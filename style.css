@@ -1,0 +1,19 @@
+:root{
+    --bgcolor: black;
+}
+
+::-webkit-scrollbar{
+    display: none;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+*:focus{
+    outline:none;
+}
+
+body{
+    overflow:hidden;
+}
