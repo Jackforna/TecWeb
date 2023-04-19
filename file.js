@@ -1,8 +1,10 @@
 /*switch to darkmode*/
 
 const toggleBtn = document.getElementById("toggle-btn");
+const AccessBtn = document.getElementById("accessibility-btn");
 const theme = document.getElementsByTagName("main");
 let darkMode = localStorage.getItem("dark-mode");
+let accessMode = localStorage.getItem("accessibility-mode");
 
 const enableDarkMode = () => {
     for(i=0;i<theme.length;i++){
@@ -12,6 +14,11 @@ const enableDarkMode = () => {
     toggleBtn.classList.remove("dark-mode-toggle");
     localStorage.setItem("dark-mode", "enabled");
     toggleBtn.checked = true;
+}
+
+const enableAccessibilityMode = () =>{
+    localStorage.setItem("accessibility-mode", "enabled");
+    AccessBtn.checked = true;
 }
 
 const disableDarkMode = () => {
@@ -24,17 +31,55 @@ const disableDarkMode = () => {
     toggleBtn.checked = false;
 }
 
+const disableAccessibilityMode = () =>{
+    localStorage.setItem("accessibility-mode", "disabled");
+    AccessBtn.checked = false;
+}
+
 if(darkMode === "enabled"){
     enableDarkMode();
 } else {
     localStorage.setItem("dark-mode", "disabled");
 }
 
-toggleBtn.addEventListener("click", (e) =>{
+if(accessMode === "enabled"){
+    enableAccessibilityMode();
+} else {
+    localStorage.setItem("accessibility-mode", "disabled");
+}
+
+toggleBtn.addEventListener("click", () =>{
     darkMode = localStorage.getItem("dark-mode");
     if(darkMode === "disabled"){
         enableDarkMode();
     } else {
         disableDarkMode();
     }
+});
+
+AccessBtn.addEventListener("click", () =>{
+    accessMode = localStorage.getItem("accessibility-mode");
+    if(accessMode === "disabled"){
+        enableAccessibilityMode();
+    } else {
+        disableAccessibilityMode();
+    }
+});
+
+document.getElementById("menubtn").addEventListener("click", ()=>{
+    document.getElementById("menuoptions").style = "display:inline";
+    document.getElementById("profileoptions").style = "display:none";
+    document.getElementById("settingsoptions").style = "display:none";
+});
+
+document.getElementById("settingsbtn").addEventListener("click", ()=>{
+    document.getElementById("menuoptions").style = "display:none";
+    document.getElementById("profileoptions").style = "display:none";
+    document.getElementById("settingsoptions").style = "display:inline";
+});
+
+document.getElementById("profilebtn").addEventListener("click", ()=>{
+    document.getElementById("menuoptions").style = "display:none";
+    document.getElementById("profileoptions").style = "display:inline";
+    document.getElementById("settingsoptions").style = "display:none";
 });

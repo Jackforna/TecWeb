@@ -9,7 +9,7 @@
     <link rel="icon" type="image/x-icon" href="img/icon.png">
 </head>
 <body>
-    <!--<header>
+    <header>
         <nav>
             <button id="menubtn">
                 <img src="img/menu.png">
@@ -21,19 +21,49 @@
                 <img src="img/settings.png">
             </button>
         </nav>
-    </header>-->
+        <div class="headeroptions">
+            <div class="menuoptions" id="menuoptions">
+                <button id="homebtn">Home</button>
+                <button id="searchbtn">Search</button>
+                <button id="squealerbtn">Squealer</button>
+                <button id="infoprofilebtn">Profile</button>
+                <button id="favouritesbtn">Favourites</button>
+            </div>
+            <div class="profileoptions" id="profileoptions" style="display:none">
+                <p>Username</p>
+                <input type="text" id="username" value="Giacomo Fornaciari" readonly>
+                <p>Password</p>
+                <input type="password" id="password" value="Fenice13!" readonly>
+                <p>Email</p>
+                <input type="email" id="email" value="giacomoforna@gmail.com" readonly>
+                <p>Telefono</p>
+                <input type="tel" id="telefono" value="3333122042" readonly>
+            </div>
+            <div class="settings" id="settingsoptions" style="display:none">
+                <div>
+                    <!--switch to dark mode-->
+                    <p>Dark Mode</p>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-btn">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div>
+                <!--switch to accessibility mode-->
+                    <p>Accessibility Mode</p>
+                    <label class="switch">
+                        <input type="checkbox" id="accessibility-btn">
+                        <span class="slider2"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </header>
     <main class="home">
         <div class="notification">
             <p>Welcome back, Giacomo</p>
             <span class="notification_progress"></span>
         </div>
-    </main>
-    <main class="settings">
-        <!--switch to darkmode-->
-        <label class="switch">
-            <input type="checkbox" id="toggle-btn">
-            <span class="slider"></span>
-        </label>
     </main>
 
     <script type="text/javascript" src="file.js"></script>
