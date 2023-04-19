@@ -83,3 +83,43 @@ document.getElementById("profilebtn").addEventListener("click", ()=>{
     document.getElementById("profileoptions").style = "display:inline";
     document.getElementById("settingsoptions").style = "display:none";
 });
+
+document.getElementById("homebtn").addEventListener("click", ()=>{
+    document.getElementById("home").style = "display:inline";
+    document.getElementById("search").style = "display:none";
+    document.getElementById("squealer").style = "display:none";
+    document.getElementById("infoprofile").style = "display:none";
+    document.getElementById("favourites").style = "display:none";
+});
+
+document.getElementById("searchbtn").addEventListener("click", ()=>{
+    document.getElementById("home").style = "display:none";
+    document.getElementById("search").style = "display:inline";
+    document.getElementById("squealer").style = "display:none";
+    document.getElementById("infoprofile").style = "display:none";
+    document.getElementById("favourites").style = "display:none";
+});
+
+document.getElementById("squealerbtn").addEventListener("click", ()=>{
+    document.getElementById("home").style = "display:none";
+    document.getElementById("search").style = "display:none";
+    document.getElementById("squealer").style = "display:inline";
+    document.getElementById("infoprofile").style = "display:none";
+    document.getElementById("favourites").style = "display:none";
+});
+
+document.getElementById("infoprofilebtn").addEventListener("click", ()=>{
+    document.getElementById("home").style = "display:none";
+    document.getElementById("search").style = "display:none";
+    document.getElementById("squealer").style = "display:none";
+    document.getElementById("infoprofile").style = "display:inline";
+    document.getElementById("favourites").style = "display:none";
+});
+
+document.getElementById("favouritesbtn").addEventListener("click", ()=>{
+    document.getElementById("home").style = "display:none";
+    document.getElementById("search").style = "display:none";
+    document.getElementById("squealer").style = "display:none";
+    document.getElementById("infoprofile").style = "display:none";
+    document.getElementById("favourites").style = "display:inline";
+});

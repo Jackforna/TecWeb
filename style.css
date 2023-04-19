@@ -1,5 +1,9 @@
 :root{
     --bgcolor: black;
+    --header-medium-width: 300px;
+    --header-small-width: 100px;
+    --size-of-icon:1.4em;
+    --slider-offset:0.3em;
 }
 
 ::-webkit-scrollbar{
@@ -20,8 +24,6 @@ body{
 
 .switch{
     float:right;
-    --size-of-icon:1.4em;
-    --slider-offset:0.3em;
     position:relative;
     width: 3.5em;
     height: 2em;
@@ -121,14 +123,6 @@ input:checked + .slider2:before{
     top:0;
 }
 
-.home{
-    position: absolute;
-    width:75%;
-    height:100%;
-    left:25%;
-    top:0;
-}
-
 @keyframes fade-in{
     5%{
         opacity: 1;
@@ -177,10 +171,10 @@ input:checked + .slider2:before{
     animation: load 3s 0.25s linear forwards;
 }
 
-header{
+.header1{
     position: absolute;
     left:0;
-    width:25%;
+    width:var(--header-medium-width);
     height:100%;
     background-color: #212121;
     top:0;
@@ -191,7 +185,40 @@ header{
     border-right: 1px solid #f6f5f9;
 }
 
-header nav{
+.header2{
+    position: absolute;
+    left:0;
+    width:var(--header-small-width);
+    height:100%;
+    background-color: #212121;
+    top:0;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #f6f5f9;
+}
+
+@media (width>1264px){
+    .header2{
+        display:none;
+    }
+
+}
+
+@media (width<=1264px){
+    .header1{
+        display:none;
+    }
+}
+
+.header1 img{
+    height:10%;
+    position:relative;
+    margin-bottom:7%;
+}
+
+.header1 nav{
     position:relative;
     width:80%;
     height:10%;
@@ -202,7 +229,7 @@ header nav{
     margin-bottom:5%;
 }
 
-header nav button{
+.header1 nav button{
     position: relative;
     width:25%;
     height:100%;
@@ -211,7 +238,7 @@ header nav button{
     border:0;
 }
 
-header nav img{
+.header1 nav img{
     width:auto;
     height:50%;
     cursor:pointer;
@@ -278,7 +305,27 @@ header nav img{
     border:1px solid #f6f5f9;
     height:10%;
     color:#f6f5f9;
-    font-size:18px;
+    font-size:17px;
     padding-left:0.5em;
     cursor:not-allowed;
+}
+
+main{
+    position:absolute;
+    height:100%;
+    top:0;
+}
+
+@media (width>1264px){
+    main{
+        width:calc(100% - var(--header-medium-width));
+        left:var(--header-medium-width);
+    }
+}
+
+@media (width<=1264px){
+    main{
+        width:calc(100% - var(--header-small-width));
+        left:var(--header-small-width);
+    }
 }
