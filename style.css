@@ -352,7 +352,6 @@ input:checked + .slider2:before{
     position:relative;
     width:30px;
     height:30px;
-    margin-bottom:20px;
     border:0;
     background-color: transparent;
     cursor:pointer;
