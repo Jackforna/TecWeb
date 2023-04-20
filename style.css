@@ -1,9 +1,10 @@
 :root{
     --bgcolor: black;
     --header-medium-width: 300px;
-    --header-small-width: 100px;
+    --header-small-width: 80px;
     --size-of-icon:1.4em;
     --slider-offset:0.3em;
+    --header-height-cell: 60px;
 }
 
 ::-webkit-scrollbar{
@@ -199,17 +200,32 @@ input:checked + .slider2:before{
     border-right: 1px solid #f6f5f9;
 }
 
-@media (width>1264px){
-    .header2{
-        display:none;
-    }
-
+.header3{
+    position: absolute;
+    left:0;
+    width:100%;
+    height:var(--header-height-cell);
+    background-color: #212121;
+    top:0;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #f6f5f9;
 }
 
-@media (width<=1264px){
-    .header1{
-        display:none;
-    }
+.footer{
+    position: absolute;
+    left:0;
+    width:100%;
+    height:var(--header-height-cell);
+    background-color: #212121;
+    bottom:0;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #f6f5f9;
 }
 
 .header1 img{
@@ -310,22 +326,91 @@ input:checked + .slider2:before{
     cursor:not-allowed;
 }
 
-main{
+.header2 button{
+    position:relative;
+    width:30px;
+    height:30px;
+    margin-bottom:20px;
+    border:0;
+    background-color: transparent;
+    cursor:pointer;
+}
+
+.header2 img{
+    position:absolute;
+    width:100%;
+    height:auto;
+    left:0;
+    top:0;
+}
+
+.header3 img{
+    height:80%;
+}
+
+.footer button{
+    position:relative;
+    width:30px;
+    height:30px;
+    margin-bottom:20px;
+    border:0;
+    background-color: transparent;
+    cursor:pointer;
+    margin:15px;
+}
+
+.footer img{
     position:absolute;
     height:100%;
+    width:auto;
+    left:0;
     top:0;
+}
+
+main{
+    position:absolute;
 }
 
 @media (width>1264px){
     main{
         width:calc(100% - var(--header-medium-width));
         left:var(--header-medium-width);
+        height:100%;
+        top:0;
+    }
+
+    .header2,
+    .header3,
+    .footer{
+        display:none;
     }
 }
 
-@media (width<=1264px){
+@media (width<=1264px) and (width>766px){
     main{
         width:calc(100% - var(--header-small-width));
         left:var(--header-small-width);
+        height:100%;
+        top:0;
+    }
+
+    .header1,
+    .header3,
+    .footer{
+        display:none;
+    }
+}
+
+@media (width<=766px){
+    main{
+        width:100%;
+        left:0;
+        height:calc(100% - (var(--header-height-cell)*2));
+        top:var(--header-height-cell);
+    }
+
+    .header1,
+    .header2{
+        display:none;
     }
 }
