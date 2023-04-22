@@ -84,43 +84,57 @@ document.getElementById("profilebtn").addEventListener("click", ()=>{
     document.getElementById("settingsoptions").style = "display:none";
 });
 
-document.getElementById("homebtn").addEventListener("click", ()=>{
+function homebtn(){
     document.getElementById("home").style = "display:inline";
     document.getElementById("search").style = "display:none";
     document.getElementById("squealer").style = "display:none";
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
     document.getElementById("welcome").style = "display:none";
-});
+    document.getElementById("settings").style = "display:none";
+}
 
-document.getElementById("searchbtn").addEventListener("click", ()=>{
+function searchbtn(){
     document.getElementById("home").style = "display:none";
     document.getElementById("search").style = "display:inline";
     document.getElementById("squealer").style = "display:none";
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
-});
+    document.getElementById("settings").style = "display:none";
+}
 
-document.getElementById("squealerbtn").addEventListener("click", ()=>{
+function squealerbtn(){
     document.getElementById("home").style = "display:none";
     document.getElementById("search").style = "display:none";
     document.getElementById("squealer").style = "display:inline";
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
-});
+    document.getElementById("settings").style = "display:none";
+}
 
-document.getElementById("infoprofilebtn").addEventListener("click", ()=>{
+function infoprofilebtn(){
     document.getElementById("home").style = "display:none";
     document.getElementById("search").style = "display:none";
     document.getElementById("squealer").style = "display:none";
     document.getElementById("infoprofile").style = "display:inline";
     document.getElementById("favourites").style = "display:none";
-});
+    document.getElementById("settings").style = "display:none";
+}
 
-document.getElementById("favouritesbtn").addEventListener("click", ()=>{
+function favouritesbtn(){
     document.getElementById("home").style = "display:none";
     document.getElementById("search").style = "display:none";
     document.getElementById("squealer").style = "display:none";
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:inline";
-});
+    document.getElementById("settings").style = "display:none";
+}
+
+function settingsbtn(){
+    document.getElementById("home").style = "display:none";
+    document.getElementById("search").style = "display:none";
+    document.getElementById("squealer").style = "display:none";
+    document.getElementById("infoprofile").style = "display:none";
+    document.getElementById("favourites").style = "display:none";
+    document.getElementById("settings").style = "display:inline";
+}
