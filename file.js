@@ -90,6 +90,7 @@ document.getElementById("homebtn").addEventListener("click", ()=>{
     document.getElementById("squealer").style = "display:none";
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
+    document.getElementById("welcome").style = "display:none";
 });
 
 document.getElementById("searchbtn").addEventListener("click", ()=>{

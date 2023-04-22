@@ -368,6 +368,8 @@ input:checked + .slider2:before{
 
 main{
     position:absolute;
+    overflow-x:hidden;
+    overflow-y:scroll;
 }
 
 @media (width>1264px){
@@ -412,4 +414,51 @@ main{
     .header2{
         display:none;
     }
+}
+
+.search{
+    position: absolute;
+    display:inline-flex;
+    padding: 5px;
+    border-radius:50px;
+    transition: 0.4s;
+    background-color: #141619;
+    top:5%;
+    min-width:50px;
+    min-height:50px;
+    align-items:center;
+    justify-content: center;
+    left:calc((100% - 50px)/2);
+}
+
+.search img{
+    height:35px;
+    width:35px;
+}
+
+.search input{
+    transition: 0.4s;
+    border:0;
+    background-color: transparent;
+    font-size:20px;
+    max-width:0px;
+    padding:0;
+    text-indent: 12px;
+    color:#f5f6f9;
+}
+
+.search input::placeholder{
+    color:rgba(255, 255, 255, 0.375);
+}
+
+.search:hover{
+    left:calc((100% - 300px)/2);
+}
+
+.search:hover img{
+    margin-left:5px;
+}
+
+.search:hover input{
+    max-width:250px;
 }
