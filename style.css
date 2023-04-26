@@ -326,6 +326,19 @@ input:checked + .slider2:before{
     cursor:not-allowed;
 }
 
+.profileoptions a{
+    display:block;
+    width:100%;
+    position:relative;
+    background-color: transparent;
+    font-size:20px;
+    color:#f6f5f9;
+    margin-bottom:2px;
+    margin-top:1.5em;
+    text-decoration: none;
+    text-align: center;
+}
+
 .header2 button{
     position:relative;
     width:30px;

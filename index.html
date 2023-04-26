@@ -23,14 +23,14 @@
             </button>
         </nav>
         <div class="headeroptions">
-            <div class="menuoptions" id="menuoptions">
+            <section class="menuoptions" id="menuoptions">
                 <button onclick="homebtn()">Home</button>
                 <button onclick="searchbtn()">Search</button>
                 <button onclick="squealerbtn()">Squealer</button>
                 <button onclick="infoprofilebtn()">Profile</button>
                 <button onclick="favouritesbtn()">Favourites</button>
-            </div>
-            <div class="profileoptions" id="profileoptions" style="display:none">
+            </section>
+            <section class="profileoptions" id="profileoptions" style="display:none">
                 <p>Username</p>
                 <input type="text" id="username" value="Giacomo Fornaciari" readonly>
                 <p>Password</p>
@@ -39,8 +39,9 @@
                 <input type="email" id="email" value="giacomoforna@gmail.com" readonly>
                 <p>Telefono</p>
                 <input type="tel" id="telefono" value="3333122042" readonly>
-            </div>
-            <div class="settings" id="settingsoptions" style="display:none">
+                <a href="accesso.html">Esci</a>
+            </section>
+            <section class="settings" id="settingsoptions" style="display:none">
                 <div>
                     <!--switch to dark mode-->
                     <p>Dark Mode</p>
@@ -57,7 +58,7 @@
                         <span class="slider2"></span>
                     </label>
                 </div>
-            </div>
+            </section>
         </div>
     </header>
     <header class="header2">
