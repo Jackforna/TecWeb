@@ -1,10 +1,30 @@
-/*switch to darkmode*/
-
 const toggleBtn = document.getElementById("toggle-btn");
 const AccessBtn = document.getElementById("accessibility-btn");
 const theme = document.getElementsByTagName("main");
 let darkMode = localStorage.getItem("dark-mode");
 let accessMode = localStorage.getItem("accessibility-mode");
+
+let user = {        //dati user
+    name : "",      
+    password : "",
+    fee_paid : 0,      //quota pagata dall'utente
+    char_d : 300,      //caratteri disponibili al giorno
+    char_w : 2000,     //caratteri disponibili a settimana
+    char_m : 7000,     //caratteri disponibili al mese
+}
+
+let el_mess = [];
+
+let mess = {        //dati messaggio
+    body : "",
+    destination : "",
+    date : "",
+    hour : "",
+    pos_reactions : 0,
+    neg_reactions : 0,
+    category : "",
+    channels : "",
+}
 
 const enableDarkMode = () => {
     for(i=0;i<theme.length;i++){
@@ -137,4 +157,13 @@ function settingsbtn(){
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
     document.getElementById("settings").style = "display:inline";
+}
+
+function public_mess(mess){
+    el_mess.unshift(mess);
+}
+
+function search_mess(property, type){  //property deve essere del tipo mess.property quando viene passato
+    let el_search_mess = el_mess.filter(mess => property === type);
+    return(el_search_mess);
 }
