@@ -5,7 +5,7 @@ let darkMode = localStorage.getItem("dark-mode");
 let accessMode = localStorage.getItem("accessibility-mode");
 
 let user = {        //dati user
-    name : "",      
+    name : "Jack",      
     password : "",
     fee_paid : 0,      //quota pagata dall'utente
     char_d : 300,      //caratteri disponibili al giorno
@@ -25,6 +25,8 @@ let mess = {        //dati messaggio
     category : "",
     channels : "",
 }
+
+//document.getElementById("welcomemex").value = "Welcome back," + user.name;
 
 const enableDarkMode = () => {
     for(i=0;i<theme.length;i++){
