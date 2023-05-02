@@ -26,8 +26,6 @@ let mess = {        //dati messaggio
     channels : "",
 }
 
-//document.getElementById("welcomemex").value = "Welcome back," + user.name;
-
 const enableDarkMode = () => {
     for(i=0;i<theme.length;i++){
     theme[i].classList.add("dark-mode-theme");
