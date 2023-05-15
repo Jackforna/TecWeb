@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Squealer</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="accesso.css">
     <link rel="icon" type="image/x-icon" href="img/icon.png">
 </head>
 <body>
@@ -20,55 +20,65 @@
         </div>
     </div>
     <div class="formsignover" id="formsign">
-        <img src="img/icon.png" alt="">
+        <img src="img/icon.png" alt="icon of a squeal, simble of the social network">
         <form action="">
-            <input type="email" placeholder="Email" id="">
+            <input type="email" placeholder="Email" id="emailsign">
             <input type="text" placeholder="Full Name" id="fullnamesign" style="display:none">
             <input type="text" placeholder="Username" id="usernamesign" style="display:none">
-            <input type="password" placeholder="Password" id="">
+            <input type="password" placeholder="Password" id="passwordsign">
             <input type="submit" value="Submit">
         </form>
     </div>
-    <div class="formsignover2" id="formsign">
-        <img src="img/icon.png" alt="">
-        <form action="">
-            <input type="email" placeholder="Email" id="">
-            <input type="text" placeholder="Full Name" id="fullnamesign" style="display:none">
-            <input type="text" placeholder="Username" id="usernamesign" style="display:none">
-            <input type="password" placeholder="Password" id="">
-            <input type="submit" value="Submit">
-            <p id="signupcell">Don't have an account? Sign Up.</p>
-            <p id="signincell" style="display:none">Already have an account? Sign In.</p>
-        </form>
+    <div class="formcell" id="formcell">
+        <div class="formsigncell form_front">
+            <img src="img/icon.png" alt="icon of a squeal, simble of the social network">
+            <form action="">
+                <input type="email" placeholder="Email" id="emailsign">
+                <input type="password" placeholder="Password" id="passwordsign">
+                <input type="submit" value="Submit">
+                <p id="signupcell">Don't have an account? Sign Up.</p>
+            </form>
+        </div>
+        <div class="formsigncell form_back">
+            <img src="img/icon.png" alt="icon of a squeal, simble of the social network">
+            <form action="">
+                <input type="email" placeholder="Email" id="emailsign">
+                <input type="text" placeholder="Full Name" id="fullnamesign">
+                <input type="text" placeholder="Username" id="usernamesign">
+                <input type="password" placeholder="Password" id="passwordsign">
+                <input type="submit" value="Submit">
+                <p id="signincell">Already have an account? Sign In.</p>
+            </form>
+        </div>
     </div>
+        
     <script>
         const formsign = document.getElementById("formsign");
+        const formcell = document.getElementById("formcell");
+        var sign = true;
     
         document.getElementById("signin").addEventListener("click", ()=>{
             formsign.classList.remove("translateform");
             document.getElementById("fullnamesign").style = "display:none";
             document.getElementById("usernamesign").style = "display:none";
+            sign = true;
         });
     
         document.getElementById("signup").addEventListener("click", ()=>{
             formsign.classList.add("translateform");
             document.getElementById("fullnamesign").style = "display:inline";
             document.getElementById("usernamesign").style = "display:inline";
+            sign = false;
         });
 
         document.getElementById("signincell").addEventListener("click", ()=>{
-            document.getElementById("fullnamesign").style = "display:none";
-            document.getElementById("usernamesign").style = "display:none";
-            document.getElementById("signincell").style = "display:none";
-            document.getElementById("signupcell").style = "display:inline";
-            
+            formcell.classList.remove("turnform");
+            sign = true;
         });
     
         document.getElementById("signupcell").addEventListener("click", ()=>{
-            document.getElementById("fullnamesign").style = "display:inline";
-            document.getElementById("usernamesign").style = "display:inline";
-            document.getElementById("signincell").style = "display:inline";
-            document.getElementById("signupcell").style = "display:none";
+            formcell.classList.add("turnform");
+            sign = false;
         });
     </script>
 </body>
