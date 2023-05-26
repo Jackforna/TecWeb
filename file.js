@@ -17,11 +17,14 @@ let el_mess = [];
 
 let mess = {        //dati messaggio
     body : "",
-    destination : "",
+    destination : "",//#
     date : "",
     hour : "",
     pos_reactions : 0,
     neg_reactions : 0,
+    image_url: "",
+    video_url: "",
+    location: "",
     category : "",
     channels : "",
 }
@@ -160,10 +163,51 @@ function settingsbtn(){
 }
 
 function public_mess(mess){
+
     el_mess.unshift(mess);
 }
 
 function search_mess(property, type){  //property deve essere del tipo mess.property quando viene passato
     let el_search_mess = el_mess.filter(mess => property === type);
     return(el_search_mess);
+}
+
+document.getElementById("locationbtn").addEventListener("click", ()=>{
+    if(checkchar(125)){
+    document.getElementById("location").style = "display:inline";
+    document.getElementById("locationbtn").style = "display:none";
+    document.getElementById("el_locationbtn").style = "display:inline";
+    writeLocation();
+    }
+});
+
+document.getElementById("el_locationbtn").addEventListener("click", ()=>{
+    document.getElementById("location").style = "display:none";
+    document.getElementById("locationbtn").style = "display:inline";
+    document.getElementById("el_locationbtn").style = "display:none";
+});
+
+function writeLocation(){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(getLocation);
+    } else {
+        document.getElementById("location").innerText = "The geolocation is not supported in this browser";
+    }
+}
+
+const getLocation = async (position) => {
+    let latitude = position.coords.latitude;
+    let longitude = position.coords.longitude;
+    let response = await fetch('https://nominatim.openstreetmap.org/reverse?lat='+latitude+'&lon='+longitude+'&format=json');
+
+    let data = await response.json();
+    console.log(data);
+    let road = data.address.road + ", " + data.address.house_number;
+    let city = data.address.city;
+    let country = data.address.country;
+    document.getElementById("location").innerText = "My Location: "+ road + " " + city + " " + country;
+};
+
+function checkchar(x){
+    //funzione che controlla se il numero di char rimasti sono abbastanza, dato in input un numero x di caratteri.
 }

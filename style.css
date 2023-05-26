@@ -24,6 +24,11 @@ body{
     overflow:hidden;
 }
 
+textarea{
+    resize:none;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 .switch{
     float:right;
     position:relative;
@@ -259,6 +264,11 @@ input:checked + .slider2:before{
     width:auto;
     height:50%;
     cursor:pointer;
+    transition: 0.4s;
+}
+
+.header1 nav img:hover{
+    transform: scale(110%);
 }
 
 .headeroptions{
@@ -356,6 +366,11 @@ input:checked + .slider2:before{
     height:auto;
     left:0;
     top:0;
+    transition: 0.4s;
+}
+
+.header2 img:hover{
+    transform: scale(110%);
 }
 
 .header3 img{
@@ -378,6 +393,11 @@ input:checked + .slider2:before{
     width:auto;
     left:0;
     top:0;
+    transition: 0.4s;
+}
+
+.footer img:hover{
+    transform: scale(110%);
 }
 
 main{
@@ -475,4 +495,73 @@ main{
 
 .search:hover input{
     max-width:250px;
+}
+
+.messaggio{
+    display:flex;
+    width:100%;
+    height:100%;
+    flex-direction:column;
+    align-items:center;
+    justify-content: center;
+}
+
+.messaggio textarea{
+    width:40%;
+    margin:1%;
+    border-radius:5px;
+    height:30%;
+    padding:0.6em;
+    font-size:16px;
+}
+
+.messaggio input[type="url"]{
+    width:40%;
+    margin:1%;
+    height:8%;
+    padding: 0.6em;
+    border-radius:5px;
+    font-size:16px;
+}
+
+.messaggio p{
+    width:40%;
+    margin:1%;
+    padding: 0.6em;
+    border-radius:5px;
+    font-size:16px;
+    border:0;
+    text-align: center;
+}
+
+.messaggio .locationbtn{
+    background-color:blue;
+    padding: 0.8em 1em 0.8em 1em;
+    font-size:16px;
+    border:0;
+    margin:1%;
+    color:#f5f6f9;
+    cursor:pointer;
+    border-radius:5px;
+    transition: 0.4s;
+}
+
+.messaggio .locationbtn:active{
+    transform: scale(0.95);
+}
+
+.messaggio .send{
+    background-color:blue;
+    padding: 0.8em 1em 0.8em 1em;
+    font-size:16px;
+    border:0;
+    margin:1%;
+    color:#f5f6f9;
+    cursor:pointer;
+    border-radius:5px;
+    transition: 0.4s;
+}
+
+.messaggio .send:active{
+    transform: scale(0.95);
 }
