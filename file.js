@@ -3,6 +3,7 @@ const AccessBtn = document.getElementById("accessibility-btn");
 const theme = document.getElementsByTagName("main");
 let darkMode = localStorage.getItem("dark-mode");
 let accessMode = localStorage.getItem("accessibility-mode");
+var location;
 
 let user = {        //dati user
     name : "Jack",      
@@ -174,10 +175,12 @@ function search_mess(property, type){  //property deve essere del tipo mess.prop
 
 document.getElementById("locationbtn").addEventListener("click", ()=>{
     if(checkchar(125)){
-    document.getElementById("location").style = "display:inline";
-    document.getElementById("locationbtn").style = "display:none";
-    document.getElementById("el_locationbtn").style = "display:inline";
-    writeLocation();
+        writeLocation();
+        user.char_d -= 125;
+        user.char_w -= 125;
+        user.char_m -= 125;
+    } else {
+        alert("Il numero di caratteri giornalieri a tua disposizione si sono esauriti");
     }
 });
 
@@ -185,6 +188,7 @@ document.getElementById("el_locationbtn").addEventListener("click", ()=>{
     document.getElementById("location").style = "display:none";
     document.getElementById("locationbtn").style = "display:inline";
     document.getElementById("el_locationbtn").style = "display:none";
+    document.getElementById("location").innerHTML = "<img src='img/position.png' alt='position logo'></img>";
 });
 
 function writeLocation(){
@@ -201,13 +205,32 @@ const getLocation = async (position) => {
     let response = await fetch('https://nominatim.openstreetmap.org/reverse?lat='+latitude+'&lon='+longitude+'&format=json');
 
     let data = await response.json();
-    console.log(data);
-    let road = data.address.road + ", " + data.address.house_number;
+    document.getElementById("location").style = "display:inline";
+    document.getElementById("locationbtn").style = "display:none";
+    document.getElementById("el_locationbtn").style = "display:inline";
+    if(data.address.house_number!=undefined){
+    var road = data.address.road + ", " + data.address.house_number;
+    } else {
+        var road = data.address.road;
+    }
     let city = data.address.city;
     let country = data.address.country;
-    document.getElementById("location").innerText = "My Location: "+ road + " " + city + " " + country;
+    document.getElementById("location").innerHTML += road + " " + city + " " + country;
 };
 
 function checkchar(x){
-    //funzione che controlla se il numero di char rimasti sono abbastanza, dato in input un numero x di caratteri.
+    let max_char;
+    if ((user.char_d<=user.char_w)&&(user.char_d<=user.char_m)){
+        max_char = user.char_d;
+    } else if (user.char_w<=user.char_m){
+        max_char = user.char_w;
+    } else {
+        max_char = user.char_m;
+    }
+
+    if(max_char>x){
+        return true;
+    } else {
+        return false;
+    }
 }
