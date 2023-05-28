@@ -138,7 +138,7 @@ function squealerbtn(){
     document.getElementById("favourites").style = "display:none";
     document.getElementById("settings").style = "display:none";
     max_char = mx_char();
-    document.getElementById("quotarimanente").innerHTML += max_char;
+    document.getElementById("quotarimanente").innerHTML = "The remaining character quota is: " + max_char;
 }
 
 function infoprofilebtn(){
