@@ -4,6 +4,9 @@ const theme = document.getElementsByTagName("main");
 let darkMode = localStorage.getItem("dark-mode");
 let accessMode = localStorage.getItem("accessibility-mode");
 var location;
+var max_char;
+var mess_length = 0;
+var continua_input = false;
 
 let user = {        //dati user
     name : "Jack",      
@@ -134,6 +137,8 @@ function squealerbtn(){
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
     document.getElementById("settings").style = "display:none";
+    max_char = mx_char();
+    document.getElementById("quotarimanente").innerHTML += max_char;
 }
 
 function infoprofilebtn(){
@@ -176,26 +181,25 @@ function search_mess(property, type){  //property deve essere del tipo mess.prop
 document.getElementById("locationbtn").addEventListener("click", ()=>{
     if(checkchar(125)){
         writeLocation();
-        user.char_d -= 125;
-        user.char_w -= 125;
-        user.char_m -= 125;
     } else {
-        alert("Il numero di caratteri giornalieri a tua disposizione si sono esauriti");
+        alert("The number of yuor characters available has run out! An extra payment will be required for sending the message.");
+        writeLocation();
     }
 });
 
 document.getElementById("el_locationbtn").addEventListener("click", ()=>{
-    document.getElementById("location").style = "display:none";
+    document.getElementById("locationdiv").style = "visibility:hidden";
     document.getElementById("locationbtn").style = "display:inline";
     document.getElementById("el_locationbtn").style = "display:none";
-    document.getElementById("location").innerHTML = "<img src='img/position.png' alt='position logo'></img>";
+    document.getElementById("location").innerHTML = "";
+    aggiorna_quota(125);
 });
 
 function writeLocation(){
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(getLocation);
     } else {
-        document.getElementById("location").innerText = "The geolocation is not supported in this browser";
+        alert("Geolocation not supported on this browser.");
     }
 }
 
@@ -205,9 +209,10 @@ const getLocation = async (position) => {
     let response = await fetch('https://nominatim.openstreetmap.org/reverse?lat='+latitude+'&lon='+longitude+'&format=json');
 
     let data = await response.json();
-    document.getElementById("location").style = "display:inline";
+    document.getElementById("locationdiv").style = "visibility:visible";
     document.getElementById("locationbtn").style = "display:none";
     document.getElementById("el_locationbtn").style = "display:inline";
+    aggiorna_quota(-125);
     if(data.address.house_number!=undefined){
     var road = data.address.road + ", " + data.address.house_number;
     } else {
@@ -218,8 +223,7 @@ const getLocation = async (position) => {
     document.getElementById("location").innerHTML += road + " " + city + " " + country;
 };
 
-function checkchar(x){
-    let max_char;
+function mx_char(){
     if ((user.char_d<=user.char_w)&&(user.char_d<=user.char_m)){
         max_char = user.char_d;
     } else if (user.char_w<=user.char_m){
@@ -227,10 +231,46 @@ function checkchar(x){
     } else {
         max_char = user.char_m;
     }
+    return(max_char);
+}
 
-    if(max_char>x){
+function checkchar(x){
+    if(max_char>=x){
         return true;
     } else {
         return false;
     }
 }
+
+function aggiorna_quota(x){ 
+    if (receiver_type()!="individuo"){
+    max_char += x;
+    document.getElementById("quotarimanente").innerText = "The remaining character quota is: " + max_char;
+    }
+}
+
+function receiver_type(){
+    //capire tipo del destinatario del messaggio e ritornare stringa con tipo
+    return("canale"); //o Canale, pubblico, privato
+}
+
+document.getElementById("textmessaggio").addEventListener("input", (event)=>{
+    let x = document.getElementById("textmessaggio").value.length;
+    if (x>mess_length){
+        if (checkchar(x-mess_length)){
+            aggiorna_quota(mess_length-x);
+        } else {
+            if(continua_input==false){
+            alert("The number of yuor characters available has run out! An extra payment will be required for sending the message.");
+            continua_input = true;
+            }
+            aggiorna_quota(mess_length-x);
+        }
+    } else {
+        aggiorna_quota(mess_length-x);
+        if((continua_input==true)&&(max_char>=0)){
+            continua_input = false;
+        }
+    }
+    mess_length = x;
+});
