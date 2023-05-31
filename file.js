@@ -4,32 +4,34 @@ const theme = document.getElementsByTagName("main");
 let darkMode = localStorage.getItem("dark-mode");
 let accessMode = localStorage.getItem("accessibility-mode");
 var location;
-var max_char;
 var mess_length = 0;
 var continua_input = false;
+var link_insert = false;
 
 let user = {        //dati user
     name : "Jack",      
     password : "",
-    fee_paid : 0,      //quota pagata dall'utente
+    version : "",      //versione di sqealer dell'utente
     char_d : 300,      //caratteri disponibili al giorno
     char_w : 2000,     //caratteri disponibili a settimana
     char_m : 7000,     //caratteri disponibili al mese
 }
 
+var max_char = mx_char();
+var max_char2 = max_char;
+
 let el_mess = [];
 
 let mess = {        //dati messaggio
+    sender : "",
     body : "",
-    destination : "",//#
     date : "",
     hour : "",
     pos_reactions : 0,
     neg_reactions : 0,
-    image_url: "",
-    video_url: "",
+    url: "",
     location: "",
-    category : "",
+    category : undefined,
     channels : "",
 }
 
@@ -137,7 +139,6 @@ function squealerbtn(){
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
     document.getElementById("settings").style = "display:none";
-    max_char = mx_char();
     document.getElementById("quotarimanente").innerHTML = "The remaining character quota is: " + max_char;
 }
 
@@ -168,9 +169,33 @@ function settingsbtn(){
     document.getElementById("settings").style = "display:inline";
 }
 
-function public_mess(mess){
-
+function public_mess(){
+    if(max_char!=max_char2){
+    const data = new Date();
+    mess.sender = user.name;
+    mess.body = document.getElementById("textmessaggio").value;
+    mess.date = data.getDate() + "/" + (data.getMonth()+1) + "/" + data.getFullYear();
+    let minutes = data.getMinutes();
+    if(minutes<10){
+        minutes = "0" + minutes;
+    }
+    mess.hour = data.getHours() + ":" + minutes;
+    mess.pos_reactions = 0;
+    mess.neg_reactions = 0;
+    if(document.getElementById("urlmessaggio").value!=""){
+    fetchURL(document.getElementById("urlmessaggio").value);
+    }
+    mess.url = document.getElementById("urlmessaggio").value;
+    mess.location = document.getElementById("location").innerHTML;
+    mess.category = undefined;                                               //fare in base alle reazioni
+    mess.channels = document.getElementById("receivermessaggio").value;                                                      //fare dopo i channels
     el_mess.unshift(mess);
+    user.char_w -= max_char2 - max_char;
+    user.char_m -= max_char2 - max_char;
+    user.char_d -= max_char2 - max_char;
+    } else {
+        alert("The message is empty!");
+    }
 }
 
 function search_mess(property, type){  //property deve essere del tipo mess.property quando viene passato
@@ -182,7 +207,7 @@ document.getElementById("locationbtn").addEventListener("click", ()=>{
     if(checkchar(125)){
         writeLocation();
     } else {
-        alert("The number of yuor characters available has run out! An extra payment will be required for sending the message.");
+        alert("The number of your characters available has run out! An extra payment will be required for sending the message.");
         writeLocation();
     }
 });
@@ -196,10 +221,14 @@ document.getElementById("el_locationbtn").addEventListener("click", ()=>{
 });
 
 function writeLocation(){
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(getLocation);
+    if(receiver_type()==""){
+        alert("inserire prima il destinatario");
     } else {
-        alert("Geolocation not supported on this browser.");
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(getLocation);
+        } else {
+            alert("Geolocation not supported on this browser.");
+        }
     }
 }
 
@@ -212,15 +241,17 @@ const getLocation = async (position) => {
     document.getElementById("locationdiv").style = "visibility:visible";
     document.getElementById("locationbtn").style = "display:none";
     document.getElementById("el_locationbtn").style = "display:inline";
-    aggiorna_quota(-125);
     if(data.address.house_number!=undefined){
     var road = data.address.road + ", " + data.address.house_number;
     } else {
         var road = data.address.road;
     }
     let city = data.address.city;
-    let country = data.address.country;
+    let country = data.address.country;    
+    if(document.getElementById("location").innerHTML == ""){
     document.getElementById("location").innerHTML += road + " " + city + " " + country;
+    aggiorna_quota(-125);
+    }
 };
 
 function mx_char(){
@@ -250,27 +281,76 @@ function aggiorna_quota(x){
 }
 
 function receiver_type(){
-    //capire tipo del destinatario del messaggio e ritornare stringa con tipo
-    return("canale"); //o Canale, pubblico, privato
+    let firstCharacter = document.getElementById("receivermessaggio").value.charAt(0);
+    switch(firstCharacter){
+        case "@":
+            return("individuo");
+        case "#":
+            return("keyword");
+        case "&":
+            return("canale");
+        case "$":
+            return("Canale");
+        default:
+            return("");
+    }
 }
 
-document.getElementById("textmessaggio").addEventListener("input", (event)=>{
-    let x = document.getElementById("textmessaggio").value.length;
-    if (x>mess_length){
-        if (checkchar(x-mess_length)){
-            aggiorna_quota(mess_length-x);
-        } else {
-            if(continua_input==false){
-            alert("The number of yuor characters available has run out! An extra payment will be required for sending the message.");
-            continua_input = true;
-            }
-            aggiorna_quota(mess_length-x);
-        }
+document.getElementById("textmessaggio").addEventListener("input", ()=>{
+    if(receiver_type()==""){
+        alert("inserire prima il destinatario");
+        document.getElementById("textmessaggio").value = "";
     } else {
-        aggiorna_quota(mess_length-x);
-        if((continua_input==true)&&(max_char>=0)){
-            continua_input = false;
+        let x = document.getElementById("textmessaggio").value.length;
+        if (x>mess_length){
+            if (checkchar(x-mess_length)){
+                aggiorna_quota(mess_length-x);
+            } else {
+                if(continua_input==false){
+                alert("The number of your characters available has run out! An extra payment will be required for sending the message.");
+                continua_input = true;
+                }
+                aggiorna_quota(mess_length-x);
+            }
+        } else {
+            aggiorna_quota(mess_length-x);
+            if((continua_input==true)&&(max_char>=0)){
+                continua_input = false;
+            }
+        }
+        mess_length = x;
+    }
+});
+
+document.getElementById("urlmessaggio").addEventListener("input", ()=>{
+    if(receiver_type()==""){
+        alert("inserire prima il destinatario");
+        document.getElementById("urlmessaggio").value = "";
+    } else {
+        if(checkchar(125)!=true){
+            alert("The number of your characters available has run out! An extra payment will be required for sending the message.");
+        }
+
+        if(document.getElementById("urlmessaggio").value == ""){
+            aggiorna_quota(125);
+            link_insert = false;
+        } else if(link_insert==false){
+            aggiorna_quota(-125);
+            link_insert = true;
         }
     }
-    mess_length = x;
+});
+
+async function fetchURL(url){
+    try{
+        const data = await fetch(url);
+        const blob = await data.blob();
+        const fileURL = URL.createObjectURL(blob);
+    } catch {
+        alert("Failed to download the link!");
+    }
+}
+
+document.getElementById("buy_proversion").addEventListener("click", ()=>{
+    //
 });

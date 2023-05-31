@@ -293,6 +293,23 @@ input:checked + .slider2:before{
     justify-content: space-between;
 }
 
+.settings button{
+    width:70%;
+    margin-left:15%;
+    margin-top:10%;
+    border:0;
+    border-radius:5px;
+    padding: 0.6em 0.4em 0.6em 0.4em;
+    font-size:16px;
+    background-color: #539bdb;
+    transition: 0.4s;
+    cursor:pointer;
+}
+
+.settings button:active{
+    transform: scale(0.95);
+}
+
 .menuoptions{
     position:relative;
     width:100%;
