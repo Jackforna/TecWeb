@@ -7,11 +7,17 @@ var location;
 var mess_length = 0;
 var continua_input = false;
 var link_insert = false;
+let receiver_type;
+let receiverValid = false;
+let lista_individui = ["Giacomo","Gabriel"];
+let lista_keyword = [];
+let lista_canale = ["unibo"];
+let lista_Canale = ["fuoricorso"];
 
 let user = {        //dati user
     name : "Jack",      
     password : "",
-    version : "",      //versione di sqealer dell'utente
+    version : "",      //versione di squealer dell'utente
     char_d : 300,      //caratteri disponibili al giorno
     char_w : 2000,     //caratteri disponibili a settimana
     char_m : 7000,     //caratteri disponibili al mese
@@ -188,7 +194,7 @@ function public_mess(){
     mess.url = document.getElementById("urlmessaggio").value;
     mess.location = document.getElementById("location").innerHTML;
     mess.category = undefined;                                               //fare in base alle reazioni
-    mess.channels = document.getElementById("receivermessaggio").value;                                                      //fare dopo i channels
+    mess.channels = document.getElementById("receivermessaggio").value;
     el_mess.unshift(mess);
     user.char_w -= max_char2 - max_char;
     user.char_m -= max_char2 - max_char;
@@ -221,8 +227,8 @@ document.getElementById("el_locationbtn").addEventListener("click", ()=>{
 });
 
 function writeLocation(){
-    if(receiver_type()==""){
-        alert("inserire prima il destinatario");
+    if(receiver_type==""){
+        alert("inserire prima un destinatario valido");
     } else {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(getLocation);
@@ -274,31 +280,81 @@ function checkchar(x){
 }
 
 function aggiorna_quota(x){ 
-    if (receiver_type()!="individuo"){
+    if (receiver_type!="individuo"){
     max_char += x;
     document.getElementById("quotarimanente").innerText = "The remaining character quota is: " + max_char;
     }
 }
 
-function receiver_type(){
+function findreceiver_type(){
     let firstCharacter = document.getElementById("receivermessaggio").value.charAt(0);
+    receiverValid = false;
     switch(firstCharacter){
         case "@":
-            return("individuo");
+            for(i=0;i<lista_individui.length;i++){
+                if((document.getElementById("receivermessaggio").value).slice(1)==lista_individui[i]){
+                    receiverValid = true;
+                }
+            }
+            if(receiverValid==true){
+                document.getElementById("quotarimanente").style = "visibility:hidden";
+                return("individuo");
+            }
+            else return ("");
         case "#":
-            return("keyword");
+            for(i=0;i<lista_individui.length;i++){
+                if((document.getElementById("receivermessaggio").value).slice(1)==lista_keyword[i]){
+                    receiverValid = true;
+                }
+            }
+            if(receiverValid==true){
+                document.getElementById("quotarimanente").style = "visibility:visible";
+                return("keyword");
+            }
+            else return ("");
         case "&":
-            return("canale");
+            for(i=0;i<lista_individui.length;i++){
+                if((document.getElementById("receivermessaggio").value).slice(1)==lista_canale[i]){
+                    receiverValid = true;
+                }
+            }
+            if(receiverValid==true){
+                document.getElementById("quotarimanente").style = "visibility:visible";
+                return("canale");
+            }
+            else return ("");
         case "$":
-            return("Canale");
+            for(i=0;i<lista_individui.length;i++){
+                if((document.getElementById("receivermessaggio").value).slice(1)==lista_Canale[i]){
+                    receiverValid = true;
+                }
+            }
+            if(receiverValid==true){
+                document.getElementById("quotarimanente").style = "visibility:visible";
+                return("Canale");
+            }
+            else return ("");
         default:
             return("");
     }
 }
 
+document.getElementById("receivermessaggio").addEventListener("input", ()=>{
+        document.getElementById("textmessaggio").value = "";
+        max_char = mx_char();
+        document.getElementById("quotarimanente").innerText = "The remaining character quota is: " + max_char;
+        document.getElementById("locationdiv").style = "visibility:hidden";
+        document.getElementById("locationbtn").style = "display:inline";
+        document.getElementById("el_locationbtn").style = "display:none";
+        document.getElementById("location").innerHTML = "";
+        document.getElementById("urlmessaggio").value = "";
+        document.getElementById("quotarimanente").style = "visibility:hidden";
+        receiver_type = findreceiver_type();
+})
+
 document.getElementById("textmessaggio").addEventListener("input", ()=>{
-    if(receiver_type()==""){
-        alert("inserire prima il destinatario");
+    if(receiver_type==""){
+        alert("inserire prima un destinatario valido");
         document.getElementById("textmessaggio").value = "";
     } else {
         let x = document.getElementById("textmessaggio").value.length;
@@ -323,8 +379,8 @@ document.getElementById("textmessaggio").addEventListener("input", ()=>{
 });
 
 document.getElementById("urlmessaggio").addEventListener("input", ()=>{
-    if(receiver_type()==""){
-        alert("inserire prima il destinatario");
+    if(receiver_type==""){
+        alert("inserire prima un destinatario valido");
         document.getElementById("urlmessaggio").value = "";
     } else {
         if(checkchar(125)!=true){
@@ -341,7 +397,7 @@ document.getElementById("urlmessaggio").addEventListener("input", ()=>{
     }
 });
 
-async function fetchURL(url){
+async function fetchURL(url){ //migliorare
     try{
         const data = await fetch(url);
         const blob = await data.blob();
@@ -352,5 +408,5 @@ async function fetchURL(url){
 }
 
 document.getElementById("buy_proversion").addEventListener("click", ()=>{
-    //
+    //form per comprare la versione pro
 });
