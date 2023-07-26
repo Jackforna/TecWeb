@@ -408,5 +408,9 @@ async function fetchURL(url){ //migliorare
 }
 
 document.getElementById("buy_proversion").addEventListener("click", ()=>{
-    //form per comprare la versione pro
+    document.getElementById("payment").style = "display:inline";
+});
+
+document.getElementById("sfondoopaco").addEventListener("click", ()=>{
+    document.getElementById("payment").style = "display:none";
 });

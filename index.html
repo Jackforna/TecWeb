@@ -143,6 +143,41 @@
     <main id="settings" style="display:none">
 
     </main>
+    <section class="payment" id="payment" style="display:none">
+        <button class="sfondoopaco" id="sfondoopaco"></button>
+        <div class="upgrade_proversion" id="upgrade_proversion">
+            <section>
+                <h1>Pro version</h1>
+                <ul>
+                    <li>Account approved</li>
+                    <li>300 more characters for day</li>
+                    <li>2000 more characters for week</li>
+                    <li>7000 more character for month</li>
+                </ul>
+                <h3>For 11.99$ for year</h3>
+                <button id="proversion1">Go to payment</button>
+            </section>
+            <section>
+                <h1>Pro version+</h1>
+                <ul>
+                    <li>Account approved</li>
+                    <li>550 more characters for day</li>
+                    <li>3500 more characters for week</li>
+                    <li>12000 more character for month</li>
+                </ul>
+                <h3>For 19.99$ for year</h3>
+                <button id="proversion2">Go to payment</button>
+            </section>
+        </div>
+        <div class="datipaypal" id="datipaypal" style="display:none">
+            <h1>Paga con</h1>
+            <div class="paypaloptions">
+                <div id="paypal-button-container"></div>
+                <script src="https://www.paypal.com/sdk/js?client-id=ASIu8uGe4RYwS7WXDVH4FCcTCx7uFrqqdo3oYHzZ-_ESZVjg-jfOhHFseUnHuPH1VAs4U_CWe2U_ZsIh&currency=EUR&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>
+            </div>
+        </div>
+    </section>
     <script type="text/javascript" src="file.js"></script>
+    <script type="text/javascript" src="paypal.js"></script>
 </body>
 </html>

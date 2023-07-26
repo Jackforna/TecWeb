@@ -423,8 +423,20 @@ main{
     overflow-y:scroll;
 }
 
+.payment{
+    position:absolute;
+    overflow:hidden;
+}
+
 @media (width>1264px){
     main{
+        width:calc(100% - var(--header-medium-width));
+        left:var(--header-medium-width);
+        height:100%;
+        top:0;
+    }
+
+    .payment{
         width:calc(100% - var(--header-medium-width));
         left:var(--header-medium-width);
         height:100%;
@@ -446,6 +458,13 @@ main{
         top:0;
     }
 
+    .payment{
+        width:calc(100% - var(--header-small-width));
+        left:var(--header-small-width);
+        height:100%;
+        top:0;
+    }
+
     .header1,
     .header3,
     .footer{
@@ -455,6 +474,13 @@ main{
 
 @media (width<=766px){
     main{
+        width:100%;
+        left:0;
+        height:calc(100% - (var(--header-height-cell)*2));
+        top:var(--header-height-cell);
+    }
+
+    .payment{
         width:100%;
         left:0;
         height:calc(100% - (var(--header-height-cell)*2));
@@ -595,4 +621,91 @@ main{
 
 .messaggio .send:active{
     transform: scale(0.95);
+}
+
+.sfondoopaco{
+    position: absolute;
+    width:100%;
+    height:100%;
+    margin:0;
+    border:0;
+    background-color: black;
+    opacity:0.7;
+}
+
+.datipaypal{
+    position:absolute;
+    height: 80%;
+    top:10%;
+    min-width:70%;
+    max-width: 70%;
+    left:15%;
+    text-align:center;
+}
+
+.upgrade_proversion{
+    position:relative;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height:70%;
+    width:100%;
+    top:15%;
+}
+
+.upgrade_proversion section{
+    position:relative;
+    width:30%;
+    margin:4%;
+    height:70%;
+    background: linear-gradient(40deg,#539bdb,#8983f7 70%);
+    text-align: center;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius:12px;
+}
+
+.upgrade_proversion h1{
+    font-size:24px;
+}
+
+.upgrade_proversion h3{
+    font-size:18px;
+}
+
+.upgrade_proversion li{
+    list-style: none;
+    text-align:left;
+}
+
+.upgrade_proversion button{
+    padding: 1em;
+    color:white;
+    background-color: #3250bf;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s ease all;
+    border:0;
+    border-radius: 12px;
+}
+
+@media (width<=766px){
+    .upgrade_proversion{
+        flex-direction: column;
+    }
+}
+
+.datipaypal h1{
+    color:white;
+    margin-top:15%;
+    margin-left:0;
+}
+
+.paypaloptions{
+    position: absolute;
+    width:80%;
+    left:10%;
 }
