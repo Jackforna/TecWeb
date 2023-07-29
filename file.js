@@ -14,17 +14,18 @@ let lista_keyword = [];
 let lista_canale = ["unibo"];
 let lista_Canale = ["fuoricorso"];
 
-let user = {        //dati user
-    name : "Jack",      
-    password : "",
-    version : "",      //versione di squealer dell'utente
-    char_d : 300,      //caratteri disponibili al giorno
-    char_w : 2000,     //caratteri disponibili a settimana
-    char_m : 7000,     //caratteri disponibili al mese
+const user = JSON.parse(localStorage.getItem("actualuser"));
+
+window.onload = () => {
+    document.getElementById("welcomemex").innerText = "Welcome "+ user.nickname;
+    document.getElementById("fullnameprofile").value = user.fullname;
+    document.getElementById("emailprofile").value = user.email;
+    document.getElementById("passwordprofile").value = user.password;
+    document.getElementById("cellprofile").value = user.cell;
 }
 
 var max_char = mx_char();
-var max_char2 = max_char;
+var max_char2 = max_char;  //variabile d'appoggio per verificare che i messaggi inviati non siano vuoti
 
 let el_mess = [];
 
@@ -414,3 +415,8 @@ document.getElementById("buy_proversion").addEventListener("click", ()=>{
 document.getElementById("sfondoopaco").addEventListener("click", ()=>{
     document.getElementById("payment").style = "display:none";
 });
+
+document.getElementById("esci").addEventListener("click", () =>{
+    localStorage.removeItem("actualuser");
+    window.location.href = 'accesso.html';
+})

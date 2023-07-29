@@ -22,64 +22,54 @@
     <div class="formsignover" id="formsign">
         <img src="img/icon.png" alt="icon of a squeal, simble of the social network">
         <form action="">
-            <input type="email" placeholder="Email" id="emailsign">
-            <input type="text" placeholder="Full Name" id="fullnamesign" style="display:none">
-            <input type="text" placeholder="Username" id="usernamesign" style="display:none">
-            <input type="password" placeholder="Password" id="passwordsign">
-            <input type="submit" value="Submit">
+            <input type="email" placeholder="Email" id="emailsign1" style="display:none" required>
+            <input type="text" placeholder="Full Name" id="fullnamesign1" style="display:none" required>
+            <input type="text" placeholder="Nickname" id="nicknamesign1" required>
+            <input type="password" placeholder="Password" id="passwordsign1" onfocus="password_security(1)" onblur="blur_password(1)" required>
+            <div id="pass_security1" style="display:none">
+                <label>Security</label>
+                <input type="range" id="range_security1" min="0" max="100" disabled>
+                <button id="infopassword" class="infopassword">i</button>
+                <div id="divinfopassword" class="divinfopassword" style="display:none">
+                    <ul>
+                        <li>At least 8 characters</li>
+                        <li>At least one number</li>
+                        <li>At least one spacial character</li>
+                        <li>At least one lowercase letter</li>
+                        <li>At least one uppercase letter</li>
+                    </ul>
+                </div>
+            </div>
+            <input type="button" value="Submit" onclick="login(1)">
         </form>
     </div>
     <div class="formcell" id="formcell">
         <div class="formsigncell form_front">
             <img src="img/icon.png" alt="icon of a squeal, simble of the social network">
             <form action="">
-                <input type="email" placeholder="Email" id="emailsign">
-                <input type="password" placeholder="Password" id="passwordsign">
-                <input type="submit" value="Submit">
+                <input type="email" placeholder="Email/Nickname" id="nicknamesign2">
+                <input type="password" placeholder="Password" id="passwordsign2">
+                <input type="button" value="Submit" onclick="login(2)">
                 <p id="signupcell">Don't have an account? Sign Up.</p>
             </form>
         </div>
         <div class="formsigncell form_back">
             <img src="img/icon.png" alt="icon of a squeal, simble of the social network">
             <form action="">
-                <input type="email" placeholder="Email" id="emailsign">
-                <input type="text" placeholder="Full Name" id="fullnamesign">
-                <input type="text" placeholder="Username" id="usernamesign">
-                <input type="password" placeholder="Password" id="passwordsign">
-                <input type="submit" value="Submit">
+                <input type="email" placeholder="Email" id="emailsign3">
+                <input type="text" placeholder="Full Name" id="fullnamesign3">
+                <input type="text" placeholder="Nickname" id="nicknamesign3">
+                <input type="password" placeholder="Password" id="passwordsign3" onfocus="password_security(3)" onblur="blur_password(3)">
+                <div id="pass_security3" style="display:none">
+                    <label>Security</label>
+                    <input type="range" id="range_security3" min="0" max="100" disabled>
+                </div>
+                <input type="button" value="Submit" onclick="login(3)">
                 <p id="signincell">Already have an account? Sign In.</p>
             </form>
         </div>
     </div>
         
-    <script>
-        const formsign = document.getElementById("formsign");
-        const formcell = document.getElementById("formcell");
-        var sign = true;
-    
-        document.getElementById("signin").addEventListener("click", ()=>{
-            formsign.classList.remove("translateform");
-            document.getElementById("fullnamesign").style = "display:none";
-            document.getElementById("usernamesign").style = "display:none";
-            sign = true;
-        });
-    
-        document.getElementById("signup").addEventListener("click", ()=>{
-            formsign.classList.add("translateform");
-            document.getElementById("fullnamesign").style = "display:inline";
-            document.getElementById("usernamesign").style = "display:inline";
-            sign = false;
-        });
-
-        document.getElementById("signincell").addEventListener("click", ()=>{
-            formcell.classList.remove("turnform");
-            sign = true;
-        });
-    
-        document.getElementById("signupcell").addEventListener("click", ()=>{
-            formcell.classList.add("turnform");
-            sign = false;
-        });
-    </script>
+    <script type="text/javascript" src="accesso.js"></script>
 </body>
 </html>

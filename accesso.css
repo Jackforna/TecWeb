@@ -110,7 +110,7 @@ form input[type="text"]{
 
 }
 
-form input[type="submit"]{
+form input[type="button"]{
     padding: 0.8em 1em 0.8em 1em;
     font-size:16px;
     width:50%;
@@ -153,4 +153,41 @@ img{
     left:calc((100% - 200px)/2);
     width:200px;
     top:10%;
+}
+
+input[type="range"] {
+    --webkit-appearance: none;
+    background-color: #ddd;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: #666;
+}
+
+input[type="range"]::-moz-range-thumb {
+    background-color: #666;
+}
+input[type="range"]::-moz-range-track {
+    background: #ddd;
+}
+
+.infopassword{
+    width:25px;
+    height:25px;
+    border-radius:50%;
+    background-color: transparent;
+    color:white;
+    border:1px solid white;
+}
+
+.divinfopassword{
+    position:absolute;
+    background-color: white;
+    border:1px solid black;
+    width:230px;
+    padding:0.1em;
+}
+
+.divinfopassword li{
+    font-size:12px;
 }
