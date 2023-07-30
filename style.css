@@ -319,13 +319,19 @@ input:checked + .slider2:before{
     position:relative;
     color:#f6f5f9;
     font-size:18px;
-    margin-top:1em;
-    margin-bottom:0.5em;
     background-color: transparent;
     border:0;
     width:100%;
     left:0;
     cursor:pointer;
+    transition: 0.4s;
+    padding:1em;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.menuoptions button:hover{
+    background-color: #696969;
 }
 
 .profileoptions{
@@ -426,6 +432,7 @@ main{
 .payment{
     position:absolute;
     overflow:hidden;
+    background-color: #141619;
 }
 
 @media (width>1264px){
@@ -623,16 +630,6 @@ main{
     transform: scale(0.95);
 }
 
-.sfondoopaco{
-    position: absolute;
-    width:100%;
-    height:100%;
-    margin:0;
-    border:0;
-    background-color: black;
-    opacity:0.7;
-}
-
 .datipaypal{
     position:absolute;
     height: 80%;
@@ -708,4 +705,138 @@ main{
     position: absolute;
     width:80%;
     left:10%;
+}
+
+.squealer_page{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+    height:100%;
+}
+
+.squealer_page button{
+    background-color:#212121;
+    transition:0.4s;
+    padding:1em;
+    color:white;
+    font-size:16px;
+    border:0;
+    border-radius:12px;
+    margin:1%;
+}
+
+.squealer_page button:hover{
+    background-color: #696969;
+}
+
+.newgroup{
+    display:flex;
+    flex-direction: column;
+    width:100%;
+    height:100%;
+    text-align:center;
+    align-items: center;
+    justify-content: center;
+}
+
+.newgroup input{
+    margin-bottom:1em;
+}
+
+.newgroup input[type="text"]{
+    height:3em;
+    width:40%;
+    padding:1em;
+    outline:none;
+    border-radius:12px;
+    font-size: 16px;
+}
+
+.newgroup select{
+    height:3em;
+    width:40%;
+    font-size: 16px;
+}
+
+.newgroup label{
+    font-size:16px;
+    margin-bottom:0.3em;
+}
+
+.newgroup input[type="checkbox"]{
+    height:20px;
+    width:20px;
+}
+
+.newgroup .creationgroup{
+    background-color:blue;
+    padding: 0.8em 1em 0.8em 1em;
+    font-size:16px;
+    border:0;
+    margin:1%;
+    color:#f5f6f9;
+    cursor:pointer;
+    border-radius:5px;
+}
+
+.newgroup .addmessagesnewgroup{
+    text-align: center;
+    font-size:16px;
+    width:40%;
+    background-color: #141619;
+    color:white;
+    padding:0.6em;
+    border:0;
+    border-radius:12px;
+    margin-bottom:30px;
+}
+
+.newgroup .addmessagesnewgroup:hover{
+    background-color: #696969;
+}
+
+.messgroup{
+    display:flex;
+    flex-direction: row;
+}
+
+.messgroup p{
+    color:white;
+    background-color: #212121;
+}
+
+.messagegroup{
+    display:flex;
+    width:100%;
+    height:100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.messagegroup input[type="text"]{
+    width:40%;
+    outline:none;
+    padding:1em;
+    font-size:16px;
+    height:3em;
+    margin-bottom:30px;
+}
+
+.messagegroup select{
+    width:40%;
+    margin-bottom:30px;
+}
+
+.messagegroup button{
+    background-color:blue;
+    padding: 0.8em 1em 0.8em 1em;
+    font-size:16px;
+    border:0;
+    margin:1%;
+    color:#f5f6f9;
+    cursor:pointer;
+    border-radius:5px;
 }

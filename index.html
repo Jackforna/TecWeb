@@ -7,6 +7,7 @@
     <title>Squealer</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="img/icon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 </head>
 <body>
     <header class="header1">
@@ -118,10 +119,47 @@
         </nav>
     </main>
     <main id="squealer" style="display:none">
-        <div class="messaggio" id="messaggio">
+        <section id="squealer_page" class="squealer_page">
+            <button id="creategroup">+ New Group</button>
+            <button id="createsqueal">+ New Squeal</button>
+        </section>
+        <section class="newgroup" id="newgroup" style="display:none">
+            <h1>Create new group</h1>
+            <label>Name</label>
+            <input type="text" id="namenewgroup">
+            <label>Type</label>
+            <select class="form-select" id="typenewgroup">
+                <option selected value="#">Public</option>
+                <option value="&">Protected</option>
+                <option value="$">Private</option>
+            </select>
+            <label>Silenceable</label>
+            <input type="checkbox" id="silenceablenewgroup">
+            <div id="messagesnewgroup">
+                <label>Add messages</label>
+            </div>
+            <button id="addmessagesnewgroup" class="addmessagesnewgroup">+</button>
+            <button id="creationgroup" class="creationgroup">Create Group</button>
+        </section>
+        <section id="messagegroup" class="messagegroup" style="display:none">
+            <input type="text" id="bodymessagegroup" placeholder="Body message">
+            <select class="form-select" id="typemessagegroup">
+                <option selected value="welcome">Welcome</option>
+                <option value="answer">Answer</option>
+                <option value="reminder">Reminder</option>
+            </select>
+            <input type="text" id="requestmessagegroup" placeholder="Request client" style="display:none">
+            <select class="form-select" id="timemessagegroup" style="display:none">
+                <option value="daily">Every day</option>
+                <option value="weekly">Every week</option>
+                <option selected value="monthly">Every month</option>
+            </select>
+            <button id="addmessage">Add message</button>
+        </section>
+        <section class="messaggio" id="messaggio" style="display:none">
             <h1>Squealer</h1>
             <input type="text" id="receivermessaggio" placeholder="Insert the receivers" required>
-            <p id="quotarimanente" style="margin:1%;" style="visibility:hidden">The remaining character quota is: </p>
+            <p id="quotarimanente" style="margin:1%;display:none" style="visibility:hidden">The remaining character quota is: </p>
             <textarea id="textmessaggio" cols="30" rows="10" placeholder="Insert the squealer text"></textarea>
             <input type="url" id="urlmessaggio" placeholder="Insert a link, an Image or a video URL">
             <div id="locationdiv" style="visibility: hidden;">
@@ -132,7 +170,7 @@
             <button class="locationbtn" id="locationbtn">Insert the location</button>
             <button class="locationbtn" id="el_locationbtn" style="display:none">Remove the location</button>
             <button class="send" onclick="public_mess()">Public Squealer</button>
-        </div>
+        </section>
     </main>
     <main id="infoprofile" style="display:none">
 
@@ -144,7 +182,6 @@
 
     </main>
     <section class="payment" id="payment" style="display:none">
-        <button class="sfondoopaco" id="sfondoopaco"></button>
         <div class="upgrade_proversion" id="upgrade_proversion">
             <section>
                 <h1>Pro version</h1>

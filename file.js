@@ -7,14 +7,27 @@ var location;
 var mess_length = 0;
 var continua_input = false;
 var link_insert = false;
-let receiver_type;
+let receiver_type = "";
 let receiverValid = false;
-let lista_individui = ["Giacomo","Gabriel"];
-let lista_keyword = [];
-let lista_canale = ["unibo"];
-let lista_Canale = ["fuoricorso"];
+let messagesnewgroup = 0;
 
-const user = JSON.parse(localStorage.getItem("actualuser"));
+//ogni user è composto da nickname, fullname, email, cell, password, version, char_d, char_w, char_m : 7000
+//ogni messaggio è composto da sender, body, date, hour, pos_reactions, neg_reactions, url, location, category, channels
+//ogni gruppo è composto da name,type,list_mess,creator,silenceable,list_users, list_modifier
+//ogni list_mess è composto da un messaggio(con tutte le componenti),type(temporizzato o no)
+
+if(!localStorage.getItem("lista_gruppi")){
+    localStorage.setItem("lista_gruppi",JSON.stringify([]));
+}
+let lista_gruppi = JSON.parse(localStorage.getItem("lista_gruppi"));
+
+if(!localStorage.getItem("lista_messaggi")){
+    localStorage.setItem("lista_messaggi",JSON.stringify([]));
+}
+let lista_messaggi = JSON.parse(localStorage.getItem("lista_messaggi"));
+
+let user = JSON.parse(localStorage.getItem("actualuser"));
+let users = JSON.parse(localStorage.getItem("users"));
 
 window.onload = () => {
     document.getElementById("welcomemex").innerText = "Welcome "+ user.nickname;
@@ -27,20 +40,6 @@ window.onload = () => {
 var max_char = mx_char();
 var max_char2 = max_char;  //variabile d'appoggio per verificare che i messaggi inviati non siano vuoti
 
-let el_mess = [];
-
-let mess = {        //dati messaggio
-    sender : "",
-    body : "",
-    date : "",
-    hour : "",
-    pos_reactions : 0,
-    neg_reactions : 0,
-    url: "",
-    location: "",
-    category : undefined,
-    channels : "",
-}
 
 const enableDarkMode = () => {
     for(i=0;i<theme.length;i++){
@@ -128,6 +127,7 @@ function homebtn(){
     document.getElementById("favourites").style = "display:none";
     document.getElementById("welcome").style = "display:none";
     document.getElementById("settings").style = "display:none";
+    document.getElementById("payment").style = "display:none";
 }
 
 function searchbtn(){
@@ -137,6 +137,7 @@ function searchbtn(){
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
     document.getElementById("settings").style = "display:none";
+    document.getElementById("payment").style = "display:none";
 }
 
 function squealerbtn(){
@@ -147,6 +148,10 @@ function squealerbtn(){
     document.getElementById("favourites").style = "display:none";
     document.getElementById("settings").style = "display:none";
     document.getElementById("quotarimanente").innerHTML = "The remaining character quota is: " + max_char;
+    document.getElementById("newgroup").style = "display:none";
+    document.getElementById("messaggio").style = "display:none";
+    document.getElementById("squealer_page").style = "display:flex";
+    document.getElementById("payment").style = "display:none";
 }
 
 function infoprofilebtn(){
@@ -156,6 +161,7 @@ function infoprofilebtn(){
     document.getElementById("infoprofile").style = "display:inline";
     document.getElementById("favourites").style = "display:none";
     document.getElementById("settings").style = "display:none";
+    document.getElementById("payment").style = "display:none";
 }
 
 function favouritesbtn(){
@@ -165,6 +171,7 @@ function favouritesbtn(){
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:inline";
     document.getElementById("settings").style = "display:none";
+    document.getElementById("payment").style = "display:none";
 }
 
 function settingsbtn(){
@@ -174,41 +181,50 @@ function settingsbtn(){
     document.getElementById("infoprofile").style = "display:none";
     document.getElementById("favourites").style = "display:none";
     document.getElementById("settings").style = "display:inline";
+    document.getElementById("payment").style = "display:none";
 }
 
 function public_mess(){
+    
     if(max_char!=max_char2){
     const data = new Date();
-    mess.sender = user.name;
-    mess.body = document.getElementById("textmessaggio").value;
-    mess.date = data.getDate() + "/" + (data.getMonth()+1) + "/" + data.getFullYear();
+    let sender = user.nickname;
+    let body = document.getElementById("textmessaggio").value;
+    let date = data.getDate() + "/" + (data.getMonth()+1) + "/" + data.getFullYear();
     let minutes = data.getMinutes();
     if(minutes<10){
         minutes = "0" + minutes;
     }
-    mess.hour = data.getHours() + ":" + minutes;
-    mess.pos_reactions = 0;
-    mess.neg_reactions = 0;
+    let hour = data.getHours() + ":" + minutes;
     if(document.getElementById("urlmessaggio").value!=""){
     fetchURL(document.getElementById("urlmessaggio").value);
     }
-    mess.url = document.getElementById("urlmessaggio").value;
-    mess.location = document.getElementById("location").innerHTML;
-    mess.category = undefined;                                               //fare in base alle reazioni
-    mess.channels = document.getElementById("receivermessaggio").value;
-    el_mess.unshift(mess);
+    let url = document.getElementById("urlmessaggio").value;
+    let location = document.getElementById("location").innerHTML;
+    let channels = document.getElementById("receivermessaggio").value;
     user.char_w -= max_char2 - max_char;
     user.char_m -= max_char2 - max_char;
     user.char_d -= max_char2 - max_char;
+    lista_messaggi.push({sender:sender, body:body, date:date, hour:hour, pos_reactions:0, neg_reactions:0, url:url, location:location, category:undefined, channels:channels});
+    localStorage.setItem("lista_messaggi",JSON.stringify(lista_messaggi));
+    localStorage.setItem("actualuser",JSON.stringify(user));
+    for(i=0;i<users.length;i++){
+        if(user.nickname==users[i].nickname){
+            users[i]=user;
+            localStorage.setItem("users",JSON.stringify(users));
+        }
+    }
+    document.getElementById("textmessaggio").value = "";
+    document.getElementById("urlmessaggio").value = "";
+    document.getElementById("location").innerHTML = "";
+    document.getElementById("receivermessaggio").value = "";
+    document.getElementById("locationdiv").style = "visibility:hidden";
+    document.getElementById("quotarimanente").style = "display:none";
     } else {
         alert("The message is empty!");
     }
 }
 
-function search_mess(property, type){  //property deve essere del tipo mess.property quando viene passato
-    let el_search_mess = el_mess.filter(mess => property === type);
-    return(el_search_mess);
-}
 
 document.getElementById("locationbtn").addEventListener("click", ()=>{
     if(checkchar(125)){
@@ -292,46 +308,46 @@ function findreceiver_type(){
     receiverValid = false;
     switch(firstCharacter){
         case "@":
-            for(i=0;i<lista_individui.length;i++){
-                if((document.getElementById("receivermessaggio").value).slice(1)==lista_individui[i]){
+            for(i=0;i<lista_gruppi.length;i++){
+                if((lista_gruppi[i].type==firstCharacter)&((document.getElementById("receivermessaggio").value).slice(1)==lista_gruppi[i].name)&((document.getElementById("receivermessaggio").value).slice(1)!=user.nickname)){
                     receiverValid = true;
                 }
             }
             if(receiverValid==true){
-                document.getElementById("quotarimanente").style = "visibility:hidden";
+                document.getElementById("quotarimanente").style = "display:none";
                 return("individuo");
             }
             else return ("");
         case "#":
-            for(i=0;i<lista_individui.length;i++){
-                if((document.getElementById("receivermessaggio").value).slice(1)==lista_keyword[i]){
+            for(i=0;i<lista_gruppi.length;i++){
+                if((lista_gruppi[i].type==firstCharacter)&((document.getElementById("receivermessaggio").value).slice(1)==lista_gruppi[i].name)){
                     receiverValid = true;
                 }
             }
             if(receiverValid==true){
-                document.getElementById("quotarimanente").style = "visibility:visible";
+                document.getElementById("quotarimanente").style = "display:inline";
                 return("keyword");
             }
             else return ("");
         case "&":
-            for(i=0;i<lista_individui.length;i++){
-                if((document.getElementById("receivermessaggio").value).slice(1)==lista_canale[i]){
+            for(i=0;i<lista_gruppi.length;i++){
+                if((lista_gruppi[i].type==firstCharacter)&((document.getElementById("receivermessaggio").value).slice(1)==lista_gruppi[i].name)){
                     receiverValid = true;
                 }
             }
             if(receiverValid==true){
-                document.getElementById("quotarimanente").style = "visibility:visible";
+                document.getElementById("quotarimanente").style = "display:inline";
                 return("canale");
             }
             else return ("");
         case "$":
-            for(i=0;i<lista_individui.length;i++){
-                if((document.getElementById("receivermessaggio").value).slice(1)==lista_Canale[i]){
+            for(i=0;i<lista_gruppi.length;i++){
+                if((lista_gruppi[i].type==firstCharacter)&((document.getElementById("receivermessaggio").value).slice(1)==lista_gruppi[i].name)){
                     receiverValid = true;
                 }
             }
             if(receiverValid==true){
-                document.getElementById("quotarimanente").style = "visibility:visible";
+                document.getElementById("quotarimanente").style = "display:inline";
                 return("Canale");
             }
             else return ("");
@@ -349,7 +365,7 @@ document.getElementById("receivermessaggio").addEventListener("input", ()=>{
         document.getElementById("el_locationbtn").style = "display:none";
         document.getElementById("location").innerHTML = "";
         document.getElementById("urlmessaggio").value = "";
-        document.getElementById("quotarimanente").style = "visibility:hidden";
+        document.getElementById("quotarimanente").style = "display:none";
         receiver_type = findreceiver_type();
 })
 
@@ -410,13 +426,133 @@ async function fetchURL(url){ //migliorare
 
 document.getElementById("buy_proversion").addEventListener("click", ()=>{
     document.getElementById("payment").style = "display:inline";
-});
-
-document.getElementById("sfondoopaco").addEventListener("click", ()=>{
-    document.getElementById("payment").style = "display:none";
+    document.getElementById("home").style = "display:none";
+    document.getElementById("search").style = "display:none";
+    document.getElementById("squealer").style = "display:none";
+    document.getElementById("infoprofile").style = "display:none";
+    document.getElementById("favourites").style = "display:none";
+    document.getElementById("settings").style = "display:none";
 });
 
 document.getElementById("esci").addEventListener("click", () =>{
     localStorage.removeItem("actualuser");
     window.location.href = 'accesso.html';
+});
+
+document.getElementById("creategroup").addEventListener("click", ()=>{
+    document.getElementById("newgroup").style = "display:flex";
+    document.getElementById("squealer_page").style = "display:none";
+});
+
+document.getElementById("createsqueal").addEventListener("click", ()=>{
+    document.getElementById("messaggio").style = "display:flex";
+    document.getElementById("squealer_page").style = "display:none";
+});
+
+document.getElementById("creationgroup").addEventListener("click", ()=>{
+    let isValid = true;
+    let name = document.getElementById("namenewgroup").value;
+    //controllo validità nome gruppo
+    for(i=0;i<lista_gruppi.length;i++){
+        if(name==lista_gruppi[i].name){   //per evitare che ci siano più gruppi con lo stesso nome
+            isValid = false;
+            alert("Name already used");
+        }
+    }
+    let type = document.getElementById("typenewgroup").value;
+    let creator = user.nickname;
+    let list_mess = [];
+    for(i=0;i<messagesnewgroup;i++){
+        let body_mess = document.getElementById("bodymessgroup"+(i+1)).innerText;
+        let type_mess = document.getElementById("typemessgroup"+(i+1)).innerText;
+        let request_mess;
+        let time_mess; 
+        switch(type_mess){
+            case "answer":
+            request_mess = document.getElementById("requestmessgroup"+(i+1)).innerHTML;
+            list_mess.push({body_mess:body_mess,type_mess:type_mess,time_mess:undefined,request_mess:request_mess});
+            break;
+        case "reminder":
+            time_mess = document.getElementById("timemessgroup"+(i+1)).innerHTML;
+            list_mess.push({body_mess:body_mess,type_mess:type_mess,time_mess:time_mess,request_mess:undefined});
+            break;
+        default:
+            list_mess.push({body_mess:body_mess,type_mess:type_mess,time_mess:undefined,request_mess:undefined});
+            break;
+        }
+        
+    }
+    //controllo lista messaggi del gruppo, almeno 3
+    if(messagesnewgroup<3){
+        isValid = false;
+        alert("All the groups must have at least 3 automatic messages");
+    }
+    let silenceable;
+    if(document.getElementById("silenceablenewgroup").checked){
+        silenceable = true;
+    } else {
+        silenceable = false;
+    }
+    if(isValid){
+    lista_gruppi.push({name:name, type:type, list_mess:list_mess, creator:creator, silenceable:silenceable, list_users:[creator], list_modifier:[creator]});
+    localStorage.setItem("lista_gruppi",JSON.stringify(lista_gruppi));
+    alert("Gruppo "+name+" creato con successo!");
+    document.getElementById("namenewgroup").value = "";
+    document.getElementById("messagesnewgroup").innerHTML = "<label>Add messages</label>";
+    messagesnewgroup = 0;
+    }
 })
+
+document.getElementById("addmessagesnewgroup").addEventListener("click", ()=>{
+    document.getElementById("newgroup").style = "display:none";
+    document.getElementById("messagegroup").style = "display:flex";
+});
+
+document.getElementById("addmessage").addEventListener("click", ()=>{
+    let body = document.getElementById("bodymessagegroup").value;
+    let type = document.getElementById("typemessagegroup").value;
+    let request = document.getElementById("requestmessagegroup").value;
+    let time = document.getElementById("timemessagegroup").value;
+    if(body!=""){
+    messagesnewgroup += 1;
+    switch(type){
+        case "answer":
+            if(request!=""){
+            document.getElementById("messagesnewgroup").innerHTML += '<div id="messgroup'+messagesnewgroup+'" class="messgroup"><p id="bodymessgroup'+messagesnewgroup+'">'+body+'</p><p id="typemessgroup'+messagesnewgroup+'">'+type+'</p><p id="requestmessgroup'+messagesnewgroup+'">'+request+'</p></div>';
+            } else {
+                alert("Please insert the request message of the client");
+            }
+            break;
+        case "reminder":
+                document.getElementById("messagesnewgroup").innerHTML += '<div id="messgroup'+messagesnewgroup+'" class="messgroup"><p id="bodymessgroup'+messagesnewgroup+'">'+body+'</p><p id="typemessgroup'+messagesnewgroup+'">'+type+'</p><p id="timemessgroup'+messagesnewgroup+'">'+time+'</p></div>';
+            break;
+        default:
+            document.getElementById("messagesnewgroup").innerHTML += '<div id="messgroup'+messagesnewgroup+'" class="messgroup"><p id="bodymessgroup'+messagesnewgroup+'">'+body+'</p><p id="typemessgroup'+messagesnewgroup+'">'+type+'</p></div>';
+            break;
+    }
+    document.getElementById("newgroup").style = "display:flex";
+    document.getElementById("messagegroup").style = "display:none";
+    document.getElementById("bodymessagegroup").value = "";
+    document.getElementById("requestmessagegroup").value = "";
+    } else {
+        alert("the message is empty");
+    }
+});
+
+document.getElementById("typemessagegroup").addEventListener("change",()=>{
+    switch(document.getElementById("typemessagegroup").value){
+        case "answer":
+            document.getElementById("requestmessagegroup").style = "display:inline";
+            document.getElementById("timemessagegroup").style = "display:none";
+            break;
+        case "reminder":
+            document.getElementById("requestmessagegroup").style = "display:none";
+            document.getElementById("requestmessagegroup").value = "";
+            document.getElementById("timemessagegroup").style = "display:inline";
+            break;
+        default:
+            document.getElementById("requestmessagegroup").style = "display:none";
+            document.getElementById("timemessagegroup").style = "display:none";
+            break;
+    }
+});
