@@ -739,6 +739,11 @@ main{
     text-align:center;
     align-items: center;
     justify-content: center;
+    overflow-y: scroll;
+}
+
+.newgroup h1{
+    margin-top:20px;
 }
 
 .newgroup input{
