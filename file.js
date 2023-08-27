@@ -577,14 +577,14 @@ document.getElementById("searchtxt").addEventListener("input",()=>{             
         }
         if((arrsearch.length>0)&(arrsearch.length<10)){
             for(i=0;i<arrsearch.length;i++)
-            document.getElementById("listsearch_find").innerHTML += '<button>'+arrsearch[i]+'</button>';
+            document.getElementById("listsearch_find").innerHTML += '<p>'+arrsearch[i]+'</p>';
         } else if(arrsearch.length==0){
             document.getElementById("listsearch_find").innerHTML += '<h5>No Results</h5><p>There were no result for "'+inputsearch+'". Try a new search.</p>';
         } else {
             for(i=0;i<10;i++){
-            document.getElementById("listsearch_find").innerHTML += '<button>'+arrsearch[i]+'</button>';
+            document.getElementById("listsearch_find").innerHTML += '<p>'+arrsearch[i]+'</p>';
             }
-            document.getElementById("listsearch_find").innerHTML += '<button>Show more</button>';               //finire
+            document.getElementById("listsearch_find").innerHTML += '<p>Show more</p>';               //finire
         }
     }
 });

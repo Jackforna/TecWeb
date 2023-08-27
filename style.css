@@ -863,19 +863,21 @@ main{
     overflow-y: scroll;
 }
 
-.listsearch_find button{
+.listsearch_find p{
     width:100%;
     position:relative;
     background-color: transparent;
-    color:white;
     border:0;
     border-radius:12px;
     padding-top:0.6em;
     padding-bottom:0.6em;
+    cursor:pointer;
+    text-align: center;
 }
 
-.listsearch_find button:hover{
+.listsearch_find p:hover{
     background-color: #696969;
+    color:white;
 }
 
 .esci_account{
