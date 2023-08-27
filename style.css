@@ -805,11 +805,12 @@ main{
 .messgroup{
     display:flex;
     flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
 }
 
 .messgroup p{
-    color:white;
-    background-color: #212121;
+    background-color:transparent;
 }
 
 .messagegroup{
@@ -819,6 +820,10 @@ main{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.messagesnewgroup{
+    width:50%;
 }
 
 .messagegroup input[type="text"]{
@@ -844,4 +849,37 @@ main{
     color:#f5f6f9;
     cursor:pointer;
     border-radius:5px;
+}
+
+.listsearch_find{
+    position:relative;
+    margin-top:10%;
+    width:50%;
+    margin-left:25%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: scroll;
+}
+
+.listsearch_find button{
+    width:100%;
+    position:relative;
+    background-color: transparent;
+    color:white;
+    border:0;
+    border-radius:12px;
+    padding-top:0.6em;
+    padding-bottom:0.6em;
+}
+
+.listsearch_find button:hover{
+    background-color: #696969;
+}
+
+.esci_account{
+    color:white;
+    text-decoration: none;
+    cursor:pointer;
 }

@@ -132,8 +132,6 @@ function login(x){
     }
 }
 
-
-
 function password_security(x){
     if(!sign){
         document.getElementById("pass_security"+x).style = "display:inline";

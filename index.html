@@ -40,7 +40,7 @@
                 <input type="email" id="emailprofile" value="" readonly>
                 <p>Cellphone</p>
                 <input type="tel" id="cellprofile" value="" readonly>
-                <a id="esci">Esci</a>
+                <a class="esci_account" id="esci">Esci</a>
             </section>
             <section class="settings" id="settingsoptions" style="display:none">
                 <div>
@@ -117,6 +117,7 @@
             <img src="img/search.png" alt="search image">
             <input type="text" id="searchtxt" placeholder="Type to search">
         </nav>
+        <section class="listsearch_find" id="listsearch_find"></section>
     </main>
     <main id="squealer" style="display:none">
         <section id="squealer_page" class="squealer_page">
@@ -135,7 +136,7 @@
             </select>
             <label>Silenceable</label>
             <input type="checkbox" id="silenceablenewgroup">
-            <div id="messagesnewgroup">
+            <div id="messagesnewgroup" class="messagesnewgroup">
                 <label>Add messages</label>
             </div>
             <button id="addmessagesnewgroup" class="addmessagesnewgroup">+</button>

@@ -556,3 +556,35 @@ document.getElementById("typemessagegroup").addEventListener("change",()=>{
             break;
     }
 });
+
+document.getElementById("searchtxt").addEventListener("input",()=>{                     //finire
+    document.getElementById("listsearch_find").innerHTML = "";
+    let input = document.getElementById("searchtxt").value;
+    let inputsearch = input.toLowerCase();
+    let arrsearch = [];
+    if(inputsearch!=""){
+        for(i=0;i<users.length;i++){
+        let user = ((users[i].nickname).slice(0,inputsearch.length)).toLowerCase();
+            if(inputsearch==user){
+                arrsearch.push("@"+users[i].nickname);
+            }
+        }
+        for(i=0;i<lista_gruppi.length;i++){
+            let gruppo = ((lista_gruppi[i].name).slice(0,inputsearch.length)).toLowerCase();
+            if(inputsearch==gruppo){
+                arrsearch.push(lista_gruppi[i].type+lista_gruppi[i].name);
+            }
+        }
+        if((arrsearch.length>0)&(arrsearch.length<10)){
+            for(i=0;i<arrsearch.length;i++)
+            document.getElementById("listsearch_find").innerHTML += '<button>'+arrsearch[i]+'</button>';
+        } else if(arrsearch.length==0){
+            document.getElementById("listsearch_find").innerHTML += '<h5>No Results</h5><p>There were no result for "'+inputsearch+'". Try a new search.</p>';
+        } else {
+            for(i=0;i<10;i++){
+            document.getElementById("listsearch_find").innerHTML += '<button>'+arrsearch[i]+'</button>';
+            }
+            document.getElementById("listsearch_find").innerHTML += '<button>Show more</button>';               //finire
+        }
+    }
+});
