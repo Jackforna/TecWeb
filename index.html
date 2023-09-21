@@ -17,7 +17,7 @@
                 <img src="img/menu.png" alt="menu image">
             </button>
             <button id="profilebtn">
-                <img src="img/profile.png" alt="profile image">
+                <img id="profilebtn_img" src="img/profile.png" alt="profile image">
             </button>
             <button id="settingsbtn">
                 <img src="img/settings.png" alt="settings image">
@@ -60,6 +60,7 @@
                     </label>
                 </div>
                 <button id="buy_proversion">Squealer Pro</button>
+                <button id="request_verified">Request Verified</button>
             </section>
         </div>
     </header>
@@ -107,6 +108,9 @@
         </button>
     </foooter>
     <main id="home">
+        <div id="messhome" class="messhome">
+
+        </div>
         <div class="notification" id="welcome">
             <p id="welcomemex"></p>
             <span class="notification_progress"></span>
@@ -162,7 +166,7 @@
             <input type="text" id="receivermessaggio" placeholder="Insert the receivers" required>
             <p id="quotarimanente" style="margin:1%;display:none" style="visibility:hidden">The remaining character quota is: </p>
             <textarea id="textmessaggio" cols="30" rows="10" placeholder="Insert the squealer text"></textarea>
-            <input type="url" id="urlmessaggio" placeholder="Insert a link, an Image or a video URL">
+            <input type="url" id="urlmessaggio" placeholder="Insert a link or an Image URL">
             <div id="locationdiv" style="visibility: hidden;">
                 <img src="img/position.png" alt="position logo">
                 <p id="location"></p>
@@ -211,7 +215,7 @@
             <h1>Paga con</h1>
             <div class="paypaloptions">
                 <div id="paypal-button-container"></div>
-                <script src="https://www.paypal.com/sdk/js?client-id=ASIu8uGe4RYwS7WXDVH4FCcTCx7uFrqqdo3oYHzZ-_ESZVjg-jfOhHFseUnHuPH1VAs4U_CWe2U_ZsIh&currency=EUR&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>
+                <!--<script src="https://www.paypal.com/sdk/js?client-id=ASIu8uGe4RYwS7WXDVH4FCcTCx7uFrqqdo3oYHzZ-_ESZVjg-jfOhHFseUnHuPH1VAs4U_CWe2U_ZsIh&currency=EUR&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>-->
             </div>
         </div>
     </section>

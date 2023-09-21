@@ -10,8 +10,9 @@ var link_insert = false;
 let receiver_type = "";
 let receiverValid = false;
 let messagesnewgroup = 0;
+let arrsearch = [];
 
-//ogni user è composto da nickname, fullname, email, cell, password, version, char_d, char_w, char_m : 7000
+//ogni user è composto da nickname, fullname, email, cell, password, version (normal, verified, professional, moderator), char_d, char_w, char_m : 7000
 //ogni messaggio è composto da sender, body, date, hour, pos_reactions, neg_reactions, url, location, category, channels
 //ogni gruppo è composto da name,type,list_mess,creator,silenceable,list_users, list_modifier
 //ogni list_mess è composto da un messaggio(con tutte le componenti),type(temporizzato o no)
@@ -20,6 +21,7 @@ if(!localStorage.getItem("lista_gruppi")){
     localStorage.setItem("lista_gruppi",JSON.stringify([]));
 }
 let lista_gruppi = JSON.parse(localStorage.getItem("lista_gruppi"));
+
 
 if(!localStorage.getItem("lista_messaggi")){
     localStorage.setItem("lista_messaggi",JSON.stringify([]));
@@ -30,11 +32,26 @@ let user = JSON.parse(localStorage.getItem("actualuser"));
 let users = JSON.parse(localStorage.getItem("users"));
 
 window.onload = () => {
+    if(user.nickname!=undefined){
     document.getElementById("welcomemex").innerText = "Welcome "+ user.nickname;
+    } else {
+        document.getElementById("welcomemex").innerText = "Welcome";
+        document.getElementById("profilebtn").style.cursor = "not-allowed";
+        document.getElementById("profilebtn_img").style.cursor = "not-allowed";
+    }
     document.getElementById("fullnameprofile").value = user.fullname;
     document.getElementById("emailprofile").value = user.email;
     document.getElementById("passwordprofile").value = user.password;
     document.getElementById("cellprofile").value = user.cell;
+    let mess_written = [];
+    for(i=0;i<lista_messaggi.length;i++){                                           //abbellire messaggi
+        for(j=0;j<lista_messaggi[i].channels.length;j++){
+            if((lista_messaggi[i].channels[j]).slice(1)==user.nickname){
+                document.getElementById("messhome").innerHTML += '<div class="card" style="width: 60%; left:20%"><div class="card-body"><p class="card-text">from '+lista_messaggi[i].sender+'</p><p class="card-text">'+lista_messaggi[i].date+', '+lista_messaggi[i].hour+'</p><p class="card-text">'+lista_messaggi[i].body+'</p><img class="card-text" src="'+lista_messaggi[i].url+'"></img><p class="card-text">'+lista_messaggi[i].location+'</p></div><button onclick="">Reaction</button></div>';
+                mess_written.unshift(lista_messaggi[i]);
+            }
+        }
+    }
 }
 
 var max_char = mx_char();
@@ -114,9 +131,13 @@ document.getElementById("settingsbtn").addEventListener("click", ()=>{
 });
 
 document.getElementById("profilebtn").addEventListener("click", ()=>{
+    if(user.nickname!=undefined){
     document.getElementById("menuoptions").style = "display:none";
     document.getElementById("profileoptions").style = "display:inline";
     document.getElementById("settingsoptions").style = "display:none";
+    } else {
+        alert("You're not sign to Squealer. Sign in to see your profile");
+    }
 });
 
 function homebtn(){
@@ -184,9 +205,9 @@ function settingsbtn(){
     document.getElementById("payment").style = "display:none";
 }
 
-function public_mess(){
+function public_mess(){                                                //finire
     
-    if(max_char!=max_char2){
+    if((max_char!=max_char2)|(receiver_type=="individuo")){
     const data = new Date();
     let sender = user.nickname;
     let body = document.getElementById("textmessaggio").value;
@@ -196,16 +217,17 @@ function public_mess(){
         minutes = "0" + minutes;
     }
     let hour = data.getHours() + ":" + minutes;
-    if(document.getElementById("urlmessaggio").value!=""){
+    /*if(document.getElementById("urlmessaggio").value!=""){
     fetchURL(document.getElementById("urlmessaggio").value);
-    }
+    }*/
     let url = document.getElementById("urlmessaggio").value;
     let location = document.getElementById("location").innerHTML;
-    let channels = document.getElementById("receivermessaggio").value;
+    let channels = [];                                                                  //finire
+    channels.push(document.getElementById("receivermessaggio").value);
     user.char_w -= max_char2 - max_char;
     user.char_m -= max_char2 - max_char;
     user.char_d -= max_char2 - max_char;
-    lista_messaggi.push({sender:sender, body:body, date:date, hour:hour, pos_reactions:0, neg_reactions:0, url:url, location:location, category:undefined, channels:channels});
+    lista_messaggi.unshift({sender:sender, body:body, date:date, hour:hour, pos_reactions:0, neg_reactions:0, url:url, location:location, category:undefined, channels:channels});
     localStorage.setItem("lista_messaggi",JSON.stringify(lista_messaggi));
     localStorage.setItem("actualuser",JSON.stringify(user));
     for(i=0;i<users.length;i++){
@@ -308,8 +330,8 @@ function findreceiver_type(){
     receiverValid = false;
     switch(firstCharacter){
         case "@":
-            for(i=0;i<lista_gruppi.length;i++){
-                if((lista_gruppi[i].type==firstCharacter)&((document.getElementById("receivermessaggio").value).slice(1)==lista_gruppi[i].name)&((document.getElementById("receivermessaggio").value).slice(1)!=user.nickname)){
+            for(i=0;i<users.length;i++){
+                if(((document.getElementById("receivermessaggio").value).slice(1)==users[i].nickname)&((document.getElementById("receivermessaggio").value).slice(1)!=user.nickname)){
                     receiverValid = true;
                 }
             }
@@ -367,7 +389,7 @@ document.getElementById("receivermessaggio").addEventListener("input", ()=>{
         document.getElementById("urlmessaggio").value = "";
         document.getElementById("quotarimanente").style = "display:none";
         receiver_type = findreceiver_type();
-})
+});
 
 document.getElementById("textmessaggio").addEventListener("input", ()=>{
     if(receiver_type==""){
@@ -452,12 +474,18 @@ document.getElementById("createsqueal").addEventListener("click", ()=>{
 document.getElementById("creationgroup").addEventListener("click", ()=>{
     let isValid = true;
     let name = document.getElementById("namenewgroup").value;
+    let vuoto = name.replace(/\s/g,"");
+    if((vuoto!="")&(vuoto.length>=3)){
     //controllo validità nome gruppo
-    for(i=0;i<lista_gruppi.length;i++){
-        if(name==lista_gruppi[i].name){   //per evitare che ci siano più gruppi con lo stesso nome
-            isValid = false;
-            alert("Name already used");
+        for(i=0;i<lista_gruppi.length;i++){
+            if(name==lista_gruppi[i].name){   //per evitare che ci siano più gruppi con lo stesso nome
+                isValid = false;
+                alert("Name already used");
+            }
         }
+    } else {
+        isValid = false;
+        alert("Please, insert a valid name for the group");
     }
     let type = document.getElementById("typenewgroup").value;
     let creator = user.nickname;
@@ -501,7 +529,7 @@ document.getElementById("creationgroup").addEventListener("click", ()=>{
     document.getElementById("messagesnewgroup").innerHTML = "<label>Add messages</label>";
     messagesnewgroup = 0;
     }
-})
+});
 
 document.getElementById("addmessagesnewgroup").addEventListener("click", ()=>{
     document.getElementById("newgroup").style = "display:none";
@@ -515,6 +543,9 @@ document.getElementById("addmessage").addEventListener("click", ()=>{
     let time = document.getElementById("timemessagegroup").value;
     if(body!=""){
     messagesnewgroup += 1;
+    if(messagesnewgroup==1){
+        document.getElementById("messagesnewgroup").innerHTML += '<div class="messgroup"><label>Body</label><label>Type</label><label>Request/Time</label></div><hr></hr>';
+    }
     switch(type){
         case "answer":
             if(request!=""){
@@ -527,7 +558,7 @@ document.getElementById("addmessage").addEventListener("click", ()=>{
                 document.getElementById("messagesnewgroup").innerHTML += '<div id="messgroup'+messagesnewgroup+'" class="messgroup"><p id="bodymessgroup'+messagesnewgroup+'">'+body+'</p><p id="typemessgroup'+messagesnewgroup+'">'+type+'</p><p id="timemessgroup'+messagesnewgroup+'">'+time+'</p></div>';
             break;
         default:
-            document.getElementById("messagesnewgroup").innerHTML += '<div id="messgroup'+messagesnewgroup+'" class="messgroup"><p id="bodymessgroup'+messagesnewgroup+'">'+body+'</p><p id="typemessgroup'+messagesnewgroup+'">'+type+'</p></div>';
+            document.getElementById("messagesnewgroup").innerHTML += '<div id="messgroup'+messagesnewgroup+'" class="messgroup"><p id="bodymessgroup'+messagesnewgroup+'">'+body+'</p><p id="typemessgroup'+messagesnewgroup+'">'+type+'</p><p></p></div>';
             break;
     }
     document.getElementById("newgroup").style = "display:flex";
@@ -557,11 +588,11 @@ document.getElementById("typemessagegroup").addEventListener("change",()=>{
     }
 });
 
-document.getElementById("searchtxt").addEventListener("input",()=>{                     //finire
+document.getElementById("searchtxt").addEventListener("input",()=>{
     document.getElementById("listsearch_find").innerHTML = "";
     let input = document.getElementById("searchtxt").value;
     let inputsearch = input.toLowerCase();
-    let arrsearch = [];
+    arrsearch = [];
     if(inputsearch!=""){
         for(i=0;i<users.length;i++){
         let user = ((users[i].nickname).slice(0,inputsearch.length)).toLowerCase();
@@ -577,14 +608,32 @@ document.getElementById("searchtxt").addEventListener("input",()=>{             
         }
         if((arrsearch.length>0)&(arrsearch.length<10)){
             for(i=0;i<arrsearch.length;i++)
-            document.getElementById("listsearch_find").innerHTML += '<p>'+arrsearch[i]+'</p>';
+            document.getElementById("listsearch_find").innerHTML += '<p class="found">'+arrsearch[i]+'</p>';
         } else if(arrsearch.length==0){
             document.getElementById("listsearch_find").innerHTML += '<h5>No Results</h5><p>There were no result for "'+inputsearch+'". Try a new search.</p>';
         } else {
-            for(i=0;i<10;i++){
-            document.getElementById("listsearch_find").innerHTML += '<p>'+arrsearch[i]+'</p>';
+            for(i=0;i<7;i++){
+            document.getElementById("listsearch_find").innerHTML += '<p class="found">'+arrsearch[i]+'</p>';
             }
-            document.getElementById("listsearch_find").innerHTML += '<p>Show more</p>';               //finire
+            document.getElementById("listsearch_find").innerHTML += '<p class="showmore" onclick="showmore()">Show more</p>';
         }
     }
+});
+
+function showmore(){
+    document.getElementById("listsearch_find").innerHTML = "";
+    for(i=0;i<arrsearch.length;i++)
+        document.getElementById("listsearch_find").innerHTML += '<p class="found">'+arrsearch[i]+'</p>';
+    document.getElementById("listsearch_find").innerHTML += '<p class="showmore" onclick="showless()">Show less</p>';
+}
+
+function showless(){
+    document.getElementById("listsearch_find").innerHTML = "";
+    for(i=0;i<7;i++)
+        document.getElementById("listsearch_find").innerHTML += '<p class="found">'+arrsearch[i]+'</p>';
+    document.getElementById("listsearch_find").innerHTML += '<p class="showmore" onclick="showmore()">Show more</p>';
+}
+
+document.getElementById("request_verified").addEventListener("click", ()=>{
+    alert("The request for a verified profile has been sent. You'll receive an email as soon as possible.");
 });

@@ -426,7 +426,6 @@ input:checked + .slider2:before{
 main{
     position:absolute;
     overflow-x:hidden;
-    overflow-y:scroll;
 }
 
 .payment{
@@ -806,11 +805,16 @@ main{
     display:flex;
     flex-direction: row;
     width: 100%;
-    justify-content: space-between;
 }
 
 .messgroup p{
     background-color:transparent;
+    width:33%;
+}
+
+.messgroup label{
+    background-color:transparent;
+    width:33%;
 }
 
 .messagegroup{
@@ -852,18 +856,18 @@ main{
 }
 
 .listsearch_find{
-    position:relative;
-    margin-top:10%;
+    position:absolute;
+    top:20%;
+    height:70%;
     width:50%;
     margin-left:25%;
     display:flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     overflow-y: scroll;
 }
 
-.listsearch_find p{
+.listsearch_find .found{
     width:100%;
     position:relative;
     background-color: transparent;
@@ -873,15 +877,52 @@ main{
     padding-bottom:0.6em;
     cursor:pointer;
     text-align: center;
+    transition: 0.4s;
 }
 
-.listsearch_find p:hover{
+.listsearch_find .found:hover{
     background-color: #696969;
     color:white;
+}
+
+.listsearch_find .showmore{
+    background-color: #3250bf;
+    color:white;
+    width:40%;
+    position:relative;
+    border:0;
+    border-radius:12px;
+    padding-top:0.6em;
+    padding-bottom:0.6em;
+    cursor:pointer;
+    text-align: center;
+    transition: 0.4s;
+}
+
+.listsearch_find .showmore:hover{
+    background-color: #539bdb;
 }
 
 .esci_account{
     color:white;
     text-decoration: none;
     cursor:pointer;
+}
+
+.messhome{
+    position:absolute;
+    width:100%;
+    height:100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.card{
+    max-height:200px;
+    margin-bottom:25px;
+    margin-top:25px;
+}
+
+.card-body{
+    overflow-y: scroll;
 }

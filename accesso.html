@@ -18,6 +18,7 @@
         <div>
             <h3>Don't have an Account?</h3>
             <button id="signup">Sign Up</button>
+            <p id="notsign" class="notsign">Enter without sign in</p>
         </div>
     </div>
     <div class="formsignover" id="formsign">
@@ -26,6 +27,11 @@
             <input type="email" placeholder="Email" id="emailsign1" style="display:none" required>
             <input type="text" placeholder="Full Name" id="fullnamesign1" style="display:none" required>
             <input type="text" placeholder="Nickname" id="nicknamesign1" required>
+            <select class="form-select" id="type_user" aria-label="Default select example" style="display:none">
+                <option value="1" selected>User</option>
+                <option value="2">Social Media Manager</option>
+                <option value="3">Squealer Moderator</option>
+            </select>
             <input type="password" placeholder="Password" id="passwordsign1" onfocus="password_security(1)" onblur="blur_password(1)" required>
             <div id="pass_security1" style="display:none">
                 <label>Security</label>
@@ -52,6 +58,7 @@
                 <input type="password" placeholder="Password" id="passwordsign2">
                 <input type="button" value="Submit" onclick="login(2)">
                 <p id="signupcell">Don't have an account? Sign Up.</p>
+                <p id="notsigncell" class="notsign">Enter without sign in</p>
             </form>
         </div>
         <div class="formsigncell form_back">
@@ -60,6 +67,11 @@
                 <input type="email" placeholder="Email" id="emailsign3">
                 <input type="text" placeholder="Full Name" id="fullnamesign3">
                 <input type="text" placeholder="Nickname" id="nicknamesign3">
+                <select class="form-select" id="type_usercell" aria-label="Default select example">
+                    <option value="1" selected>User</option>
+                    <option value="2">Social Media Manager</option>
+                    <option value="3">Squealer Moderator</option>
+                </select>
                 <input type="password" placeholder="Password" id="passwordsign3" onfocus="password_security(3)" onblur="blur_password(3)">
                 <div id="pass_security3" style="display:none">
                     <label>Security</label>

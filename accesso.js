@@ -4,6 +4,8 @@ let sign = true;
 let security = false;
 let actualuser;
 var range;
+let access = false;
+
 if(!localStorage.users){
     const user = [{
         nickname : "Jack",
@@ -33,24 +35,30 @@ document.getElementById("signin").addEventListener("click", ()=>{
     formsign.classList.remove("translateform");
     document.getElementById("fullnamesign1").style = "display:none";
     document.getElementById("emailsign1").style = "display:none";
+    document.getElementById("type_user").style = "display:none";
     sign = true;
+    access = true;
 });
     
 document.getElementById("signup").addEventListener("click", ()=>{
     formsign.classList.add("translateform");
     document.getElementById("fullnamesign1").style = "display:inline";
     document.getElementById("emailsign1").style = "display:inline";
+    document.getElementById("type_user").style = "display:inline";
     sign = false;
+    access = true;
 });
 
 document.getElementById("signincell").addEventListener("click", ()=>{
     formcell.classList.remove("turnform");
     sign = true;
+    access = true;
 });
     
 document.getElementById("signupcell").addEventListener("click", ()=>{
     formcell.classList.add("turnform");
     sign = false;
+    access = true;
 });
 
 document.getElementById("passwordsign1").addEventListener("input", (e) => {
@@ -151,4 +159,16 @@ document.getElementById("infopassword").addEventListener("mouseover", ()=>{
 
 document.getElementById("infopassword").addEventListener("mouseout", ()=>{
     document.getElementById("divinfopassword").style = "display:none";
+});
+
+document.getElementById("notsign").addEventListener("click", ()=>{
+    window.location.href="index.html";
+    actualuser = "not sign";
+    localStorage.setItem("actualuser",JSON.stringify(actualuser));
+});
+
+document.getElementById("notsigncell").addEventListener("click", ()=>{
+    window.location.href="index.html";
+    actualuser = "not sign";
+    localStorage.setItem("actualuser",JSON.stringify(actualuser));
 });
