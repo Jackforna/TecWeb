@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squealer Moderator Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="../img/icon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="img/squealer.png" alt="icon of Squealer" height="60" style="margin-left:5%;cursor:default">
+            </a>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <button class="nav-link" id="squealbtn" style="color:white;font-size:20px;margin-left:5%">Squeal</button>
+              <button class="nav-link" id="usersbtn" style="color:white;font-size:20px;margin-left:5%">Users</button>
+              <button class="nav-link" id="channelsbtn" style="color:white;font-size:20px;margin-left:5%">Channels</button>
+            </div>
+          </div>
+        </div>
+    </nav>
+    <main>
+        <section id="squealhome">
+            <nav class="search">
+                <img src="img/search.png" alt="search image">
+                <input type="text" id="searchsender" placeholder="Search sender">
+            </nav>
+            <div class="filter">
+                <p>Filter by:</p>
+                <select class="form-select" style="background-color:#141619;color:white" aria-label="Filter sender">
+                    <option value="sender" selected>Sender</option>
+                    <option value="date">Date</option>
+                    <option value="receiver">Receiver</option>
+                </select>
+            </div>
+            <section class="listsearch_find" id="listsender_find"></section>
+        </section>
+        <section id="usershome" style="display:none">
+            <nav class="search">
+                <img src="img/search.png" alt="search image">
+                <input type="text" id="searchuser" placeholder="Search user">
+            </nav>
+            <div class="filter">
+                <p>Filter type:</p>
+                <select id="filterusertype" class="form-select" style="background-color:#141619;color:white" aria-label="Filter users">
+                    <option value="all" selected>All</option>
+                    <option value="user">User</option>
+                    <option value="social media manager">Social Media Manager</option>
+                    <option value="moderator">Moderator</option>
+                </select>
+                <p>Filter popularity:</p>
+                <select id="filteruserpopularity" class="form-select" style="background-color:#141619;color:white" aria-label="Filter users">
+                    <option value="nothing" selected>Not selected</option>
+                    <option value="top">Top-down</option>
+                    <option value="down">Down-top</option>
+                </select>
+            </div>
+            <section class="listsearch_find" id="listuser_find"></section>
+        </section>
+        <section id="channelshome" style="display:none">
+            <nav class="search">
+                <img src="img/search.png" alt="search image">
+                <input type="text" id="searchchannel" placeholder="Search channel">
+            </nav>
+            <div class="filter">
+                <p>Filter by:</p>
+                <select class="form-select" style="background-color:#141619;color:white" aria-label="Filter sender">
+                    <option value="sender" selected>Owners</option>
+                    <option value="date">Number of posts</option>
+                    <option value="receiver">Popularity</option>
+                </select>
+            </div>
+            <section class="listsearch_find" id="listchannel_find"></section>
+        </section>
+    </main>
+
+    <script type="text/javascript" src="script.js"></script>
+</body>
+</html>

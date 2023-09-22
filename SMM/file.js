@@ -12,7 +12,7 @@ let receiverValid = false;
 let messagesnewgroup = 0;
 let arrsearch = [];
 
-//ogni user è composto da nickname, fullname, email, cell, password, version (normal, verified, professional, moderator), char_d, char_w, char_m : 7000
+//ogni user è composto da nickname, fullname, email, cell, password, version (normal, verified, professional, moderator), blocked(booleano), popularity, char_d, char_w, char_m : 7000
 //ogni messaggio è composto da sender, body, date, hour, pos_reactions, neg_reactions, url, location, category, channels
 //ogni gruppo è composto da name,type,list_mess,creator,silenceable,list_users, list_modifier
 //ogni list_mess è composto da un messaggio(con tutte le componenti),type(temporizzato o no)

@@ -1,0 +1,158 @@
+::-webkit-scrollbar{
+    display: none;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+*:focus{
+    outline:none;
+}
+
+body{
+    position:absolute;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow:hidden;
+    height:100%;
+    width:100%;
+}
+
+.navbar{
+    background-color: #212121;
+    border-bottom: 2px solid white;
+    height:80px;
+}
+
+main{
+    position: relative;
+    width:100%;
+    height:calc(100% - 80px);
+    background-color: #212121;
+}
+
+main>section{
+    width:100%;
+    height:100%;
+    overflow-x:hidden;
+    overflow-y:scroll;
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+}
+
+.search{
+    position: absolute;
+    display:inline-flex;
+    padding: 5px;
+    border-radius:50px;
+    transition: 0.4s;
+    background-color: #141619;
+    top:5%;
+    min-width:50px;
+    min-height:50px;
+    align-items:center;
+    justify-content: center;
+    left:calc((100% - 50px)/2);
+}
+
+.search img{
+    height:35px;
+    width:35px;
+}
+
+.search input{
+    transition: 0.4s;
+    border:0;
+    background-color: transparent;
+    font-size:20px;
+    max-width:0px;
+    padding:0;
+    text-indent: 12px;
+    color:#f5f6f9;
+}
+
+.search input::placeholder{
+    color:rgba(255, 255, 255, 0.375);
+}
+
+.search:hover{
+    left:calc((100% - 300px)/2);
+}
+
+.search:hover img{
+    margin-left:5px;
+}
+
+.search:hover input{
+    max-width:250px;
+}
+
+.listsearch_find{
+    position:relative;
+    margin-top:2em;
+    height:70%;
+    width:50%;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+}
+
+.listsearch_find .found{
+    width:100%;
+    position:relative;
+    background-color: transparent;
+    border:0;
+    border-radius:12px;
+    padding-top:0.6em;
+    padding-bottom:0.6em;
+    cursor:pointer;
+    text-align: center;
+    transition: 0.4s;
+    color:white;
+}
+
+.listsearch_find .found:hover{
+    background-color: #696969;
+}
+
+.listsearch_find .showmore{
+    background-color: #3250bf;
+    color:white;
+    width:40%;
+    position:relative;
+    border:0;
+    border-radius:12px;
+    padding-top:0.6em;
+    padding-bottom:0.6em;
+    cursor:pointer;
+    text-align: center;
+    transition: 0.4s;
+}
+
+.listsearch_find .showmore:hover{
+    background-color: #539bdb;
+}
+
+.form-select{
+    position:relative;
+    max-width:200px;
+    margin-top: 100px;
+}
+
+.filter{
+    display:flex;
+    flex-direction: row;
+    width:80%;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter p{
+    color:white;
+    font-size:20px;
+    margin-right:1em;
+    margin-left:1em;
+    margin-top: 100px;
+}

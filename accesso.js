@@ -13,7 +13,8 @@ if(!localStorage.users){
         email: "giacomo.fornaciari@studio.unibo.it",
         cell: "3333122042",      
         password : "Fenice13!",
-        version : "base",      //versione di squealer dell'utente
+        version : "moderator",      //versione di squealer dell'utente
+        blocked : false,            //se l'utente è stato bloccato da un moderator
         char_d : 300,      //caratteri disponibili al giorno
         char_w : 2000,     //caratteri disponibili a settimana
         char_m : 7000,     //caratteri disponibili al mese
@@ -35,7 +36,7 @@ document.getElementById("signin").addEventListener("click", ()=>{
     formsign.classList.remove("translateform");
     document.getElementById("fullnamesign1").style = "display:none";
     document.getElementById("emailsign1").style = "display:none";
-    document.getElementById("type_user").style = "display:none";
+    document.getElementById("type_user1").style = "display:none";
     sign = true;
     access = true;
 });
@@ -44,7 +45,7 @@ document.getElementById("signup").addEventListener("click", ()=>{
     formsign.classList.add("translateform");
     document.getElementById("fullnamesign1").style = "display:inline";
     document.getElementById("emailsign1").style = "display:inline";
-    document.getElementById("type_user").style = "display:inline";
+    document.getElementById("type_user1").style = "display:inline";
     sign = false;
     access = true;
 });
@@ -103,7 +104,8 @@ function login(x){
     let nickname = document.getElementById("nicknamesign"+x).value;
     let email = document.getElementById("emailsign"+x).value;
     let password = document.getElementById("passwordsign"+x).value;
-    let fullname = document.getElementById("fullnamesign"+x).value; 
+    let fullname = document.getElementById("fullnamesign"+x).value;
+    let type = document.getElementById("type_user"+x).value;
     let valid = false;
     if(sign){
         for(i=0;i<users.length;i++){
@@ -114,7 +116,25 @@ function login(x){
             }
         }
         if(valid){
-            window.location.href = 'index.html';
+            if(actualuser.blocked!=true){
+                let version = actualuser.version;
+                switch(version){
+                    case "user":
+                        window.location.href = 'Squealer app/public/index.html';
+                    break;
+                    case "social media manager":
+                        window.location.href = 'SMM/index.html';
+                    break;
+                    case "moderator":
+                        window.location.href = 'moderator/moderator.html';
+                    break;
+                    default:
+                        window.location.href = 'Squealer app/public/index.html';
+                    break;
+                }
+            } else {
+                alert("This account has been blocked by a moderator!");
+            }
         } else {
             alert('Invalid credentials');
         }
@@ -126,11 +146,25 @@ function login(x){
         }
         if(!valid){
             if(security){
-            users.push({nickname : nickname, email : email, password : password, fullname : fullname, cell : "", version : "base", char_d : 300, char_w : 2000,char_m : 7000});
+            users.push({nickname : nickname, email : email, password : password, fullname : fullname, cell : "", version : type, blocked : false, char_d : 300, char_w : 2000,char_m : 7000});
             localStorage.setItem("users",JSON.stringify(users));
             actualuser = users[users.length-1];
             localStorage.setItem("actualuser",JSON.stringify(actualuser));
-            window.location.href = 'index.html';
+            switch(type){
+                case "user":
+                    window.location.href = 'Squealer app/public/index.html';
+                break;
+                case "social media manager":
+                    window.location.href = 'SMM/index.html';
+                break;
+                case "moderator":
+                    window.location.href = 'moderator/moderator.html';
+                break;
+                default:
+                    window.location.href = 'Squealer app/public/index.html';
+                break;
+            }
+            
             } else {
                 alert("Password not strong enough");
             }
