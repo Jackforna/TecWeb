@@ -22,23 +22,40 @@
               <button class="nav-link" id="channelsbtn" style="color:white;font-size:20px;margin-left:5%">Channels</button>
             </div>
           </div>
+          <div class="d-flex">
+            <button id="gotosquealer" class="btn btn-outline-success">Go to Squealer App</button>
+          </div>
         </div>
     </nav>
     <main>
         <section id="squealhome">
             <nav class="search">
                 <img src="img/search.png" alt="search image">
-                <input type="text" id="searchsender" placeholder="Search sender">
+                <input type="text" id="searchsqueal" placeholder="Search sender">
             </nav>
             <div class="filter">
                 <p>Filter by:</p>
-                <select class="form-select" style="background-color:#141619;color:white" aria-label="Filter sender">
+                <select id="filtersqueal" class="form-select" style="background-color:#141619;color:white" aria-label="Filter sender">
                     <option value="sender" selected>Sender</option>
-                    <option value="date">Date</option>
                     <option value="receiver">Receiver</option>
                 </select>
+                <p>Search date:</p>
+                <input type="date" id="datesqueal">
             </div>
-            <section class="listsearch_find" id="listsender_find"></section>
+            <section class="listsearch_find" id="listsqueals_find"></section>
+            <section class="edithome" id="sectioneditsqueal" style="display:none;">
+                <button type="button" class="btn-close" aria-label="Close" id="closeeditsqueal" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
+                    <nav>
+                        <button id="sectioneditsquealreceiverssection" style="border-bottom:1px solid white">Receivers</button>
+                        <button id="sectioneditsquealreactionssection">Reactions</button>
+                    </nav>
+                    <main id="sectioneditsquealreceivers">
+                        <h3>Receivers</h3>
+                    </main>
+                    <main id="sectioneditsquealreactions" style="display: none;">
+                        <h3>Reactions</h3>
+                    </main>
+            </section>
         </section>
         <section id="usershome" style="display:none">
             <nav class="search">
@@ -61,6 +78,31 @@
                 </select>
             </div>
             <section class="listsearch_find" id="listuser_find"></section>
+            <section class="edithome" id="sectionedituser" style="display:none">
+                <button type="button" class="btn-close" aria-label="Close" id="closeedituser" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
+                <header>
+                    <img src="" alt="profile photo" id="sectionedituserphoto">
+                    <h3 id="sectioneditusername"></h3>
+                    <button id="sectionedituserblock" class="btn btn-outline-primary"></button>
+                </header>
+                <main>
+                    <div>
+                        <p id="sectionedituserdaily"></p>
+                        <input type="number" placeholder="Insert characters" id="sectionedituserdailyinsert">
+                        <button onclick="addchardaily()" class="btn btn-outline-primary">Add</button>
+                    </div>
+                    <div>
+                        <p id="sectionedituserweekly"></p>
+                        <input type="number" placeholder="Insert characters" id="sectionedituserweeklyinsert">
+                        <button onclick="addcharweekly()" class="btn btn-outline-primary">Add</button>
+                    </div>
+                    <div>
+                        <p id="sectioneditusermonthly"></p>
+                        <input type="number" placeholder="Insert characters" id="sectioneditusermonthlyinsert">
+                        <button onclick="addcharmonthly()" class="btn btn-outline-primary">Add</button>
+                    </div>
+                </main>
+            </section>
         </section>
         <section id="channelshome" style="display:none">
             <nav class="search">
@@ -68,14 +110,39 @@
                 <input type="text" id="searchchannel" placeholder="Search channel">
             </nav>
             <div class="filter">
-                <p>Filter by:</p>
-                <select class="form-select" style="background-color:#141619;color:white" aria-label="Filter sender">
-                    <option value="sender" selected>Owners</option>
-                    <option value="date">Number of posts</option>
-                    <option value="receiver">Popularity</option>
+                <p>Filter type:</p>
+                <select id="filterchanneltype" class="form-select" style="background-color:#141619;color:white" aria-label="Filter channels">
+                    <option value="channels" selected>channels</option>
+                    <option value="CHANNELS">CHANNELS</option>
                 </select>
+                <p id="filterchannelp">Filter by:</p>
+                <select id="filterchannel" class="form-select" style="background-color:#141619;color:white" aria-label="Filter channels">
+                    <option value="name" selected>Name</option>
+                    <option value="owner">Owner</option>
+                    <option value="post">Number of posts</option>
+                </select>
+                <p id="filterchannelpopularityp">Filter popularity:</p>
+                <select id="filterchannelpopularity" class="form-select" style="background-color:#141619;color:white" aria-label="Filter channels">
+                    <option value="nothing" selected>Not selected</option>
+                    <option value="top">Top-down</option>
+                    <option value="down">Down-top</option>
+                </select>
+                <button id="createnewCHANNEL" style="display:none">Create new CHANNEL</button>
             </div>
             <section class="listsearch_find" id="listchannel_find"></section>
+                <section class="edithome" id="sectioneditchannel" style="display:none">
+                    <button type="button" class="btn-close" aria-label="Close" id="closeeditchannel" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
+                    <header>
+                        <img src="" alt="profile photo" id="sectioneditchannelphoto">
+                        <input type="text" id="sectioneditchannelname">
+                        <button id="sectioneditchannelchangename" class="btn btn-outline-primary" style="margin-left:1em;margin-right:1em">Edit name</button>
+                        <button id="sectioneditchannelblock" class="btn btn-outline-primary"></button>
+                    </header>
+                    <main id="sectioneditchannelowners">
+                        <h3>Owners</h3>
+                    </main>
+                </section>
+            </section>
         </section>
     </main>
 

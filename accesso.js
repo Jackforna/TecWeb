@@ -9,12 +9,14 @@ let access = false;
 if(!localStorage.users){
     const user = [{
         nickname : "Jack",
+        photoprofile : "",
         fullname : "CEO",
         email: "giacomo.fornaciari@studio.unibo.it",
         cell: "3333122042",      
         password : "Fenice13!",
         version : "moderator",      //versione di squealer dell'utente
         blocked : false,            //se l'utente è stato bloccato da un moderator
+        popularity : 0,
         char_d : 300,      //caratteri disponibili al giorno
         char_w : 2000,     //caratteri disponibili a settimana
         char_m : 7000,     //caratteri disponibili al mese
@@ -146,7 +148,7 @@ function login(x){
         }
         if(!valid){
             if(security){
-            users.push({nickname : nickname, email : email, password : password, fullname : fullname, cell : "", version : type, blocked : false, char_d : 300, char_w : 2000,char_m : 7000});
+            users.push({nickname : nickname, photoprofile : "", email : email, password : password, fullname : fullname, cell : "", version : type, blocked : false, popularity : 0, char_d : 300, char_w : 2000,char_m : 7000});
             localStorage.setItem("users",JSON.stringify(users));
             actualuser = users[users.length-1];
             localStorage.setItem("actualuser",JSON.stringify(actualuser));

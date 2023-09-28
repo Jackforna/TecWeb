@@ -12,9 +12,9 @@ let receiverValid = false;
 let messagesnewgroup = 0;
 let arrsearch = [];
 
-//ogni user è composto da nickname, fullname, email, cell, password, version (normal, verified, professional, moderator), blocked(booleano), popularity, char_d, char_w, char_m : 7000
-//ogni messaggio è composto da sender, body, date, hour, pos_reactions, neg_reactions, url, location, category, channels
-//ogni gruppo è composto da name,type,list_mess,creator,silenceable,list_users, list_modifier
+//ogni user è composto da nickname, photoprofile, fullname, email, cell, password, version (normal, verified, professional, moderator), blocked(booleano), popularity, char_d, char_w, char_m : 7000
+//ogni messaggio è composto da sender, body, date, hour, pos_reactions, neg_reactions, url, location, category, receivers[]
+//ogni gruppo è composto da name,type,list_mess,creator,silenceable,list_users, list_modifier, list_posts, blocked(booleano, solo se è di tipo channel), description(se è tipo CHANNEL)
 //ogni list_mess è composto da un messaggio(con tutte le componenti),type(temporizzato o no)
 
 if(!localStorage.getItem("lista_gruppi")){
@@ -206,28 +206,36 @@ function settingsbtn(){
 }
 
 function public_mess(){                                                //finire
-    
     if((max_char!=max_char2)|(receiver_type=="individuo")){
     const data = new Date();
     let sender = user.nickname;
     let body = document.getElementById("textmessaggio").value;
-    let date = data.getDate() + "/" + (data.getMonth()+1) + "/" + data.getFullYear();
+    let month;
+    if((data.getMonth()+1)<10){
+        month = "0" + (data.getMonth()+1);
+    } else {
+        month = data.getMonth()+1;
+    }
+    let day;
+    if(data.getDate()<10){
+        day = "0" + data.getDate();
+    } else {
+        day = data.getDate();
+    }
+    let date = data.getFullYear() + "-" + month + "-" + day;
     let minutes = data.getMinutes();
     if(minutes<10){
         minutes = "0" + minutes;
     }
     let hour = data.getHours() + ":" + minutes;
-    /*if(document.getElementById("urlmessaggio").value!=""){
-    fetchURL(document.getElementById("urlmessaggio").value);
-    }*/
     let url = document.getElementById("urlmessaggio").value;
     let location = document.getElementById("location").innerHTML;
-    let channels = [];                                                                  //finire
-    channels.push(document.getElementById("receivermessaggio").value);
+    let receivers = [];                                                                  //finire
+    receivers.push(document.getElementById("receivermessaggio").value);
     user.char_w -= max_char2 - max_char;
     user.char_m -= max_char2 - max_char;
     user.char_d -= max_char2 - max_char;
-    lista_messaggi.unshift({sender:sender, body:body, date:date, hour:hour, pos_reactions:0, neg_reactions:0, url:url, location:location, category:undefined, channels:channels});
+    lista_messaggi.unshift({sender:sender, body:body, date:date, hour:hour, photoprofile:"", image:"", pos_reactions:0, neg_reactions:0, url:url, location:location, category:undefined, receivers:receivers});
     localStorage.setItem("lista_messaggi",JSON.stringify(lista_messaggi));
     localStorage.setItem("actualuser",JSON.stringify(user));
     for(i=0;i<users.length;i++){
@@ -522,7 +530,7 @@ document.getElementById("creationgroup").addEventListener("click", ()=>{
         silenceable = false;
     }
     if(isValid){
-    lista_gruppi.push({name:name, type:type, list_mess:list_mess, creator:creator, silenceable:silenceable, list_users:[creator], list_modifier:[creator]});
+    lista_gruppi.push({name:name, type:type, list_mess:list_mess, creator:creator, silenceable:silenceable, list_users:[creator], list_modifier:[creator], list_posts:[], blocked:false});
     localStorage.setItem("lista_gruppi",JSON.stringify(lista_gruppi));
     alert("Gruppo "+name+" creato con successo!");
     document.getElementById("namenewgroup").value = "";

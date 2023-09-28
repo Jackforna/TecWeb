@@ -48,7 +48,7 @@ main>section{
     border-radius:50px;
     transition: 0.4s;
     background-color: #141619;
-    top:5%;
+    top:4%;
     min-width:50px;
     min-height:50px;
     align-items:center;
@@ -92,35 +92,38 @@ main>section{
     position:relative;
     margin-top:2em;
     height:70%;
-    width:50%;
+    width:100%;
     display:flex;
     flex-direction: column;
     align-items: center;
     overflow-y: scroll;
 }
 
-.listsearch_find .found{
-    width:100%;
+.found{
+    width:60%;
+    position:relative;
+    display:flex;
+    flex-direction: row;
+}
+
+.found p{
+    width:60%;
+    margin-left:20%;
     position:relative;
     background-color: transparent;
     border:0;
     border-radius:12px;
     padding-top:0.6em;
     padding-bottom:0.6em;
-    cursor:pointer;
+    cursor:default;
     text-align: center;
-    transition: 0.4s;
     color:white;
-}
-
-.listsearch_find .found:hover{
-    background-color: #696969;
 }
 
 .listsearch_find .showmore{
     background-color: #3250bf;
     color:white;
-    width:40%;
+    width:25%;
     position:relative;
     border:0;
     border-radius:12px;
@@ -154,5 +157,197 @@ main>section{
     font-size:20px;
     margin-right:1em;
     margin-left:1em;
+    margin-top: 110px;
+}
+
+.filter input[type="date"]{
+    color:white;
+    font-size:18px;
     margin-top: 100px;
+    background-color: #141619;
+    border:1px solid white;
+    padding:0.3em;
+    border-radius: 8px;
+}
+
+.filter button{
+    color:white;
+    font-size:18px;
+    margin-top: 100px;
+    background-color: transparent;
+    padding:0.3em 0.8em 0.3em 0.8em;
+    border-radius: 8px;
+    transition: 0.4s;
+    border:0;
+    margin-left:1em;
+}
+
+.filter button:hover{
+    background-color: #696969;
+}
+
+.filter input[type="date"]::-webkit-inner-spin-button,
+.filter input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+  
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0; /* Opzionale: può aiutare a gestire il layout */
+}
+
+.reactions{
+    display:flex;
+    flex-direction: row;
+    height:100%;
+    align-items: center;
+}
+
+.reactions img{
+    height:30px;
+    width:30px;
+    cursor:pointer;
+}
+
+.reactions span{
+    font-size:18px;
+    margin-bottom:12px;
+    margin-top: 12px;
+}
+
+.card-header{
+    padding-bottom:0.8em;
+    display:flex; 
+    flex-direction: row;
+    align-items: center;
+}
+
+.card-footer{
+    padding-bottom:0.8em;
+    display:flex; 
+    flex-direction: row;
+}
+
+.card-header img{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    overflow: hidden;
+    margin:0em 1em 0em 1em;
+}
+
+.card-header h5{
+    color:white;
+    margin-top:8px;
+    width:75%;
+}
+
+.card-text{
+    color:white;
+}
+
+.edithome{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #212121;
+}
+
+.edithome header{
+    position: relative;
+    display:flex;
+    width:100%;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.edithome main{
+    position: relative;
+    display:flex;
+    width:100%;
+    height:60%;
+    margin-top:5%;  
+    flex-direction: column;
+    align-items: center;
+}
+
+.edithome header img{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    overflow: hidden;
+    margin:0em 1em 0em 1em;
+}
+
+.edithome header h3{
+    color:white;
+    margin-top:8px;
+    margin-right:1em;
+}
+
+.edithome main p{
+    color:white;
+    font-size:18px;
+}
+
+.edithome main div{
+    display:flex;
+    flex-direction: row;
+    margin-bottom:2em;
+    justify-content: center;
+    align-items: center;
+}
+
+.edithome main div p{
+    text-align: left;
+    margin-right:2em;
+    min-width:300px;
+}
+
+.edithome main div input[type="number"]{
+    background-color: #141619;
+    padding:0.8em;
+    border:1px solid white;
+    border-radius:12px;
+    width:200px;
+    color:white;
+    margin-right:1em;
+}
+
+.edithome header input[type="text"]{
+    font-weight: bold;
+    font-size:1.5em;
+    background-color: #212121;
+    border:0;
+    color:white;
+}
+
+.edithome main h3{
+    color:white;
+    margin-bottom: 3%;
+}
+
+.edithome nav{
+    width:100%;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.edithome nav button{
+    background-color: transparent;
+    padding:0.6em 2em 0.6em 2em;
+    color:white;
+    border:0;
+    transition: 0.4s;
+}
+
+.edithome main div img{
+    
 }
