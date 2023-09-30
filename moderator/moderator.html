@@ -45,15 +45,21 @@
             <section class="listsearch_find" id="listsqueals_find"></section>
             <section class="edithome" id="sectioneditsqueal" style="display:none;">
                 <button type="button" class="btn-close" aria-label="Close" id="closeeditsqueal" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
-                    <nav>
+                    <nav class="nav">
                         <button id="sectioneditsquealreceiverssection" style="border-bottom:1px solid white">Receivers</button>
                         <button id="sectioneditsquealreactionssection">Reactions</button>
                     </nav>
                     <main id="sectioneditsquealreceivers">
-                        <h3>Receivers</h3>
+                        <h3 style="margin-bottom:2%">Receivers</h3>
+                        <div style="height:50px; position:relative; width:80%">
+                            <nav class="search">
+                                <img src="img/search.png" alt="search image">
+                                <input type="text" id="searchaddreceivers" placeholder="Add receivers">
+                            </nav>
+                        </div>
+                        <div class="sectioneditsquealreceiverslist" style="overflow-y:scroll; display:flex; flex-direction:column; justify-content: unset; height: 80%;" id="sectioneditsquealreceiverslist"></div>
                     </main>
                     <main id="sectioneditsquealreactions" style="display: none;">
-                        <h3>Reactions</h3>
                     </main>
             </section>
         </section>

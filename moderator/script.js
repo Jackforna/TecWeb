@@ -10,6 +10,8 @@ let arrsearchchannel = [];
 let arrchannelpopularity = [];
 let arrCHANNELS = [];
 let arruserpopularity = [];
+let arrsquealreceiversusers = [];
+let arrsquealreceiverschannels = [];
 let input;
 let inputsearch;
 let edit;
@@ -399,20 +401,28 @@ document.getElementById("searchsqueal").addEventListener("input",()=>{
             for(i=0;i<squeals.length;i++){
                 let mex = ((squeals[i].sender).slice(0,inputsearch.length)).toLowerCase();
                 if(searchsqueal==mex){
-                    arrsqueals.push(squeals[i]);
+                    const inreceivers = arrsqueals.find(oggetto => {
+                        return oggetto == squeals[i];
+                      });
+                    if(!inreceivers)
+                        arrsqueals.push(squeals[i]);
                 }
             }
         } else if(filtersqueal.value=="receiver"){
             for(i=0;i<squeals.length;i++){
                 for(j=0;j<squeals[i].receivers.length;j++){
                     let mex = ((squeals[i].receivers[j]).slice(1,(inputsearch.length+1))).toLowerCase();
-                    if(inputsearch==mex){
-                        arrsqueals.push(squeals[i]);
+                    if(searchsqueal==mex){
+                        const inreceivers = arrsqueals.find(oggetto => {
+                            return oggetto == squeals[i];
+                          });
+                        if(!inreceivers)
+                            arrsqueals.push(squeals[i]);
                     }
                 }
             }
         }
-        if(arrsqueals.length!=0){
+        if(arrsqueals.length!=0){  
             for(i=0;i<arrsqueals.length;i++){
                 document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body+'</p><p class="card-text">'+arrsqueals[i].location+'</p><a class="card-text" href="'+arrsqueals[i].url+'">'+arrsqueals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
                 if(arrsqueals[i].image==""){
@@ -451,10 +461,11 @@ function editmex(x){
     else
         editsqueal = squeals[x];
     document.getElementById("sectioneditsqueal").style = "display:flex";
+    document.getElementById("sectioneditsquealreceiverslist").innerHTML = '';
+    document.getElementById("searchaddreceivers").value = "";
     for(i=0;i<editsqueal.receivers.length;i++){
-        document.getElementById("sectioneditsquealreceivers").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button class="btn btn-outline-primary">Delete</button></div>';
+        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
     }
-    document.getElementById("sectioneditsquealreceivers").innerHTML += '<button class="btn btn-outline-primary">Add Receiver</button>';
 }
 
 function savechangessqueal(){
@@ -468,6 +479,23 @@ function savechangessqueal(){
 
 document.getElementById("closeeditsqueal").addEventListener("click", ()=>{
     document.getElementById("sectioneditsqueal").style = "display:none";
+    document.getElementById("listsqueals_find").innerHTML = "";
+    document.getElementById("datesqueal").value = "";
+    document.getElementById("filtersqueal").value = "sender";
+    document.getElementById("searchsqueal").value = "";
+    document.getElementById("searchsqueal").placeholder = "Search sender";
+    arrsquealsdate = [];
+    for(i=0;i<squeals.length;i++){
+        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body+'</p><p class="card-text">'+squeals[i].location+'</p><a class="card-text" href="'+squeals[i].url+'">'+squeals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+        if(squeals[i].image==""){
+            document.getElementById("imgsquealer").style = "display:none";
+        }
+        document.getElementById("imgsquealer").removeAttribute("id");
+        if(squeals[i].photoprofile==""){
+            document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+        }
+        document.getElementById("imgprofilesquealer").removeAttribute("id");
+    }
 });
 
 document.getElementById("sectioneditsquealreactionssection").addEventListener("click",()=>{
@@ -475,8 +503,8 @@ document.getElementById("sectioneditsquealreactionssection").addEventListener("c
     document.getElementById("sectioneditsquealreceivers").style = "display:none";
     document.getElementById("sectioneditsquealreactionssection").style = "border-bottom:1px solid white";
     document.getElementById("sectioneditsquealreceiverssection").style = "border-bottom:0";
-    document.getElementById("sectioneditsquealreactions").innerHTML = '<h3>Reactions<h3>';
-    document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:100px">'+editsqueal.pos_reactions+'</p><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><input type="number"><button class="btn btn-outline-primary">Edit characters</button></div><div><p style="min-width:100px">'+editsqueal.neg_reactions+'</p><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><input type="number"><button class="btn btn-outline-primary">Edit characters</button></div>';
+    document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
+    document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
 });
 
 document.getElementById("sectioneditsquealreceiverssection").addEventListener("click",()=>{
@@ -484,12 +512,145 @@ document.getElementById("sectioneditsquealreceiverssection").addEventListener("c
     document.getElementById("sectioneditsquealreceivers").style = "display:flex";
     document.getElementById("sectioneditsquealreactionssection").style = "border-bottom:0";
     document.getElementById("sectioneditsquealreceiverssection").style = "border-bottom:1px solid white";
-    document.getElementById("sectioneditsquealreceivers").innerHTML = '<h3>Receivers<h3>';
+    document.getElementById("sectioneditsquealreceiverslist").innerHTML = '';
+    document.getElementById("searchaddreceivers").value = "";
     for(i=0;i<editsqueal.receivers.length;i++){
-        document.getElementById("sectioneditsquealreceivers").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button class="btn btn-outline-primary">Delete</button></div>';
+        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
     }
-    document.getElementById("sectioneditsquealreceivers").innerHTML += '<button class="btn btn-outline-primary">Add Receiver</button>';
 });
+
+function editpositivereactions(){
+    let add = document.getElementById("editpositivereactions").value;
+    editsqueal.pos_reactions = JSON.parse(editsqueal.pos_reactions) + parseInt(add);
+    document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
+    document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
+    savechangessqueal();
+    }
+
+function editnegativereactions(){
+    let add = document.getElementById("editnegativereactions").value;
+    editsqueal.neg_reactions = JSON.parse(editsqueal.neg_reactions) + parseInt(add);
+    document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
+    document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
+    savechangessqueal();
+    }
+
+document.getElementById("searchaddreceivers").addEventListener("input",()=>{
+    document.getElementById("sectioneditsquealreceiverslist").innerHTML = '';
+    input = document.getElementById("searchaddreceivers").value;
+    inputsearch = input.toLowerCase();
+    arrsquealreceiversusers = [];
+    arrsquealreceiverschannels = [];
+    if(inputsearch!=""){   
+        for(i=0;i<users.length;i++){
+        let user = ((users[i].nickname).slice(0,inputsearch.length)).toLowerCase();
+            if(inputsearch==user){
+                arrsquealreceiversusers.push(users[i]);
+            }
+        }
+        for(i=0;i<channels.length;i++){
+            let user = ((channels[i].name).slice(0,inputsearch.length)).toLowerCase();
+                if(inputsearch==user){
+                    arrsquealreceiverschannels.push(channels[i]);
+                }
+            }
+        let len = arrsquealreceiverschannels.length + arrsquealreceiversusers.length;
+        if(len>0){
+            for(i=0;i<arrsquealreceiversusers.length;i++){
+                const inreceivers = editsqueal.receivers.find(oggetto => {
+                    return oggetto == "@"+arrsquealreceiversusers[i].nickname;
+                  });
+                if(inreceivers)
+                    document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="deleteuserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Delete</button></div>';
+                else 
+                    document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="adduserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Add</button></div>';
+            }
+            for(i=0;i<arrsquealreceiverschannels.length;i++){
+                const inreceivers = editsqueal.receivers.find(oggetto => {
+                    return oggetto == arrsquealreceiverschannels[i].type + arrsquealreceiverschannels[i].name;
+                  });
+                if(inreceivers)
+                    document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="deletechannelreceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
+                else 
+                    document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="addchannelreceiver('+i+')" class="btn btn-outline-primary">Add</button></div>';
+            }
+        } else{
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no result for "'+inputsearch+'". Try a new search.</p>';
+        }
+    } else {
+        arrsquealreceiversusers = [];
+        arrsquealreceiverschannels = [];
+        for(i=0;i<editsqueal.receivers.length;i++)
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Delete</button><br></div>';
+    }
+});
+
+function rewritereceiverlist(){
+    document.getElementById("sectioneditsquealreceiverslist").innerHTML = "";
+    for(i=0;i<arrsquealreceiversusers.length;i++){
+        const inreceivers = editsqueal.receivers.find(oggetto => {
+            return oggetto == "@"+arrsquealreceiversusers[i].nickname;
+          });
+        if(inreceivers)
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="deleteuserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Delete</button></div>';
+        else 
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="adduserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Add</button></div>';
+    }
+    for(i=0;i<arrsquealreceiverschannels.length;i++){
+        const inreceivers = editsqueal.receivers.find(oggetto => {
+            return oggetto == arrsquealreceiverschannels[i].type + arrsquealreceiverschannels[i].name;
+          });
+        if(inreceivers)
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="deletechannelreceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
+        else 
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="addchannelreceiver('+i+')" class="btn btn-outline-primary">Add</button></div>';
+    }
+}
+
+function deletereceiver(x){
+    editsqueal.receivers.splice(x,1);
+    document.getElementById("sectioneditsquealreceiverslist").innerHTML = "";
+    for(i=0;i<editsqueal.receivers.length;i++){
+        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
+    }
+    savechangessqueal();
+}
+
+function deleteuserreceiver(x){
+    let y;
+    for(i=0;i<editsqueal.receivers.length;i++){
+        if(editsqueal.receivers[i]=="@"+arrsquealreceiversusers[x].nickname){
+            y = i;
+        }
+    }
+    editsqueal.receivers.splice(y,1);
+    savechangessqueal();
+    rewritereceiverlist();
+}
+
+function adduserreceiver(x){
+    editsqueal.receivers.push("@"+arrsquealreceiversusers[x].nickname);
+    savechangessqueal();
+    rewritereceiverlist();
+}
+
+function deletechannelreceiver(x){
+    let y;
+    for(i=0;i<editsqueal.receivers.length;i++){
+        if(editsqueal.receivers[i]==arrsquealreceiverschannels[x].type + arrsquealreceiverschannels[x].name){
+            y = i;
+        }
+    }
+    editsqueal.receivers.splice(y,1);
+    savechangessqueal();
+    rewritereceiverlist();
+}
+
+function addchannelreceiver(x){
+    editsqueal.receivers.push(arrsquealreceiverschannels[x].type + arrsquealreceiverschannels[x].name);
+    savechangessqueal();
+    rewritereceiverlist();
+}
 
 /*--------------------------------------------------------------------------------------------------------------*/
 
