@@ -1283,3 +1283,26 @@ function removeownerCHANNEL(x){
         }
     }
 }
+
+document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
+    let select = document.getElementById("typenewmessageCHANNEL").value;
+    switch(select){
+        case 'welcome':
+            document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
+            document.getElementById("requestnewmessageCHANNEL").classList.add('d-none');
+        break;
+        case 'answer':
+            document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
+            document.getElementById("requestnewmessageCHANNEL").classList.remove('d-none');
+
+        break;
+        case 'reminder':
+            document.getElementById("remindernewmessageCHANNEL").classList.remove('d-none');
+            document.getElementById("requestnewmessageCHANNEL").classList.add('d-none');
+        break;
+    }
+});
+
+document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
+    let 
+});

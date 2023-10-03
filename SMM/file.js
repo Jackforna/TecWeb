@@ -45,8 +45,8 @@ window.onload = () => {
     document.getElementById("cellprofile").value = user.cell;
     let mess_written = [];
     for(i=0;i<lista_messaggi.length;i++){                                           //abbellire messaggi
-        for(j=0;j<lista_messaggi[i].channels.length;j++){
-            if((lista_messaggi[i].channels[j]).slice(1)==user.nickname){
+        for(j=0;j<lista_messaggi[i].receivers.length;j++){
+            if((lista_messaggi[i].receivers[j]).slice(1)==user.nickname){
                 document.getElementById("messhome").innerHTML += '<div class="card" style="width: 60%; left:20%"><div class="card-body"><p class="card-text">from '+lista_messaggi[i].sender+'</p><p class="card-text">'+lista_messaggi[i].date+', '+lista_messaggi[i].hour+'</p><p class="card-text">'+lista_messaggi[i].body+'</p><img class="card-text" src="'+lista_messaggi[i].url+'"></img><p class="card-text">'+lista_messaggi[i].location+'</p></div><button onclick="">Reaction</button></div>';
                 mess_written.unshift(lista_messaggi[i]);
             }

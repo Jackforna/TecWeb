@@ -537,8 +537,8 @@ input:checked + .slider:before{
 .addhome main section div p{
     color:white;
     font-size:20px;
-    width:40%;
     margin-top:10px;
+    margin-right:10px;
 }
 
 .addhome main section h3{
