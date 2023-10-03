@@ -1,6 +1,7 @@
 let users = JSON.parse(localStorage.getItem("users"));
 let squeals = JSON.parse(localStorage.getItem("lista_messaggi"));
 let channels = JSON.parse(localStorage.getItem("lista_gruppi"));
+let actualuser = JSON.parse(localStorage.getItem("actualuser"));
 let arruser = users;
 let arrusertype = [];
 let arrsqueals = squeals;
@@ -9,6 +10,7 @@ let arrchannels = [];
 let arrsearchchannel = [];
 let arrchannelpopularity = [];
 let arrCHANNELS = [];
+let arrsearchCHANNEL = [];
 let arruserpopularity = [];
 let arrsquealreceiversusers = [];
 let arrsquealreceiverschannels = [];
@@ -16,7 +18,11 @@ let input;
 let inputsearch;
 let edit;
 let editchannel;
+let editCHANNEL;
 let editsqueal;
+let arrcreateCHANNELowners = [];
+let arrcreateCHANNELownersadd = [];
+let arrcreateCHANNELmessages = [];
 const filtersqueal = document.getElementById("filtersqueal");
 
 window.onload = function() {
@@ -464,7 +470,7 @@ function editmex(x){
     document.getElementById("sectioneditsquealreceiverslist").innerHTML = '';
     document.getElementById("searchaddreceivers").value = "";
     for(i=0;i<editsqueal.receivers.length;i++){
-        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
+        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Remove</button></div>';
     }
 }
 
@@ -515,7 +521,7 @@ document.getElementById("sectioneditsquealreceiverssection").addEventListener("c
     document.getElementById("sectioneditsquealreceiverslist").innerHTML = '';
     document.getElementById("searchaddreceivers").value = "";
     for(i=0;i<editsqueal.receivers.length;i++){
-        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
+        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Remove</button></div>';
     }
 });
 
@@ -561,7 +567,7 @@ document.getElementById("searchaddreceivers").addEventListener("input",()=>{
                     return oggetto == "@"+arrsquealreceiversusers[i].nickname;
                   });
                 if(inreceivers)
-                    document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="deleteuserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Delete</button></div>';
+                    document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="deleteuserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Remove</button></div>';
                 else 
                     document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="adduserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Add</button></div>';
             }
@@ -570,7 +576,7 @@ document.getElementById("searchaddreceivers").addEventListener("input",()=>{
                     return oggetto == arrsquealreceiverschannels[i].type + arrsquealreceiverschannels[i].name;
                   });
                 if(inreceivers)
-                    document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="deletechannelreceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
+                    document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="deletechannelreceiver('+i+')" class="btn btn-outline-primary">Remove</button></div>';
                 else 
                     document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="addchannelreceiver('+i+')" class="btn btn-outline-primary">Add</button></div>';
             }
@@ -581,7 +587,7 @@ document.getElementById("searchaddreceivers").addEventListener("input",()=>{
         arrsquealreceiversusers = [];
         arrsquealreceiverschannels = [];
         for(i=0;i<editsqueal.receivers.length;i++)
-            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Delete</button><br></div>';
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Remove</button><br></div>';
     }
 });
 
@@ -592,7 +598,7 @@ function rewritereceiverlist(){
             return oggetto == "@"+arrsquealreceiversusers[i].nickname;
           });
         if(inreceivers)
-            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="deleteuserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Delete</button></div>';
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="deleteuserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Remove</button></div>';
         else 
             document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>@'+arrsquealreceiversusers[i].nickname+'</p><button onclick="adduserreceiver('+i+')" id="changeuserreceiver'+i+'" class="btn btn-outline-primary">Add</button></div>';
     }
@@ -601,7 +607,7 @@ function rewritereceiverlist(){
             return oggetto == arrsquealreceiverschannels[i].type + arrsquealreceiverschannels[i].name;
           });
         if(inreceivers)
-            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="deletechannelreceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
+            document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="deletechannelreceiver('+i+')" class="btn btn-outline-primary">Remove</button></div>';
         else 
             document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+arrsquealreceiverschannels[i].type+arrsquealreceiverschannels[i].name+'</p><button id="changechannelreceiver'+i+'" onclick="addchannelreceiver('+i+')" class="btn btn-outline-primary">Add</button></div>';
     }
@@ -611,7 +617,7 @@ function deletereceiver(x){
     editsqueal.receivers.splice(x,1);
     document.getElementById("sectioneditsquealreceiverslist").innerHTML = "";
     for(i=0;i<editsqueal.receivers.length;i++){
-        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Delete</button></div>';
+        document.getElementById("sectioneditsquealreceiverslist").innerHTML += '<div><p>'+editsqueal.receivers[i]+'</p><button onclick="deletereceiver('+i+')" class="btn btn-outline-primary">Remove</button></div>';
     }
     savechangessqueal();
 }
@@ -741,13 +747,13 @@ document.getElementById("filterchanneltype").addEventListener("change",()=>{
             document.getElementById("listchannel_find").innerHTML = "";
             if((arrCHANNELS.length>0)&(arrCHANNELS.length<7)){
                 for(i=0;i<arrCHANNELS.length;i++)
-                document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px">Edit</button></div>';
+                document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
             } else if(arrCHANNELS.length==0){
                 document.getElementById("listchannel_find").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no channels already created</p>';
             } else {
                 for(i=0;i<7;i++)
-                    document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px">Edit</button></div>';
-                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore2()">Show more</p>';
+                    document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
             }
         break;
     }
@@ -772,61 +778,94 @@ document.getElementById("filterchannel").addEventListener("change",()=>{
 });
 
 document.getElementById("searchchannel").addEventListener("input",()=>{
-    let filterchannel = document.getElementById("filterchannel").value;
+    let filterchanneltype = document.getElementById("filterchanneltype").value;
     input = document.getElementById("searchchannel").value;
     inputsearch = input.toLowerCase();
     document.getElementById("listchannel_find").innerHTML = "";
-    document.getElementById("filterchannelpopularity").value = "nothing";
-    arrsearchchannel = [];
-    arrchannelpopularity = [];
-    if(inputsearch!=""){
-        switch(filterchannel){
-            case "name":
-                for(i=0;i<arrchannels.length;i++){
-                    let channel = ((arrchannels[i].name).slice(0,inputsearch.length)).toLowerCase();
-                        if(inputsearch==channel){
-                            arrsearchchannel.push(arrchannels[i]);
+    if(filterchanneltype=="channels"){
+        let filterchannel = document.getElementById("filterchannel").value;
+        document.getElementById("filterchannelpopularity").value = "nothing";
+        arrsearchchannel = [];
+        arrchannelpopularity = [];
+        if(inputsearch!=""){
+            switch(filterchannel){
+                case "name":
+                    for(i=0;i<arrchannels.length;i++){
+                        let channel = ((arrchannels[i].name).slice(0,inputsearch.length)).toLowerCase();
+                            if(inputsearch==channel){
+                                arrsearchchannel.push(arrchannels[i]);
+                            }
+                        }
+                break;
+                case "owner":
+                    for(i=0;i<arrchannels.length;i++){
+                        for(j=0;j<arrchannels[i].list_modifier.length;j++){
+                        let channel = ((arrchannels[i].list_modifier[j]).slice(0,inputsearch.length)).toLowerCase();
+                            if(inputsearch==channel){
+                                arrsearchchannel.push(arrchannels[i]);
+                            }
                         }
                     }
-            break;
-            case "owner":
-                for(i=0;i<arrchannels.length;i++){
-                    for(j=0;j<arrchannels[i].list_modifier.length;j++){
-                    let channel = ((arrchannels[i].list_modifier[j]).slice(0,inputsearch.length)).toLowerCase();
-                        if(inputsearch==channel){
-                            arrsearchchannel.push(arrchannels[i]);
+                break;
+                case "post":
+                    for(i=0;i<arrchannels.length;i++){
+                        let channel = arrchannels[i].list_posts.length;
+                            if(inputsearch==channel){
+                                arrsearchchannel.push(arrchannels[i]);
+                            }
                         }
-                    }
-                }
-            break;
-            case "post":
-                for(i=0;i<arrchannels.length;i++){
-                    let channel = arrchannels[i].list_posts.length;
-                        if(inputsearch==channel){
-                            arrsearchchannel.push(arrchannels[i]);
-                        }
-                    }
-            break;
-        }
-        if((arrsearchchannel.length>0)&(arrsearchchannel.length<7)){
-            for(i=0;i<arrsearchchannel.length;i++)
-            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-        } else if(arrsearchchannel.length==0){
-            document.getElementById("listchannel_find").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no result for "'+inputsearch+'". Try a new search.</p>';
-        } else {
-            for(i=0;i<7;i++)
+                break;
+            }
+            if((arrsearchchannel.length>0)&(arrsearchchannel.length<7)){
+                for(i=0;i<arrsearchchannel.length;i++)
                 document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-            document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore2()">Show more</p>';
+            } else if(arrsearchchannel.length==0){
+                document.getElementById("listchannel_find").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no result for "'+inputsearch+'". Try a new search.</p>';
+            } else {
+                for(i=0;i<7;i++)
+                    document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore2()">Show more</p>';
+            }
+        } else {
+            arrsearchchannel = arrchannels;
+            if((arrsearchchannel.length>0)&(arrsearchchannel.length<7)){
+                for(i=0;i<arrsearchchannel.length;i++)
+                document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+            } else {
+                for(i=0;i<7;i++)
+                    document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore2()">Show more</p>';
+            }
         }
     } else {
-        arrsearchchannel = arrchannels;
-        if((arrsearchchannel.length>0)&(arrsearchchannel.length<7)){
-            for(i=0;i<arrsearchchannel.length;i++)
-            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        arrsearchCHANNEL = [];
+        if(inputsearch!=""){
+            for(i=0;i<arrCHANNELS.length;i++){
+                let channel = ((arrCHANNELS[i].name).slice(0,inputsearch.length)).toLowerCase();
+                if(inputsearch==channel){
+                    arrsearchCHANNEL.push(arrCHANNELS[i]);
+                }
+            }
+            if((arrsearchCHANNEL.length>0)&(arrsearchCHANNEL.length<7)){
+                for(i=0;i<arrsearchCHANNEL.length;i++)
+                    document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+            } else if(arrsearchCHANNEL.length==0){
+                document.getElementById("listchannel_find").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no channels already created</p>';
+            } else {
+                for(i=0;i<7;i++)
+                    document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+            }
         } else {
-            for(i=0;i<7;i++)
-                document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-            document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore2()">Show more</p>';
+            arrsearchCHANNEL = arrCHANNELS;
+            if((arrsearchCHANNEL.length>0)&(arrsearchCHANNEL.length<7)){
+                for(i=0;i<arrsearchCHANNEL.length;i++)
+                document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+            } else {
+                for(i=0;i<7;i++)
+                    document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+            }
         }
     }
 });
@@ -918,6 +957,40 @@ function showless2(){
     }
 }
 
+function showmore3(){
+    document.getElementById("listchannel_find").innerHTML = "";
+    if(arrchannelpopularity.length>0){
+        for(i=0;i<arrchannelpopularity.length;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrchannelpopularity[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showless3()">Show less</p>';
+    } else if(arrsearchchannel.length>0){
+        for(i=0;i<arrsearchchannel.length;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showless3()">Show less</p>';
+    } else {
+        for(i=0;i<arrchannels.length;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrchannels[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showless3()">Show less</p>';
+    }
+}
+
+function showless3(){
+    document.getElementById("listchannel_find").innerHTML = "";
+    if(arrchannelpopularity.length>0){
+        for(i=0;i<7;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrchannelpopularity[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+    } else if(arrsearchchannel.length>0){
+        for(i=0;i<7;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+    } else {
+        for(i=0;i<7;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrchannels[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+    }
+}
+
 document.getElementById("closeeditchannel").addEventListener("click",()=>{
     document.getElementById("sectioneditchannel").style = "display:none";
     document.getElementById("listchannel_find").innerHTML = "";
@@ -959,7 +1032,7 @@ function editchan(x){
     else 
         document.getElementById("sectioneditchannelblock").innerText = "Block";
     for(i=0;i<editchannel.list_modifier.length;i++){
-        document.getElementById("sectioneditchannelowners").innerHTML += '<div><p>'+editchannel.list_modifier[i]+'</p><button class="btn btn-outline-primary" onclick="deleteownerchannel('+i+')">Delete</button></div>';
+        document.getElementById("sectioneditchannelowners").innerHTML += '<div><p>'+editchannel.list_modifier[i]+'</p><button class="btn btn-outline-primary" onclick="deleteownerchannel('+i+')">Remove</button></div>';
     }
 }
 
@@ -1015,6 +1088,198 @@ function deleteownerchannel(x){
     savechangeschannel();
     document.getElementById("sectioneditchannelowners").innerHTML = '<h3>Owners</h3>';
     for(i=0;i<editchannel.list_modifier.length;i++){
-        document.getElementById("sectioneditchannelowners").innerHTML += '<div><p>'+editchannel.list_modifier[i]+'</p><button class="btn btn-outline-primary" onclick="deleteownerchannel('+i+')">Delete</button></div>';
+        document.getElementById("sectioneditchannelowners").innerHTML += '<div><p>'+editchannel.list_modifier[i]+'</p><button class="btn btn-outline-primary" onclick="deleteownerchannel('+i+')">Remove</button></div>';
+    }
+}
+
+document.getElementById("createnewCHANNEL").addEventListener("click",()=>{
+    document.getElementById("sectioncreateCHANNEL").style = "display:flex";
+    arrcreateCHANNELowners = [];
+    arrcreateCHANNELmessages = [];
+    arrcreateCHANNELownersadd = [];
+    arrcreateCHANNELowners.push(actualuser);
+});
+
+document.getElementById("closecreateCHANNEL").addEventListener("click",()=>{
+    document.getElementById("sectioncreateCHANNEL").style = "display:none";
+});
+
+document.getElementById("closeeditCHANNEL").addEventListener("click",()=>{
+    document.getElementById("sectioneditCHANNEL").style = "display:none";
+});
+
+function editCHAN(x){
+    if(arrsearchCHANNEL.length>0){
+        editCHANNEL = arrsearchCHANNEL[x];
+    } else {
+        editCHANNEL = arrCHANNELS[x];
+    }
+    document.getElementById("sectioneditCHANNEL").style = "display:flex";
+    document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<h3>Squealers</h3><button class="btn btn-outline-primary">Create</button>';
+    if(editCHANNEL.photoprofile!="")
+        document.getElementById("sectioneditCHANNELphoto").src = editCHANNEL.photoprofile;
+    else 
+        document.getElementById("sectioneditCHANNELphoto").src = "img/group_photo1.png";
+    document.getElementById("sectioneditCHANNELname").innerText = editCHANNEL.name;
+    document.getElementById("sectioneditCHANNELdescription").value = editCHANNEL.description;
+    for(i=0;i<editCHANNEL.list_posts.length;i++){
+        //document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div><p>'+editCHANNEL.list_posts[i]+'</p><button class="btn btn-outline-primary" onclick="deletesquealerCHANNEL('+i+')">Delete</button></div>';
+    }
+}
+
+function deletesquealerCHANNEL(x){
+
+    savechangesCHANNEL();
+}
+
+document.getElementById("sectioneditCHANNELdelete").addEventListener("click",()=>{
+    for(i=0;i<channels.length;i++){
+        if(channels[i]==editCHANNEL){
+            channels.splice(i,1);
+        }
+    }
+    localStorage.setItem("lista_gruppi",JSON.stringify(channels));
+    document.getElementById("sectioneditCHANNEL").style = "display:none";
+    arrCHANNELS = [];
+    for(i=0;i<channels.length;i++){
+        if(channels[i].type=="$"){
+            arrCHANNELS.push(channels[i]);
+        }
+    }
+    document.getElementById("listchannel_find").innerHTML = '';
+    arrsearchCHANNEL = arrCHANNELS;
+    if((arrsearchCHANNEL.length>0)&(arrsearchCHANNEL.length<7)){
+        for(i=0;i<arrsearchCHANNEL.length;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+    } else {
+        for(i=0;i<7;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+    }
+});
+
+document.getElementById("sectioneditCHANNELdescription").addEventListener("input",()=>{
+    editCHANNEL.description = document.getElementById("sectioneditCHANNELdescription").value;
+    savechangesCHANNEL();
+});
+
+function savechangesCHANNEL(){
+    for(i=0;i<channels.length;i++){
+        if(editCHANNEL.name==channels[i].name){
+            channels[i] = editCHANNEL;
+        }
+    }
+    localStorage.setItem("lista_gruppi",JSON.stringify(channels));
+}
+
+document.getElementById("viewCHANNELowners").addEventListener("click",()=>{
+    document.getElementById("viewCHANNELownerslist").style = "display:flex";
+    document.getElementById("viewCHANNELownerslist").innerHTML = '<h3>List owners CHANNEL</h3>';
+    for(i=0;i<arrcreateCHANNELowners.length;i++)
+        document.getElementById("viewCHANNELownerslist").innerHTML += '<div><p>'+arrcreateCHANNELowners[i].nickname+'</p><button class="btn btn-outline-primary" onclick="removeownerCHANNEL('+i+')">Remove</button></div>';
+    document.getElementById("viewCHANNELownerslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELownerslist()">Hide CHANNEL owners</button>';
+    document.getElementById("viewCHANNELowners").style = "display:none";
+});
+
+function closeCHANNELownerslist(){
+    document.getElementById("viewCHANNELownerslist").style = "display:none";
+    document.getElementById("viewCHANNELowners").style = "display:flex";
+}
+
+document.getElementById("viewCHANNELmessages").addEventListener("click",()=>{
+    document.getElementById("viewCHANNELmessageslist").style = "display:flex";
+    document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
+    if(arrcreateCHANNELmessages){
+        document.getElementById("viewCHANNELmessageslist").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no messages already added</p>';
+    }
+    //for(i=0;i<arrcreateCHANNELmessages.length;i++)
+        //document.getElementById("viewCHANNELmessageslist").innerHTML += '';
+    document.getElementById("viewCHANNELmessageslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELmessageslist()">Hide CHANNEL messages</button>';
+    document.getElementById("viewCHANNELmessages").style = "display:none";
+});
+
+function closeCHANNELmessageslist(){
+    document.getElementById("viewCHANNELmessageslist").style = "display:none";
+    document.getElementById("viewCHANNELmessages").style = "display:flex";
+}
+
+document.getElementById("addautomaticmessage").addEventListener("click",()=>{
+    if(document.getElementById("addautomaticmessage").classList.contains('collapsed')){
+        document.getElementById("addautomaticmessage").classList.remove('collapsed');
+        document.getElementById("flush-collapseOne").classList.remove('collapse');
+    } else {
+        document.getElementById("addautomaticmessage").classList.add('collapsed');
+        document.getElementById("flush-collapseOne").classList.add('collapse');
+    }
+});
+
+document.getElementById("searchaddownerCHANNEL").addEventListener("input",()=>{
+    document.getElementById("searchaddownerCHANNELlist").style = "display:flex";
+    document.getElementById("searchaddownerCHANNELlist").innerHTML = "";
+    input = document.getElementById("searchaddownerCHANNEL").value;
+    inputsearch = input.toLowerCase();
+    arrcreateCHANNELownersadd = [];
+    if(inputsearch!=""){
+        for(i=0;i<users.length;i++){
+        let user = ((users[i].nickname).slice(0,inputsearch.length)).toLowerCase();
+            if(inputsearch==user){
+                arrcreateCHANNELownersadd.push(users[i]);
+            }
+        }
+        if(arrcreateCHANNELownersadd.length>0){
+            for(i=0;i<arrcreateCHANNELownersadd.length;i++){
+                const inreceivers = arrcreateCHANNELowners.find(oggetto => {
+                    return oggetto.nickname == arrcreateCHANNELownersadd[i].nickname;
+                  });
+                if(!inreceivers){
+                    document.getElementById("searchaddownerCHANNELlist").innerHTML += '<div class="found"><p>'+arrcreateCHANNELownersadd[i].nickname+', '+arrcreateCHANNELownersadd[i].version+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="addownerCHANNEL('+i+')">Add</button></div>';
+                } else {
+                    document.getElementById("searchaddownerCHANNELlist").innerHTML += '<div class="found"><p>'+arrcreateCHANNELownersadd[i].nickname+', '+arrcreateCHANNELownersadd[i].version+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px">Added</button></div>';
+                }
+            }
+        } else {
+            document.getElementById("searchaddownerCHANNELlist").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no result for "'+inputsearch+'". Try a new search.</p>';
+        }
+    } else {
+        document.getElementById("searchaddownerCHANNELlist").style = "display:none";
+    }
+});
+
+function addownerCHANNEL(x){
+    let userselected = arrcreateCHANNELownersadd[x];
+    arrcreateCHANNELowners.push(userselected);
+    document.getElementById("viewCHANNELownerslist").innerHTML = '<h3>List owners CHANNEL</h3>';
+    for(i=0;i<arrcreateCHANNELowners.length;i++)
+        document.getElementById("viewCHANNELownerslist").innerHTML += '<div><p>'+arrcreateCHANNELowners[i].nickname+'</p><button class="btn btn-outline-primary" onclick="removeownerCHANNEL('+i+')">Remove</button></div>';
+    document.getElementById("viewCHANNELownerslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELownerslist()">Hide CHANNEL owners</button>';
+    document.getElementById("searchaddownerCHANNELlist").innerHTML = "";
+    for(i=0;i<arrcreateCHANNELownersadd.length;i++){
+        const inreceivers = arrcreateCHANNELowners.find(oggetto => {
+            return oggetto.nickname == arrcreateCHANNELownersadd[i].nickname;
+          });
+        if(!inreceivers){
+            document.getElementById("searchaddownerCHANNELlist").innerHTML += '<div class="found"><p>'+arrcreateCHANNELownersadd[i].nickname+', '+arrcreateCHANNELownersadd[i].version+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="addownerCHANNEL('+i+')">Add</button></div>';
+        } else {
+            document.getElementById("searchaddownerCHANNELlist").innerHTML += '<div class="found"><p>'+arrcreateCHANNELownersadd[i].nickname+', '+arrcreateCHANNELownersadd[i].version+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px">Added</button></div>';
+        }
+    }
+}
+
+function removeownerCHANNEL(x){
+    arrcreateCHANNELowners.splice(x,1);
+    document.getElementById("viewCHANNELownerslist").innerHTML = '<h3>List owners CHANNEL</h3>';
+    for(i=0;i<arrcreateCHANNELowners.length;i++)
+        document.getElementById("viewCHANNELownerslist").innerHTML += '<div><p>'+arrcreateCHANNELowners[i].nickname+'</p><button class="btn btn-outline-primary" onclick="removeownerCHANNEL('+i+')">Remove</button></div>';
+    document.getElementById("viewCHANNELownerslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELownerslist()">Hide CHANNEL owners</button>';
+    document.getElementById("searchaddownerCHANNELlist").innerHTML = "";
+    for(i=0;i<arrcreateCHANNELownersadd.length;i++){
+        const inreceivers = arrcreateCHANNELowners.find(oggetto => {
+            return oggetto.nickname == arrcreateCHANNELownersadd[i].nickname;
+          });
+        if(!inreceivers){
+            document.getElementById("searchaddownerCHANNELlist").innerHTML += '<div class="found"><p>'+arrcreateCHANNELownersadd[i].nickname+', '+arrcreateCHANNELownersadd[i].version+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="addownerCHANNEL('+i+')">Add</button></div>';
+        } else {
+            document.getElementById("searchaddownerCHANNELlist").innerHTML += '<div class="found"><p>'+arrcreateCHANNELownersadd[i].nickname+', '+arrcreateCHANNELownersadd[i].version+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px">Added</button></div>';
+        }
     }
 }

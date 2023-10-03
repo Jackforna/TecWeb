@@ -133,13 +133,13 @@
                     <option value="top">Top-down</option>
                     <option value="down">Down-top</option>
                 </select>
-                <button id="createnewCHANNEL" style="display:none">Create new CHANNEL</button>
+                <button class="btn btn-outline-info" id="createnewCHANNEL" style="display:none">Create new CHANNEL</button>
             </div>
             <section class="listsearch_find" id="listchannel_find"></section>
                 <section class="edithome" id="sectioneditchannel" style="display:none">
                     <button type="button" class="btn-close" aria-label="Close" id="closeeditchannel" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
                     <header>
-                        <img src="" alt="profile photo" id="sectioneditchannelphoto">
+                        <img src="" alt="channel photo" id="sectioneditchannelphoto">
                         <input type="text" id="sectioneditchannelname">
                         <button id="sectioneditchannelchangename" class="btn btn-outline-primary" style="margin-left:1em;margin-right:1em">Edit name</button>
                         <button id="sectioneditchannelblock" class="btn btn-outline-primary"></button>
@@ -147,6 +147,69 @@
                     <main id="sectioneditchannelowners">
                         <h3>Owners</h3>
                     </main>
+                </section>
+                <section class="edithome" id="sectioneditCHANNEL" style="display:none">
+                    <button type="button" class="btn-close" aria-label="Close" id="closeeditCHANNEL" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
+                    <header>
+                        <img src="" alt="CHANNEL photo" id="sectioneditCHANNELphoto">
+                        <h3 id="sectioneditCHANNELname"></h3>
+                        <button id="sectioneditCHANNELdelete" class="btn btn-outline-primary">Delete</button>
+                    </header>
+                    <textarea id="sectioneditCHANNELdescription"></textarea>
+                    <main id="sectioneditCHANNELsquealers">
+                        <h3>Squealers</h3>
+
+                    </main>
+                </section>
+                <section class="addhome flex-column position-absolute overflow-y-scroll" id="sectioncreateCHANNEL" style="display:none">
+                    <button type="button" class="btn-close" aria-label="Close" id="closecreateCHANNEL" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
+                        <header>
+                            <input type="file" alt="image new group" id="sectioncreateCHANNELphoto">
+                            <label for="sectioncreateCHANNELphoto">+</label>
+                            <input type="text" placeholder="Name CHANNEL" id="sectioncreateCHANNELname">
+                            <button class="btn btn-outline-primary m-2">Create</button>
+                        </header>
+                        <main>
+                            <textarea id="sectioneditCHANNELdescription" placeholder="Description"></textarea>
+                            <div>
+                                <label class="me-4 text-light" for="sectioncreateCHANNELsilenciable">Silenciable</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-btn">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div style="margin-top:2%; min-height:50px;">
+                                <nav class="searchfixed">
+                                    <img src="img/search.png" alt="search image">
+                                    <input type="text" id="searchaddownerCHANNEL" placeholder="Search User">
+                                </nav>
+                            </div>
+                            <section style="display:none" id="searchaddownerCHANNELlist">
+
+                            </section>
+                            <button class="btn btn-outline-info m-2" id="viewCHANNELowners">View CHANNEL owners</button>
+                            <section style="display:none" id="viewCHANNELownerslist">
+                                
+                            </section>
+                            <section class="position-relative">
+                                <div class="accordion accordion-flush" id="accordionFlushExample">
+                                    <section class="accordion-item bg-transparent m-0" style="width:100%">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed rounded-2 bg-black text-light b-0" id="addautomaticmessage" style="box-shadow:none">Add automatic message</button>
+                                        </h2>
+                                        <div id="flush-collapseOne" class="accordion-collapse collapse">
+                                            <section class="accordion-body text-light" style="width:100%">
+                                                Section new messages
+                                            </section>
+                                        </div>
+                                    </section>
+                                </div>
+                            </section>
+                            <button class="btn btn-outline-info m-2" id="viewCHANNELmessages">View CHANNEL messages</button>
+                            <section style="display:none" id="viewCHANNELmessageslist" class="position-relative">
+                                
+                            </section>
+                        </main>
                 </section>
             </section>
         </section>
