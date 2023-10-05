@@ -1514,7 +1514,10 @@ document.getElementById("linknewsqueal").addEventListener("input",()=>{
 });
 
 document.getElementById("sendnewsqueal").addEventListener("click",()=>{
-    
+    let text = document.getElementById("textnewsqueal").value;
+    let link = document.getElementById("linknewsqueal").value;
+    let img = document.getElementById("imgnewsqueal").src;
+    let position = document.getElementById("positionnewsqueal").value;
 });
 
 /*-------------------------------------Accesso fotocamera---------------------------------------------------- */
