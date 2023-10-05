@@ -29,8 +29,8 @@ const filtersqueal = document.getElementById("filtersqueal");
 
 window.onload = function() {
     for(i=0;i<arrsqueals.length;i++){
-        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body+'</p><p class="card-text">'+arrsqueals[i].location+'</p><a class="card-text" href="'+arrsqueals[i].url+'">'+arrsqueals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
-        if(arrsqueals[i].image==""){
+        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-text" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+        if(arrsqueals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
             document.getElementById("imgsquealer").style = "display:none";
         }
         if(arrsqueals[i].photoprofile==""){
@@ -303,13 +303,16 @@ document.getElementById("squealbtn").addEventListener("click",()=>{
     document.getElementById("searchsqueal").placeholder = "Search sender";
     arrsquealsdate = [];
     for(i=0;i<squeals.length;i++){
-        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body+'</p><p class="card-text">'+squeals[i].location+'</p><a class="card-text" href="'+squeals[i].url+'">'+squeals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
-        if(squeals[i].image==""){
+        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-text" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+        if(squeals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
             document.getElementById("imgsquealer").style = "display:none";
         }
         document.getElementById("imgsquealer").removeAttribute("id");
         if(squeals[i].photoprofile==""){
-            document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+            if(users.find(item => item.nickname === squeals[i].sender))
+                document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+            else 
+                document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
         }
         document.getElementById("imgprofilesquealer").removeAttribute("id");
     }
@@ -323,13 +326,16 @@ document.getElementById("filtersqueal").addEventListener("change",()=>{
         case "sender":
             document.getElementById("searchsqueal").placeholder = "Search sender";
             for(i=0;i<squeals.length;i++){
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body+'</p><p class="card-text">'+squeals[i].location+'</p><a class="card-text" href="'+squeals[i].url+'">'+squeals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
-                if(squeals[i].image==""){
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-text" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                if(squeals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(squeals[i].photoprofile==""){
-                    document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    if(users.find(item => item.nickname === squeals[i].sender))
+                        document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    else 
+                        document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -337,13 +343,16 @@ document.getElementById("filtersqueal").addEventListener("change",()=>{
         case "receiver":
             document.getElementById("searchsqueal").placeholder = "Search receiver";
             for(i=0;i<squeals.length;i++){
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body+'</p><p class="card-text">'+squeals[i].location+'</p><a class="card-text" href="'+squeals[i].url+'">'+squeals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
-                if(squeals[i].image==""){
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-text" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                if(squeals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(squeals[i].photoprofile==""){
-                    document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    if(users.find(item => item.nickname === squeals[i].sender))
+                        document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    else 
+                        document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -361,13 +370,16 @@ document.getElementById("datesqueal").addEventListener("change",()=>{
             if(datesqueal==squeals[i].date){
                 arrsquealsdate.push(squeals[i]);
                 j += 1;
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body+'</p><p class="card-text">'+squeals[i].location+'</p><a class="card-text" href="'+squeals[i].url+'">'+squeals[i].url+'</a><div class="text-center"><img src="'+squeals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+(j-1)+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
-                if(squeals[i].image==""){
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-text" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img src="'+squeals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+(j-1)+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                if(squeals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(squeals[i].photoprofile==""){
-                    document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    if(users.find(item => item.nickname === squeals[i].sender))
+                        document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    else 
+                        document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -380,13 +392,16 @@ document.getElementById("datesqueal").addEventListener("change",()=>{
                 if(datesqueal==arrsqueals[i].date){
                 arrsquealsdate.push(arrsqueals[i]);
                 j += 1;
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body+'</p><p class="card-text">'+arrsqueals[i].location+'</p><a class="card-text" href="'+arrsqueals[i].url+'">'+arrsqueals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+(j-1)+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
-                if(arrsqueals[i].image==""){
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-text" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+(j-1)+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+                if(arrsqueals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(arrsqueals[i].photoprofile==""){
-                    document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    if(users.find(item => item.nickname === arrsqueals[i].sender))
+                        document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    else 
+                        document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -432,13 +447,16 @@ document.getElementById("searchsqueal").addEventListener("input",()=>{
         }
         if(arrsqueals.length!=0){  
             for(i=0;i<arrsqueals.length;i++){
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body+'</p><p class="card-text">'+arrsqueals[i].location+'</p><a class="card-text" href="'+arrsqueals[i].url+'">'+arrsqueals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
-                if(arrsqueals[i].image==""){
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-text" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+                if(arrsqueals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(arrsqueals[i].photoprofile==""){
-                    document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    if(users.find(item => item.nickname === arrsqueals[i].sender))
+                        document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    else 
+                        document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -448,13 +466,16 @@ document.getElementById("searchsqueal").addEventListener("input",()=>{
     } else {
         arrsqueals = squeals;
         for(i=0;i<arrsqueals.length;i++){
-            document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body+'</p><p class="card-text">'+arrsqueals[i].location+'</p><a class="card-text" href="'+arrsqueals[i].url+'">'+arrsqueals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
-            if(arrsqueals[i].image==""){
+            document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-text" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+            if(arrsqueals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                 document.getElementById("imgsquealer").style = "display:none";
             }
             document.getElementById("imgsquealer").removeAttribute("id");
             if(arrsqueals[i].photoprofile==""){
-                document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                if(users.find(item => item.nickname === arrsqueals[i].sender))
+                    document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                else 
+                    document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
             }
             document.getElementById("imgprofilesquealer").removeAttribute("id");
         }
@@ -494,13 +515,16 @@ document.getElementById("closeeditsqueal").addEventListener("click", ()=>{
     document.getElementById("searchsqueal").placeholder = "Search sender";
     arrsquealsdate = [];
     for(i=0;i<squeals.length;i++){
-        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body+'</p><p class="card-text">'+squeals[i].location+'</p><a class="card-text" href="'+squeals[i].url+'">'+squeals[i].url+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].image+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
-        if(squeals[i].image==""){
+        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-text" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+        if(squeals[i].body.img=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
             document.getElementById("imgsquealer").style = "display:none";
         }
         document.getElementById("imgsquealer").removeAttribute("id");
         if(squeals[i].photoprofile==""){
-            document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+            if(users.find(item => item.nickname === squeals[i].sender))
+                document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+            else 
+                document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
         }
         document.getElementById("imgprofilesquealer").removeAttribute("id");
     }
@@ -655,7 +679,7 @@ function deletechannelreceiver(x){
 }
 
 function addchannelreceiver(x){
-    editsqueal.receivers.push(arrsquealreceiverschannels[x].type + arrsquealreceiverschannels[x].name);
+    editsqueal.receivers.push(arrsquealreceiverschannels[x]);
     savechangessqueal();
     rewritereceiverlist();
 }
@@ -1105,8 +1129,8 @@ document.getElementById("createnewCHANNEL").addEventListener("click",()=>{
     document.getElementById("sectioncreateCHANNELphoto").value = "";
     document.getElementById("sectioncreateCHANNELname").value = "";
     document.getElementById("sectioncreateCHANNELdescription").value = "";
-    document.getElementById("imgnewmessageCHANNEL").src = "";
-    document.getElementById("imgrequestnewmessageCHANNEL").src = "";
+    document.getElementById("imgnewmessageCHANNEL").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+    document.getElementById("imgrequestnewmessageCHANNEL").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     document.getElementById("textnewmessageCHANNEL").value = "";
     document.getElementById("typenewmessageCHANNEL").value = "welcome";
     document.getElementById("userrequestnewmessageCHANNEL").value = "";
@@ -1155,15 +1179,15 @@ function editCHAN(x){
     document.getElementById("sectioneditCHANNELname").innerText = editCHANNEL.name;
     document.getElementById("sectioneditCHANNELdescription").value = editCHANNEL.description;
     for(i=0;i<editCHANNEL.list_posts.length;i++){
-        //document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div><p>'+editCHANNEL.list_posts[i]+'</p><button class="btn btn-outline-primary" onclick="deletesquealerCHANNEL('+i+')">Delete</button></div>';
+        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '';
     }
 }
 
 function createnewCHANNELsqueal(){
     document.getElementById("writenewsqueal").classList.remove('d-none');
-    document.getElementById("bodynewsqueal").innerHTML = '<input type="text" class="text-light bg-transparent border-0" id="textnewsqueal" style="width:100%" placeholder="What\'re you thinking about?" required>';
+    document.getElementById("bodynewsqueal").innerHTML = "";
     document.getElementById("linknewsqueal").value = "";
-    document.getElementById("imgnewsqueal").src = "";
+    document.getElementById("imgnewsqueal").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     document.getElementById("positionnewsqueal").value = "";
 }
 
@@ -1424,10 +1448,10 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
     document.getElementById("userrequestnewmessageCHANNEL").value = "";
     document.getElementById("remindernewmessageCHANNEL").value = "day";
     document.getElementById("linknewmessageCHANNEL").value = "";
-    document.getElementById("imgnewmessageCHANNEL").src = "";
+    document.getElementById("imgnewmessageCHANNEL").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     document.getElementById("positionnewmessageCHANNEL").value = "";
     document.getElementById("linkrequestnewmessageCHANNEL").value = "";
-    document.getElementById("imgrequestnewmessageCHANNEL").src = "";
+    document.getElementById("imgrequestnewmessageCHANNEL").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     document.getElementById("positionrequestnewmessageCHANNEL").value = "";
     if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
         document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
@@ -1502,9 +1526,10 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
 });
 
 function clearnewsqueal(){
-    document.getElementById("bodynewsqueal").innerHTML = '<input type="text" class="text-light bg-transparent border-0" id="textnewsqueal" style="width:100%" placeholder="What\'re you thinking about?" required>';
+    document.getElementById("bodynewsqueal").innerHTML = "";
+    document.getElementById("textnewsqueal").value = ""
     document.getElementById("linknewsqueal").value = "";
-    document.getElementById("imgnewsqueal").src = "";
+    document.getElementById("imgnewsqueal").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     document.getElementById("positionnewsqueal").value = "";
 }
 
@@ -1539,15 +1564,22 @@ document.getElementById("sendnewsqueal").addEventListener("click",()=>{
             minutes = "0" + minutes;
         }
         let hour = data.getHours() + ":" + minutes;
-        let receivers = editCHANNEL.list_users.concat(editCHANNEL.list_modifier);
-        lista_messaggi.unshift({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
-        localStorage.setItem("lista_messaggi",JSON.stringify(lista_messaggi));
-        editcCHANNEL.list_posts.push({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
+        let receivers = [];
+        for(i=0;i<editCHANNEL.list_users.length;i++){
+            receivers.push("@" + editCHANNEL.list_users[i].nickname);
+        }
+        for(i=0;i<editCHANNEL.list_modifier.length;i++){
+            receivers.push("@" + editCHANNEL.list_modifier[i].nickname);
+        }
+        squeals.unshift({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
+        localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
+        editCHANNEL.list_posts.push({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
         document.getElementById("textnewsqueal").value = "";
         document.getElementById("linknewsqueal").value = "";
         document.getElementById("positionnewsqueal").value = "";
-        document.getElementById("imgnewsqueal").src = "";
+        document.getElementById("imgnewsqueal").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         savechangesCHANNEL();
+        document.getElementById("writenewsqueal").classList.add('d-none');
     } else {
         alert("The message is empty!");
     }
@@ -1575,7 +1607,7 @@ startButton.addEventListener('click', async () => {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         videoElement.classList.remove("d-none");
         videoElement.srcObject = stream;
-        capturedPhoto.src = "";
+        capturedPhoto.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         capturedPhoto.classList.add("d-none");
         usePhoto.classList.add("d-none");
         mediaStream = stream;
@@ -1598,6 +1630,7 @@ captureButton.addEventListener('click', () => {
         } else if(num_message==2){
             document.getElementById("imgrequestnewmessageCHANNEL").src = capturedPhoto.src;
         } else if(num_message==3){
+            document.getElementById("imgnewsqueal").src = capturedPhoto.src;
             document.getElementById("bodynewsqueal").innerHTML += '<img class="img-fluid mt-3" style="width:160px;height:120px" src="'+capturedPhoto.src+'"></img>';
         }
         capturedPhoto.classList.remove("d-none");
@@ -1610,14 +1643,14 @@ captureButton.addEventListener('click', () => {
 
 usePhoto.addEventListener("click",()=>{
     document.getElementById("access-camera").classList.add("d-none");
-    capturedPhoto.src = "";
+    capturedPhoto.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     capturedPhoto.classList.add("d-none");
     usePhoto.classList.add("d-none");
 });
 
 document.getElementById("closetakephoto").addEventListener("click",()=>{
     document.getElementById("access-camera").classList.add("d-none");
-    capturedPhoto.src = "";
+    capturedPhoto.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     capturedPhoto.classList.add("d-none");
     usePhoto.classList.add("d-none");
 });

@@ -158,7 +158,7 @@
                     </header>
                     <textarea class="text-center" id="sectioneditCHANNELdescription"></textarea>
                     <main id="sectioneditCHANNELsquealers">
-
+                        
                     </main>
                 </section>
                 <section class="addhome flex-column position-absolute overflow-y-scroll d-none" id="sectioncreateCHANNEL" style="display:none">
@@ -265,14 +265,17 @@
         <h3 class="text-light text-center mt-5 mb-4">Write new Squeal</h3>
         <div class="card bg-black border-success text-light mt-3 d-flex flex-row" style="width:80%;min-height:200px">
             <section style="width:80%">
-                <div class="card-body text-center" id="bodynewsqueal" style="width:100%;min-height:150px">
-                <input type="text" class="text-light bg-transparent border-0" id="textnewsqueal" style="width:100%" placeholder="What're you thinking about?" required>
+                <div class="card-body text-center" style="width:100%;min-height:150px">
+                <input type="text" class="text-light bg-transparent border-0" id="textnewsqueal" style="width:100%" placeholder="What're you thinking about?">
+                <div id="bodynewsqueal">
+
+                </div>
                 </div>
                 <div class="card-footer d-flex justify-content-center" style="height:50px">
                     <input type="file" class="d-none" id="linknewsqueal">
                     <label for="linknewsqueal" style="cursor:pointer;font-size:20px"><i class="bi-link-45deg me-3"></i></label>
                     <img src="" class="d-none" id="imgnewsqueal">
-                    <label for="imgnewsqueal"><i class="bi-camera me-3" style="cursor:pointer;font-size:20px" onclick="accesscamera(3)"></i></label>
+                    <label><i class="bi-camera me-3" style="cursor:pointer;font-size:20px" onclick="accesscamera(3)"></i></label>
                     <input type="text" class="d-none" id="positionnewsqueal">
                     <label for="positionnewsqueal" style="cursor:pointer;font-size:20px"><i class="bi-geo-alt me-3" onclick="getposition(3)"></i></label>
                     <label style="cursor:pointer;font-size:20px"><i class="bi-x-circle" onclick="clearnewsqueal()"></i></label>
