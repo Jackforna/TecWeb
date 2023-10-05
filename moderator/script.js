@@ -1518,6 +1518,39 @@ document.getElementById("sendnewsqueal").addEventListener("click",()=>{
     let link = document.getElementById("linknewsqueal").value;
     let img = document.getElementById("imgnewsqueal").src;
     let position = document.getElementById("positionnewsqueal").value;
+    if((text!="")|(link!="")|(img!="")|(position!="")){
+        const data = new Date();
+        let sender = editCHANNEL.name;
+        let month;
+        if((data.getMonth()+1)<10){
+            month = "0" + (data.getMonth()+1);
+        } else {
+            month = data.getMonth()+1;
+        }
+        let day;
+        if(data.getDate()<10){
+            day = "0" + data.getDate();
+        } else {
+            day = data.getDate();
+        }
+        let date = data.getFullYear() + "-" + month + "-" + day;
+        let minutes = data.getMinutes();
+        if(minutes<10){
+            minutes = "0" + minutes;
+        }
+        let hour = data.getHours() + ":" + minutes;
+        let receivers = editCHANNEL.list_users.concat(editCHANNEL.list_modifier);
+        lista_messaggi.unshift({sender:sender, body:body, date:date, hour:hour, photoprofile:"", image:"", pos_reactions:0, neg_reactions:0, url:url, location:location, category:undefined, receivers:receivers});
+        localStorage.setItem("lista_messaggi",JSON.stringify(lista_messaggi));
+        editcCHANNEL.list_posts.push();
+        document.getElementById("textnewsqueal").value = "";
+        document.getElementById("linknewsqueal").value = "";
+        document.getElementById("positionnewsqueal").value = "";
+        document.getElementById("imgnewsqueal").src = "";
+        savechangesCHANNEL();
+    } else {
+        alert("The message is empty!");
+    }
 });
 
 /*-------------------------------------Accesso fotocamera---------------------------------------------------- */
