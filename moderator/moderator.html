@@ -260,15 +260,15 @@
             </section>
         </section>
     </main>
-    <section id="writenewsqueal" class="container-fluid position-absolute flex-column bg-black overflow-y-scroll align-items-center" style="display:flex;width:100%; height:100%; top:0; left:0">
+    <section id="writenewsqueal" class="container-fluid d-none position-absolute flex-column bg-black overflow-y-scroll align-items-center" style="display:flex;width:100%; height:100%; top:0; left:0">
         <button type="button" class="btn-close" aria-label="Close" id="closewritenewsqueal" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
-        <h3 class="text-light text-center mt-5">Write new Squeal</h3>
-        <div class="card bg-black border-success text-light mt-3 d-flex flex-row" style="width:80%">
+        <h3 class="text-light text-center mt-5 mb-4">Write new Squeal</h3>
+        <div class="card bg-black border-success text-light mt-3 d-flex flex-row" style="width:80%;min-height:200px">
             <section style="width:80%">
-                <div class="card-body text-center" id="bodynewsqueal" style="width:100%">
+                <div class="card-body text-center" id="bodynewsqueal" style="width:100%;min-height:150px">
                 <input type="text" class="text-light bg-transparent border-0" id="textnewsqueal" style="width:100%" placeholder="What're you thinking about?" required>
                 </div>
-                <div class="card-footer d-flex justify-content-center">
+                <div class="card-footer d-flex justify-content-center" style="height:50px">
                     <input type="file" class="d-none" id="linknewsqueal">
                     <label for="linknewsqueal" style="cursor:pointer;font-size:20px"><i class="bi-link-45deg me-3"></i></label>
                     <img src="" class="d-none" id="imgnewsqueal">
@@ -279,7 +279,7 @@
                 </div>
             </section>
             <section class="d-flex align-items-center justify-content-center" style="width:20%;height:100%;">
-                <i class="bi-send" style="font-size:32px" id="sendnewsqueal"></i>
+                <i class="bi-send" style="font-size:32px; cursor:pointer" id="sendnewsqueal"></i>
             </section>
         </div>
     </section>

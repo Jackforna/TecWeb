@@ -1540,9 +1540,9 @@ document.getElementById("sendnewsqueal").addEventListener("click",()=>{
         }
         let hour = data.getHours() + ":" + minutes;
         let receivers = editCHANNEL.list_users.concat(editCHANNEL.list_modifier);
-        lista_messaggi.unshift({sender:sender, body:body, date:date, hour:hour, photoprofile:"", image:"", pos_reactions:0, neg_reactions:0, url:url, location:location, category:undefined, receivers:receivers});
+        lista_messaggi.unshift({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
         localStorage.setItem("lista_messaggi",JSON.stringify(lista_messaggi));
-        editcCHANNEL.list_posts.push();
+        editcCHANNEL.list_posts.push({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
         document.getElementById("textnewsqueal").value = "";
         document.getElementById("linknewsqueal").value = "";
         document.getElementById("positionnewsqueal").value = "";
