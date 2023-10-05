@@ -1179,7 +1179,7 @@ function editCHAN(x){
     document.getElementById("sectioneditCHANNELname").innerText = editCHANNEL.name;
     document.getElementById("sectioneditCHANNELdescription").value = editCHANNEL.description;
     for(i=0;i<editCHANNEL.list_posts.length;i++){
-        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '';
+        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3" style="width: 50%;"><div class="card-header" style="background-color: #141619"><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-text" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>'; 
     }
 }
 
