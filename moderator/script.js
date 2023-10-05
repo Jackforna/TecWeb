@@ -23,6 +23,8 @@ let editsqueal;
 let arrcreateCHANNELowners = [];
 let arrcreateCHANNELownersadd = [];
 let arrcreateCHANNELmessages = [];
+const CHANNELsilenceable = document.getElementById("sectioncreateCHANNELsilenceable");
+let num_message;
 const filtersqueal = document.getElementById("filtersqueal");
 
 window.onload = function() {
@@ -1093,15 +1095,45 @@ function deleteownerchannel(x){
 }
 
 document.getElementById("createnewCHANNEL").addEventListener("click",()=>{
-    document.getElementById("sectioncreateCHANNEL").style = "display:flex";
+    document.getElementById("sectioncreateCHANNEL").classList.add("d-flex");
+    document.getElementById("sectioncreateCHANNEL").classList.remove("d-none");
     arrcreateCHANNELowners = [];
     arrcreateCHANNELmessages = [];
     arrcreateCHANNELownersadd = [];
+    CHANNELsilenceable.checked = false;
     arrcreateCHANNELowners.push(actualuser);
+    document.getElementById("sectioncreateCHANNELphoto").value = "";
+    document.getElementById("sectioncreateCHANNELname").value = "";
+    document.getElementById("sectioncreateCHANNELdescription").value = "";
+    document.getElementById("imgnewmessageCHANNEL").src = "";
+    document.getElementById("imgrequestnewmessageCHANNEL").src = "";
+    document.getElementById("textnewmessageCHANNEL").value = "";
+    document.getElementById("typenewmessageCHANNEL").value = "welcome";
+    document.getElementById("userrequestnewmessageCHANNEL").value = "";
+    document.getElementById("remindernewmessageCHANNEL").value = "day";
+    document.getElementById("linknewmessageCHANNEL").value = "";
+    document.getElementById("positionnewmessageCHANNEL").value = "";
+    document.getElementById("linkrequestnewmessageCHANNEL").value = "";
+    document.getElementById("positionrequestnewmessageCHANNEL").value = "";
+    document.getElementById("searchaddownerCHANNEL").value = "";
+    document.getElementById("searchaddownerCHANNELlist").classList.add('d-none');
+    if(!document.getElementById("viewCHANNELownerslist").classList.contains('d-none')){
+        document.getElementById("viewCHANNELownerslist").classList.add('d-none');
+        document.getElementById("viewCHANNELowners").classList.remove('d-none');
+    }
+    if(!document.getElementById("addautomaticmessage").classList.contains('collapsed')){
+        document.getElementById("addautomaticmessage").classList.add('collapsed');
+        document.getElementById("flush-collapseOne").classList.add('collapse');
+    }
+    if(!document.getElementById("viewCHANNELmessageslist").classList.contains('d-none')){
+        document.getElementById("viewCHANNELmessageslist").classList.add('d-none');
+        document.getElementById("viewCHANNELmessages").classList.remove('d-none');
+    }
 });
 
 document.getElementById("closecreateCHANNEL").addEventListener("click",()=>{
-    document.getElementById("sectioncreateCHANNEL").style = "display:none";
+    document.getElementById("sectioncreateCHANNEL").classList.remove("d-flex");
+    document.getElementById("sectioncreateCHANNEL").classList.add("d-none");
 });
 
 document.getElementById("closeeditCHANNEL").addEventListener("click",()=>{
@@ -1115,7 +1147,7 @@ function editCHAN(x){
         editCHANNEL = arrCHANNELS[x];
     }
     document.getElementById("sectioneditCHANNEL").style = "display:flex";
-    document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<h3>Squealers</h3><button class="btn btn-outline-primary">Create</button>';
+    document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div><h3 class="me-3">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
     if(editCHANNEL.photoprofile!="")
         document.getElementById("sectioneditCHANNELphoto").src = editCHANNEL.photoprofile;
     else 
@@ -1126,6 +1158,18 @@ function editCHAN(x){
         //document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div><p>'+editCHANNEL.list_posts[i]+'</p><button class="btn btn-outline-primary" onclick="deletesquealerCHANNEL('+i+')">Delete</button></div>';
     }
 }
+
+function createnewCHANNELsqueal(){
+    document.getElementById("writenewsqueal").classList.remove('d-none');
+    document.getElementById("bodynewsqueal").innerHTML = '<input type="text" class="text-light bg-transparent border-0" id="textnewsqueal" style="width:100%" placeholder="What\'re you thinking about?" required>';
+    document.getElementById("linknewsqueal").value = "";
+    document.getElementById("imgnewsqueal").src = "";
+    document.getElementById("positionnewsqueal").value = "";
+}
+
+document.getElementById("closewritenewsqueal").addEventListener("click",()=>{
+    document.getElementById("writenewsqueal").classList.add('d-none');
+});
 
 function deletesquealerCHANNEL(x){
 
@@ -1173,34 +1217,45 @@ function savechangesCHANNEL(){
 }
 
 document.getElementById("viewCHANNELowners").addEventListener("click",()=>{
-    document.getElementById("viewCHANNELownerslist").style = "display:flex";
+    document.getElementById("viewCHANNELownerslist").classList.remove('d-none');
     document.getElementById("viewCHANNELownerslist").innerHTML = '<h3>List owners CHANNEL</h3>';
     for(i=0;i<arrcreateCHANNELowners.length;i++)
         document.getElementById("viewCHANNELownerslist").innerHTML += '<div><p>'+arrcreateCHANNELowners[i].nickname+'</p><button class="btn btn-outline-primary" onclick="removeownerCHANNEL('+i+')">Remove</button></div>';
     document.getElementById("viewCHANNELownerslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELownerslist()">Hide CHANNEL owners</button>';
-    document.getElementById("viewCHANNELowners").style = "display:none";
+    document.getElementById("viewCHANNELowners").classList.add('d-none');
 });
 
 function closeCHANNELownerslist(){
-    document.getElementById("viewCHANNELownerslist").style = "display:none";
-    document.getElementById("viewCHANNELowners").style = "display:flex";
+    document.getElementById("viewCHANNELownerslist").classList.add('d-none');
+    document.getElementById("viewCHANNELowners").classList.remove('d-none');
 }
 
 document.getElementById("viewCHANNELmessages").addEventListener("click",()=>{
-    document.getElementById("viewCHANNELmessageslist").style = "display:flex";
+    document.getElementById("viewCHANNELmessageslist").classList.remove('d-none');
     document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
-    if(arrcreateCHANNELmessages){
+    if(arrcreateCHANNELmessages.length==0){
         document.getElementById("viewCHANNELmessageslist").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no messages already added</p>';
     }
-    //for(i=0;i<arrcreateCHANNELmessages.length;i++)
-        //document.getElementById("viewCHANNELmessageslist").innerHTML += '';
+    for(i=0;i<arrcreateCHANNELmessages.length;i++){
+        switch(arrcreateCHANNELmessages[i].type){
+            case 'welcome':
+                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+            break;
+            case 'answer':
+                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><p class="card-text m-1 fs-6">Request: '+arrcreateCHANNELmessages[i].request.text+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+            break;
+            case 'reminder':
+                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><p class="card-text m-1 fs-6">Remind: every '+arrcreateCHANNELmessages[i].frequency+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+            break;
+        }
+    }
     document.getElementById("viewCHANNELmessageslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELmessageslist()">Hide CHANNEL messages</button>';
-    document.getElementById("viewCHANNELmessages").style = "display:none";
+    document.getElementById("viewCHANNELmessages").classList.add('d-none');
 });
 
 function closeCHANNELmessageslist(){
-    document.getElementById("viewCHANNELmessageslist").style = "display:none";
-    document.getElementById("viewCHANNELmessages").style = "display:flex";
+    document.getElementById("viewCHANNELmessageslist").classList.add('d-none');
+    document.getElementById("viewCHANNELmessages").classList.remove('d-none');
 }
 
 document.getElementById("addautomaticmessage").addEventListener("click",()=>{
@@ -1214,7 +1269,7 @@ document.getElementById("addautomaticmessage").addEventListener("click",()=>{
 });
 
 document.getElementById("searchaddownerCHANNEL").addEventListener("input",()=>{
-    document.getElementById("searchaddownerCHANNELlist").style = "display:flex";
+    document.getElementById("searchaddownerCHANNELlist").classList.remove('d-none');
     document.getElementById("searchaddownerCHANNELlist").innerHTML = "";
     input = document.getElementById("searchaddownerCHANNEL").value;
     inputsearch = input.toLowerCase();
@@ -1241,7 +1296,7 @@ document.getElementById("searchaddownerCHANNEL").addEventListener("input",()=>{
             document.getElementById("searchaddownerCHANNELlist").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no result for "'+inputsearch+'". Try a new search.</p>';
         }
     } else {
-        document.getElementById("searchaddownerCHANNELlist").style = "display:none";
+        document.getElementById("searchaddownerCHANNELlist").classList.add('d-none');
     }
 });
 
@@ -1304,5 +1359,262 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
 });
 
 document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
-    let 
+    let textmessage = document.getElementById("textnewmessageCHANNEL").value;
+    let textmessage_empty = textmessage.replace(/\s/g,"");
+    let select = document.getElementById("typenewmessageCHANNEL").value;
+    let userrequesttext = document.getElementById("userrequestnewmessageCHANNEL").value;
+    let request = userrequesttext.replace(/\s/g,"");
+    let frequencymessage = document.getElementById("remindernewmessageCHANNEL").value;
+    let link = document.getElementById("linknewmessageCHANNEL").value;
+    let photo = document.getElementById("imgnewmessageCHANNEL").src;
+    let position = document.getElementById("positionnewmessageCHANNEL").value;
+    let linkrequest = document.getElementById("linkrequestnewmessageCHANNEL").value;
+    let photorequest = document.getElementById("imgrequestnewmessageCHANNEL").src;
+    let positionrequest = document.getElementById("positionrequestnewmessageCHANNEL").value;
+    let newmessage;
+    switch(select){
+        case 'welcome':
+            if((textmessage_empty!="")|(link!="")|(photo!="")|(position!="")){
+            newmessage = {type:select, text:textmessage, link:link, photo:photo, position:position};
+            arrcreateCHANNELmessages.push(newmessage);
+            } else {
+                alert("The message is empty!");
+            }
+        break;
+        case 'answer':
+            if((textmessage_empty!="")|(link!="")|(photo!="")|(position!="")){
+                if(request!=""){
+                newmessage = {type:select, request:{text:userrequesttext, link:linkrequest, photo:photorequest, position:positionrequest}, text:textmessage, link:link, photo:photo, position:position};
+                arrcreateCHANNELmessages.push(newmessage);
+                } else {
+                    alert("User request not valid");
+                }
+            } else {
+                alert("The message is empty!");
+            }
+        break;
+        case 'reminder':
+            if((textmessage_empty!="")|(link!="")|(photo!="")|(position!="")){
+                newmessage = {type:select, frequency:frequencymessage, text:textmessage, link:link, photo:photo, position:position};
+                arrcreateCHANNELmessages.push(newmessage);
+            } else {
+                alert("The message is empty!");
+            }
+        break;
+    }
+    if(!document.getElementById("viewCHANNELmessageslist").classList.contains('d-none')){
+    document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
+        for(i=0;i<arrcreateCHANNELmessages.length;i++){
+            switch(arrcreateCHANNELmessages[i].type){
+                case 'welcome':
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+                break;
+                case 'answer':
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><p class="card-text m-1 fs-6">Request: '+arrcreateCHANNELmessages[i].request.text+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+                break;
+                case 'reminder':
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><p class="card-text m-1 fs-6">Remind: every '+arrcreateCHANNELmessages[i].frequency+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+                break;
+            }
+        }
+        document.getElementById("viewCHANNELmessageslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELmessageslist()">Hide CHANNEL messages</button>';
+    }
+    document.getElementById("textnewmessageCHANNEL").value = "";
+    document.getElementById("typenewmessageCHANNEL").value = "welcome";
+    document.getElementById("userrequestnewmessageCHANNEL").value = "";
+    document.getElementById("remindernewmessageCHANNEL").value = "day";
+    document.getElementById("linknewmessageCHANNEL").value = "";
+    document.getElementById("imgnewmessageCHANNEL").src = "";
+    document.getElementById("positionnewmessageCHANNEL").value = "";
+    document.getElementById("linkrequestnewmessageCHANNEL").value = "";
+    document.getElementById("imgrequestnewmessageCHANNEL").src = "";
+    document.getElementById("positionrequestnewmessageCHANNEL").value = "";
+    if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
+        document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
+    if(!document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
+        document.getElementById("requestnewmessageCHANNEL").classList.add('d-none');
 });
+
+function deletenewmessageCHANNEL(x){
+    arrcreateCHANNELmessages.splice(x,1);
+    document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
+        for(i=0;i<arrcreateCHANNELmessages.length;i++){
+            switch(arrcreateCHANNELmessages[i].type){
+                case 'welcome':
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+                break;
+                case 'answer':
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><p class="card-text m-1 fs-6">Request: '+arrcreateCHANNELmessages[i].request.text+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+                break;
+                case 'reminder':
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card bg-transparent border-0" style="width: 70%"><section class="card-body"><p class="card-text m-1 fs-6">Type: '+arrcreateCHANNELmessages[i].type+'</p><p class="card-text m-1 fs-6 text-center">Message: '+arrcreateCHANNELmessages[i].text+'</p><p class="card-text m-1 fs-6">Remind: every '+arrcreateCHANNELmessages[i].frequency+'</p><button class="btn btn-primary mt-2" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></section></div>';
+                break;
+            }
+        }
+    document.getElementById("viewCHANNELmessageslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELmessageslist()">Hide CHANNEL messages</button>';
+}
+
+document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
+    let photo = document.getElementById("sectioncreateCHANNELphoto").value;
+    let name = document.getElementById("sectioncreateCHANNELname").value;
+    let description = document.getElementById("sectioncreateCHANNELdescription").value;
+    let silenceable = CHANNELsilenceable.checked;
+    let list_modifier = arrcreateCHANNELowners;
+    let list_mess = arrcreateCHANNELmessages;
+    let creator = actualuser.nickname;
+    let name_empty = name.replace(/\s/g,"");
+    let Valid = true;
+    if((name_empty!="")&(name_empty.length>=3)&(description!="")&(list_modifier.length>0)&(list_mess.length>=3)){
+        for(i=0;i<channels.length;i++){
+            if(name==channels[i].name){   //per evitare che ci siano più gruppi con lo stesso nome
+                Valid = false;
+                alert("Name already used");
+            }
+        }
+        if(Valid){
+        let newCHANNEL = {creator:creator, photoprofile:photo, name:name, description:description, silenceable:silenceable, list_modifier:list_modifier, list_mess:list_mess, type:'$', list_posts:[], list_users:[]};
+        channels.push(newCHANNEL);
+        localStorage.setItem("lista_gruppi",JSON.stringify(channels));
+        alert("CHANNEL creation successfully");
+        document.getElementById("sectioncreateCHANNEL").classList.remove("d-flex");
+        document.getElementById("sectioncreateCHANNEL").classList.add("d-none");
+        document.getElementById("sectioncreateCHANNEL").innerHTML = "";
+        document.getElementById("listchannel_find").innerHTML = "";
+        for(i=0;i<channels.length;i++){
+            if(channels[i].type=="$"){
+                arrCHANNELS.push(channels[i]);
+            }
+        }
+            if((arrCHANNELS.length>0)&(arrCHANNELS.length<7)){
+                for(i=0;i<arrCHANNELS.length;i++)
+                document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+            } else if(arrCHANNELS.length==0){
+                document.getElementById("listchannel_find").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no channels already created</p>';
+            } else {
+                for(i=0;i<7;i++)
+                    document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+            }
+        }
+    } else {
+        alert("Some information are invalid or missing! Please try again.");
+    }
+});
+
+function clearnewsqueal(){
+    document.getElementById("bodynewsqueal").innerHTML = '<input type="text" class="text-light bg-transparent border-0" id="textnewsqueal" style="width:100%" placeholder="What\'re you thinking about?" required>';
+    document.getElementById("linknewsqueal").value = "";
+    document.getElementById("imgnewsqueal").src = "";
+    document.getElementById("positionnewsqueal").value = "";
+}
+
+document.getElementById("linknewsqueal").addEventListener("input",()=>{
+    if(document.getElementById("linknewsqueal").value!="");
+    document.getElementById("bodynewsqueal").innerHTML += '<p class="text-light text-start mt-3"><a  href="'+document.getElementById("linknewsqueal").value+'" style="width:100%">'+document.getElementById("linknewsqueal").value+'</a></p>';
+});
+
+document.getElementById("sendnewsqueal").addEventListener("click",()=>{
+    
+});
+
+/*-------------------------------------Accesso fotocamera---------------------------------------------------- */
+
+const videoElement = document.getElementById('webcam');
+const startButton = document.getElementById('avviaFotocamera');
+const captureButton = document.getElementById('catturaFoto');
+const canvas = document.getElementById('canvas');
+const capturedPhoto = document.getElementById('fotoCatturata');
+const usePhoto = document.getElementById('usephoto');
+let mediaStream = null;
+
+
+function accesscamera(x){
+    num_message = x;
+    document.getElementById("access-camera").classList.remove("d-none");
+    document.getElementById("access-camera").classList.add("d-flex");
+}
+
+startButton.addEventListener('click', async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoElement.classList.remove("d-none");
+        videoElement.srcObject = stream;
+        capturedPhoto.src = "";
+        capturedPhoto.classList.add("d-none");
+        usePhoto.classList.add("d-none");
+        mediaStream = stream;
+    } catch (error) {
+        console.error('Errore durante l\'accesso alla fotocamera:', error);
+    }
+});
+
+captureButton.addEventListener('click', () => {
+    if (mediaStream) {
+        // Cattura un'immagine dalla fotocamera e visualizzala su un elemento canvas
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+        // Mostra l'immagine catturata su un elemento immagine
+        capturedPhoto.src = canvas.toDataURL('image/jpeg');
+        if(num_message==1){
+            document.getElementById("imgnewmessageCHANNEL").src = capturedPhoto.src;
+        } else if(num_message==2){
+            document.getElementById("imgrequestnewmessageCHANNEL").src = capturedPhoto.src;
+        } else if(num_message==3){
+            document.getElementById("bodynewsqueal").innerHTML += '<img class="img-fluid mt-3" style="width:160px;height:120px" src="'+capturedPhoto.src+'"></img>';
+        }
+        capturedPhoto.classList.remove("d-none");
+        videoElement.classList.add("d-none");
+        usePhoto.classList.remove("d-none");
+        //blocca il mediaStream
+        mediaStream.getTracks().forEach(track => track.stop());
+    }
+});
+
+usePhoto.addEventListener("click",()=>{
+    document.getElementById("access-camera").classList.add("d-none");
+    capturedPhoto.src = "";
+    capturedPhoto.classList.add("d-none");
+    usePhoto.classList.add("d-none");
+});
+
+document.getElementById("closetakephoto").addEventListener("click",()=>{
+    document.getElementById("access-camera").classList.add("d-none");
+    capturedPhoto.src = "";
+    capturedPhoto.classList.add("d-none");
+    usePhoto.classList.add("d-none");
+});
+
+/*-------------------------------------Accesso geolocalizzazione----------------------------------------------*/
+
+function getposition(x){
+    num_message = x;
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(getLocation);
+    } else {
+        alert("Geolocation not supported on this browser.");
+    }
+}
+
+const getLocation = async (position) => {
+    let latitude = position.coords.latitude;
+    let longitude = position.coords.longitude;
+    let response = await fetch('https://nominatim.openstreetmap.org/reverse?lat='+latitude+'&lon='+longitude+'&format=json');
+
+    let data = await response.json();
+    if(data.address.house_number!=undefined){
+    var road = data.address.road + ", " + data.address.house_number;
+    } else {
+        var road = data.address.road;
+    }
+    let city = data.address.city;
+    let country = data.address.country;    
+    if(num_message==1){
+        document.getElementById("positionnewmessageCHANNEL").value += road + " " + city + " " + country;
+    } else if(num_message==2){
+        document.getElementById("positionrequestnewmessageCHANNEL").value += road + " " + city + " " + country;
+    } else if(num_message==3){
+        document.getElementById("bodynewsqueal").innerHTML += '<p class="text-light mt-3 text-start">Position: '+road + " " + city + " " + country+'</p>';
+    }
+};

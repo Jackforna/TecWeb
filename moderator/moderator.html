@@ -156,26 +156,25 @@
                         <h3 id="sectioneditCHANNELname"></h3>
                         <button id="sectioneditCHANNELdelete" class="btn btn-outline-primary">Delete</button>
                     </header>
-                    <textarea id="sectioneditCHANNELdescription"></textarea>
+                    <textarea class="text-center" id="sectioneditCHANNELdescription"></textarea>
                     <main id="sectioneditCHANNELsquealers">
-                        <h3>Squealers</h3>
 
                     </main>
                 </section>
-                <section class="addhome flex-column position-absolute overflow-y-scroll" id="sectioncreateCHANNEL" style="display:none">
+                <section class="addhome flex-column position-absolute overflow-y-scroll d-none" id="sectioncreateCHANNEL" style="display:none">
                     <button type="button" class="btn-close" aria-label="Close" id="closecreateCHANNEL" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
                         <header>
                             <input type="file" alt="image new group" id="sectioncreateCHANNELphoto">
                             <label for="sectioncreateCHANNELphoto"><i class="bi-image"></i></label>
-                            <input type="text" class="me-3" placeholder="Name CHANNEL" id="sectioncreateCHANNELname">
-                            <button class="btn btn-outline-primary m-2">Create</button>
+                            <input type="text" class="me-3" placeholder="Name CHANNEL" id="sectioncreateCHANNELname" required>
+                            <button class="btn btn-outline-primary m-2" id="btncreatenewCHANNEL">Create</button>
                         </header>
                         <main>
-                            <textarea id="sectioneditCHANNELdescription" placeholder="Description"></textarea>
+                            <textarea id="sectioncreateCHANNELdescription" placeholder="Description" required></textarea>
                             <div>
-                                <label class="me-4 text-light" for="sectioncreateCHANNELsilenciable">Silenciable</label>
+                                <p class="me-4 mt-2 text-light">Silenceable</p>
                                 <label class="switch">
-                                    <input type="checkbox" id="toggle-btn">
+                                    <input type="checkbox" id="sectioncreateCHANNELsilenceable">
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -185,11 +184,11 @@
                                     <input type="text" id="searchaddownerCHANNEL" placeholder="Search User">
                                 </nav>
                             </div>
-                            <section style="display:none" id="searchaddownerCHANNELlist">
+                            <section class="d-none" id="searchaddownerCHANNELlist">
 
                             </section>
                             <button class="btn btn-outline-info m-2" id="viewCHANNELowners">View CHANNEL owners</button>
-                            <section style="display:none" id="viewCHANNELownerslist">
+                            <section class="d-none" id="viewCHANNELownerslist">
                                 
                             </section>
                             <section class="position-relative">
@@ -213,12 +212,15 @@
                                                 <div class="card bg-black border-success text-light mt-3" style="width:80%">
                                                     <section style="width:80%">
                                                         <div class="card-body text-center" style="width:100%">
-                                                        <input type="text" class="text-light bg-transparent border-0" style="width:100%" placeholder="What're you thinking about?">
+                                                        <input type="text" class="text-light bg-transparent border-0" id="textnewmessageCHANNEL" style="width:100%" placeholder="What're you thinking about?" required>
                                                         </div>
                                                         <div class="card-footer" style="height:50px">
-                                                            <i class="bi-link-45deg me-3" style="cursor:pointer"></i>
-                                                            <i class="bi-camera me-3" style="cursor:pointer"></i>
-                                                            <i class="bi-geo-alt" style="cursor:pointer"></i>
+                                                            <input type="file" class="d-none" id="linknewmessageCHANNEL">
+                                                            <label for="linknewmessageCHANNEL" style="cursor:pointer"><i class="bi-link-45deg me-3"></i></label>
+                                                            <img src="" class="d-none" id="imgnewmessageCHANNEL">
+                                                            <label for="imgnewmessageCHANNEL"><i class="bi-camera me-3" style="cursor:pointer" onclick="accesscamera(1)"></i></label>
+                                                            <input type="text" class="d-none" id="positionnewmessageCHANNEL">
+                                                            <label for="positionnewmessageCHANNEL" style="cursor:pointer"><i class="bi-geo-alt" onclick="getposition(1)"></i></label>
                                                         </div>
                                                     </section>
                                                     <section style="width:20%">
@@ -228,12 +230,15 @@
                                                 <div class="card bg-black border-success text-light mt-3 d-none" id="requestnewmessageCHANNEL" style="width:80%">
                                                     <section style="width:80%">
                                                         <div class="card-body text-center" style="width:100%">
-                                                        <input type="text" class="text-light bg-transparent border-0" style="width:100%" placeholder="What request should the user make?">
+                                                        <input type="text" class="text-light bg-transparent border-0" id="userrequestnewmessageCHANNEL" style="width:100%" placeholder="What request should the user make?">
                                                         </div>
                                                         <div class="card-footer" style="height:50px">
-                                                            <i class="bi-link-45deg me-3" style="cursor:pointer"></i>
-                                                            <i class="bi-camera me-3" style="cursor:pointer"></i>
-                                                            <i class="bi-geo-alt" style="cursor:pointer"></i>
+                                                            <input type="file" class="d-none" id="linkrequestnewmessageCHANNEL">
+                                                            <label for="linkrequestnewmessageCHANNEL" style="cursor:pointer"><i class="bi-link-45deg me-3"></i></label>
+                                                            <img src="" class="d-none" id="imgrequestnewmessageCHANNEL">
+                                                            <label for="imgrequestnewmessageCHANNEL"><i class="bi-camera me-3" style="cursor:pointer" onclick="accesscamera(2)"></i></label>
+                                                            <input type="text" class="d-none" id="positionrequestnewmessageCHANNEL">
+                                                            <label for="positionrequestnewmessageCHANNEL" style="cursor:pointer"><i class="bi-geo-alt" onclick="getposition(2)"></i></label>
                                                         </div>
                                                     </section>
                                                     <section style="width:20%">
@@ -247,7 +252,7 @@
                                 </div>
                             </section>
                             <button class="btn btn-outline-info m-2" id="viewCHANNELmessages">View CHANNEL messages</button>
-                            <section style="display:none" id="viewCHANNELmessageslist">
+                            <section class="d-none" id="viewCHANNELmessageslist">
                                 
                             </section>
                         </main>
@@ -255,7 +260,39 @@
             </section>
         </section>
     </main>
-
+    <section id="writenewsqueal" class="container-fluid position-absolute flex-column bg-black overflow-y-scroll align-items-center" style="display:flex;width:100%; height:100%; top:0; left:0">
+        <button type="button" class="btn-close" aria-label="Close" id="closewritenewsqueal" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
+        <h3 class="text-light text-center mt-5">Write new Squeal</h3>
+        <div class="card bg-black border-success text-light mt-3 d-flex flex-row" style="width:80%">
+            <section style="width:80%">
+                <div class="card-body text-center" id="bodynewsqueal" style="width:100%">
+                <input type="text" class="text-light bg-transparent border-0" id="textnewsqueal" style="width:100%" placeholder="What're you thinking about?" required>
+                </div>
+                <div class="card-footer d-flex justify-content-center">
+                    <input type="file" class="d-none" id="linknewsqueal">
+                    <label for="linknewsqueal" style="cursor:pointer;font-size:20px"><i class="bi-link-45deg me-3"></i></label>
+                    <img src="" class="d-none" id="imgnewsqueal">
+                    <label for="imgnewsqueal"><i class="bi-camera me-3" style="cursor:pointer;font-size:20px" onclick="accesscamera(3)"></i></label>
+                    <input type="text" class="d-none" id="positionnewsqueal">
+                    <label for="positionnewsqueal" style="cursor:pointer;font-size:20px"><i class="bi-geo-alt me-3" onclick="getposition(3)"></i></label>
+                    <label style="cursor:pointer;font-size:20px"><i class="bi-x-circle" onclick="clearnewsqueal()"></i></label>
+                </div>
+            </section>
+            <section class="d-flex align-items-center justify-content-center" style="width:20%;height:100%;">
+                <i class="bi-send" style="font-size:32px" id="sendnewsqueal"></i>
+            </section>
+        </div>
+    </section>
+    <section id="access-camera" class="container-fluid position-absolute d-none flex-column bg-black overflow-y-scroll align-items-center" style="width:100%; height:100%; top:0; left:0">
+        <button type="button" class="btn-close" aria-label="Close" id="closetakephoto" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
+        <h1 class="text-light">Capture photo from webcam</h1>
+        <video id="webcam" style="max-height:300px" autoplay></video>
+        <canvas id="canvas" style="display: none"></canvas>
+        <img id="fotoCatturata" class="d-none" src="" alt="Foto Catturata" style="height:300px; width:400px">
+        <button class="btn btn-outline-primary m-3" id="avviaFotocamera">Open webcam</button>
+        <button class="btn btn-outline-primary m-3" id="catturaFoto">Take photo</button>
+        <button id="usephoto" class="btn btn-outline-primary m-3 d-none">Use photo</button>
+    </section>
     <script type="text/javascript" src="script.js"></script>
 </body>
 </html>
