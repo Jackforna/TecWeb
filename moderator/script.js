@@ -23,6 +23,7 @@ let editsqueal;
 let arrcreateCHANNELowners = [];
 let arrcreateCHANNELownersadd = [];
 let arrcreateCHANNELmessages = [];
+let list_posts = [];
 const CHANNELsilenceable = document.getElementById("sectioncreateCHANNELsilenceable");
 let num_message;
 const filtersqueal = document.getElementById("filtersqueal");
@@ -296,6 +297,7 @@ document.getElementById("squealbtn").addEventListener("click",()=>{
     document.getElementById("squealhome").style = "display:flex";
     document.getElementById("usershome").style = "display:none";
     document.getElementById("channelshome").style = "display:none";
+    document.getElementById("sectioneditsqueal").style = "display:none";
     document.getElementById("listsqueals_find").innerHTML = "";
     document.getElementById("datesqueal").value = "";
     document.getElementById("filtersqueal").value = "sender";
@@ -499,11 +501,22 @@ function editmex(x){
 
 function savechangessqueal(){
     for(i=0;i<squeals.length;i++){
-        if(editsqueal.id==squeals[i].id){
+        if((editsqueal.sender==squeals[i].sender)&(editsqueal.date==squeals[i].date)&(editsqueal.hour==squeals[i].hour)&(editsqueal.seconds==squeals[i].seconds)){
             squeals[i] = editsqueal;
         }
     }
     localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
+    for(j=0;j<channels.length;j++){
+        if(editsqueal.sender == channels[j].name){
+            if(channels[j].type=="$"){
+                editCHANNEL = channels[j];
+                edit_listposts(1);
+            } else if(channels[j].type == "&"){
+                editchannel = channels[j];
+                edit_listposts(2);
+            }
+        }
+    }
 }
 
 document.getElementById("closeeditsqueal").addEventListener("click", ()=>{
@@ -553,19 +566,23 @@ document.getElementById("sectioneditsquealreceiverssection").addEventListener("c
 
 function editpositivereactions(){
     let add = document.getElementById("editpositivereactions").value;
+    if(add!=""){
     editsqueal.pos_reactions = JSON.parse(editsqueal.pos_reactions) + parseInt(add);
     document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
     document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
     savechangessqueal();
     }
+}
 
 function editnegativereactions(){
     let add = document.getElementById("editnegativereactions").value;
+    if(add!=""){
     editsqueal.neg_reactions = JSON.parse(editsqueal.neg_reactions) + parseInt(add);
     document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
     document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
     savechangessqueal();
     }
+}
 
 document.getElementById("searchaddreceivers").addEventListener("input",()=>{
     document.getElementById("sectioneditsquealreceiverslist").innerHTML = '';
@@ -702,6 +719,12 @@ document.getElementById("channelsbtn").addEventListener("click",()=>{
     document.getElementById("searchchannel").type = "text";
     document.getElementById("listchannel_find").innerHTML = "";
     document.getElementById("filterchanneltype").value = "channels";
+    document.getElementById("sectioneditCHANNEL").style = "display:none";
+    document.getElementById("sectioneditchannel").style = "display:none";
+    if(!document.getElementById("sectioncreateCHANNEL").classList.contains("d-none")){
+        document.getElementById("sectioncreateCHANNEL").classList.add("d-none");
+        document.getElementById("sectioncreateCHANNEL").classList.remove("d-flex");
+    }
     arrchannels = [];
     arrCHANNELS = [];
     arrchannelpopularity = [];
@@ -1171,7 +1194,7 @@ function editCHAN(x){
         editCHANNEL = arrCHANNELS[x];
     }
     document.getElementById("sectioneditCHANNEL").style = "display:flex";
-    document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div><h3 class="me-3">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
+    document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div class="d-flex flex-row mb-3"><h3 class="me-3 text-light">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
     if(editCHANNEL.photoprofile!="")
         document.getElementById("sectioneditCHANNELphoto").src = editCHANNEL.photoprofile;
     else 
@@ -1179,7 +1202,7 @@ function editCHAN(x){
     document.getElementById("sectioneditCHANNELname").innerText = editCHANNEL.name;
     document.getElementById("sectioneditCHANNELdescription").value = editCHANNEL.description;
     for(i=0;i<editCHANNEL.list_posts.length;i++){
-        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style="background-color: #141619; width:100%; height:70px"><p class="card-text">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-text" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
+        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style="background-color: #141619; width:100%; height:70px"><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-text" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
     }
 }
 
@@ -1195,14 +1218,21 @@ document.getElementById("closewritenewsqueal").addEventListener("click",()=>{
     document.getElementById("writenewsqueal").classList.add('d-none');
 });
 
-function deletesquealCHANNEL(x){
+function deletesquealCHANNEL(x){        //non funziona
+    let i = squeals.length - 1;
+    while (i >= 0) {
+    if ((squeals[i].sender === editCHANNEL.list_posts[x].sender)&(squeals[i].date === editCHANNEL.list_posts[x].date)&(squeals[i].hour === editCHANNEL.list_posts[x].hour)&(squeals[i].body.text === editCHANNEL.list_posts[x].body.text)&(squeals[i].body.position === editCHANNEL.list_posts[x].body.position)&(squeals[i].body.link === editCHANNEL.list_posts[x].body.link)&(squeals[i].body.photo === editCHANNEL.list_posts[x].body.photo)&(squeals[i].pos_reactions === editCHANNEL.list_posts[x].pos_reactions)&(squeals[i].neg_reactions === editCHANNEL.list_posts[x].neg_reactions)) {
+        squeals.splice(i, 1);
+    }
+    i--;
+    }
+    localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
     editCHANNEL.list_posts.splice(x,1);
     savechangesCHANNEL();
-    document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div><h3 class="me-3">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
+    document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div class="d-flex flex-row mb-3"><h3 class="me-3 text-light">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
     for(i=0;i<editCHANNEL.list_posts.length;i++){
-        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style="background-color: #141619"><p class="card-text">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-text" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
+        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style="background-color: #141619"><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-text" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
     }
-    //eliminare lo squeal anche da lista_messaggi
 }
 
 document.getElementById("sectioneditCHANNELdelete").addEventListener("click",()=>{
@@ -1211,7 +1241,12 @@ document.getElementById("sectioneditCHANNELdelete").addEventListener("click",()=
             channels.splice(i,1);
         }
     }
+    for(i=0;i<squeals.length;i++){
+        if(editCHANNEL.name == squeals[i].sender)
+            squeals.splice(i,1);
+    }
     localStorage.setItem("lista_gruppi",JSON.stringify(channels));
+    localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
     document.getElementById("sectioneditCHANNEL").style = "display:none";
     arrCHANNELS = [];
     for(i=0;i<channels.length;i++){
@@ -1224,7 +1259,7 @@ document.getElementById("sectioneditCHANNELdelete").addEventListener("click",()=
     if((arrsearchCHANNEL.length>0)&(arrsearchCHANNEL.length<7)){
         for(i=0;i<arrsearchCHANNEL.length;i++)
             document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
-    } else {
+    } else if(arrsearchCHANNEL.length>7){
         for(i=0;i<7;i++)
             document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
         document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
@@ -1490,6 +1525,7 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
     let silenceable = CHANNELsilenceable.checked;
     let list_modifier = arrcreateCHANNELowners;
     let list_mess = arrcreateCHANNELmessages;
+    let rule = documen.getElementById("sectioncreateCHANNELrule").value;
     let creator = actualuser.nickname;
     let name_empty = name.replace(/\s/g,"");
     let Valid = true;
@@ -1501,7 +1537,7 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
             }
         }
         if(Valid){
-        let newCHANNEL = {creator:creator, photoprofile:photo, name:name, description:description, silenceable:silenceable, list_modifier:list_modifier, list_mess:list_mess, type:'$', list_posts:[], list_users:[]};
+        let newCHANNEL = {creator:creator, photoprofile:photo, name:name, rule:rule, description:description, silenceable:silenceable, list_modifier:list_modifier, list_mess:list_mess, type:'$', list_posts:[], list_users:[]};
         channels.push(newCHANNEL);
         localStorage.setItem("lista_gruppi",JSON.stringify(channels));
         alert("CHANNEL creation successfully");
@@ -1565,6 +1601,7 @@ document.getElementById("sendnewsqueal").addEventListener("click",()=>{
         }
         let date = data.getFullYear() + "-" + month + "-" + day;
         let minutes = data.getMinutes();
+        let seconds = data.getSeconds();
         if(minutes<10){
             minutes = "0" + minutes;
         }
@@ -1576,19 +1613,42 @@ document.getElementById("sendnewsqueal").addEventListener("click",()=>{
         for(i=0;i<editCHANNEL.list_modifier.length;i++){
             receivers.push("@" + editCHANNEL.list_modifier[i].nickname);
         }
-        squeals.unshift({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
+        squeals.unshift({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, seconds:seconds, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
         localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
-        editCHANNEL.list_posts.push({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
+        editCHANNEL.list_posts.unshift({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
         document.getElementById("textnewsqueal").value = "";
         document.getElementById("linknewsqueal").value = "";
         document.getElementById("positionnewsqueal").value = "";
         document.getElementById("imgnewsqueal").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         savechangesCHANNEL();
         document.getElementById("writenewsqueal").classList.add('d-none');
+        document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div class="d-flex flex-row mb-3"><h3 class="me-3 text-light">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
+        for(i=0;i<editCHANNEL.list_posts.length;i++){
+            document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style="background-color: #141619; width:100%; height:70px"><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body" style=" background-color: #141619"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-text" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.img+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" style="background-color: #141619;"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="img/reaction_positive1.png" alt=""><img src="img/reaction_positive2.png" alt=""><img src="img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="img/reaction_negative1.png" alt=""><img src="img/reaction_negative2.png" alt=""><img src="img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
+        }
     } else {
         alert("The message is empty!");
     }
 });
+
+function edit_listposts(x){
+    if(x==1){
+        editCHANNEL.list_posts = [];
+        for(i=0;i<squeals.length;i++){
+            if(editCHANNEL.name == squeals[i].sender)
+            editCHANNEL.list_posts.push(squeals[i]);
+        }
+        savechangesCHANNEL();
+    } else {
+        editchannel.list_posts = [];
+        for(i=0;i<squeals.length;i++){
+            if(editchannel.name == squeals[i].sender)
+            editchannel.list_posts.push(squeals[i]);
+        }
+        savechangeschannel();
+    }
+}
+
 
 /*-------------------------------------Accesso fotocamera---------------------------------------------------- */
 
@@ -1689,6 +1749,7 @@ const getLocation = async (position) => {
     } else if(num_message==2){
         document.getElementById("positionrequestnewmessageCHANNEL").value += road + " " + city + " " + country;
     } else if(num_message==3){
+        document.getElementById("positionnewsqueal").value = road + " " + city + " " + country;
         document.getElementById("bodynewsqueal").innerHTML += '<p class="text-light mt-3 text-start">Position: '+road + " " + city + " " + country+'</p>';
     }
 };

@@ -156,10 +156,10 @@
                         <h3 id="sectioneditCHANNELname"></h3>
                         <button id="sectioneditCHANNELdelete" class="btn btn-outline-primary">Delete</button>
                     </header>
-                    <textarea class="text-center" id="sectioneditCHANNELdescription"></textarea>
-                    <main id="sectioneditCHANNELsquealers">
+                    <textarea class="text-center" id="sectioneditCHANNELdescription" style="min-height:50px"></textarea>
+                    <section class="d-flex flex-column align-items-center" id="sectioneditCHANNELsquealers">
                         
-                    </main>
+                    </section>
                 </section>
                 <section class="addhome flex-column position-absolute overflow-y-scroll d-none" id="sectioncreateCHANNEL" style="display:none">
                     <button type="button" class="btn-close" aria-label="Close" id="closecreateCHANNEL" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
@@ -172,6 +172,14 @@
                         <main>
                             <textarea id="sectioncreateCHANNELdescription" placeholder="Description" required></textarea>
                             <div>
+                                <select class="form-select mt-0 me-4 bg-black text-light" id="sectioncreateCHANNELrule" aria-label="Default select example">
+                                    <option value="nothing" selected>No rules</option>
+                                    <option value="pos_reactions">Among the most positive reactions</option>
+                                    <option value="neg_reactions">Among the most negative reactions</option>
+                                    <option value="lot_reactions">Among the most reactions</option>
+                                    <option value="last_hour">Of the last hour</option>
+                                    <option value="last_day">Of the last day</option>
+                                </select>
                                 <p class="me-4 mt-2 text-light">Silenceable</p>
                                 <label class="switch">
                                     <input type="checkbox" id="sectioncreateCHANNELsilenceable">
