@@ -402,6 +402,7 @@ input[type="number"]::-webkit-outer-spin-button {
     justify-content: center;
     align-items: center;
     margin-right:20px;
+    overflow: hidden;
 }
 
 .addhome header input[type="text"]{
