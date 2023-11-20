@@ -1,3 +1,7 @@
+localStorage.setItem("lista_messaggi",JSON.stringify([{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Martina', position:null, photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Matteo', position:null, photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'43', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Marta', position:null, photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''}]));
+localStorage.setItem("users",JSON.stringify([{nickname:"Mario", bio:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et dignissim nulla, faucibus pretium arcu. Morbi in tellus eget orci consectetur venenatis. Maecenas iaculis magna in tortor consequat, vel maximus ''a sagittis. Suspendisse sollicitudin mattis felis. Nunc porttitor euismod enim ut maximus. Sed et felis ut odio aliquam lobortis. Praesent feugiat pharetra urna vitae varius. Nam vitae malesuada erat.", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:10}, {nickname:"Marco", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:15}, {nickname:"Maria", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:5}, {nickname:"Marta", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:3}, {nickname:"Martina", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:8}]));
+localStorage.setItem("lista_gruppi",JSON.stringify([{name:'uni_fuoricorso',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"&",list_mess:[{body:{text:'Ciao benveuto in questo gruppo!', location:'', photo:'', link:''}, type:'Welcome', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:''},{body:{text:'Position', location:'', photo:'', link:''}, type:'Answer', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:'to /position'},{body:{text:'Ciao ricordati che sei in questo gruppo!', location:'', photo:'', link:''}, type:'Reminder', remind:{every:'every month', dayMonth:'1', dayWeek:'', hour:'14:00'}, request:''}],silenceable:true,list_users:[{nickname:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Creator', block:false},{nickname:'Martina', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Modifier', block:true}], list_posts:[{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Martina', location:'', photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Matteo', location:'', photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'43', pos_reactions:0, neg_reactions:0, category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Marta', location:'', photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, category:''}], description:"", popularity:10},{name:'unibo',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"&",list_mess:[{body:{text:'Ciao benveuto in questo gruppo!', location:'', photo:'', link:''}, type:'Welcome', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:''},{body:{text:'Position', location:'', photo:'', link:''}, type:'Answer', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:' to /position'},{body:{text:'Ciao Martina. Sei in questo gruppo!', location:'', photo:'', link:''}, type:'Reminder', remind:{every:'every month', dayMonth:1, dayWeek:'', hour:'14:00'}, request:''}], silenceable:true, list_users:[{nickname:'Mario', photoprofile:'', type:'Creator', block:false}], list_posts:[], description:"", popularity:8}]));
+localStorage.setItem("actualuser",JSON.stringify({nickname:"Mario", bio:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et dignissim nulla, faucibus pretium arcu. Morbi in tellus eget orci consectetur venenatis. Maecenas iaculis magna in tortor consequat, vel maximus ''a sagittis. Suspendisse sollicitudin mattis felis. Nunc porttitor euismod enim ut maximus. Sed et felis ut odio aliquam lobortis. Praesent feugiat pharetra urna vitae varius. Nam vitae malesuada erat.", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}));
 let users = JSON.parse(localStorage.getItem("users"));
 let squeals = JSON.parse(localStorage.getItem("lista_messaggi"));
 let channels = JSON.parse(localStorage.getItem("lista_gruppi"));
@@ -848,8 +852,8 @@ document.getElementById("searchchannel").addEventListener("input",()=>{
                 break;
                 case "owner":
                     for(i=0;i<arrchannels.length;i++){
-                        for(j=0;j<arrchannels[i].list_modifier.length;j++){
-                        let channel = ((arrchannels[i].list_modifier[j]).slice(0,inputsearch.length)).toLowerCase();
+                        for(j=0;j<arrchannels[i].list_users.length;j++){
+                        let channel = ((arrchannels[i].list_users[j]).slice(0,inputsearch.length)).toLowerCase();
                             if(inputsearch==channel){
                                 arrsearchchannel.push(arrchannels[i]);
                             }
@@ -1070,7 +1074,7 @@ function editchan(x){
         editchannel = arrchannels[x];
     }
     document.getElementById("sectioneditchannel").style = "display:flex";
-    document.getElementById("sectioneditchannelowners").innerHTML = '<h3>Owners</h3>';
+    document.getElementById("sectioneditchannelowners").innerHTML = '<h3>Users</h3>';
     if(editchannel.photoprofile!="")
         document.getElementById("sectioneditchannelphoto").src = editchannel.photoprofile;
     else 
@@ -1080,8 +1084,8 @@ function editchan(x){
         document.getElementById("sectioneditchannelblock").innerText = "Unblock";
     else 
         document.getElementById("sectioneditchannelblock").innerText = "Block";
-    for(i=0;i<editchannel.list_modifier.length;i++){
-        document.getElementById("sectioneditchannelowners").innerHTML += '<div><p>'+editchannel.list_modifier[i]+'</p><button class="btn btn-outline-primary" onclick="deleteownerchannel('+i+')">Remove</button></div>';
+    for(i=0;i<editchannel.list_users.length;i++){
+        document.getElementById("sectioneditchannelowners").innerHTML += '<div><p>'+editchannel.list_users[i].nickname+'</p><button class="btn btn-outline-primary" onclick="deleteownerchannel('+i+')">Remove</button></div>';
     }
 }
 
@@ -1129,15 +1133,15 @@ document.getElementById("sectioneditchannelchangename").addEventListener("click"
 })
 
 function deleteownerchannel(x){
-    if(editchannel.list_modifier.length<2){
+    if(editchannel.list_users.length<2){
         alert("There must be at least one owner of the channel. This owner can't be deleted");
     } else {
-        editchannel.list_modifier.splice(x, 1);
+        editchannel.list_users.splice(x, 1);
     }
     savechangeschannel();
-    document.getElementById("sectioneditchannelowners").innerHTML = '<h3>Owners</h3>';
-    for(i=0;i<editchannel.list_modifier.length;i++){
-        document.getElementById("sectioneditchannelowners").innerHTML += '<div><p>'+editchannel.list_modifier[i]+'</p><button class="btn btn-outline-primary" onclick="deleteownerchannel('+i+')">Remove</button></div>';
+    document.getElementById("sectioneditchannelowners").innerHTML = '<h3>Users</h3>';
+    for(i=0;i<editchannel.list_users.length;i++){
+        document.getElementById("sectioneditchannelowners").innerHTML += '<div><p>'+editchannel.list_users[i].nickname+'</p><button class="btn btn-outline-primary" onclick="deleteownerchannel('+i+')">Remove</button></div>';
     }
 }
 
@@ -1582,13 +1586,13 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
     let name = document.getElementById("sectioncreateCHANNELname").value;
     let description = document.getElementById("sectioncreateCHANNELdescription").value;
     let silenceable = CHANNELsilenceable.checked;
-    let list_modifier = arrcreateCHANNELowners;
+    let list_users = arrcreateCHANNELowners;
     let list_mess = arrcreateCHANNELmessages;
     let rule = document.getElementById("sectioncreateCHANNELrule").value;
     let creator = actualuser.nickname;
     let name_empty = name.replace(/\s/g,"");
     let Valid = true;
-    if((name_empty!="")&(name_empty.length>=3)&(description!="")&(list_modifier.length>0)&(list_mess.length>=3)){
+    if((name_empty!="")&(name_empty.length>=3)&(description!="")&(list_users.length>0)&(list_mess.length>=3)){
         for(i=0;i<channels.length;i++){
             if(name==channels[i].name){   //per evitare che ci siano più gruppi con lo stesso nome
                 Valid = false;
@@ -1596,7 +1600,7 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
             }
         }
         if(Valid){
-        let newCHANNEL = {creator:creator, photoprofile:photo, name:name, rule:rule, description:description, silenceable:silenceable, list_modifier:list_modifier, list_mess:list_mess, type:'$', list_posts:[], list_users:[]};
+        let newCHANNEL = {creator:creator, photoprofile:photo, name:name, rule:rule, description:description, silenceable:silenceable, list_users:list_users, list_mess:list_mess, type:'$', list_posts:[]};
         channels.push(newCHANNEL);
         localStorage.setItem("lista_gruppi",JSON.stringify(channels));
         alert("CHANNEL creation successfully");
@@ -1676,8 +1680,8 @@ document.getElementById("sendnewsqueal").addEventListener("click",()=>{
         for(i=0;i<editCHANNEL.list_users.length;i++){
             receivers.push("@" + editCHANNEL.list_users[i].nickname);
         }
-        for(i=0;i<editCHANNEL.list_modifier.length;i++){
-            receivers.push("@" + editCHANNEL.list_modifier[i].nickname);
+        for(i=0;i<editCHANNEL.list_users.length;i++){
+            receivers.push("@" + editCHANNEL.list_users[i].nickname);
         }
         squeals.unshift({sender:sender, body:{text:text, link:link, img:img, position:position}, date:date, hour:hour, seconds:seconds, photoprofile:editCHANNEL.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers});
         localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
