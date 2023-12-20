@@ -1,14 +1,10 @@
-localStorage.setItem("lista_messaggi",JSON.stringify([{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Martina', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, receivers:['@Marta'], category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Matteo', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'43', pos_reactions:0, neg_reactions:0, receivers:['@Maria'], category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, receivers:['@Martina','@Maria'], category:''}]));
-localStorage.setItem("users",JSON.stringify([{nickname:"Mario", bio:"", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"moderator", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:10}, {nickname:"Marco", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', cell:'', password:'', version:"verified", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:15}, {nickname:"Maria", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:5}, {nickname:"Marta", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"SMM", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:3}, {nickname:"Martina", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"professional", blocked:false, char_d:400, char_w:2500, char_m: 9000, popularity:8}]));
-localStorage.setItem("lista_gruppi",JSON.stringify([{name:'uni_fuoricorso',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"$", rule:'nothing', list_mess:[{body:{text:'Ciao benveuto in questo gruppo!', position:[], photo:'', link:''}, type:'Welcome', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:''},{body:{text:'Position', position:[], photo:'', link:''}, type:'Answer', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:'to /position'},{body:{text:'Ciao ricordati che sei in questo gruppo!', position:[], photo:'', link:''}, type:'Reminder', remind:{every:'every month', dayMonth:'1', dayWeek:'', hour:'14:00'}, request:''}],silenceable:true, blocked:false, list_users:[{nickname:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Creator', block:false},{nickname:'Martina', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Modifier', block:true}], list_posts:[{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Martina', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Matteo', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'43', pos_reactions:0, neg_reactions:0, category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, category:''}], description:"", popularity:10},{name:'unibo',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"&", rule:'nothing', list_mess:[{body:{text:'Ciao benveuto in questo gruppo!', position:[], photo:'', link:''}, type:'Welcome', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:''},{body:{text:'Position', position:[], photo:'', link:''}, type:'Answer', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:' to /position'},{body:{text:'Ciao Martina. Sei in questo gruppo!', position:[], photo:'', link:''}, type:'Reminder', remind:{every:'every month', dayMonth:1, dayWeek:'', hour:'14:00'}, request:''}], silenceable:true, blocked:false, list_users:[{nickname:'Mario', photoprofile:'', type:'Creator', block:false}], list_posts:[], description:"", popularity:8}]));
-localStorage.setItem("actualuser",JSON.stringify({nickname:"Mario", bio:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et dignissim nulla, faucibus pretium arcu. Morbi in tellus eget orci consectetur venenatis. Maecenas iaculis magna in tortor consequat, vel maximus ''a sagittis. Suspendisse sollicitudin mattis felis. Nunc porttitor euismod enim ut maximus. Sed et felis ut odio aliquam lobortis. Praesent feugiat pharetra urna vitae varius. Nam vitae malesuada erat.", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}));
-let users = JSON.parse(localStorage.getItem("users"));
-let squeals = JSON.parse(localStorage.getItem("lista_messaggi"));
-let channels = JSON.parse(localStorage.getItem("lista_gruppi"));
-let actualuser = JSON.parse(localStorage.getItem("actualuser"));
-let arruser = users;
+let users;
+let squeals;
+let channels;
+let actualuser;
+let arruser;
 let arrusertype = [];
-let arrsqueals = squeals;
+let arrsqueals;
 let arrsquealsdate = [];
 let arrchannels = [];
 let arrsearchchannel = [];
@@ -31,34 +27,297 @@ let list_posts = [];
 const CHANNELsilenceable = document.getElementById("sectioncreateCHANNELsilenceable");
 let num_message;
 const filtersqueal = document.getElementById("filtersqueal");
-let newphotoprofile;
+let newphotoprofile = "";
 let latitude = '';
 let longitude = '';
 var inputLink = '';
 var map = null;
 var map2 = null;
 
-window.onload = function() {
-    for(i=0;i<arrsqueals.length;i++){
-        if(arrsqueals[i].body.photo===''){
-            arrsqueals[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-        }
-    }
-    for(i=0;i<arrsqueals.length;i++){
-        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
-        if(arrsqueals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
-            document.getElementById("imgsquealer").style = "display:none";
-        }
-        if(arrsqueals[i].photoprofile==""){
-            document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
-        }
-        document.getElementById("imgprofilesquealer").removeAttribute("id");
-        document.getElementById("imgsquealer").removeAttribute("id");
+async function uploadVideo(blob, fileName) {
+    const formData = new FormData();
+    const file = new File([blob], fileName, { type: 'video/mp4' });
+    formData.append('file', file);
+  
+    try {
+      const response = await fetch('http://localhost:8080/upload', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Errore di upload: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      return result.filePath; 
+    } catch (error) {
+      console.error('Errore durante l\'upload del video:', error);
     }
 }
 
+async function uploadImage(blob, fileName) {
+    const formData = new FormData();
+    // Crea un File dal Blob
+    const file = new File([blob], fileName, { type: 'image/jpeg' });
+    formData.append('file', file);
+  
+    try {
+      const response = await fetch('http://localhost:3000/upload', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Errore di upload: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      return result.filePath;
+    } catch (error) {
+      console.error('Errore durante l\'upload dell\'immagine:', error);
+    }
+}
+
+/*     //script da usare per salvare un video e un'immagine
+let videoBlob; // Il tuo Blob va qui
+let fileName = 'mioVideo.mp4'; // Scegli un nome di file per il video
+
+uploadVideo(videoBlob, fileName)
+  .then(filePath => {
+    if (filePath) {
+      console.log('Video caricato con successo. Percorso:', filePath);
+      // Qui potresti voler aggiungere il video all'interfaccia utente
+      // video.src = filePath;
+    }
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+
+// Supponiamo che questa sia la tua Data URL ottenuta da toDataURL()
+let imageDataUrl = canvas.toDataURL('image/jpeg'); // Usa il tipo MIME appropriato
+
+// Converti la Data URL in un Blob
+let imageBlob = dataURLtoBlob(imageDataUrl);
+
+// Ora puoi usare la funzione uploadImage come prima, passando il Blob e un nome file
+let fileName = 'immagineCaricata.jpeg'; // Scegli un nome file
+uploadImage(imageBlob, fileName).then(filePath => {
+  // Gestisci il percorso del file restituito come necessario
+  img.src = filePath;
+}).catch(error => {
+  console.error(error);
+});
+  */
+
+function getActualUser(){
+    let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
+    fetch(`http://localhost:8080/get-user/${actualUserId}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        actualuser = data;
+        console.log(actualuser);
+    })
+    .catch(error => {
+        console.error('Errore nella richiesta:', error);
+    });
+}
+
+window.onload = function() {
+    fetch('http://localhost:8080/get-users')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        users = data;
+        console.log(users);
+        arruser = users;
+    })
+    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+
+    getActualUser();
+
+    fetch('http://localhost:8080/get-listSqueals')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        squeals = data.reverse();
+        console.log(squeals);
+        arrsqueals = squeals;
+        for(i=0;i<arrsqueals.length;i++){
+            if(arrsqueals[i].body.photo===''){
+                arrsqueals[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            }
+        }
+        for(i=0;i<arrsqueals.length;i++){
+            let videoURL = "";
+            if(arrsqueals[i].body.video instanceof Blob){
+                videoURL = URL.createObjectURL(arrsqueals[i].body.video);
+                console.log(videoURL);
+            }
+            if(arrsqueals[i].channel=="")
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+            else
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+' from '+arrsqueals[i].channel+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+            if(arrsqueals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
+                document.getElementById("imgsquealer").style = "display:none";
+            }
+            if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
+            if(arrsqueals[i].photoprofile==""){
+                if(arrsqueals[i].channel=="")
+                    document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
+                else 
+                    document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
+            }
+            document.getElementById("imgprofilesquealer").removeAttribute("id");
+            document.getElementById("imgsquealer").removeAttribute("id");
+        }
+    })
+    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+
+    fetch('http://localhost:8080/get-listChannels')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        channels = data;
+        console.log(channels);
+    })
+    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+}
+
+function updateUsers(updatedUsers) {
+    fetch('http://localhost:8080/update-users', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUsers)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+        })
+        .then(data => {
+            getActualUser();
+            console.log(data);
+        })
+    .catch(error => {
+        console.error('Errore nella richiesta:', error);
+    });
+}
+
+function updateSqueals(updatedSqueals) {
+    fetch('http://localhost:8080/update-squeals', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedSqueals)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+    .catch(error => {
+        console.error('Errore nella richiesta:', error);
+    });
+}
+
+function updateChannels(updatedChannels) {
+    fetch('http://localhost:8080/update-channels', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedChannels)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+    .catch(error => {
+        console.error('Errore nella richiesta:', error);
+    });
+}
+
+function addSqueal(squealData) {
+    fetch('http://localhost:8080/add-squeal', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(squealData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+}
+
+function addChannel(channelData) {
+    fetch('http://localhost:8080/add-channel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(channelData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+}
+
 document.getElementById("gotosquealer").addEventListener("click",()=>{      //fare collegamento con squealer app
-    window.location.href = "";
+    window.location.href = "http://localhost:8080/squealer-app";
 });
 
 document.getElementById("usersbtn").addEventListener("click",()=>{
@@ -166,7 +425,7 @@ document.getElementById("filterusertype").addEventListener("change",()=>{
             for(i=0;i<arruser.length;i++){
                 switch(filterusertype){
                     case 'user':
-                        if((arruser[i].version=='normal')|(arruser[i].version=='verified')|(arruser[i].version=='professional')){
+                        if((arruser[i].version=='user')|(arruser[i].version=='normal')|(arruser[i].version=='verified')|(arruser[i].version=='professional')){
                             arrusertype.push(arruser[i]);
                         }
                     break;
@@ -279,6 +538,7 @@ function addchardaily(){
     let add = document.getElementById("sectionedituserdailyinsert").value;
     edit.char_d = JSON.parse(edit.char_d) + parseInt(add);
     document.getElementById("sectionedituserdaily").innerText = "Remaining daily characters: "+edit.char_d;
+    document.getElementById("sectionedituserdailyinsert").value = "";
     savechangesuser();
 }
 
@@ -286,6 +546,7 @@ function addcharweekly(){
     let add = document.getElementById("sectionedituserweeklyinsert").value;
     edit.char_w = JSON.parse(edit.char_w) + parseInt(add);
     document.getElementById("sectionedituserweekly").innerText = "Remaining daily characters: "+edit.char_w;
+    document.getElementById("sectionedituserweeklyinsert").value = "";
     savechangesuser();
 }
 
@@ -293,6 +554,7 @@ function addcharmonthly(){
     let add = document.getElementById("sectioneditusermonthlyinsert").value;
     edit.char_m = JSON.parse(edit.char_m) + parseInt(add);
     document.getElementById("sectioneditusermonthly").innerText = "Remaining daily characters: "+edit.char_m;
+    document.getElementById("sectioneditusermonthlyinsert").value = "";
     savechangesuser();
 }
 
@@ -313,7 +575,7 @@ function savechangesuser(){
             users[i] = edit;
         }
     }
-    localStorage.setItem("users",JSON.stringify(users));
+    updateUsers(users);
 }
 
 document.getElementById("closeedituser").addEventListener("click", ()=>{
@@ -339,16 +601,26 @@ document.getElementById("squealbtn").addEventListener("click",()=>{
         }
     }
     for(i=0;i<squeals.length;i++){
-        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+        let videoURL = "";
+            if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
+                videoURL = URL.createObjectURL(squeals[i].body.video);
+            }
+        if(squeals[i].channel=="")
+            document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+        else 
+            document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+' from '+squeals[i].channel+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
         if(squeals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
             document.getElementById("imgsquealer").style = "display:none";
         }
+        if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
         document.getElementById("imgsquealer").removeAttribute("id");
         if(squeals[i].photoprofile==""){
-            if(users.find(item => item.nickname === squeals[i].sender))
-                document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
-            else 
-                document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
+            if(squeals[i].channel=="")
+                    document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
+                else 
+                    document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
         }
         document.getElementById("imgprofilesquealer").removeAttribute("id");
     }
@@ -367,16 +639,26 @@ document.getElementById("filtersqueal").addEventListener("change",()=>{
                 }
             }
             for(i=0;i<squeals.length;i++){
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer" ><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                let videoURL = "";
+                if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
+                    videoURL = URL.createObjectURL(squeals[i].body.video);
+                }
+                if(squeals[i].channel=="")
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                else 
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+' from '+squeals[i].channel+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
                 if(squeals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
+                if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                    document.getElementById("recordedVideosquealer").classList.remove("d-none");
+                document.getElementById("recordedVideosquealer").removeAttribute("id");
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(squeals[i].photoprofile==""){
-                    if(users.find(item => item.nickname === squeals[i].sender))
-                        document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
-                    else 
-                        document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
+                    if(squeals[i].channel=="")
+                    document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
+                else 
+                    document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -389,16 +671,26 @@ document.getElementById("filtersqueal").addEventListener("change",()=>{
                 }
             }
             for(i=0;i<squeals.length;i++){
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                let videoURL = "";
+                if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
+                    videoURL = URL.createObjectURL(squeals[i].body.video);
+                }
+                if(squeals[i].channel=="")
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                else 
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+' from '+squeals[i].channel+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
                 if(squeals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
+                if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                    document.getElementById("recordedVideosquealer").classList.remove("d-none");
+                document.getElementById("recordedVideosquealer").removeAttribute("id");
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(squeals[i].photoprofile==""){
-                    if(users.find(item => item.nickname === squeals[i].sender))
-                        document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
-                    else 
-                        document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
+                    if(squeals[i].channel=="")
+                    document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
+                else 
+                    document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -423,16 +715,26 @@ document.getElementById("datesqueal").addEventListener("change",()=>{
             if(datesqueal==squeals[i].date){
                 arrsquealsdate.push(squeals[i]);
                 j += 1;
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+(j-1)+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                let videoURL = "";
+                if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
+                    videoURL = URL.createObjectURL(squeals[i].body.video);
+                }
+                if(squeals[i].channel=="")
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+                else 
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+' from '+squeals[i].channel+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
                 if(squeals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
+                if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                    document.getElementById("recordedVideosquealer").classList.remove("d-none");
+                document.getElementById("recordedVideosquealer").removeAttribute("id");
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(squeals[i].photoprofile==""){
-                    if(users.find(item => item.nickname === squeals[i].sender))
-                        document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
-                    else 
-                        document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
+                    if(squeals[i].channel=="")
+                    document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
+                else 
+                    document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -450,16 +752,26 @@ document.getElementById("datesqueal").addEventListener("change",()=>{
                 if(datesqueal==arrsqueals[i].date){
                 arrsquealsdate.push(arrsqueals[i]);
                 j += 1;
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+(j-1)+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+                let videoURL = "";
+                if((arrsqueals[i].body.video instanceof Blob)&(arrsqueals[i].body.video!=window.location.href)){
+                    videoURL = URL.createObjectURL(arrsqueals[i].body.video);
+                }
+                if(arrsqueals[i].channel=="")
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+                else
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+' from '+arrsqueals[i].channel+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
                 if(arrsqueals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
+                if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                    document.getElementById("recordedVideosquealer").classList.remove("d-none");
+                document.getElementById("recordedVideosquealer").removeAttribute("id");
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(arrsqueals[i].photoprofile==""){
-                    if(users.find(item => item.nickname === arrsqueals[i].sender))
-                        document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    if(arrsqueals[i].channel=="")
+                    document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
                     else 
-                        document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
+                        document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -481,7 +793,7 @@ document.getElementById("searchsqueal").addEventListener("input",()=>{
         if(filtersqueal.value=="sender"){
             for(i=0;i<squeals.length;i++){
                 let mex = ((squeals[i].sender).slice(0,inputsearch.length)).toLowerCase();
-                if(searchsqueal==mex){
+                if(inputsearch==mex){
                     const inreceivers = arrsqueals.find(oggetto => {
                         return oggetto == squeals[i];
                       });
@@ -493,7 +805,7 @@ document.getElementById("searchsqueal").addEventListener("input",()=>{
             for(i=0;i<squeals.length;i++){
                 for(j=0;j<squeals[i].receivers.length;j++){
                     let mex = ((squeals[i].receivers[j]).slice(1,(inputsearch.length+1))).toLowerCase();
-                    if(searchsqueal==mex){
+                    if(inputsearch==mex){
                         const inreceivers = arrsqueals.find(oggetto => {
                             return oggetto == squeals[i];
                           });
@@ -510,16 +822,26 @@ document.getElementById("searchsqueal").addEventListener("input",()=>{
                 }
             } 
             for(i=0;i<arrsqueals.length;i++){
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+                let videoURL = "";
+                if((arrsqueals[i].body.video instanceof Blob)&(arrsqueals[i].body.video!=window.location.href)){
+                    videoURL = URL.createObjectURL(arrsqueals[i].body.video);
+                }
+                if(arrsqueals[i].channel=="")
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+                else
+                    document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+' from '+arrsqueals[i].channel+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
                 if(arrsqueals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                     document.getElementById("imgsquealer").style = "display:none";
                 }
+                if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                    document.getElementById("recordedVideosquealer").classList.remove("d-none");
+                document.getElementById("recordedVideosquealer").removeAttribute("id");
                 document.getElementById("imgsquealer").removeAttribute("id");
                 if(arrsqueals[i].photoprofile==""){
-                    if(users.find(item => item.nickname === arrsqueals[i].sender))
-                        document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
+                    if(arrsqueals[i].channel=="")
+                        document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
                     else 
-                        document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
+                        document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
                 }
                 document.getElementById("imgprofilesquealer").removeAttribute("id");
             }
@@ -534,13 +856,23 @@ document.getElementById("searchsqueal").addEventListener("input",()=>{
             }
         }
         for(i=0;i<arrsqueals.length;i++){
-            document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text">'+arrsqueals[i].date+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+            let videoURL = "";
+                if((arrsqueals[i].body.video instanceof Blob)&(arrsqueals[i].body.video!=window.location.href)){
+                    videoURL = URL.createObjectURL(arrsqueals[i].body.video);
+                }
+            if(arrsqueals[i].channel=="")
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+            else
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+' from '+arrsqueals[i].channel+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
             if(arrsqueals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                 document.getElementById("imgsquealer").style = "display:none";
             }
+            if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
             document.getElementById("imgsquealer").removeAttribute("id");
             if(arrsqueals[i].photoprofile==""){
-                if(users.find(item => item.nickname === arrsqueals[i].sender))
+                if(arrsqueals[i].channel=="")
                     document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
                 else 
                     document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
@@ -573,9 +905,21 @@ function savechangessqueal(){
     for(i=0;i<squeals.length;i++){
         if((editsqueal.sender==squeals[i].sender)&(editsqueal.date==squeals[i].date)&(editsqueal.hour==squeals[i].hour)&(editsqueal.seconds==squeals[i].seconds)){
             squeals[i] = editsqueal;
+            if(squeals[i].channel!=""){
+                for(j=0; j<channels.length; j++){
+                    if(channels[j].name==squeals[i].channel){
+                        for(k=0; k<channels[j].list_posts.length; k++){
+                            if((editsqueal.sender==channels[j].list_posts[k].sender)&(editsqueal.date==channels[j].list_posts[k].date)&(editsqueal.hour==channels[j].list_posts[k].hour)&(editsqueal.seconds==channels[j].list_posts[k].seconds)){
+                                channels[j].list_posts[k] = editsqueal;
+                                updateChannels(channels);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
-    localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
+    updateSqueals(squeals);
     for(j=0;j<channels.length;j++){
         if(editsqueal.sender == channels[j].name){
             if(channels[j].type=="$"){
@@ -603,16 +947,26 @@ document.getElementById("closeeditsqueal").addEventListener("click", ()=>{
         }
     }
     for(i=0;i<squeals.length;i++){
-        document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text">'+squeals[i].date+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+        let videoURL = "";
+        if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
+            videoURL = URL.createObjectURL(squeals[i].body.video);
+        }
+        if(squeals[i].channel=="")
+            document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
+        else 
+            document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%;"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+' from '+squeals[i].channel+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+squeals[i].body.position+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
         if(squeals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
             document.getElementById("imgsquealer").style = "display:none";
         }
+        if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
         document.getElementById("imgsquealer").removeAttribute("id");
         if(squeals[i].photoprofile==""){
-            if(users.find(item => item.nickname === squeals[i].sender))
-                document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
-            else 
-                document.getElementById("imgprofilesquealer").src = "img/group_photo1.png";
+            if(squeals[i].channel=="")
+                    document.getElementById("imgprofilesquealer").src = "../img/profile_photo1.png";
+                else 
+                    document.getElementById("imgprofilesquealer").src = "../img/group_photo1.png";
         }
         document.getElementById("imgprofilesquealer").removeAttribute("id");
     }
@@ -1186,7 +1540,7 @@ function savechangeschannel(){
             channels[i] = editchannel;
         }
     }
-    localStorage.setItem("lista_gruppi",JSON.stringify(channels));
+    updateChannels(channels);
 }
 
 document.getElementById("sectioneditchannelchangename").addEventListener("click",()=>{
@@ -1234,7 +1588,7 @@ document.getElementById("createnewCHANNEL").addEventListener("click",()=>{
     arrcreateCHANNELownersadd = [];
     CHANNELsilenceable.checked = false;
     arrcreateCHANNELowners.push(actualuser);
-    document.getElementById("sectioncreateCHANNELphotoimg").src = "../node_modules/bootstrap-icons/icons/image.svg";
+    document.getElementById("sectioncreateCHANNELphotoimg").src = "img/image.svg";
     document.getElementById("sectioncreateCHANNELphotoimg").style = "filter:invert(1); width:30px; height:30px";
     document.getElementById("sectioncreateCHANNELname").value = "";
     document.getElementById("sectioncreateCHANNELdescription").value = "";
@@ -1287,9 +1641,16 @@ function editCHAN(x){
     document.getElementById("sectioneditCHANNELname").innerText = editCHANNEL.name;
     document.getElementById("sectioneditCHANNELdescription").value = editCHANNEL.description;
     for(i=0;i<editCHANNEL.list_posts.length;i++){
+        let videoURL = "";
+            if((editCHANNEL.list_posts[i].body.video instanceof Blob)&(editCHANNEL.list_posts[i].body.video!=window.location.href)){
+                videoURL = URL.createObjectURL(editCHANNEL.list_posts[i].body.video);
+            }
         if(editCHANNEL.list_posts[i].body.photo=="")
             editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style=" width:100%; height:70px"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
+        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style=" width:100%; height:70px"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height: 150px;"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
+        if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
         document.getElementById("imgsquealer").removeAttribute("id");
         if(editCHANNEL.list_posts[i].photoprofile=="")
             document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
@@ -1314,19 +1675,26 @@ document.getElementById("closewritenewsqueal").addEventListener("click",()=>{
 function deletesquealCHANNEL(x){
     let i = squeals.length - 1;
     while (i >= 0) {
-        if ((squeals[i].sender === editCHANNEL.list_posts[x].sender)&(squeals[i].date === editCHANNEL.list_posts[x].date)&(squeals[i].hour === editCHANNEL.list_posts[x].hour)&(squeals[i].body.text === editCHANNEL.list_posts[x].body.text)&(squeals[i].body.position === editCHANNEL.list_posts[x].body.position)&(squeals[i].body.link === editCHANNEL.list_posts[x].body.link)&(squeals[i].body.photo === editCHANNEL.list_posts[x].body.photo)&(squeals[i].pos_reactions === editCHANNEL.list_posts[x].pos_reactions)&(squeals[i].neg_reactions === editCHANNEL.list_posts[x].neg_reactions)) {
+        if ((squeals[i].sender === editCHANNEL.list_posts[x].sender)&(squeals[i].date === editCHANNEL.list_posts[x].date)&(squeals[i].hour === editCHANNEL.list_posts[x].hour)&(squeals[i].seconds === editCHANNEL.list_posts[x].seconds)) {
             squeals.splice(i, 1);
         }
         i--;
     }
-    localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
+    updateSqueals(squeals);
     editCHANNEL.list_posts.splice(x,1);
     savechangesCHANNEL();
     document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div class="d-flex flex-row mb-3"><h3 class="me-3 text-light">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
     for(i=0;i<editCHANNEL.list_posts.length;i++){
+        let videoURL = "";
+            if((editCHANNEL.list_posts[i].body.video instanceof Blob)&(editCHANNEL.list_posts[i].body.video!=window.location.href)){
+                videoURL = URL.createObjectURL(editCHANNEL.list_posts[i].body.video);
+            }
         if(editCHANNEL.list_posts[i].body.photo=="")
             editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
+        document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height: 150px;"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
+        if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
         document.getElementById("imgsquealer").removeAttribute("id");
         if(editCHANNEL.list_posts[i].photoprofile=="")
             document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
@@ -1344,8 +1712,8 @@ document.getElementById("sectioneditCHANNELdelete").addEventListener("click",()=
         if(editCHANNEL.name == squeals[i].sender)
             squeals.splice(i,1);
     }
-    localStorage.setItem("lista_gruppi",JSON.stringify(channels));
-    localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
+    updateChannels(channels);
+    updateSqueals(squeals);
     document.getElementById("sectioneditCHANNEL").style = "display:none";
     arrCHANNELS = [];
     for(i=0;i<channels.length;i++){
@@ -1376,7 +1744,7 @@ function savechangesCHANNEL(){
             channels[i] = editCHANNEL;
         }
     }
-    localStorage.setItem("lista_gruppi",JSON.stringify(channels));
+    updateChannels(channels);
 }
 
 document.getElementById("viewCHANNELowners").addEventListener("click",()=>{
@@ -1400,17 +1768,24 @@ document.getElementById("viewCHANNELmessages").addEventListener("click",()=>{
         document.getElementById("viewCHANNELmessageslist").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no messages already added</p>';
     }
     for(i=0;i<arrcreateCHANNELmessages.length;i++){
+        let videoURL = "";
+            if((arrcreateCHANNELmessages[i].body.video instanceof Blob)&(arrcreateCHANNELmessages[i].body.video!=window.location.href)){
+                videoURL = URL.createObjectURL(arrcreateCHANNELmessages[i].body.video);
+            }
         switch(arrcreateCHANNELmessages[i].type){
             case 'welcome':
-                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
             case 'answer':
-                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></d><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
             case 'reminder':
-                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></d><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
         }
+        if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
         if(arrcreateCHANNELmessages[i].body.position.length!=0){
             var mapId = 'map-' + i;
             document.getElementById("mapmess").id = mapId;
@@ -1568,7 +1943,7 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
     }
 });
 
-document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
+document.getElementById("addnewmessageCHANNEL").addEventListener("click", async()=>{
     let textmessage = document.getElementById("textnewmessageCHANNEL").value;
     let textmessage_empty = textmessage.replace(/\s/g,"");
     let select = document.getElementById("typenewmessageCHANNEL").value;
@@ -1587,14 +1962,17 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
     if(longitude!=""){
     position[1] = longitude;
     }
+    let video = "";
+    if(document.getElementById("videonewmessageCHANNEL").src!=window.location.href)
+        video = await fetchBlobFromUrl(document.getElementById("videonewmessageCHANNEL").src);
     document.getElementById("map").classList.add("d-none");
     document.getElementById("map").innerHTML = '<button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletemap()"><i class="bi-x" style="font-size:20px"></i></button><button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>';
     document.getElementById("linknewmessageCHANNEL").innerHTML = '';
     let newmessage;
     switch(select){
         case 'welcome':
-            if((textmessage_empty!="")|(link!="")|(photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")|(position.length!=0)){
-            newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, body:{text:textmessage, link:link, photo:photo, position:position}};
+            if((textmessage_empty!="")|(link!="")|(video!="")|(photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")|(position.length!=0)){
+            newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, body:{text:textmessage, link:link, photo:photo, position:position, video:video}};
             arrcreateCHANNELmessages.push(newmessage);
             } else {
                 alert("The message is empty!");
@@ -1603,7 +1981,7 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
         case 'answer':
             if((textmessage_empty!="")|(link!="")|(photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")|(position.length!=0)){
                 if(request!=""){
-                newmessage = {type:select, request:userrequesttext, remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, body:{text:textmessage, link:link, photo:photo, position:position}};
+                newmessage = {type:select, request:userrequesttext, remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, body:{text:textmessage, link:link, photo:photo, position:position, video:video}};
                 arrcreateCHANNELmessages.push(newmessage);
                 } else {
                     alert("User request not valid");
@@ -1623,7 +2001,7 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
                 } else if(frequencymessage=="every month"){
                     dayMonth = date.getDate()+1;
                 }
-                newmessage = {type:select, request:"", remind:{every:frequencymessage, dayWeek:dayWeek, dayMonth:dayMonth, hour:hour}, frequency:frequencymessage, body:{text:textmessage, link:link, photo:photo, position:position}};
+                newmessage = {type:select, request:"", remind:{every:frequencymessage, dayWeek:dayWeek, dayMonth:dayMonth, hour:hour}, frequency:frequencymessage, body:{text:textmessage, link:link, photo:photo, position:position, video:video}};
                 arrcreateCHANNELmessages.push(newmessage);
             } else {
                 alert("The message is empty!");
@@ -1633,17 +2011,24 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
     if(!document.getElementById("viewCHANNELmessageslist").classList.contains('d-none')){
     document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
         for(i=0;i<arrcreateCHANNELmessages.length;i++){
+            let videoURL = "";
+            if((arrcreateCHANNELmessages[i].body.video instanceof Blob)&(arrcreateCHANNELmessages[i].body.video!=window.location.href)){
+                videoURL = URL.createObjectURL(arrcreateCHANNELmessages[i].body.video);
+            }
             switch(arrcreateCHANNELmessages[i].type){
                 case 'welcome':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
                 case 'answer':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></d><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
                 case 'reminder':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></d><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
             }
+            if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
                 if(arrcreateCHANNELmessages[i].body.position.length!=0){
                     var mapId = 'map-' + i;
                     document.getElementById("mapmess").id = mapId;
@@ -1669,6 +2054,8 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click",()=>{
     longitude = "";
     position = [];
     document.getElementById("photonewmessage").innerHTML = "";
+    document.getElementById("videonewmessageCHANNEL").src = "";
+    document.getElementById("videonewmessage").innerHTML = "";
     document.getElementById("map").innerHTML = "";
     document.getElementById("inputrequestnewmessageCHANNEL").innerHTML = "";
     if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
@@ -1686,17 +2073,25 @@ function deletenewmessageCHANNEL(x){
     arrcreateCHANNELmessages.splice(x,1);
     document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
         for(i=0;i<arrcreateCHANNELmessages.length;i++){
+            let videoURL = "";
+            if((arrcreateCHANNELmessages[i].body.video instanceof Blob)&(arrcreateCHANNELmessages[i].body.video!=window.location.href)){
+                videoURL = URL.createObjectURL(arrcreateCHANNELmessages[i].body.video);
+                console.log(videoURL);
+            }
             switch(arrcreateCHANNELmessages[i].type){
                 case 'welcome':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
                 case 'answer':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></d><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
                 case 'reminder':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></d><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="width: 70%; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><section id="mapmess" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px"></section><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
             }
+            if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
             if(arrcreateCHANNELmessages[i].body.position.length!=0){
                 var mapId = 'map-' + i;
                 document.getElementById("mapmess").id = mapId;
@@ -1740,7 +2135,7 @@ document.getElementById("takephotoCHANNEL").addEventListener("click", ()=>{
 
 document.getElementById("deletephotoCHANNEL").addEventListener("click", ()=>{
     document.getElementById("sectioncreateCHANNELphototype").classList.add("d-none");
-    newphotoprofile = "../node_modules/bootstrap-icons/icons/image.svg";
+    newphotoprofile = "img/image.svg";
     document.getElementById("sectioncreateCHANNELphotoimg").src = newphotoprofile;
     document.getElementById("sectioncreateCHANNELphotoimg").style = "filter:invert(1); height:30px; width:30px";
 });
@@ -1766,7 +2161,7 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
         if(Valid){
         let newCHANNEL = {creator:creator, photoprofile:photo, photoprofileX:0, photoprofileY:0, name:name, rule:rule, description:description, silenceable:silenceable, list_users:list_users, list_mess:list_mess, type:'$', list_posts:[], popularity:0};
         channels.push(newCHANNEL);
-        localStorage.setItem("lista_gruppi",JSON.stringify(channels));
+        addChannel(newCHANNEL);
         alert("CHANNEL creation successfully");
         document.getElementById("sectioncreateCHANNEL").classList.remove("d-flex");
         document.getElementById("sectioncreateCHANNEL").classList.add("d-none");
@@ -1793,13 +2188,17 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
     }
 });
 
-document.getElementById("sendnewsqueal").addEventListener("click",()=>{
+document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
     let text = document.getElementById("textnewsqueal").value;
     let link = '';
     if(document.getElementById("linknewsqueal").innerHTML!=''){
         link = document.getElementById("linknewsquealhref").href;
     }
     let img = document.getElementById("imgnewsqueal").src;
+    let video = "";
+    if(document.getElementById("videonewsquealCHANNEL").src!=window.location.href)
+        video = await fetchBlobFromUrl(document.getElementById("videonewsquealCHANNEL").src);
+    console.log(document.getElementById("videonewsquealCHANNEL").src);                     
     let position = [];
     if(latitude!=""){
     position[0] = latitude;
@@ -1807,7 +2206,7 @@ document.getElementById("sendnewsqueal").addEventListener("click",()=>{
     if(longitude!=""){
     position[1] = longitude;
     }
-    if((text!="")|(link!="")|(img!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")|(position.length!=0)){
+    if((text!="")|(link!="")|(video!="")|(img!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")|(position.length!=0)){
         const data = new Date();
         let sender = actualuser.nickname
         let channel = editCHANNEL.name;
@@ -1832,28 +2231,35 @@ document.getElementById("sendnewsqueal").addEventListener("click",()=>{
         let hour = data.getHours() + ":" + minutes;
         let receivers = [];
         for(i=0;i<editCHANNEL.list_users.length;i++){
-            receivers.push("@" + editCHANNEL.list_users[i].nickname);
+            if(editCHANNEL.list_users[i].nickname!=actualuser.nickname)
+                receivers.push("@" + editCHANNEL.list_users[i].nickname);
         }
-        for(i=0;i<editCHANNEL.list_users.length;i++){
-            receivers.push("@" + editCHANNEL.list_users[i].nickname);
-        }
-        squeals.unshift({sender:sender, body:{text:text, link:link, photo:img, position:position}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers, channel:channel});
-        localStorage.setItem("lista_messaggi",JSON.stringify(squeals));
-        editCHANNEL.list_posts.unshift({sender:sender, body:{text:text, link:link, photo:img, position:position}, date:date, hour:hour, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers, channel:channel});
+        squeals.unshift({sender:sender, body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers, channel:channel});
+        addSqueal({sender:sender, body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers, channel:channel});
+        editCHANNEL.list_posts.unshift({sender:sender, body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers, channel:channel});
         document.getElementById("photonewsqueal").innerHTML = '';
         document.getElementById("linknewsqueal").innerHTML = '';
         if(!document.getElementById("mapnewsqueal").classList.contains('d-none'));
             document.getElementById("mapnewsqueal").classList.add('d-none');
         document.getElementById("mapnewsqueal").innerHTML = '<button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletemap()"><i class="bi-x" style="font-size:20px"></i></button><button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>';
         document.getElementById("imgnewsqueal").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        document.getElementById("videonewsquealCHANNEL").src = "";
+        document.getElementById("videonewsqueal").innerHTML = "";
+        document.getElementById("textnewsqueal").value = "";
         savechangesCHANNEL();
         document.getElementById("writenewsqueal").classList.add('d-none');
         document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div class="d-flex flex-row mb-3"><h3 class="me-3 text-light">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
         for(i=0;i<editCHANNEL.list_posts.length;i++){
             if(editCHANNEL.list_posts[i].body.photo=="")
                 editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-            document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style="width:100%; height:70px"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
+            let videoURL = "";
+            if((arrsqueals[i].body.video instanceof Blob)&(arrsqueals[i].body.video!=window.location.href))
+                videoURL = URL.createObjectURL(arrsqueals[i].body.video);
+            document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column" style="width: 50%;"><div class="card-header" style="width:100%; height:70px"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+editCHANNEL.list_posts[i].body.position+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height: 150px;"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
             document.getElementById("imgsquealer").removeAttribute("id");
+            if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                document.getElementById("recordedVideosquealer").classList.remove("d-none");
+            document.getElementById("recordedVideosquealer").removeAttribute("id");
             if(editCHANNEL.list_posts[i].photoprofile=="")
                 document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
             document.getElementById("imgprofilesquealer").removeAttribute("id");
@@ -1966,6 +2372,15 @@ document.getElementById("closetakephoto").addEventListener("click",()=>{
     usePhoto.classList.add("d-none");
 });
 
+function dataURLtoBlob(dataurl) {
+    let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], {type:mime});
+  }
+
 /*-------------------------------------Accesso geolocalizzazione----------------------------------------------*/
 
 function getposition(x){
@@ -2014,4 +2429,112 @@ function deletemap() {
 function openGoogleMaps() {
     var url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     window.open(url, '_blank');
+}
+
+/*--------------------------------------------accesso videocamera--------------------------------------------*/
+
+let preview = document.getElementById('preview');
+let startButtonVideo = document.getElementById('startRecording');
+let stopButtonVideo = document.getElementById('stopRecording');
+let recordedVideo = document.getElementById('recordedVideo');
+
+let mediaRecorder;
+let chunks = [];
+let stream;
+let blob;
+
+function accessvideo(x){
+    num_message = x;
+    document.getElementById("access-video").classList.remove("d-none");
+    document.getElementById("access-video").classList.add("d-flex");
+    if(preview.classList.contains("d-none")){
+        stopButtonVideo.classList.add("d-none");
+        preview.classList.remove("d-none");
+        startButtonVideo.classList.remove("d-none");
+        document.getElementById("usevideo").classList.add("d-none");
+        recordedVideo.classList.add("d-none");
+        recordedVideo.src = "";
+    }
+}
+
+document.getElementById("closetakevideo").addEventListener("click", () =>{
+    document.getElementById("access-video").classList.add("d-none");
+    document.getElementById("access-video").classList.remove("d-flex");
+})
+
+document.getElementById("usevideo").addEventListener("click", () =>{
+    if(num_message==1){
+        document.getElementById("videonewmessageCHANNEL").src = recordedVideo.src;
+        document.getElementById("videonewmessage").innerHTML = '<video src="'+recordedVideo.src+'" class="rounded" alt="..." style="width:100%; height:100%" controls></video><button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletevideo(1)"><i class="bi-x" style="font-size:20px"></i></button>';
+    } else if(num_message==3){
+        document.getElementById("videonewsqueal").innerHTML += '<video src="'+recordedVideo.src+'" class="rounded" alt="..." style="width:100%; height:100%" controls></video><button style="position: absolute; top: 10px; right: 10px; color:white; background-color: red; border-radius:8px; border:0" onclick="deletevideo(3)"><i class="bi-x" style="font-size:20px"></i></button>';
+        document.getElementById("videonewsquealCHANNEL").src = recordedVideo.src;
+    }
+    document.getElementById("access-video").classList.add("d-none");
+    document.getElementById("access-video").classList.remove("d-flex");
+})
+
+function deletevideo(x){
+    if(x==1){
+        document.getElementById("videonewmessageCHANNEL").src = "";
+        document.getElementById("videonewmessage").innerHTML = "";
+    } else if(x==3){
+        document.getElementById("videonewsquealCHANNEL").src = "";
+        document.getElementById("videonewsqueal").innerHTML = "";
+    }
+}
+
+
+startButtonVideo.onclick = async function() {
+    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio:true });
+    mediaRecorder = new MediaRecorder(stream);
+    preview.srcObject = stream;
+    chunks = [];
+    recordedVideo.src = "";
+
+    mediaRecorder.ondataavailable = function(e) {
+        if (e.data.size > 0)
+            chunks.push(e.data);
+    };
+
+    if (mediaRecorder && mediaRecorder.state !== 'recording') {
+        mediaRecorder.start(300);
+        if(preview.classList.contains("d-none")){
+            preview.classList.remove("d-none");
+            document.getElementById("usevideo").classList.add("d-none");
+            document.getElementById("recordedVideo").classList.add("d-none");
+        }
+        startButtonVideo.classList.add("d-none");
+        stopButtonVideo.classList.remove("d-none");
+    }
+};
+
+stopButtonVideo.onclick = function() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        stopButtonVideo.classList.add("d-none");
+        preview.classList.add("d-none");
+        startButtonVideo.classList.remove("d-none");
+        document.getElementById("usevideo").classList.remove("d-none");
+        document.getElementById("recordedVideo").classList.remove("d-none");
+        blob = new Blob(chunks, { 'type' : mediaRecorder.mimeType || 'video/mp4' });
+        chunks = [];
+        let videoURL = URL.createObjectURL(blob);
+        recordedVideo.src = videoURL;
+        recordedVideo.load();
+        stream.getTracks().forEach(track => track.stop());
+    }
+};
+
+async function fetchBlobFromUrl(blobUrl) {
+    try {
+        const response = await fetch(blobUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const blob = await response.blob();
+        return blob;
+    } catch (error) {
+        console.error('Error fetching Blob from URL:', error);
+    }
 }

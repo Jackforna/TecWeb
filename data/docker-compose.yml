@@ -6,9 +6,12 @@ services:
     restart: always
     container_name: my-mongo-container
     volumes:
-      - ./data:/data/db
+      - data:/data/db
     ports:
-      - 8080:27017
+      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+volumes:
+  data:
+    driver: local

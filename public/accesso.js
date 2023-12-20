@@ -1,4 +1,3 @@
-const dbUrl = 'mongodb://localhost:27017/mymongo-container';
 const formsign = document.getElementById("formsign");
 const formcell = document.getElementById("formcell");
 let sign = true;
@@ -6,27 +5,54 @@ let security = false;
 let actualuser;
 var range;
 let access = false;
+let users;
 
+fetch('http://localhost:8080/get-users')
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.json();
+})
+.then(data => {
+    users = data;
+})
+.catch(error => console.error('There has been a problem with your fetch operation:', error));
 
-if(!localStorage.users){
-    const user = [{
-        nickname : "Jack",
-        photoprofile : "",
-        fullname : "CEO",
-        email: "giacomo.fornaciari@studio.unibo.it",
-        cell: "3333122042",      
-        password : "Fenice13!",
-        version : "moderator",      //versione di squealer dell'utente
-        blocked : false,            //se l'utente è stato bloccato da un moderator
-        popularity : 0,
-        char_d : 300,      //caratteri disponibili al giorno
-        char_w : 2000,     //caratteri disponibili a settimana
-        char_m : 7000,     //caratteri disponibili al mese
-    }]
-    localStorage.setItem("users",JSON.stringify(user));
+function addUser(userData) {
+    fetch('http://localhost:8080/add-user', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
 }
 
-let users = JSON.parse(localStorage.getItem("users"));
+function getUserById(id) {
+    fetch(`http://localhost:8080/get-user/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return(data);
+        })
+        .catch(error => {
+            console.error('Errore nella richiesta:', error);
+        });
+}
 
 const requirements = [
     {regex: /.{8,}/, index: 0},     //minimo di 8 caratteri
@@ -116,25 +142,23 @@ function login(x){
             if((nickname==users[i].nickname)&(password==users[i].password)){
                 valid = true;
                 actualuser = users[i];
-                console.log(actualuser);
-                localStorage.setItem("actualuser",JSON.stringify(actualuser));
+                localStorage.setItem("actualUserId", JSON.stringify(actualuser._id));
             }
         }
         if(valid){
             if(actualuser.blocked!=true){
-                let version = actualuser.version;
-                switch(version){
+                switch(actualuser.version){
                     case "user":
-                        window.location.href = 'Squealer app/public/index.html';
+                        window.location.href = 'http://localhost:8080/squealer-app';
                     break;
                     case "SMM":
-                        window.location.href = 'SMM/index.html';
+                        
                     break;
                     case "moderator":
-                        window.location.href = 'moderator.html';
+                        window.location.href = 'http://localhost:8080/moderator';
                     break;
                     default:
-                        window.location.href = 'Squealer app/public/index.html';
+                        
                     break;
                 }
             } else {
@@ -152,9 +176,9 @@ function login(x){
         if(!valid){
             if(security){
             users.push({nickname : nickname, photoprofile : "", email : email, password : password, fullname : fullname, cell : "", version : type, blocked : false, popularity : 0, char_d : 300, char_w : 2000,char_m : 7000});
-            localStorage.setItem("users",JSON.stringify(users));
+            addUser({nickname : nickname, photoprofile : "", email : email, password : password, fullname : fullname, cell : "", version : type, blocked : false, popularity : 0, char_d : 300, char_w : 2000,char_m : 7000});
             actualuser = users[users.length-1];
-            localStorage.setItem("actualuser",JSON.stringify(actualuser));
+            localStorage.setItem("actualUserId", JSON.stringify(actualuser._id));
             switch(type){
                 case "user":
                     window.location.href = 'Squealer app/public/index.html';
@@ -201,13 +225,13 @@ document.getElementById("infopassword").addEventListener("mouseout", ()=>{
 });
 
 document.getElementById("notsign").addEventListener("click", ()=>{
-    window.location.href="index.html";
-    actualuser = "not sign";
-    localStorage.setItem("actualuser",JSON.stringify(actualuser));
+    window.location.href = "http://localhost:8080/squealer-app";
+    actualuser = "1";
+    localStorage.setItem("actualUserId", JSON.stringify(actualuser));
 });
 
 document.getElementById("notsigncell").addEventListener("click", ()=>{
-    window.location.href="index.html";
-    actualuser = "not sign";
-    localStorage.setItem("actualuser",JSON.stringify(actualuser));
+    window.location.href = "http://localhost:8080/squealer-app";
+    actualuser = "1";
+    localStorage.setItem("actualUserId", JSON.stringify(actualuser));
 });

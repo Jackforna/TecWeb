@@ -166,7 +166,7 @@
                     <button type="button" class="btn-close" aria-label="Close" id="closecreateCHANNEL" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
                         <header>
                             <input type="button" class="d-none" id="sectioncreateCHANNELphoto">
-                            <label for="sectioncreateCHANNELphoto" style="display:flex; align-items: center; justify-content: center;"><i class="bi-image" id="sectioncreateCHANNELphotoimg"></i></label>
+                            <label for="sectioncreateCHANNELphoto" style="position:relative; display:flex; align-items: center; justify-content: center;"><img src="img/image.svg" id="sectioncreateCHANNELphotoimg" style="filter:invert(1); height:30px; width:30px"></label>
                             <input type="text" class="me-3" placeholder="Name CHANNEL" id="sectioncreateCHANNELname" required>
                             <button class="btn btn-outline-primary m-2" id="btncreatenewCHANNEL">Create</button>
                         </header>
@@ -229,12 +229,15 @@
                                                                 <button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>
                                                             </section>
                                                             <div style="width:200px; max-height:150px" id="photonewmessage"></div>
+                                                            <div style="width:200px; max-height:150px; position:relative" class="mt-2" id="videonewmessage"></div>
                                                             <div id="linknewmessageCHANNEL" style="width:100%"></div>
                                                         </div>
                                                         <div class="card-footer" style="height:50px">
                                                             <label style="cursor:pointer" onclick="showModal(1)"><i class="bi-link-45deg me-3"></i></label>
                                                             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="d-none" id="imgnewmessageCHANNEL">
                                                             <label style="cursor:pointer"><i class="bi-camera me-3" onclick="accesscamera(1)"></i></label>
+                                                            <video src="" class="d-none" id="videonewmessageCHANNEL"></video>
+                                                            <label style="cursor:pointer"><i class="bi-camera-video me-3" onclick="accessvideo(1)"></i></label>
                                                             <label style="cursor:pointer"><i class="bi-geo-alt me-3" onclick="getposition(1)"></i></label>
                                                         </div>
                                                     </section>
@@ -303,12 +306,15 @@
                         <button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>
                     </section>
                     <div style="width:200px; max-height:150px; position:relative" class="mt-2" id="photonewsqueal"></div>
+                    <div style="width:200px; max-height:150px; position:relative" class="mt-2" id="videonewsqueal"></div>
                     <div id="linknewsqueal" style="width:100%; text-align: left;"></div>
                 </div>
                 <div class="card-footer d-flex justify-content-center" style="height:50px">
                     <label style="cursor:pointer" onclick="showModal(3)"><i class="bi-link-45deg me-3"></i></label>
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="d-none" id="imgnewsqueal">
                     <label style="cursor:pointer"><i class="bi-camera me-3" onclick="accesscamera(3)"></i></label>
+                    <video src="" class="d-none" id="videonewsquealCHANNEL"></video>
+                    <label style="cursor:pointer"><i class="bi-camera-video me-3" onclick="accessvideo(3)"></i></label>
                     <label style="cursor:pointer"><i class="bi-geo-alt me-3" onclick="getposition(3)"></i></label>
                 </div>
             </section>
@@ -326,6 +332,15 @@
         <button class="btn btn-outline-primary m-3" id="avviaFotocamera">Open webcam</button>
         <button class="btn btn-outline-primary m-3 d-none" id="catturaFoto">Take photo</button>
         <button id="usephoto" class="btn btn-outline-primary m-3 d-none">Use photo</button>
+    </section>
+    <section id="access-video" class="container-fluid position-absolute d-none flex-column bg-black overflow-y-scroll align-items-center" style="width:100%; height:100%; top:0; left:0; z-index:1001">
+        <button type="button" class="btn-close" aria-label="Close" id="closetakevideo" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1)"></button>
+        <h1 class="text-light mt-3">Capture video from webcam</h1>
+        <video id="preview" style="max-height:300px" autoplay></video>
+        <video id="recordedVideo" controls class="d-none"></video>
+        <button id="startRecording" class="btn btn-outline-primary m-3">Start Video</button>
+        <button id="stopRecording" class="btn btn-outline-primary m-3 d-none">Stop Video</button>
+        <button id="usevideo" class="btn btn-outline-primary m-3 d-none">Use video</button>
     </section>
     <script type="text/javascript" src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
