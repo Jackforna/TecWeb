@@ -17,6 +17,12 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'accesso.html'));
 });
 
+/*Angular main page access*/
+app.use('/SMM', express.static(path.join(__dirname, 'SMM-angular/dist')));
+app.get('/SMM/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'SMM-angular/dist', 'index.html'));
+});
+
 app.get('/moderator', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'moderator.html'));
 });

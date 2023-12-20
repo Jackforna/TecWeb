@@ -1,0 +1,109 @@
+<body>
+    <!-- post-input.component.html -->
+    <mat-card class="post-input-container">
+        <mat-card-header>
+            <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
+        <div class="custom-select-wrapper">
+            <select>
+            <option value="squeal" selected>Squeal</option>
+            <option value="channel">Channel</option>
+            </select>
+        </div>
+        <div class="custom-select-wrapper">
+            <select>
+              <option value="public" selected>Public</option>
+              <option value="private">Private</option>
+            </select>
+        </div>
+        <span class="character-counter">{{ remainingChars }}</span>
+        </mat-card-header>
+        
+        <div class="post-content">
+            <div class="post-textarea">
+                <textarea 
+                    placeholder="A cosa stai pensando?" 
+                    [attr.maxlength]="charLeftUser"
+                    (input)="updateCharLeftUser($event)"
+                    [(ngModel)]="userText" 
+                    (click)="setCursorAtStart($event)">
+                </textarea>
+            </div>
+        </div>
+
+        <!-- Image container -->
+        <div *ngIf="sentImageUrl" class="sent-image-container">
+            <div class="image-with-close">
+              <img [src]="sentImageUrl" alt="Immagine inviata" class="sent-image" />
+              <span class="close-icon" (click)="removeSentImage()">&#10006;</span>
+            </div>
+        </div>
+
+        <!-- Link container -->
+        <div *ngIf="sentLink" class="sent-link-container">
+            <a [href]="sentLink" target="_blank">{{ sentLink }}</a>
+            <span class="remove-link-icon" (click)="removeSentLink()">&#10006;</span>
+        </div>
+
+        <!-- Map container -->
+        <div *ngIf="isMapActive" id="leaflet-map-container">
+            <div id="leaflet-map" style="height: 300px;"></div>
+            <button class="close-map-button" (click)="removeMap()">&#10006;</button>
+        </div>
+          
+          
+        <mat-card-actions>
+            <div class="input-icons">
+                <button class="icon-button" (click)="openLinkDialog()"><i class="material-icons">attach_file</i></button>
+                <button class="icon-button" (click)="openCameraDialog()"><i class="material-icons">photo_camera</i></button>
+                <button class="icon-button" (click)="getUserLocation()"><i class="material-icons">place</i></button>
+                <button class="icon-button" (click)="openMapModal()"><i class="material-icons">pin_drop</i></button>
+                <button class="icon-button send-icon"><i class="material-icons">send</i></button>
+            </div>              
+        </mat-card-actions>
+
+        <!--Modale camera-->
+        <div class="camera-modal" *ngIf="showCameraModal">
+            <div class="camera-modal-content">
+              <h2>Carica o Scatta una Foto</h2>
+              <video #videoElement width="300px" height="300px" style="display:block; width: 300px; height: 300px;"></video>
+              <canvas #canvasElement width="300px" height="300px" style="display:none; width: 300px; height: 300px;"></canvas>
+                <div class = "camera-modal-buttons">
+                    <button class="icon-button" (click)="capturePhoto()"><i class="material-icons">photo_camera</i></button>
+                    <label for="file-input" class="icon-button">
+                        <i class="material-icons">file_upload</i>
+                    </label>
+                    <input type="file" id="file-input" accept="image/*,video/*,.gif" (change)="onFileSelected($event)" hidden>                    
+                    <button class="icon-button" (click)="closeCameraModal()"><i class="material-icons">close</i></button>
+                    <button class="icon-button send-icon" (click)="sendImage()"><i class="material-icons">send</i></button>
+                </div>
+            </div>
+        </div>
+
+        <!--Modale link-->
+        <div class="link-modal" *ngIf="showLinkModal">
+            <div class="link-modal-content">
+            <h2>Inserisci Link</h2>
+            <input type="text" [(ngModel)]="linkInput" placeholder="Inserisci il tuo link qui">
+            <div class="modal-actions">
+                <button (click)="closeLinkModal()">Chiudi</button>
+                <button (click)="validateAndSendLink()">Invia</button>
+            </div>
+            </div>
+        </div>
+
+        <!--Modale mappa custom-->
+        <div class="map-modal" *ngIf="showMapModal">
+            <div class="map-modal-content">
+            <h2>Scegli la Posizione</h2>
+            <div id="map-container" style="height: 400px;"></div>
+            <button (click)="confirmLocation()">Conferma Posizione</button>
+            <button (click)="closeMapModal()">Chiudi</button>
+            </div>
+        </div>
+  
+          
+  
+
+    </mat-card>
+  
+</body>

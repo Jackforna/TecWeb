@@ -1,0 +1,354 @@
+body{
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vh; 
+  height: auto;
+  margin-bottom: 15%;
+}
+
+
+app-create-message .post-input-container {
+  margin-bottom: 10%;
+}
+
+/* post-input.component.css */
+.post-input-container {
+  width: 70%;
+  margin-top: 4%;
+  margin-bottom: 10%;
+}
+
+.user-avatar {
+  background-size: cover;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background-position: center; /* Centra l'immagine di sfondo */
+  background-repeat: no-repeat; /* Impedisce la ripetizione dell'immagine */
+}  
+
+  .custom-select-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-left: 2%;
+      margin-right: 2%
+    }
+  
+    .custom-select-wrapper select {
+      padding: 5px 15px;
+      border-radius: 20px;
+      border-color: black;
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.2); /* Semi-trasparente */
+      color: black;
+      font-size: 16px;
+    }
+  
+    /* Icona della freccia personalizzata */
+    .custom-select-wrapper::after {
+      content: '\25BC';
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      color: white;
+      pointer-events: none;
+    }
+
+    .post-content {
+      width: 100%;
+      padding: 10px;
+  }
+  
+  .post-textarea {
+      margin-top: 4%;
+      margin-left: 2%;
+      width: 90%;
+      height: 120px;
+      position: relative; /* Aggiunto per il posizionamento assoluto della textarea all'interno */
+  }
+  
+  .post-textarea textarea {
+      resize: none; /* Impedisce il ridimensionamento */
+      width: 100%; /* Larghezza al 100% del contenitore */
+      height: 100%; /* Altezza al 100% del contenitore */
+      padding: 10px; /* Aggiunge un po' di spazio interno */
+      box-sizing: border-box; /* Include padding e bordo nella larghezza e altezza */
+      border: 1px solid #ccc; /* Aggiunge un bordo leggero alla textarea */
+      border-radius: 4px; /* Bordo leggermente arrotondato */
+      font-size: 1em; /* Dimensione del testo */
+  }
+  
+  
+  .character-counter {
+      margin-left: auto; /* sposta il contatore di caratteri a destra */
+  }
+
+
+.input-icons {
+display: flex;
+align-items: center; /* Allinea verticalmente le icone */
+justify-content: flex-start; /* Allinea le icone all'inizio */
+width: 100%; /* Assicurati che il contenitore abbia una larghezza completa */
+margin-left: 2%;
+}
+
+.icon-button {
+background: none;
+border: none;
+cursor: pointer;
+padding: 5px; /* Aggiungi un po' di spazio intorno alle icone */
+margin-right: 2%;
+}
+
+.icon-button i.material-icons {
+color: black; /* Cambia questo colore come preferisci */
+font-size: 24px; /* O la dimensione che preferisci */
+}
+
+.send-icon {
+margin-left: auto; /* Spinge il pulsante 'send' a destra */
+}
+
+/*Modale camera*/
+
+.camera-modal {
+display: flex;
+justify-content: center;
+align-items: center;
+position: fixed;
+z-index: 1000;
+left: 10%;
+top: 0;
+width: 100%; /* Larghezza al 100% della viewport */
+height: 100%; /* Altezza al 100% della viewport */
+overflow: auto;
+background-color: rgba(0, 0, 0, 0.4);
+}
+
+.camera-modal-content {
+background-color: #fefefe;
+padding: 20px;
+border: 1px solid #888;
+width: auto;
+max-width: 500px;
+margin: auto; /* Centrato orizzontalmente */
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+animation-name: animatetop;
+animation-duration: 0.4s;
+/* Mantiene le proporzioni dell'immagine e la dimensione corretta all'interno del canvas */
+object-fit: contain;
+/* Imposta la dimensione massima del canvas per mantenere le proporzioni */
+max-width: 100%;
+max-height: 100%;
+}
+
+
+/*Gestione foto nel messaggio*/
+.sent-image-container {
+  position: relative;
+  width: 300px; /* Larghezza fissa del contenitore dell'immagine */
+  height: 300px; /* Altezza fissa del contenitore dell'immagine */
+  margin-left: 4%;
+  margin-top: 1%;
+  overflow: hidden; /* Nasconde le parti dell'immagine che eccedono il contenitore */
+}
+
+.image-with-close {
+  position: relative;
+  width: 100%; /* Usa l'intera larghezza del contenitore */
+  height: 100%; /* Usa l'intera altezza del contenitore */
+}
+
+.sent-image {
+  width: 100%; /* Larghezza dell'immagine si adatta alla larghezza del contenitore */
+  height: 100%; /* Altezza dell'immagine si adatta all'altezza del contenitore */
+  object-fit: cover; /* Copre il contenitore mantenendo le proporzioni */
+}
+
+.close-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: red;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 24px;
+  user-select: none;
+}
+
+/*Modale link*/
+.link-modal {
+display: flex;
+justify-content: center;
+align-items: center;
+position: fixed;
+z-index: 1000;
+left: 10%;
+top: 0;
+width: 100%;
+height: 100%;
+overflow: auto;
+background-color: rgba(0, 0, 0, 0.4);
+}
+
+.link-modal-content {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+background-color: #fefefe;
+padding: 20px;
+border: 1px solid #888;
+width: 100%;
+max-width: 500px;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+text-align: center;
+}
+
+.link-modal-content input {
+width: 80%;
+padding: 10px;
+margin-bottom: 10px;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+font-size: 1em;
+}
+
+.close-icon {
+position: absolute;
+top: 15px;
+right: 15px;
+color: red;
+cursor: pointer;
+font-weight: bold;
+font-size: 24px;
+user-select: none;
+}
+
+.sent-link-container {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-top: 2%; /* Regola secondo il tuo layout */
+margin-left: 4%;
+padding: 0px;
+background-color: transparent; /* Sfondo per il contenitore del link */
+border-radius: 4px;
+}
+
+.sent-link-container a {
+margin-right: 10px; /* Spazio tra il link e l'icona 'X' */
+overflow: hidden; /* Previene il debordamento del testo del link */
+text-overflow: ellipsis; /* Aggiunge '...' se il link è troppo lungo */
+white-space: nowrap; /* Mantiene il link su una singola linea */
+max-width: 90%; /* Imposta una larghezza massima per il link */
+color: blue;
+}
+
+.remove-link-icon {
+color: red;
+cursor: pointer;
+font-weight: bold;
+font-size: 24px;
+user-select: none;
+}
+
+.modal-actions {
+display: flex;
+justify-content: space-between;
+width: 40%;
+padding-top: 10px;
+}
+
+.modal-actions button {
+padding: 5px 15px;
+margin: 0 5px;
+background-color: #007bff;
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+font-size: 1.2em;
+}
+
+.modal-actions button:nth-child(1) {
+background-color: #6c757d; /* Colore per il pulsante di chiusura/annullamento */
+}
+
+/* Aggiungi stili al passaggio del mouse, ecc. */
+.modal-actions button:hover {
+opacity: 0.9;
+}
+
+
+/*Posizione effettiva*/
+#leaflet-map {
+position: relative;
+width: 300px; /* Imposta la larghezza del contenitore della mappa */
+height: 300px; /* Imposta l'altezza del contenitore della mappa */
+}
+
+.leaflet-tile-container leaflet-zoom-animated{
+width: 300px; /* Imposta la larghezza del contenitore della mappa */
+height: 300px; /* Imposta l'altezza del contenitore della mappa */
+transform: none !important;
+}
+
+.leaflet-tile leaflet-tile-loaded{
+width: 300px; /* Imposta la larghezza del contenitore della mappa */
+height: 300px; /* Imposta l'altezza del contenitore della mappa */
+transform: none !important;
+}
+
+.close-map-button {
+position: absolute;
+top: 0;
+right: 0;
+background-color: transparent;
+color: red;
+border: none;
+cursor: pointer;
+font-size: 24px;
+padding: 5px; 
+z-index: 1000; 
+}
+
+
+#leaflet-map-container {
+position: relative;
+width: 300px; 
+height: 300px; 
+margin-top: 2%;
+margin-left: 4%;
+}
+
+/*Custom map*/
+.map-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 10%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.map-modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+#map-container{
+  height: 300px;
+  width: 500px;
+}

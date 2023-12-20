@@ -152,7 +152,7 @@ function login(x){
                         window.location.href = 'http://localhost:8080/squealer-app';
                     break;
                     case "SMM":
-                        
+                        window.location.href = 'http://localhost:8080/SMM';
                     break;
                     case "moderator":
                         window.location.href = 'http://localhost:8080/moderator';
@@ -181,16 +181,16 @@ function login(x){
             localStorage.setItem("actualUserId", JSON.stringify(actualuser._id));
             switch(type){
                 case "user":
-                    window.location.href = 'Squealer app/public/index.html';
+                    window.location.href = 'http://localhost:8080/squealer-app';
                 break;
                 case "social media manager":
-                    window.location.href = 'SMM/index.html';
+                    window.location.href = 'http://localhost:8080/SMM';
                 break;
                 case "moderator":
-                    window.location.href = 'moderator.html';
+                    window.location.href = 'http://localhost:8080/moderator';
                 break;
                 default:
-                    window.location.href = 'Squealer app/public/index.html';
+                    window.location.href = 'http://localhost:8080/squealer-app';
                 break;
             }
             

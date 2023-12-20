@@ -1,0 +1,57 @@
+<mat-sidenav-container class="example-container">
+    <mat-sidenav mode="side" opened>
+        <mat-list role="list">
+            <!-- Quando aggiungo username al path
+            <mat-list-item role="listitem" [routerLink]="[username, 'edit-profile']" [routerLinkActive]="'active'">Edit profile</mat-list-item>  
+            <mat-list-item role="listitem" [routerLink]="[username, 'create-message']" [routerLinkActive]="'active'">Create message</mat-list-item>
+            <mat-list-item role="listitem" [routerLink]="[username, 'monitoring']" [routerLinkActive]="'active'">Monitoring</mat-list-item>
+            <mat-list-item role="listitem" [routerLink]="[username, 'settings']" [routerLinkActive]="'active'">Settings</mat-list-item>
+            <mat-list-item role="button">
+            -->
+            <div class = "logoSquealer-container">
+                <img src = "../../../assets/images/image_enhanced.png" alt = "logo">
+            </div>
+            <div class = "userLogged-container">
+                <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
+                <span>{{ username }}</span>
+            </div>
+            <div class = "pageSelector-container">
+                <mat-list-item role="listitem" [routerLink]="['/edit-profile']" [routerLinkActive]="'active'">
+                    <div class = "singleListItem-container">
+                        <mat-icon>account_circle</mat-icon>
+                        <span>Edit profile</span>
+                    </div>
+                </mat-list-item>  
+                <mat-list-item role="listitem" [routerLink]="['/create-message']" [routerLinkActive]="'active'">
+                    <div class = "singleListItem-container">
+                        <mat-icon>create</mat-icon>
+                        <span>Create message</span>
+                    </div>
+                </mat-list-item>
+                <mat-list-item role="listitem" [routerLink]="['/monitoring']" [routerLinkActive]="'active'">
+                    <div class = "singleListItem-container">
+                        <mat-icon>visibility</mat-icon>
+                        <span>Monitoring</span>
+                    </div>
+                </mat-list-item>
+                <mat-list-item role="listitem" [routerLink]="['/settings']" [routerLinkActive]="'active'">
+                    <div class = "singleListItem-container">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                    </div>
+                </mat-list-item>
+            </div>
+            <div class = "space-impaginator"></div>
+            <div class = "logOut-container">
+                <mat-list-item role="button">
+                    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon" (click)="onLogout()">
+                        <mat-icon>logout</mat-icon>
+                    </button>
+                </mat-list-item>
+            </div>
+        </mat-list>          
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
