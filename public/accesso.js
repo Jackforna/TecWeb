@@ -148,7 +148,7 @@ function login(x){
         if(valid){
             if(actualuser.blocked!=true){
                 switch(actualuser.version){
-                    case "user":
+                    case "normal":
                         window.location.href = 'http://localhost:8080/squealer-app';
                     break;
                     case "SMM":
@@ -175,12 +175,22 @@ function login(x){
         }
         if(!valid){
             if(security){
-            users.push({nickname : nickname, photoprofile : "", email : email, password : password, fullname : fullname, cell : "", version : type, blocked : false, popularity : 0, char_d : 300, char_w : 2000,char_m : 7000});
-            addUser({nickname : nickname, photoprofile : "", email : email, password : password, fullname : fullname, cell : "", version : type, blocked : false, popularity : 0, char_d : 300, char_w : 2000,char_m : 7000});
+            addUser({nickname : nickname, photoprofile : "", email : email, password : password, fullname : fullname, cell : "", version : type, blocked : false, popularity : 0, char_d : 300, char_w : 2000,char_m : 7000, notifications:[false,false,false,false,false]});
+            fetch('http://localhost:8080/get-users')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                users = data;
+            })
+            .catch(error => console.error('There has been a problem with your fetch operation:', error));
             actualuser = users[users.length-1];
             localStorage.setItem("actualUserId", JSON.stringify(actualuser._id));
             switch(type){
-                case "user":
+                case "normal":
                     window.location.href = 'http://localhost:8080/squealer-app';
                 break;
                 case "social media manager":

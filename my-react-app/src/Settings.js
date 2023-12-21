@@ -26,12 +26,39 @@ function Settings() {
 
     useEffect(() => {
         if (location.pathname.endsWith('/settings')) {
-            const users = getUsers();
-            setAllUsers(users);
-            const user = getActualUser();
-            setactualuser(user);
-            const squeals = getListSqueals();
-            setallSqueals(squeals);
+            async function getAll1(){
+                try{
+                    const users = await getUsers();
+                    setAllUsers(users);
+                    console.log(users);
+                } catch (error) {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    throw error;
+                }
+            }
+            async function getAll2(){
+                try{
+                    const user = await getActualUser();
+                    setactualuser(user);
+                    console.log(user);
+                } catch (error) {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    throw error;
+                }
+            }
+            async function getAll3(){
+                try{
+                    const squeals = await getListSqueals();
+                    setallSqueals(squeals);
+                    console.log(squeals);
+                } catch (error) {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    throw error;
+                }
+            }    
+            getAll1();
+            getAll2();
+            getAll3();
         }
     },[location.pathname]);
 

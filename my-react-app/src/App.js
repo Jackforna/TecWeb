@@ -22,7 +22,7 @@ import Redirector from './Redirector';
 import Search from './Search';
 import Profile from './Profile';
 import Settings from './Settings'
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+//import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 //ogni user è composto da nickname, bio, photoprofile, fullname, email, password, version (normal, verified, professional, SMM, moderator), blocked(booleano), char_d, char_w, char_m : 7000, popularity
 //ogni messaggio è composto da sender, typesender, body:{text:'', link:'', photo:'', position:[]}, date, hour, seconds, pos_reactions, neg_reactions, category, receivers[], channel
@@ -30,7 +30,7 @@ import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, u
 //ogni list_mess è composto da un messaggio(con tutte le componenti),type, request, remind:{every, dayMonth, dayWeek, hour}
 
 function App() {
-  const location = useLocation();
+  //const location = useLocation();
   const [showIcon, setShowIcon] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -56,29 +56,41 @@ function App() {
   });
 
   useEffect(() => {
-    if(location.pathname.endsWith('/home')){
-      const users = getUsers();
-      setAllUsers(users);
-      const user = getActualUser();
-      setactualuser(user);
-      const squeals = getListSqueals();
-      setallSqueals(squeals);
-      const Channels = getListChannels();
-      Channels.forEach(channel => {
-        switch(channel.type) {
-          case '&':
-            setallchannels(allchannelsprev => [...allchannelsprev, channel]);
-          break;
-          case '$':
-            setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
-          break;
-          case '#':
-            setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
-          break;
+    /*if(location.pathname.endsWith('/home')){
+      async function getAll(){
+        try{
+          const users = await getUsers();
+          setAllUsers(users);
+          const user = await getActualUser();
+          setactualuser(user);
+          const squeals = await getListSqueals();
+          setallSqueals(squeals);
+          const Channels = await getListChannels();
+          Channels.forEach(channel => {
+            switch(channel.type) {
+              case '&':
+                setallchannels(allchannelsprev => [...allchannelsprev, channel]);
+              break;
+              case '$':
+                setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
+              break;
+              case '#':
+                setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
+              break;
+            }
+          });
+          console.log(users);
+          console.log(user);
+          console.log(squeals);
+          console.log(Channels);
+        } catch (error) {
+          console.error('There was a problem fetching data:', error);
         }
-      });
     }
-}, [location.pathname]);
+    getAll();
+      
+    }*/
+},[] /*[location.pathname]*/);
 
   const handleFocus = () => {
     setShowIcon(false);

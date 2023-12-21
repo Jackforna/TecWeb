@@ -1587,7 +1587,9 @@ document.getElementById("createnewCHANNEL").addEventListener("click",()=>{
     arrcreateCHANNELmessages = [];
     arrcreateCHANNELownersadd = [];
     CHANNELsilenceable.checked = false;
-    arrcreateCHANNELowners.push(actualuser);
+    let userCreator = actualuser;
+    userCreator.type = "Creator";
+    arrcreateCHANNELowners.push(userCreator);
     document.getElementById("sectioncreateCHANNELphotoimg").src = "img/image.svg";
     document.getElementById("sectioncreateCHANNELphotoimg").style = "filter:invert(1); width:30px; height:30px";
     document.getElementById("sectioncreateCHANNELname").value = "";
@@ -1887,6 +1889,7 @@ document.getElementById("searchaddownerCHANNEL").addEventListener("input",()=>{
 
 function addownerCHANNEL(x){
     let userselected = arrcreateCHANNELownersadd[x];
+    userselected.type = "Modifier";
     arrcreateCHANNELowners.push(userselected);
     document.getElementById("viewCHANNELownerslist").innerHTML = '<h3>List owners CHANNEL</h3>';
     for(i=0;i<arrcreateCHANNELowners.length;i++)

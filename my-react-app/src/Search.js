@@ -17,19 +17,19 @@ import L from 'leaflet';
 import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 function Search() {
-    const [actualuser, setactualuser] = useState({nickname:"Martina", bio:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et dignissim nulla, faucibus pretium arcu. Morbi in tellus eget orci consectetur venenatis. Maecenas iaculis magna in tortor consequat, vel maximus ''a sagittis. Suspendisse sollicitudin mattis felis. Nunc porttitor euismod enim ut maximus. Sed et felis ut odio aliquam lobortis. Praesent feugiat pharetra urna vitae varius. Nam vitae malesuada erat.", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000})
+    const [actualuser, setactualuser] = useState()
     const [selectedItems, setSelectedItems] = useState([]);
     const location = useLocation();
     const [inputSearch, setinputSearch] = useState("");
     const [clientinputSearch, setclientinputSearch] = useState("");
     const [showIcon, setshowIcon] = useState(true);
     const [isDropdownOpen, setisDropdownOpen] = useState(false);
-    const [allUsers, setAllUsers] = useState([{nickname:"Mario", bio:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et dignissim nulla, faucibus pretium arcu. Morbi in tellus eget orci consectetur venenatis. Maecenas iaculis magna in tortor consequat, vel maximus ''a sagittis. Suspendisse sollicitudin mattis felis. Nunc porttitor euismod enim ut maximus. Sed et felis ut odio aliquam lobortis. Praesent feugiat pharetra urna vitae varius. Nam vitae malesuada erat.", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Marco", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Maria", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Marta", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Martina", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}]);
-    const [allSqueals, setallSqueals] = useState([{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Martina', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Matteo', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'43', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''}]);
+    const [allUsers, setAllUsers] = useState([]);
+    const [allSqueals, setallSqueals] = useState([]);
     const [allprint,setallprint] = useState([]);
-    const [allchannels, setallchannels] = useState([{name:'uni_fuoricorso',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"&",list_mess:[{body:{text:'Ciao benveuto in questo gruppo!', position:[], photo:'', link:''}, type:'Welcome', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:''},{body:{text:'Position', position:[], photo:'', link:''}, type:'Answer', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:'to /position'},{body:{text:'Ciao ricordati che sei in questo gruppo!', position:[], photo:'', link:''}, type:'Reminder', remind:{every:'every month', dayMonth:'1', dayWeek:'', hour:'14:00'}, request:''}],silenceable:true,list_users:[{nickname:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Creator', block:false},{nickname:'Martina', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Modifier', block:true}], list_posts:[{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Martina', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Matteo', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'43', pos_reactions:0, neg_reactions:0, category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, category:''}], description:""},{name:'unibo',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"&",list_mess:[{body:{text:'Ciao benveuto in questo gruppo!', position:[], photo:'', link:''}, type:'Welcome', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:''},{body:{text:'Position', position:[], photo:'', link:''}, type:'Answer', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:' to /position'},{body:{text:'Ciao Martina. Sei in questo gruppo!', position:[], photo:'', link:''}, type:'Reminder', remind:{every:'every month', dayMonth:1, dayWeek:'', hour:'14:00'}, request:''}], silenceable:true, list_users:[{nickname:'Mario', photoprofile:'', type:'Creator', block:false}], list_posts:[], description:""}]);
+    const [allchannels, setallchannels] = useState([]);
     const [allCHANNELS, setallCHANNELS] = useState([]);
-    const [allkeywords, setallkeywords] = useState([{name:'uni_fuori',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"#", list_users:[{nickname:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Creator', block:false},{nickname:'Martina', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Modifier', block:true}], list_posts:[{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Martina', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, category:''}], description:""}]);
+    const [allkeywords, setallkeywords] = useState([]);
     const [viewprofile, setViewprofile] = useState(false);
     const [viewsearch, setViewsearch] = useState(true);
     const [viewchannel, setViewchannel] = useState(false);
@@ -67,26 +67,62 @@ function Search() {
 
   useEffect(() => {
         if (location.pathname.endsWith('/search')) {
-          const users = getUsers();
-        setAllUsers(users);
-        const user = getActualUser();
-        setactualuser(user);
-        const squeals = getListSqueals();
-        setallSqueals(squeals);
-        const Channels = getListChannels();
-        Channels.forEach(channel => {
-          switch(channel.type) {
-            case '&':
-              setallchannels(allchannelsprev => [...allchannelsprev, channel]);
-            break;
-            case '$':
-              setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
-            break;
-            case '#':
-              setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
-            break;
+          async function getAll1(){
+            try{
+                const users = await getUsers();
+                setAllUsers(users);
+                console.log(users);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+                throw error;
+            }
+        }
+        async function getAll2(){
+            try{
+                const user = await getActualUser();
+                setactualuser(user);
+                console.log(user);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+                throw error;
+            }
+        }
+        async function getAll3(){
+            try{
+                const squeals = await getListSqueals();
+                setallSqueals(squeals);
+                console.log(squeals);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+                throw error;
+            }
+        }  
+        async function getAll4(){
+          try{
+              const Channels = await getListChannels();
+              Channels.forEach(channel => {
+                switch(channel.type) {
+                  case '&':
+                    setallchannels(allchannelsprev => [...allchannelsprev, channel]);
+                  break;
+                  case '$':
+                    setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
+                  break;
+                  case '#':
+                    setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
+                  break;
+                }
+              });
+              console.log(Channels);
+          } catch (error) {
+              console.error('There has been a problem with your fetch operation:', error);
+              throw error;
           }
-        });
+      }    
+        getAll1();
+        getAll2();
+        getAll3();
+        getAll4();
         }
     },[location.pathname]);
 
@@ -538,7 +574,7 @@ const subscribekeyword = () => {
                             <Card.Text style={{textAlign:'left'}}>
                                         {squeal.body.text}
                                     </Card.Text>
-                                    {squeal.body.photo!='' && (
+                                    {squeal.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' && (
                                   <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                   </div>
@@ -645,7 +681,7 @@ const subscribekeyword = () => {
                                 <Card.Text style={{textAlign:'left'}}>
                                     {squeal.body.text}
                                 </Card.Text>
-                                {squeal.body.photo!="" && (
+                                {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
@@ -703,7 +739,7 @@ const subscribekeyword = () => {
                                 <Card.Text style={{textAlign:'left'}}>
                                     {squeal.body.text}
                                 </Card.Text>
-                                {squeal.body.photo!="" && (
+                                {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
@@ -790,7 +826,7 @@ const subscribekeyword = () => {
                                 <Card.Text style={{textAlign:'left'}}>
                                     {squeal.body.text}
                                 </Card.Text>
-                                {squeal.body.photo!="" && (
+                                {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>

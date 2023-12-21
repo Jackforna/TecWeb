@@ -1,207 +1,210 @@
-export function getUsers(){
-    fetch('http://localhost:8080/get-users')
-    .then(response => {
+export async function getUsers(){
+    try {
+        const response = await fetch('http://localhost:8080/get-users');
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
-        return response.json();
-    })
-    .then(data => {
-        return(data);
-    })
-    .catch(error => console.error('There has been a problem with your fetch operation:', error));
-}
-
-export function addUser(userData) {
-    fetch('http://localhost:8080/add-user', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .catch(error => {
+        const data = await response.json();
+        return data;
+    } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
-    });
+        throw error;
+    }
 }
 
-export function getUserById(id) {
-    fetch(`http://localhost:8080/get-user/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            return(data);
-        })
-        .catch(error => {
-            console.error('Errore nella richiesta:', error);
+export async function addUser(userData) {
+    try {
+        const response = await fetch('http://localhost:8080/add-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
         });
-}
 
-function getActualUser(){
-    let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
-    fetch(`http://localhost:8080/get-user/${actualUserId}`)
-    .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json();
-    })
-    .then(data => {
-        actualuser = data;
-        console.log(actualuser);
-    })
-    .catch(error => {
-        console.error('Errore nella richiesta:', error);
-    });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
+    }
 }
 
-export function getListChannels(){
-    fetch('http://localhost:8080/get-listChannels')
-    .then(response => {
+export async function getUserById(id) {
+    try {
+        const response = await fetch(`http://localhost:8080/get-user/${id}`);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
+export async function getActualUser() {
+    try {
+        let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
+        const response = await fetch(`http://localhost:8080/get-user/${actualUserId}`);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
+export async function getListChannels() {
+    try {
+        const response = await fetch('http://localhost:8080/get-listChannels');
+
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-        return(data);
-    })
-    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
+    }
 }
 
-export function getListSqueals(){
-    fetch('http://localhost:8080/get-listSqueals')
-    .then(response => {
+export async function getListSqueals() {
+    try {
+        const response = await fetch('http://localhost:8080/get-listSqueals');
+
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-        return(data.reverse());
-    })
-    .catch(error => console.error('There has been a problem with your fetch operation:', error));
-}
 
-export function updateUsers(updatedUsers) {
-    fetch('http://localhost:8080/update-users', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedUsers)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-        })
-        .then(data => {
-            getActualUser();
-            console.log(data);
-        })
-    .catch(error => {
-        console.error('Errore nella richiesta:', error);
-    });
-}
-
-export function updateSqueals(updatedSqueals) {
-    fetch('http://localhost:8080/update-squeals', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedSqueals)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-        })
-        .then(data => {
-            console.log(data);
-        })
-    .catch(error => {
-        console.error('Errore nella richiesta:', error);
-    });
-}
-
-export function updateChannels(updatedChannels) {
-    fetch('http://localhost:8080/update-channels', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedChannels)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-        })
-        .then(data => {
-            console.log(data);
-        })
-    .catch(error => {
-        console.error('Errore nella richiesta:', error);
-    });
-}
-
-export function addSqueal(squealData) {
-    fetch('http://localhost:8080/add-squeal', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(squealData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-    })
-    .catch(error => {
+        const data = await response.json();
+        return data.reverse();
+    } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
-    });
+        throw error;
+    }
 }
 
-export function addChannel(channelData) {
-    fetch('http://localhost:8080/add-channel', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(channelData)
-    })
-    .then(response => {
+export async function updateUsers(updatedUsers) {
+    try {
+        const response = await fetch('http://localhost:8080/update-users', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedUsers)
+        });
+
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-    })
-    .catch(error => {
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
+export async function updateSqueals(updatedSqueals) {
+    try {
+        const response = await fetch('http://localhost:8080/update-squeals', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedSqueals)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
+export async function updateChannels(updatedChannels) {
+    try {
+        const response = await fetch('http://localhost:8080/update-channels', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedChannels)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
+export async function addSqueal(squealData) {
+    try {
+        const response = await fetch('http://localhost:8080/add-squeal', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(squealData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
-    });
+        throw error;
+    }
+}
+
+export async function addChannel(channelData) {
+    try {
+        const response = await fetch('http://localhost:8080/add-channel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(channelData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
+    }
 }
