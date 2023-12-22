@@ -17,18 +17,18 @@ import L from 'leaflet';
 import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 function Profile() {
-    const [actualuser, setactualuser] = useState({nickname:"Mario", bio:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et dignissim nulla, faucibus pretium arcu. Morbi in tellus eget orci consectetur venenatis. Maecenas iaculis magna in tortor consequat, vel maximus ''a sagittis. Suspendisse sollicitudin mattis felis. Nunc porttitor euismod enim ut maximus. Sed et felis ut odio aliquam lobortis. Praesent feugiat pharetra urna vitae varius. Nam vitae malesuada erat.", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000})
-    const [allUsers, setAllUsers] = useState([{nickname:"Mario", bio:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et dignissim nulla, faucibus pretium arcu. Morbi in tellus eget orci consectetur venenatis. Maecenas iaculis magna in tortor consequat, vel maximus ''a sagittis. Suspendisse sollicitudin mattis felis. Nunc porttitor euismod enim ut maximus. Sed et felis ut odio aliquam lobortis. Praesent feugiat pharetra urna vitae varius. Nam vitae malesuada erat.", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Marco", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Maria", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Marta", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Martina", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", blocked:false, char_d:400, char_w:2500, char_m: 9000}]);
+    const [actualuser, setactualuser] = useState({nickname: "", photoprofile: "", fullname: "", email: "", cell: "", password: "", version: "", blocked: false, popularity: 0, char_d: 0, char_w: 0, char_m: 0, bio: "", photoprofileX: 0, photoprofileY: 0, notifications: [false,false,false,false,false]})
+    const [allUsers, setAllUsers] = useState([]);
     const [n_channeladmin, setn_channeladmin] = useState(0);
     const [mypostsactive, setmypostsactive] = useState(true);
     const [mychannelsactive, setmychannelsactive] = useState(false);
     const [mycharacteractive, setmycharacteractive] = useState(false);
-    const [allSqueals, setallSqueals] = useState([{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Martina', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Matteo', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'43', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:''}]);
+    const [allSqueals, setallSqueals] = useState([]);
     const [allSquealsprint, setallSquealsprint] = useState([]);
     const [allChannelsprint, setallChannelsprint] = useState([]);
-    const [allchannels, setallchannels] = useState([{name:'uni_fuoricorso',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"&",list_mess:[{body:{text:'Ciao benveuto in questo gruppo!', position:[], photo:'', link:''}, type:'Welcome', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:''},{body:{text:'Position', position:[], photo:'', link:''}, type:'Answer', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:'to /position'},{body:{text:'Ciao ricordati che sei in questo gruppo!', position:[], photo:'', link:''}, type:'Reminder', remind:{every:'every month', dayMonth:'1', dayWeek:'', hour:'14:00'}, request:''}],silenceable:true,list_users:[{nickname:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Creator', block:false},{nickname:'Martina', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Modifier', block:true}], list_posts:[{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Martina', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Matteo', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'43', pos_reactions:0, neg_reactions:0, category:''},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, category:''}], description:""},{name:'unibo',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"&",list_mess:[{body:{text:'Ciao benveuto in questo gruppo!', position:[], photo:'', link:''}, type:'Welcome', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:''},{body:{text:'Position', position:[], photo:'', link:''}, type:'Answer', remind:{every:'', dayMonth:'', dayWeek:'', hour:''}, request:' to /position'},{body:{text:'Ciao Martina. Sei in questo gruppo!', position:[], photo:'', link:''}, type:'Reminder', remind:{every:'every month', dayMonth:1, dayWeek:'', hour:'14:00'}, request:''}], silenceable:true, list_users:[{nickname:'Mario', photoprofile:'', type:'Creator', block:false}], list_posts:[], description:""}]);
+    const [allchannels, setallchannels] = useState([]);
     const [allCHANNELS, setallCHANNELS] = useState([]);
-    const [allkeywords, setallkeywords] = useState([{name:'#uni_fuori',photoprofile:'', photoprofileX:0, photoprofileY:0, type:"#", list_users:[{nickname:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Creator', block:false},{nickname:'Martina', photoprofile:'', photoprofileX:0, photoprofileY:0, type:'Modifier', block:true}], list_posts:[{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, body:{text:'Ciao Martina', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'32', pos_reactions:0, neg_reactions:0, category:''}], description:""}]);
+    const [allkeywords, setallkeywords] = useState([]);
     const location = useLocation();
     const [indexsquealtodelete, setindexsquealtodelete] = useState();
     const [confirmdeletesqueal, setconfirmdeletesqueal] = useState(false);
@@ -102,50 +102,96 @@ function Profile() {
 
     useEffect(() => {
         if (location.pathname.endsWith('/profile')) {
-            let channeladmin = 0;
-            setallSquealsprint([]);
-            setallChannelsprint([]);
-            let newSqueals = JSON.parse(localStorage.getItem("newSqueals"));
-            if(newSqueals){
-                for(let i=0;i<newSqueals.length;i++){
-                    if(newSqueals[i].sender==actualuser.nickname){
-                        setallSquealsprint(prevallSquealsprint => [...prevallSquealsprint,newSqueals[i]])
-                    }
+              async function getAll1(){
+                try{
+                    const users = await getUsers();
+                    setAllUsers(users);
+                } catch (error) {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    throw error;
                 }
-            } else {
-                for(let i=0;i<allSqueals.length;i++){
-                    if(allSqueals[i].sender==actualuser.nickname){
-                        setallSquealsprint(prevallSquealsprint => [...prevallSquealsprint,allSqueals[i]])
-                    }
+              }
+              async function getAll2(){
+                try{
+                    const user = await getActualUser();
+                    setactualuser(user);
+                } catch (error) {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    throw error;
                 }
-            }
-            for(let i=0;i<allchannels.length;i++){
-                for(let j=0;j<allchannels[i].list_users.length;j++)
-                if(allchannels[i].list_users[j].nickname==actualuser.nickname){
-                    setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint,allchannels[i]]);
-                        if((allchannels[i].list_users[j].type=='Modifier')|(allchannels[i].list_users[j].type=='Creator')){
-                            channeladmin += 1;
-                        }
+              }
+              async function getAll3(){
+                try{
+                    const squeals = await getListSqueals();
+                    setallSqueals(squeals);
+                } catch (error) {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    throw error;
                 }
-            }
-            for(let i=0;i<allCHANNELS.length;i++){
-                for(let j=0;j<allCHANNELS[i].list_users.length;j++)
-                if(allCHANNELS[i].list_users[j].nickname==actualuser.nickname){
-                    setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint,allCHANNELS[i]]);
-                        if((allCHANNELS[i].list_users[j].type=='Modifier')|(allchannels[i].list_users[j].type=='Creator')){
-                            channeladmin += 1;
-                        }
+              }  
+              async function getAll4(){
+                try{
+                    const Channels = await getListChannels();
+                    Channels.forEach(channel => {
+                      switch(channel.type) {
+                        case '&':
+                          setallchannels(allchannelsprev => [...allchannelsprev, channel]);
+                        break;
+                        case '$':
+                          setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
+                        break;
+                        case '#':
+                          setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
+                        break;
+                      }
+                    });
+                } catch (error) {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    throw error;
                 }
-            }
-            for(let i=0;i<allkeywords.length;i++){
-                for(let j=0;j<allkeywords[i].list_users.length;j++)
-                if(allkeywords[i].list_users[j].nickname==actualuser.nickname){
-                    setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint,allkeywords[i]]);
-                }
-            }
-            setn_channeladmin(channeladmin);
+              }    
+            getAll1();
+            getAll2();
+            getAll3();
+            getAll4();            
         }
     }, [location.pathname])
+
+    useEffect(()=>{
+        let channeladmin = 0;
+        setallSquealsprint([]);
+        setallChannelsprint([]);
+        for(let i=0;i<allSqueals.length;i++){
+            if(allSqueals[i].sender==actualuser.nickname){
+                setallSquealsprint(prevallSquealsprint => [...prevallSquealsprint,allSqueals[i]])
+            }
+        }
+        for(let i=0;i<allchannels.length;i++){
+            for(let j=0;j<allchannels[i].list_users.length;j++)
+            if(allchannels[i].list_users[j].nickname==actualuser.nickname){
+                setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint,allchannels[i]]);
+                    if((allchannels[i].list_users[j].type=='Modifier')|(allchannels[i].list_users[j].type=='Creator')){
+                        channeladmin += 1;
+                    }
+            }
+        }
+        for(let i=0;i<allCHANNELS.length;i++){
+            for(let j=0;j<allCHANNELS[i].list_users.length;j++)
+            if(allCHANNELS[i].list_users[j].nickname==actualuser.nickname){
+                setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint,allCHANNELS[i]]);
+                    if((allCHANNELS[i].list_users[j].type=='Modifier')|(allCHANNELS[i].list_users[j].type=='Creator')){
+                        channeladmin += 1;
+                    }
+            }
+        }
+        for(let i=0;i<allkeywords.length;i++){
+            for(let j=0;j<allkeywords[i].list_users.length;j++)
+            if(allkeywords[i].list_users[j].nickname==actualuser.nickname){
+                setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint,allkeywords[i]]);
+            }
+        }
+        setn_channeladmin(channeladmin);
+    }, [allSqueals, actualuser, allchannels, allCHANNELS, allkeywords])
 
     const opendeletesqueal = (index) => {
         setindexsquealtodelete(index);
@@ -1091,7 +1137,7 @@ function Profile() {
                                 <Card.Text style={{textAlign:'left'}}>
                                     {squeal.body.text}
                                 </Card.Text>
-                                {squeal.body.photo!="" && (
+                                {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
@@ -1150,7 +1196,7 @@ function Profile() {
                                 <Card.Text style={{textAlign:'left'}}>
                                     {squeal.body.text}
                                 </Card.Text>
-                                {squeal.body.photo!="" && (
+                                {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
@@ -1377,7 +1423,7 @@ function Profile() {
                                 <Card.Text style={{textAlign:'left'}}>
                                     {squeal.body.text}
                                 </Card.Text>
-                                {squeal.body.photo!="" && (
+                                {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>

@@ -71,54 +71,50 @@ function Search() {
             try{
                 const users = await getUsers();
                 setAllUsers(users);
-                console.log(users);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
                 throw error;
             }
-        }
-        async function getAll2(){
+          }
+          async function getAll2(){
             try{
                 const user = await getActualUser();
                 setactualuser(user);
-                console.log(user);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
                 throw error;
             }
-        }
-        async function getAll3(){
+          }
+          async function getAll3(){
             try{
                 const squeals = await getListSqueals();
                 setallSqueals(squeals);
-                console.log(squeals);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
                 throw error;
             }
-        }  
-        async function getAll4(){
-          try{
-              const Channels = await getListChannels();
-              Channels.forEach(channel => {
-                switch(channel.type) {
-                  case '&':
-                    setallchannels(allchannelsprev => [...allchannelsprev, channel]);
-                  break;
-                  case '$':
-                    setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
-                  break;
-                  case '#':
-                    setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
-                  break;
-                }
-              });
-              console.log(Channels);
-          } catch (error) {
-              console.error('There has been a problem with your fetch operation:', error);
-              throw error;
-          }
-      }    
+          }  
+          async function getAll4(){
+            try{
+                const Channels = await getListChannels();
+                Channels.forEach(channel => {
+                  switch(channel.type) {
+                    case '&':
+                      setallchannels(allchannelsprev => [...allchannelsprev, channel]);
+                    break;
+                    case '$':
+                      setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
+                    break;
+                    case '#':
+                      setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
+                    break;
+                  }
+                });
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+                throw error;
+            }
+          }    
         getAll1();
         getAll2();
         getAll3();

@@ -8,16 +8,16 @@ import 'leaflet/dist/leaflet.css';
 import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 function Settings() {
-    const [actualuser, setactualuser] = useState({nickname:"Mario", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000, notifications:[false, true, true, false, true]})
+    const [actualuser, setactualuser] = useState({nickname:"", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000, notifications:[false, true, true, false, true]})
     const [openBar, setOpenBar] = useState(true);
     const location = useLocation();
     const [isNotifications, setIsNotifications] = useState(true);
     const [isAccount, setIsAccount] = useState(false);
     const [isCharacters, setIsCharacters] = useState(false);
     const [isFindSMM, setIsFindSMM] = useState(false);
-    const [allUsers, setAllUsers] = useState([{nickname:"Mario", bio:"", photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"SMM", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Marco", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', cell:'', password:'', version:"SMM", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Maria", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"SMM", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Marta", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000}, {nickname:"Martina", bio:'', photoprofile:'', fullname:'', email:'', cell:'', password:'', version:"normal", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000}]);
+    const [allUsers, setAllUsers] = useState([]);
     const [showIcon, setShowIcon] = useState(true);
-    const [allSqueals, setallSqueals] = useState([{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', channel:'', body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:null},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'channels', channel:'uni_fuoricorso', body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:null},{sender:'Mario', photoprofile:'', photoprofileX:0, photoprofileY:0, typesender:'Users', channel:'', body:{text:'Ciao Marta', position:[], photo:'', link:''}, date:'26/10/2023', hour:'17:37', seconds:'27', pos_reactions:0, neg_reactions:0, receivers:['Marta'], category:null}]);
+    const [allSqueals, setallSqueals] = useState([]);
     const [allPrint, setAllPrint] = useState([]);
     const [clientInputSearch, setClientInputSearch] = useState("");
     const [confirmBuyProfessional, setConfirmBuyProfessional] = useState(false);
@@ -30,7 +30,6 @@ function Settings() {
                 try{
                     const users = await getUsers();
                     setAllUsers(users);
-                    console.log(users);
                 } catch (error) {
                     console.error('There has been a problem with your fetch operation:', error);
                     throw error;
@@ -40,7 +39,6 @@ function Settings() {
                 try{
                     const user = await getActualUser();
                     setactualuser(user);
-                    console.log(user);
                 } catch (error) {
                     console.error('There has been a problem with your fetch operation:', error);
                     throw error;
@@ -50,7 +48,6 @@ function Settings() {
                 try{
                     const squeals = await getListSqueals();
                     setallSqueals(squeals);
-                    console.log(squeals);
                 } catch (error) {
                     console.error('There has been a problem with your fetch operation:', error);
                     throw error;

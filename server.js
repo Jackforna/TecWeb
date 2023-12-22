@@ -237,7 +237,8 @@ async function initializeCollections() {
             char_m: 7000,
             bio: "",
             photoprofileX: 0,
-            photoprofileY: 0
+            photoprofileY: 0,
+            notifications: [false,false,false,false,false]
         };
 
         // Inserisci l'elemento nella collezione
