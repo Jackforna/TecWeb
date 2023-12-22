@@ -24,8 +24,9 @@ function Home(){
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [suggestedProfiles, setSuggestedProfiles] = useState([]);
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
-  const [actualuser, setactualuser] = useState()
+  const [actualuser, setactualuser] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
+  const [allSquealsReceived, setAllSquealsReceived] = useState(null);
   const [allSqueals, setallSqueals] = useState([]);
   const [allSquealsprint,setallSquealsprint] = useState([]);
   const [squealpos_reaction, setsquealpos_reaction] = useState([0,0,0]) //l'array deve essere lungo quanti sono i messaggi, serve per tenere traccia della reazione positiva che ha messo l'utente a tutti i messaggi
@@ -65,8 +66,8 @@ function Home(){
           async function getAll3(){
             try{
                 const squeals = await getListSqueals();
-                setallSqueals(squeals);
-                
+                setAllSquealsReceived(squeals);
+                console.log(squeals);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
                 throw error;
@@ -79,17 +80,20 @@ function Home(){
 },[location.pathname]);
 
 useEffect(()=>{
+    if(actualuser && allSquealsReceived){
     let squealsReceived = [];
-        for(let i=0; i<allSqueals.length;i++){
-            for(let j=0; j<allSqueals[i].receivers.length; j++){
-                if(allSqueals[i].receivers[j]==="@"+actualuser.nickname){
-                    squealsReceived.push(allSqueals[i]);
+        for(let i=0; i<allSquealsReceived.length;i++){
+            for(let j=0; j<allSquealsReceived[i].receivers.length; j++){
+                if(allSquealsReceived[i].receivers[j]=="@"+actualuser.nickname){
+                    squealsReceived.push(allSquealsReceived[i]);
                 }
             }
         }
+        console.log(squealsReceived);
     setallSquealsprint(squealsReceived);
     setallSqueals(squealsReceived);
-}, [actualuser, allSqueals]);
+    }
+}, [actualuser, allSquealsReceived]);
 
 const handleFocus = () => {
     setShowIcon(false);
@@ -209,7 +213,7 @@ const handleFocus = () => {
                 className="mx-auto d-flex flex-column"
               >
               <div style={{position:'relative', marginTop:'13%', height:'100%', overflowY:'scroll'}}>
-                  {allSquealsprint.map((squeal,index) => (
+                  {allSquealsprint.length!=0 && allSquealsprint.map((squeal,index) => (
                     <Card key={index} style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
                     <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                       <CardGroup>
