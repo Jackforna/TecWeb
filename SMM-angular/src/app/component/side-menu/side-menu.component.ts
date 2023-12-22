@@ -21,6 +21,7 @@ export class SideMenuComponent implements OnInit {
     this.username = datiUtente ? datiUtente.username : '';
     this.profilePictureUrl = datiUtente ? datiUtente.profilePictureUrl : '';
     this.profileDescription = datiUtente ? datiUtente.profileDescription : '';
+    console.log("Siamo qua side-menu.component.ts");
   }
 
   onLogout(): void {

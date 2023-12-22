@@ -7,4 +7,4 @@ platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
 
 
-console.log("Siamo qua");
+console.log("Siamo Main");

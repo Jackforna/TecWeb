@@ -20,7 +20,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 })
 export class EditProfileComponent implements OnInit{
 
-  /*Test*/
   @ViewChild('selectPhotoDialog') selectPhotoDialogRef!: TemplateRef<any>;
   dialogRef!: MatDialogRef<any, any>;
 
@@ -42,8 +41,6 @@ export class EditProfileComponent implements OnInit{
   profileDescription: string = '';
 
   
-  //user = localStorage.getItem('Dati manager');
-  //userId = this.user ? JSON.parse(this.user).managedAccounts[1] : null;
 
   /*Dati per il cambio vip*/
   selectedVIP: any; // Sostituisci con il tipo appropriato
@@ -57,7 +54,9 @@ export class EditProfileComponent implements OnInit{
   otherAmount: number | null = null;
   selectedPaymentMethod: string = '';
 
-  /*Dati utente loggato*/
+
+  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
+  /*Dati utente loggato */
   userDati = localStorage.getItem('Dati utente');
   datiUtente = this.userDati ? JSON.parse(this.userDati) : null;
   user = localStorage.getItem('Dati manager');
@@ -72,7 +71,7 @@ export class EditProfileComponent implements OnInit{
     private dialog: MatDialog) { }
 
   ngOnInit() { 
-    this.laodUserData(); // Carica i dati utente
+    this.laodUserData(); // Carica i dati utente 
     this.loadManagedUsers(); // Carica gli utenti gestiti (VIP)
     console.log(this.userId);
   }
@@ -102,10 +101,10 @@ export class EditProfileComponent implements OnInit{
 
         this.databaseService.patchUserData(this.userId, { profilePictureUrl: imageUrl }).subscribe(() => {
           // Aggiorna il localStorage e ricarica i dati utente
-          this.userDati = localStorage.getItem('Dati utente');
+          this.userDati = localStorage.getItem('Dati utente');  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
           const updatedUserData = this.userDati ? JSON.parse(this.userDati) : {};
           updatedUserData.profilePictureUrl = imageUrl;
-          localStorage.setItem('Dati utente', JSON.stringify(updatedUserData));
+          localStorage.setItem('Dati utente', JSON.stringify(updatedUserData)); //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
 
           this.laodUserData();
           this.router.navigate(['/path-to-user-profile-or-current-page']).then(() => {
@@ -128,7 +127,7 @@ export class EditProfileComponent implements OnInit{
 
   /*Gestione cambio vip*/
   loadManagedUsers(): void {
-    const managerData = JSON.parse(localStorage.getItem('Dati manager') || '{}');
+    const managerData = JSON.parse(localStorage.getItem('Dati manager') || '{}');  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
     const managedAccounts = managerData.managedAccounts || [];
 
     managedAccounts.forEach((uid: string) => {
@@ -157,11 +156,11 @@ export class EditProfileComponent implements OnInit{
       if (selectedVIPIndex !== -1) {
         console.log('Indice dell\'utente selezionato:', selectedVIPIndex);
         this.userId = this.user ? JSON.parse(this.user).managedAccounts[selectedVIPIndex] : null;
-        localStorage.removeItem('ActuallyManagedAccount');
-        localStorage.setItem('ActuallyManagedAccount', JSON.stringify(this.userId));
+        localStorage.removeItem('ActuallyManagedAccount');  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
+        localStorage.setItem('ActuallyManagedAccount', JSON.stringify(this.userId));  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
         
         this.databaseService.getUserData(this.userId).subscribe((data: any) => {
-          localStorage.setItem('Dati utente', JSON.stringify(data));
+          localStorage.setItem('Dati utente', JSON.stringify(data));  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
           this.laodUserData(); // Ricarica i dati dell'utente
   
           this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -197,8 +196,8 @@ export class EditProfileComponent implements OnInit{
     .subscribe(response => {
       console.log(response);
       console.log(this.userId);
-      localStorage.removeItem('Dati utente');
-      localStorage.setItem('Dati utente', JSON.stringify({username: this.username, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser, profileDescription: newDescription}));
+      localStorage.removeItem('Dati utente'); //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
+      localStorage.setItem('Dati utente', JSON.stringify({username: this.username, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser, profileDescription: newDescription})); //CONTROLLARE CHIAMATA
       // Force a refresh of the page
       this.router.routeReuseStrategy.shouldReuseRoute = () => false;
       this.router.onSameUrlNavigation = 'reload';
@@ -232,10 +231,10 @@ export class EditProfileComponent implements OnInit{
     let amountNumber = typeof amountValue === 'string' ? parseInt(amountValue, 10) : amountValue || 0;
 
     console.log('Importo selezionato:', amountNumber, 'Metodo di pagamento:', this.selectedPaymentMethod);
-    this.databaseService.patchUserData(this.userId, {charLeft: this.charLeftUser + amountNumber}).subscribe(response => {
+    this.databaseService.patchUserData(this.userId, {charLeft: this.charLeftUser + amountNumber}).subscribe(response => { //CONTROLLARE CHIAMATA
       console.log(response);
-      localStorage.removeItem('Dati utente');
-      localStorage.setItem('Dati utente', JSON.stringify({username: this.username, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser + amountNumber, profileDescription: this.profileDescription}));
+      localStorage.removeItem('Dati utente'); //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
+      localStorage.setItem('Dati utente', JSON.stringify({username: this.username, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser + amountNumber, profileDescription: this.profileDescription})); //CONTROLLARE CHIAMATA
       // Force a refresh of the page
       this.router.routeReuseStrategy.shouldReuseRoute = () => false;
       this.router.onSameUrlNavigation = 'reload';

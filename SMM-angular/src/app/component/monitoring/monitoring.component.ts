@@ -11,10 +11,7 @@ export class MonitoringComponent implements OnInit{
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      const username = params['username'];
-      // Now you can use the username
-    });
+    console.log("Siamo monitoring.component.ts");
   }
 
 }

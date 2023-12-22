@@ -10,16 +10,18 @@ import { RegisterComponent } from './component/register/register.component';
 import { authGuard } from './auth/auth.guard';
 
 const routes: Routes = [
-  { path : '', component: SideMenuComponent,  children: [   /*canActivate: [authGuard]*/
+  { path : '', component: SideMenuComponent, canActivate: [authGuard],  children: [  
     { path: '', redirectTo: 'edit-profile', pathMatch: 'full'},
-    //{ path: ':username/edit-profile', component: EditProfileComponent },
     { path: 'edit-profile', component: EditProfileComponent },
     { path: 'monitoring', component: MonitoringComponent },
     { path: 'create-message', component: CreateMessageComponent },
     { path: 'settings', component: SettingsComponent },
   ]},
+
+  /* inutile
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  */
 ];
 
 @NgModule({
