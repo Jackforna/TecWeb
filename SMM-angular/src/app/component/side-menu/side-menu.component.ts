@@ -30,13 +30,8 @@ export class SideMenuComponent implements OnInit {
     this.getAllUsers().subscribe(users => {
       console.log('Utenti', users);
     });
-    console.log("Utente :" + this.id + " Dovrebbe essere questo che è il vecchio: 65856ccddc1ca87a4d665acd ");
-    this.getCurrentUser(this.id ?? '').subscribe(user => {
-      console.log('Utente loggato', user);
-    });
-    this.getCurrentUser('65856ccddc1ca87a4d665acd').subscribe(user => {
-      console.log('Utente loggato sbagliato attuale', user); 
-    });
+    console.log(this.id);
+    this.getActualUser();
   }
 
   onLogout(): void {
@@ -52,5 +47,16 @@ export class SideMenuComponent implements OnInit {
     return this.http.get(`/get-user/${id}`);
   }
 
+  getActualUser() {
+    let actualUserId = JSON.parse(localStorage.getItem("actualUserId")!) ?? '';
+    this.http.get(`http://localhost:8080/get-user/${actualUserId}`).subscribe(
+      data => {
+        console.log(data);
+      },
+      error => {
+        console.error('Errore nella richiesta:', error);
+      }
+    );
+  }
 
 }

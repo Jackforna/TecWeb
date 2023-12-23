@@ -248,6 +248,29 @@ async function initializeCollections() {
         console.log("Utente iniziale inserito nella collezione 'Users'");
     } else {
         console.log("La collezione 'Users' esiste già");
+        /* Delete option
+        await UsersCollection.deleteMany({});
+        const usersToInsert = {
+          nickname: "Jack",
+          photoprofile: "",
+          fullname: "Giacomo Fornaciari",
+          email: "giacomo.fornaciari@studio.unibo.it",
+          cell: "3333122042",
+          password: "Fenice13!",
+          version: "moderator",
+          blocked: false,
+          popularity: 0,
+          char_d: 300,
+          char_w: 2000,
+          char_m: 7000,
+          bio: "",
+          photoprofileX: 0,
+          photoprofileY: 0,
+          notifications: [false,false,false,false,false]
+        };
+        
+        await UsersCollection.insertOne(usersToInsert);
+        */
     }
 
   } catch (err) {

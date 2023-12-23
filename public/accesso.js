@@ -21,6 +21,7 @@ async function getUsers(){
     }
 }
 
+/*Vecchia funzione funzionante
 async function addUserAndActualUser(nickname, email, password, fullname, type) {
     try {
       // Prima aggiungi l'utente
@@ -69,6 +70,67 @@ async function addUserAndActualUser(nickname, email, password, fullname, type) {
       // Gestire l'errore come necessario
     }
   }
+*/
+
+/*Nuova funzione */
+async function addUserAndActualUser(nickname, email, password, fullname, type) {
+    try {
+        // Crea un oggetto utente base
+        let userData = {
+            nickname: nickname, 
+            photoprofile: "", 
+            email: email, 
+            password: password, 
+            fullname: fullname, 
+            cell: "", 
+            version: type, 
+            blocked: false, 
+            popularity: 0, 
+            char_d: 300, 
+            char_w: 2000,
+            char_m: 7000, 
+            notifications: [false, false, false, false, false]
+        };
+
+        // Aggiungi il campo managedAccounts se l'utente è un social media manager
+        if (type === "social media manager") {
+            userData.managedAccounts = [];
+        }
+
+        // Aggiungi l'utente
+        await addUserAsync(userData);
+
+        // Dopo che l'utente è stato aggiunto, ottieni gli utenti
+        users = await getUsers();
+
+        if (users && users.length > 0) {
+            actualuser = users[users.length - 1];
+            localStorage.setItem("actualUserId", JSON.stringify(actualuser._id));
+            // Esegui altri compiti che dipendono da actualuser
+            switch(type){
+                case "normal":
+                    window.location.href = 'http://localhost:8080/squealer-app';
+                break;
+                case "social media manager":
+                    window.location.href = 'http://localhost:8080/SMM';
+                break;
+                case "moderator":
+                    window.location.href = 'http://localhost:8080/moderator';
+                break;
+                default:
+                    window.location.href = 'http://localhost:8080/squealer-app';
+                break;
+            }
+        } else {
+            console.log("Nessun utente trovato");
+        }
+    } catch (error) {
+        console.error('There has been a problem:', error);
+        // Gestire l'errore come necessario
+    }
+}
+/*Fine nuova funzione */
+
 
 fetch('http://localhost:8080/get-users')
 .then(response => {
@@ -236,7 +298,7 @@ function login(x){
                     case "normal":
                         window.location.href = 'http://localhost:8080/squealer-app';
                     break;
-                    case "SMM":
+                    case "social media manager":
                         window.location.href = 'http://localhost:8080/SMM';
                     break;
                     case "moderator":
