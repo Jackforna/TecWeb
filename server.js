@@ -18,10 +18,12 @@ app.get('/', (req, res) => {
 });
 
 /*Angular main page access*/
-app.use('/SMM', express.static(path.join(__dirname, 'SMM-angular/dist')));
+const angularDistPath = path.join(__dirname, 'SMM-angular/dist/smm-squealer');
+app.use('/SMM', express.static(angularDistPath));
 app.get('/SMM/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'SMM-angular/dist', 'index.html'));
+    res.sendFile(path.join(angularDistPath, 'index.html'));
 });
+
 
 app.get('/moderator', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'moderator.html'));
