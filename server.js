@@ -18,10 +18,12 @@ app.get('/', (req, res) => {
 });
 
 /*Angular main page access*/
-app.use('/SMM', express.static(path.join(__dirname, 'SMM-angular/dist')));
+const angularDistPath = path.join(__dirname, 'SMM-angular/dist/smm-squealer');
+app.use('/SMM', express.static(angularDistPath));
 app.get('/SMM/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'SMM-angular/dist', 'index.html'));
+    res.sendFile(path.join(angularDistPath, 'index.html'));
 });
+
 
 app.get('/moderator', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'moderator.html'));
@@ -283,6 +285,29 @@ async function initializeCollections() {
       // Inserisci l'elemento nella collezione
       await UsersCollection.insertOne(usersToInsert);*/
         console.log("La collezione 'Users' esiste già");
+        /* Delete option
+        await UsersCollection.deleteMany({});
+        const usersToInsert = {
+          nickname: "Jack",
+          photoprofile: "",
+          fullname: "Giacomo Fornaciari",
+          email: "giacomo.fornaciari@studio.unibo.it",
+          cell: "3333122042",
+          password: "Fenice13!",
+          version: "moderator",
+          blocked: false,
+          popularity: 0,
+          char_d: 300,
+          char_w: 2000,
+          char_m: 7000,
+          bio: "",
+          photoprofileX: 0,
+          photoprofileY: 0,
+          notifications: [false,false,false,false,false]
+        };
+        
+        await UsersCollection.insertOne(usersToInsert);
+        */
     }
 
   } catch (err) {
