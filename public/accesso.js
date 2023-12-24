@@ -33,6 +33,7 @@ async function addUserAndActualUser(nickname, email, password, fullname, type) {
         fullname: fullname, 
         cell: "", 
         version: type, 
+        clients: [],
         blocked: false, 
         popularity: 0, 
         char_d: 300, 
@@ -47,7 +48,6 @@ async function addUserAndActualUser(nickname, email, password, fullname, type) {
       if (users && users.length > 0) {
         actualuser = users[users.length - 1];
         localStorage.setItem("actualUserId", JSON.stringify(actualuser._id));
-        // Esegui altri compiti che dipendono da actualuser
         switch(type){
             case "normal":
                 window.location.href = 'http://localhost:8080/squealer-app';

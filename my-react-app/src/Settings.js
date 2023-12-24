@@ -59,6 +59,24 @@ function Settings() {
         }
     },[location.pathname]);
 
+    async function updateAllUsers(UsersToUpdate){
+        try{
+          await updateUsers(UsersToUpdate);
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+    }
+
+    async function addnewSqueal(squealToAdd){
+        try{
+          await addSqueal(squealToAdd);
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+    }
+
     const openNotifications = () => {
         setIsNotifications(true);
         setIsAccount(false);
@@ -77,32 +95,32 @@ function Settings() {
         setIsCharacters(true);
     };
 
-    const gotoDashboard = () => {                       //fare, entrare nelle dashboard
+    const gotoDashboard = () => {
         if(actualuser.version=="SMM"){
-            window.location.href = "/SMMDashboard";
+            window.location.href = "http://localhost:8080/SMM";
         } else {
-            window.location.href = "/ModeratorDashboard";
+            window.location.href = "http://localhost:8080/moderator";
         }
     };
 
     const requestVerified = () => {
         let actualdate = new Date();
-        let newdate = actualdate.getDate() +"/"+ actualdate.getMonth()+1 +"/"+ actualdate.getFullYear();
+        let newdate = actualdate.getDate() +"/"+ (actualdate.getMonth()+1) +"/"+ actualdate.getFullYear();
         let newhour = actualdate.getHours() +"/"+ actualdate.getMinutes();
         let newseconds = actualdate.getSeconds();
-        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request verified', body:{text:'Request verified', position:[], photo:'', link:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, receivers:['Giacomo Fornaciari', 'Gabriel Betti'], category:''}
+        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request verified', body:{text:'Request verified', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], receivers:['@Jack', '@Gabriel Betti'], category:''}
         setallSqueals([...allSqueals, newsqueal]);
-        //salvare allSqueals
+        addnewSqueal(newsqueal);
     };
 
     const requestSMM = () => {
         let actualdate = new Date();
-        let newdate = actualdate.getDate() +"/"+ actualdate.getMonth()+1 +"/"+ actualdate.getFullYear();
+        let newdate = actualdate.getDate() +"/"+ (actualdate.getMonth()+1) +"/"+ actualdate.getFullYear();
         let newhour = actualdate.getHours() +"/"+ actualdate.getMinutes();
         let newseconds = actualdate.getSeconds();
-        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request SMM', body:{text:'Request SMM', position:[], photo:'', link:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, receivers:['Giacomo Fornaciari', 'Gabriel Betti'], category:''}
+        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request SMM', body:{text:'Request SMM', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], receivers:['@Jack', '@Gabriel Betti'], category:''}
         setallSqueals([...allSqueals, newsqueal]);
-        //salvare allSqueals
+        addnewSqueal(newsqueal);
     };
 
     const findSMM = () => {
@@ -134,9 +152,9 @@ function Settings() {
               });
               alert("Your payment was successfull. You've now access to the professional actions");
               setAllUsers(updatedUsers);
+              updateAllUsers(updatedUsers);
         }
         setConfirmBuyProfessional(false);
-        //salvare allUsers
     }
     
     const handleBlur = () => {
@@ -181,7 +199,7 @@ function Settings() {
           alert("You select your new SMM "+item);
       
           setAllUsers(updatedUsers);
-          //salvare allUsers
+          updateAllUsers(updatedUsers);
     }
 
     const changenotification = (x) => {
@@ -198,9 +216,8 @@ function Settings() {
             }
             return obj;
           });
-          alert("You've changed your notifications");
           setAllUsers(updatedUsers);
-          //salvare allUsers
+          updateAllUsers(updatedUsers);
     }
 
     const morecharacter = (x) => {
@@ -224,6 +241,7 @@ function Settings() {
                 });
                 alert("Your payment was successfull. You've now access to the professional actions");
                 setAllUsers(updatedUsers);
+                updateAllUsers(updatedUsers);
             } else if(optionCharacters==2){
                 setactualuser({...actualuser, char_d:actualuser.char_d + 700, char_w: actualuser.char_w + 4500, char_m: actualuser.char_m + 16000});
                 const updatedUsers = allUsers.map((obj) => {
@@ -238,10 +256,10 @@ function Settings() {
                 });
                 alert("Your payment was successfull. You've now more characters to use this month");
                 setAllUsers(updatedUsers);
+                updateAllUsers(updatedUsers);
             }
         }
         setConfirmBuyCharacters(false);
-        //salvare allUsers
     }
 
     return (

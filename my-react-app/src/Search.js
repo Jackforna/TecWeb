@@ -97,19 +97,27 @@ function Search() {
           async function getAll4(){
             try{
                 const Channels = await getListChannels();
-                Channels.forEach(channel => {
-                  switch(channel.type) {
+                let newAllchannels = [];
+                let newAllCHANNELS = [];
+                let newAllKeywords = [];
+
+                for (let i = 0; i < Channels.length; i++) {
+                  switch (Channels[i].type) {
                     case '&':
-                      setallchannels(allchannelsprev => [...allchannelsprev, channel]);
-                    break;
+                      newAllchannels.push(Channels[i]);
+                      break;
                     case '$':
-                      setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
-                    break;
+                      newAllCHANNELS.push(Channels[i]);
+                      break;
                     case '#':
-                      setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
-                    break;
+                      newAllKeywords.push(Channels[i]);
+                      break;
                   }
-                });
+                }
+
+                setallchannels(newAllchannels);
+                setallCHANNELS(newAllCHANNELS);
+                setallkeywords(newAllKeywords);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
                 throw error;
@@ -121,6 +129,15 @@ function Search() {
         getAll4();
         }
     },[location.pathname]);
+
+    async function updateAllChannels(ChannelsToUpdate){
+      try{
+        await updateChannels(ChannelsToUpdate);
+      } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+          throw error;
+      }
+    }
 
     const handleFocus = () => {
         setshowIcon(false);
@@ -202,7 +219,7 @@ function Search() {
                 for(let j=0;j<allCHANNELS[i].list_users.length;j++)
                 if(allCHANNELS[i].list_users[j].nickname==(item.slice(1,item.length))){
                     setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint,allCHANNELS[i]]);
-                        if((allCHANNELS[i].list_users[j].type=='Modifier')|(allchannels[i].list_users[j].type=='Creator')){
+                        if((allCHANNELS[i].list_users[j].type=='Modifier')|(allCHANNELS[i].list_users[j].type=='Creator')){
                             channeladmin += 1;
                         }
                 }
@@ -434,7 +451,8 @@ const subscribechannel = () => {
   setallCHANNELS(allCHANNELS);
   setallchannels(allchannels);
   setInChannel(!inChannel);
-  //salva modifiche ai canali
+  let ListChannels = [...allchannels, ...allCHANNELS, ...allkeywords];
+  updateAllChannels(ListChannels);
 }
 
 const subscribekeyword = () => {

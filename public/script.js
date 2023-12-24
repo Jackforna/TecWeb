@@ -2237,9 +2237,9 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
             if(editCHANNEL.list_users[i].nickname!=actualuser.nickname)
                 receivers.push("@" + editCHANNEL.list_users[i].nickname);
         }
-        squeals.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers, channel:channel});
-        addSqueal({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers, channel:channel});
-        editCHANNEL.list_posts.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, category:undefined, receivers:receivers, channel:channel});
+        squeals.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], category:undefined, receivers:receivers, channel:channel});
+        addSqueal({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], category:undefined, receivers:receivers, channel:channel});
+        editCHANNEL.list_posts.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], category:undefined, receivers:receivers, channel:channel});
         document.getElementById("photonewsqueal").innerHTML = '';
         document.getElementById("linknewsqueal").innerHTML = '';
         if(!document.getElementById("mapnewsqueal").classList.contains('d-none'));

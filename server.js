@@ -107,12 +107,25 @@ app.post('/add-user', async (req, res) => {
 
 app.put('/update-users', async (req, res) => {
   try {
-      const updatedUsers = req.body;
+    const updatedUsers = req.body;
+    const operations = updatedUsers.map(user => {
+      const _id = typeof user._id === 'string' ? new ObjectId(user._id) : user._id;
 
-      await UsersCollection.deleteMany({});
+      const { _id: idToRemove, ...replacementData } = user;
 
-      await UsersCollection.insertMany(updatedUsers);
-      
+      if (Array.isArray(replacementData.notifications) && replacementData.notifications.length && Array.isArray(replacementData.notifications[0])) {
+        replacementData.notifications = replacementData.notifications[0];
+      }
+
+      return {
+        replaceOne: {
+          filter: { _id: _id },
+          replacement: replacementData, // Non include l'`_id` nel documento di sostituzione
+          upsert: true // Crea un nuovo documento se nessuno corrisponde al filtro
+        }
+      };
+    });
+    await UsersCollection.bulkWrite(operations);
       const users = await UsersCollection.find().toArray();
       res.status(200).json(users);
   } catch (error) {
@@ -257,6 +270,7 @@ async function initializeCollections() {
             version: "moderator",
             blocked: false,
             popularity: 0,
+            clients:[],
             char_d: 300,
             char_w: 2000,
             char_m: 7000,
@@ -270,6 +284,29 @@ async function initializeCollections() {
         await usersCollection.insertOne(usersToInsert);
         console.log("Utente iniziale inserito nella collezione 'Users'");
     } else {
+        /*await UsersCollection.deleteMany({});
+        const usersToInsert = {
+          nickname: "Jack",
+          photoprofile: "",
+          fullname: "Giacomo Fornaciari",
+          email: "giacomo.fornaciari@studio.unibo.it",
+          cell: "3333122042",      
+          password: "Fenice13!",
+          version: "moderator",
+          blocked: false,
+          popularity: 0,
+          clients:[],
+          char_d: 300,
+          char_w: 2000,
+          char_m: 7000,
+          bio: "",
+          photoprofileX: 0,
+          photoprofileY: 0,
+          notifications: [false,false,false,false,false]
+      };
+
+      // Inserisci l'elemento nella collezione
+      await UsersCollection.insertOne(usersToInsert);*/
         console.log("La collezione 'Users' esiste già");
         /* Delete option
         await UsersCollection.deleteMany({});
