@@ -29,10 +29,11 @@ function Home(){
   const [allSquealsReceived, setAllSquealsReceived] = useState(null);
   const [allSqueals, setallSqueals] = useState([]);
   const [allSquealsprint,setallSquealsprint] = useState([]);
-  const [squealpos_reaction, setsquealpos_reaction] = useState([0,0,0]) //l'array deve essere lungo quanti sono i messaggi, serve per tenere traccia della reazione positiva che ha messo l'utente a tutti i messaggi
-  const [squealneg_reaction, setsquealneg_reaction] = useState([0,0,0]) //l'array deve essere lungo quanti sono i messaggi, serve per tenere traccia della reazione negativa che ha messo l'utente a tutti i messaggi
   const [showbtnopacity, setshowbtnopacity] = useState(false);
   const [inputSearch, setinputSearch] = useState("");
+  const [allchannels, setallchannels] = useState([]);
+  const [allCHANNELS, setallCHANNELS] = useState([]);
+  const [allkeywords, setallkeywords] = useState([]);
   const [clientinputSearch, setclientinputSearch] = useState("");
   const markerIcon = new L.Icon({
     iconUrl: require('leaflet/dist/images/marker-icon.png'),
@@ -41,8 +42,6 @@ function Home(){
     iconAnchor: [12, 41]
   });
 
-
-    
   useEffect(() => {
     if(location.pathname.endsWith('/home')){
         async function getAll1(){
@@ -67,15 +66,36 @@ function Home(){
             try{
                 const squeals = await getListSqueals();
                 setAllSquealsReceived(squeals);
-                console.log(squeals);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
                 throw error;
             }
           }  
+          async function getAll4(){
+            try{
+                const Channels = await getListChannels();
+                Channels.forEach(channel => {
+                  switch(channel.type) {
+                    case '&':
+                      setallchannels(allchannelsprev => [...allchannelsprev, channel]);
+                    break;
+                    case '$':
+                      setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
+                    break;
+                    case '#':
+                      setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
+                    break;
+                  }
+                });
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+                throw error;
+            }
+          }
         getAll1();
         getAll2();
         getAll3();
+        getAll4();    
     }
 },[location.pathname]);
 
@@ -94,6 +114,24 @@ useEffect(()=>{
     setallSqueals(squealsReceived);
     }
 }, [actualuser, allSquealsReceived]);
+
+async function updateAllSqueals(squealsToUpdate){
+  try{
+    const squeal = await updateSqueals(squealsToUpdate);
+  } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+      throw error;
+  }
+}
+
+async function updateAllChannels(ChannelsToUpdate){
+  try{
+    const chan = await updateChannels(ChannelsToUpdate);
+  } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+      throw error;
+  }
+}
 
 const handleFocus = () => {
     setShowIcon(false);
@@ -173,31 +211,140 @@ const handleFocus = () => {
     }
   };
 
-  const reactionSqueal = (indexSqueal,x) => {            //funzione per mettere una reazione a un messaggio
-    const newallSqueals = [...allSqueals];
-    const newsquealpos_reaction = [...squealpos_reaction];
-    const newsquealneg_reaction = [...squealneg_reaction];
+  const reactionSqueal = (indexSqueal,x) => {  //devo controllare che se un messaggio fa parte di un canale ne vengano modificate le reazioni
+      
+    let newallSqueals = [...allSqueals];
+    let channelsModified = [...allchannels];
+    let CHANNELSModified = [...allCHANNELS];
+    let keywordsModified = [...allkeywords];
     if(x<4){
-      if((squealpos_reaction!=0)|(squealneg_reaction!=0)){
         newallSqueals[indexSqueal].pos_reactions += x;
-        newallSqueals[indexSqueal].pos_reactions -= squealpos_reaction[indexSqueal];
-        newallSqueals[indexSqueal].neg_reactions -= squealneg_reaction[indexSqueal];
-        newsquealneg_reaction[indexSqueal] = 0;
-      }
-      newsquealpos_reaction[indexSqueal] = x;
+        let find = false;
+        for(let j=0; j<allSqueals[indexSqueal].usersReactions.length;j++){
+          if(allSqueals[indexSqueal].usersReactions[j].nickname===actualuser.nickname){
+            find = true;
+            newallSqueals[indexSqueal].pos_reactions -= allSqueals[indexSqueal].usersReactions[j].posReactions;
+            if(newallSqueals[indexSqueal].pos_reactions<0)
+              newallSqueals[indexSqueal].pos_reactions = 0;
+            newallSqueals[indexSqueal].neg_reactions -= allSqueals[indexSqueal].usersReactions[j].negReactions;
+            if(newallSqueals[indexSqueal].neg_reactions<0)
+              newallSqueals[indexSqueal].neg_reactions = 0;
+            newallSqueals[indexSqueal].usersReactions[j] = {nickname: actualuser.nickname, posReactions:x, negReactions:0};
+          }
+        }
+        if(!find){
+          newallSqueals[indexSqueal].usersReactions.push({nickname: actualuser.nickname, posReactions:x, negReactions:0});
+        }
+        if(newallSqueals[indexSqueal].channel!=""){
+          switch(newallSqueals[indexSqueal].typesender){
+            case "channels":
+              for(let i=0; i<allchannels.length; i++){
+                if(allchannels[i].name===newallSqueals[indexSqueal].channel){
+                  for(let j=0; j<allchannels[i].list_posts.length; j++){
+                    if((newallSqueals[indexSqueal].sender===allchannels[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allchannels[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allchannels[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allchannels[i].list_posts[j].seconds)){
+                      channelsModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
+                      channelsModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
+                      channelsModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
+                    }
+                  }
+                }
+              }
+            break;
+            case "CHANNELS":
+              for(let i=0; i<allCHANNELS.length; i++){
+                if(allCHANNELS[i].name===newallSqueals[indexSqueal].channel){
+                  for(let j=0; j<allCHANNELS[i].list_posts.length; j++){
+                    if((newallSqueals[indexSqueal].sender===allCHANNELS[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allCHANNELS[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allCHANNELS[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allCHANNELS[i].list_posts[j].seconds)){
+                      CHANNELSModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
+                      CHANNELSModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
+                      CHANNELSModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
+                    }
+                  }
+                }
+              }
+            break;
+            case "keywords":
+              for(let i=0; i<allkeywords.length; i++){
+                if(allkeywords[i].name===newallSqueals[indexSqueal].channel){
+                  for(let j=0; j<allkeywords[i].list_posts.length; j++){
+                    if((newallSqueals[indexSqueal].sender===allkeywords[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allkeywords[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allkeywords[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allkeywords[i].list_posts[j].seconds)){
+                      keywordsModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
+                      keywordsModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
+                      keywordsModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
+                    }
+                  }
+                }
+              }
+            break;
+          }
+        }
     } else {
       x-= 3;
-      if((squealpos_reaction!=0)|(squealneg_reaction!=0)){
         newallSqueals[indexSqueal].neg_reactions += x;
-        newallSqueals[indexSqueal].pos_reactions -= squealpos_reaction[indexSqueal];
-        newallSqueals[indexSqueal].neg_reactions -= squealneg_reaction[indexSqueal];
-        newsquealpos_reaction[indexSqueal] = 0;
-      }
-      newsquealneg_reaction[indexSqueal] = x;
+        let find = false;
+        for(let j=0; j<allSqueals[indexSqueal].usersReactions.length;j++){
+          if(allSqueals[indexSqueal].usersReactions[j].nickname===actualuser.nickname){
+            find = true;
+            newallSqueals[indexSqueal].pos_reactions -= allSqueals[indexSqueal].usersReactions[j].posReactions;
+            if(newallSqueals[indexSqueal].pos_reactions<0)
+              newallSqueals[indexSqueal].pos_reactions = 0;
+            newallSqueals[indexSqueal].neg_reactions -= allSqueals[indexSqueal].usersReactions[j].negReactions;
+            if(newallSqueals[indexSqueal].neg_reactions<0)
+              newallSqueals[indexSqueal].neg_reactions = 0;
+            newallSqueals[indexSqueal].usersReactions[j] = {nickname: actualuser.nickname, posReactions:0, negReactions:x};
+          }
+        }
+        if(!find){
+          newallSqueals[indexSqueal].usersReactions.push({nickname: actualuser.nickname, posReactions:0, negReactions:x});
+        }
+        if(newallSqueals[indexSqueal].channel!=""){
+          switch(newallSqueals[indexSqueal].typesender){
+            case "channels":
+              for(let i=0; i<allchannels.length; i++){
+                if(allchannels[i].name===newallSqueals[indexSqueal].channel){
+                  for(let j=0; j<allchannels[i].list_posts.length; j++){
+                    if((newallSqueals[indexSqueal].sender===allchannels[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allchannels[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allchannels[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allchannels[i].list_posts[j].seconds)){
+                      channelsModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
+                      channelsModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
+                      channelsModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
+                    }
+                  }
+                }
+              }
+            break;
+            case "CHANNELS":
+              for(let i=0; i<allCHANNELS.length; i++){
+                if(allCHANNELS[i].name===newallSqueals[indexSqueal].channel){
+                  for(let j=0; j<allCHANNELS[i].list_posts.length; j++){
+                    if((newallSqueals[indexSqueal].sender===allCHANNELS[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allCHANNELS[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allCHANNELS[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allCHANNELS[i].list_posts[j].seconds)){
+                      CHANNELSModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
+                      CHANNELSModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
+                      CHANNELSModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
+                    }
+                  }
+                }
+              }
+            break;
+            case "keywords":
+              for(let i=0; i<allkeywords.length; i++){
+                if(allkeywords[i].name===newallSqueals[indexSqueal].channel){
+                  for(let j=0; j<allkeywords[i].list_posts.length; j++){
+                    if((newallSqueals[indexSqueal].sender===allkeywords[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allkeywords[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allkeywords[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allkeywords[i].list_posts[j].seconds)){
+                      keywordsModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
+                      keywordsModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
+                      keywordsModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
+                    }
+                  }
+                }
+              }
+            break;
+          }
+        }
     }
     setallSqueals(newallSqueals);
-    setsquealneg_reaction(newsquealneg_reaction);
-    setsquealpos_reaction(newsquealpos_reaction);
+    updateAllSqueals(newallSqueals);
+    let ListChannelsModified = [...channelsModified, ...CHANNELSModified, ...keywordsModified];
+    updateAllChannels(ListChannelsModified);
   };
 
     return(

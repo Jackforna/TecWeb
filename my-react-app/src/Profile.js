@@ -85,7 +85,7 @@ function Profile() {
         iconAnchor: [12, 41]
       });
     const [capturedImage, setCapturedImage] = useState(null);
-    const [newmessage, setNewmessage] = useState({body:{text:'', position:[], link:'', photo:''}, request:'', type:'', remind:{}})
+    const [newmessage, setNewmessage] = useState({body:{text:'', position:[], link:'', photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', video:''}, request:'', type:'', remind:{every:'',dayMonth:'',dayWeek:'',hour:''}})
     const [showLinkModal, setShowLinkModal] = useState(false);
     const [inputLink, setinputLink] = useState('');
     const [displayedLink, setDisplayedLink] = useState(''); 
@@ -191,7 +191,37 @@ function Profile() {
             }
         }
         setn_channeladmin(channeladmin);
-    }, [allSqueals, actualuser, allchannels, allCHANNELS, allkeywords])
+    }, [allSqueals, actualuser, allchannels, allCHANNELS, allkeywords]);
+
+    async function updateAllUsers(UsersToUpdate){
+        try{
+          const user = await updateUsers(UsersToUpdate);
+          console.log(user)
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+    }
+
+    async function updateAllChannels(ChannelsToUpdate){
+        try{
+          const chan = await updateChannels(ChannelsToUpdate);
+          console.log(chan);
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+    }
+
+    async function updateAllSqueals(SquealsToUpdate){
+        try{
+          const squeal = await updateSqueals(SquealsToUpdate);
+          console.log(squeal);
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+    }
 
     const opendeletesqueal = (index) => {
         setindexsquealtodelete(index);
@@ -205,8 +235,7 @@ function Profile() {
         newallSqueals.splice(indexsquealtodelete, 1);
         setallSquealsprint(newallSqueals);
         setallSqueals(newallSqueals);
-        localStorage.setItem("newSqueals",JSON.stringify(newSqueals));
-        //salvare i valori degli squeal
+        updateAllSqueals(newallSqueals);
         }
         setconfirmdeletesqueal(false);
     }
@@ -287,7 +316,7 @@ function Profile() {
         setnewpassword(value);
     }
 
-    const closeeditprofile = (save) => {
+    const closeeditprofile = (save) => {        //backend
         if(save){
             const newinfo = {
                 ...actualuser,
@@ -329,7 +358,43 @@ function Profile() {
             }    
             setallChannelsprint(updatedItems);
             setactualuser(newinfo);
-            //salva modifiche actualuser, allusers, allchannels, allCHANNELS e allkeyword
+            let newlistusers = [...allUsers];
+            let newlistchannel = [...allchannels];
+            let newlistCHANNEL = [...allCHANNELS];
+            let newlistkeywords = [...allkeywords];
+            for(let i=0;i<allUsers.length;i++){
+                if(allUsers[i].nickname === actualuser.nickname){
+                    newlistusers[i] = {...newinfo};
+                }
+            }
+            for(let i=0;i<allchannels.length;i++){
+                for(let j=0;j<updatedItems.length;j++){
+                    if(allchannels[i]._id===updatedItems[j]._id){
+                        newlistchannel[i] = {...updatedItems[j]}
+                    }
+                }
+            }
+            for(let i=0;i<allCHANNELS.length;i++){
+                for(let j=0;j<updatedItems.length;j++){
+                    if(allCHANNELS[i]._id===updatedItems[j]._id){
+                        newlistCHANNEL[i] = {...updatedItems[j]}
+                    }
+                }
+            }
+            for(let i=0;i<allkeywords.length;i++){
+                for(let j=0;j<updatedItems.length;j++){
+                    if(allkeywords[i]._id===updatedItems[j]._id){
+                        newlistkeywords[i] = {...updatedItems[j]}
+                    }
+                }
+            }
+            setAllUsers(newlistusers);
+            setallchannels(newlistchannel);
+            setallCHANNELS(newlistCHANNEL);
+            setallkeywords(newlistkeywords);
+            updateAllUsers(newlistusers);
+            let ListChannelsToUpdate = [...newlistchannel,...newlistCHANNEL,...newlistkeywords];
+            updateAllChannels(ListChannelsToUpdate);
         }
         seteditprofilevisible(false);
     }
@@ -352,7 +417,7 @@ function Profile() {
         }
     }
 
-    const closeeditchannel = (save) => {
+    const closeeditchannel = (save) => {            //backend
         if(save){
             const updatedItems = [...allChannelsprint];
             for (let i = 0; i < updatedItems.length; i++) {
@@ -370,7 +435,29 @@ function Profile() {
                     };
                 }      
             setallChannelsprint(updatedItems);
-            //salva modifiche canali
+            for(let i=0;i<allchannels.length;i++){
+                for(let j=0;j<updatedItems.length;j++){
+                    if(allchannels[i]._id===updatedItems[j]._id){
+                        allchannels[i] = {...updatedItems[j]}
+                    }
+                }
+            }
+            for(let i=0;i<allCHANNELS.length;i++){
+                for(let j=0;j<updatedItems.length;j++){
+                    if(allCHANNELS[i]._id===updatedItems[j]._id){
+                        allCHANNELS[i] = {...updatedItems[j]}
+                    }
+                }
+            }
+            for(let i=0;i<allkeywords.length;i++){
+                for(let j=0;j<updatedItems.length;j++){
+                    if(allkeywords[i]._id===updatedItems[j]._id){
+                        allkeywords[i] = {...updatedItems[j]}
+                    }
+                }
+            }
+            let ListChannelsToUpdate = [...allchannels,...allCHANNELS,...allkeywords];
+            updateAllChannels(ListChannelsToUpdate);
         }
         seteditchannelvisible(false);
     }
@@ -570,7 +657,7 @@ function Profile() {
         setconfirmleavechannel(true);
     }
 
-    const deletechannel = (confirm) => {
+    const deletechannel = (confirm) => {            //backend
         if(confirm){
             seteditchannelvisible(false);
             let newlistchannel;
@@ -587,7 +674,8 @@ function Profile() {
             }
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
-            //bisogna salvare le modifiche dei canali
+            let allChannelsModified = [...newlistchannel, ...newlistCHANNEL, ...allkeywords];
+            updateAllChannels(allChannelsModified);
             for(let i=0; i<allChannelsprint[indexchanneledit].list_users.length;i++){
                 if((allChannelsprint[indexchanneledit].list_users[i].nickname==actualuser.nickname)&((allChannelsprint[indexchanneledit].list_users[i].type=='Creator')|(allChannelsprint[indexchanneledit].list_users[i].type=='Modifier'))){
                     let channeladmin = n_channeladmin-1;
@@ -603,7 +691,7 @@ function Profile() {
         setconfirmdeletechannel(false);    
     }
 
-    const leavechannel = (confirm) => {
+    const leavechannel = (confirm) => {             //backend
         if(confirm){
             seteditchannelvisible(false);
             for(let i=0; i<allChannelsprint[indexchanneledit].list_users.length;i++){
@@ -634,7 +722,8 @@ function Profile() {
             }
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
-            //bisogna salvare le modifiche dei canali
+            let allChannelsModified = [...newlistchannel, ...newlistCHANNEL, ...allkeywords];
+            updateAllChannels(allChannelsModified);
             const newlist = [
                 ...allChannelsprint.slice(0, indexchanneledit),
                 ...allChannelsprint.slice(indexchanneledit + 1)
@@ -656,7 +745,7 @@ function Profile() {
         setPositionMap([]);
         setDisplayedLink(null);
         setNewmessagetext('');
-        setNewmessage({body:{text:'', position:[], link:'', photo:''}, request:'', type:'', remind:{}})
+        setNewmessage({body:{text:'', position:[], link:'', photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', video:''}, request:'', type:'', remind:{every:'',dayMonth:'',dayWeek:'',hour:''}});
         setSelection("Select an option");
         setReminder("Select reminder frequency");
         } else {
@@ -664,9 +753,9 @@ function Profile() {
         }
     }
 
-    const sectionaddmessagechannel = (confirm) => {                 //salvare messaggio gruppo
+    const sectionaddmessagechannel = (confirm) => {
         if(confirm){
-            if((newmessage.body.text!='')|(newmessage.body.link!='')|(newmessage.body.photo!='')|(newmessage.body.position.length!=0)){
+            if((newmessage.body.text!='')|(newmessage.body.link!='')|(newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')|(newmessage.body.position.length!=0)|(newmessage.body.video!="")){
                 switch(selection){
                     case "Welcome":
                         setnewchannelmessages(prevmess => ([...prevmess, {
@@ -675,6 +764,7 @@ function Profile() {
                                 position: newmessage.body.position,
                                 link: newmessage.body.link,
                                 photo:newmessage.body.photo,
+                                video:newmessage.body.video,
                             },
                             request: '',
                             type: selection,
@@ -689,6 +779,7 @@ function Profile() {
                                     position: newmessage.body.position,
                                     link: newmessage.body.link,
                                     photo:newmessage.body.photo,
+                                    video:newmessage.body.video,
                                 },
                                 request: "to "+newmessage.request,
                                 type: selection,
@@ -707,6 +798,7 @@ function Profile() {
                                     position: newmessage.body.position,
                                     link: newmessage.body.link,
                                     photo:newmessage.body.photo,
+                                    video:newmessage.body.video,
                                 },
                                 request: '',
                                 type: selection,
@@ -814,41 +906,44 @@ function Profile() {
     setShowCameraModalmessage(false);
     }
 
-    const deleteprofile = (confirm) => {
+    const deleteprofile = (confirm) => {                //backend finire!!!
         if(confirm){
-            let newlistusers;
+            let newlistusers = [];
             for(let i=0; i<allUsers.length; i++){
-                        if(allUsers[i].nickname==actualuser.nickname){
-                            newlistusers = allUsers.splice(i,1);
+                        if(allUsers[i].nickname!=actualuser.nickname){
+                            newlistusers.push(allUsers[i]);
                         }
                     }
             setAllUsers(newlistusers);
-            let newlistchannel;
-            let newlistCHANNEL;
-            let newlistkeywords;
+            let newlistchannel = [...allchannels];
+            let newlistCHANNEL = [...allCHANNELS];
+            let newlistkeywords = [...allkeywords];
             for(let i=0; i<allchannels.length; i++){
                 if(allchannels[i].name==allChannelsprint[indexchanneledit].name){
+                    newlistchannel[i].list_users = [];
                     for(let j=0;j<allchannels[i].list_users.length;j++){
-                        if(allchannels[i].list_users[j].nickname==actualuser.nickname){
-                            newlistchannel = allchannels[i].list_users.splice(j,1);
+                        if(allchannels[i].list_users[j].nickname!=actualuser.nickname){
+                            newlistchannel[i].list_users.push(allchannels[i].list_users[j]);
                         }
                     }
                 }
             }
             for(let i=0; i<allCHANNELS.length; i++){
                 if(allCHANNELS[i].name==allChannelsprint[indexchanneledit].name){
+                    newlistCHANNEL[i].list_users = [];
                     for(let j=0;j<allCHANNELS[i].list_users.length;j++){
-                        if(allCHANNELS[i].list_users[j].nickname==actualuser.nickname){
-                            newlistCHANNEL = allCHANNELS[i].list_users.splice(j,1);
+                        if(allCHANNELS[i].list_users[j].nickname!=actualuser.nickname){
+                            newlistCHANNEL[i].list_users.push(allCHANNELS[i].list_users[j]);
                         }
                     }
                 }
             }
             for(let i=0; i<allkeywords.length; i++){
                 if(allkeywords[i].name==allChannelsprint[indexchanneledit].name){
+                    newlistkeywords[i].list_users = [];
                     for(let j=0;j<allkeywords[i].list_users.length;j++){
-                        if(allkeywords[i].list_users[j].nickname==actualuser.nickname){
-                            newlistkeywords = allkeywords[i].list_users.splice(j,1);
+                        if(allkeywords[i].list_users[j].nickname!=actualuser.nickname){
+                            newlistkeywords[i].list_users.push(allkeywords[i].list_users[j]);
                         }
                     }
                 }
@@ -857,9 +952,10 @@ function Profile() {
             setallchannels(newlistchannel);
             setallkeywords(newlistkeywords);
             setactualuser(null);
-                                                            //fare
-            //salva i valori degli user
-            //torna alla pagina di accesso 
+            let allChannelsModified = [...newlistchannel,...newlistCHANNEL,...newlistkeywords];
+            updateAllChannels(allChannelsModified);
+            updateAllUsers(newlistusers);
+            window.location.href = 'http://localhost:8080';
         }
         setSectiondeleteprofile(false);
     } 
@@ -904,7 +1000,7 @@ function Profile() {
         setViewKeyword(false);
     }
 
-    const subscribekeyword = () => {
+    const subscribekeyword = () => {                //backend
         if(inKeyword){
             for(let i=0; i<allkeywords.length; i++){
               if(allkeywords[i].name==newNameKeyword){
@@ -930,6 +1026,8 @@ function Profile() {
             }
           }
           setallkeywords(allkeywords);
+          let allChannelsModified = [...allchannels,...allCHANNELS,...allkeywords];
+          updateAllChannels(allChannelsModified);
           setInKeyword(!inKeyword);
     }
 
@@ -976,7 +1074,7 @@ function Profile() {
                         <Card.Text style={{textAlign:'left'}}>
                                     {squeal.body.text}
                                 </Card.Text>
-                                {squeal.body.photo!='' && (
+                                {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
                               <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                 <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                               </div>
@@ -1470,18 +1568,6 @@ function Profile() {
                     </Container>
                 </Col>
               </Container>
-
-
-
-
-
-
-
-
-
-
-
-
     </Container>
         
         <Modal show={showCameraModal} style={{position:'absolute', top:'0', width:'80%', left:'20%', height:'100%'}} onHide={() => setShowCameraModal(false)}>
