@@ -2,7 +2,7 @@
     <div class = "userLoggedActionInline-container">
         <div class = "userLogged-container">
             <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
-            <span>{{ username }}</span>
+            <span>{{ nickname }}</span>
         </div>
         <div class = "action1-container">
             <a style = "margin-bottom: 6%;"  (click)="openVIPSelectModule()">Modifica VIP da gestire</a>
@@ -16,7 +16,7 @@
                 </div>
                 <div mat-dialog-actions>
                 <button mat-button (click)="closeDialog()">Annulla</button>
-                <button mat-button (click)="modifiedImage(fileInput.files?.item(0) || undefined)">Seleziona</button>
+                <!--<button mat-button (click)="modifiedImage(fileInput.files?.item(0) || undefined)">Seleziona</button>-->
                 </div>
             </ng-template>
             <!--Fine test-->
@@ -27,7 +27,7 @@
                 <div mat-dialog-content>
                 <!-- Lista di opzioni VIP (da sostituire con i dati reali) -->
                 <mat-radio-group [(ngModel)]="selectedVIP">
-                    <mat-radio-button *ngFor="let vip of vipList" [value]="vip">{{ vip.username }}</mat-radio-button>
+                    <mat-radio-button *ngFor="let vip of vipList" [value]="vip">{{ vip.nickname }}</mat-radio-button>
                 </mat-radio-group>
                 </div>
                 <div mat-dialog-actions>

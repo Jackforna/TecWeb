@@ -121,6 +121,29 @@ app.put('/update-users', async (req, res) => {
   }
 });
 
+/*Temporanea per aggiunta di campi specifici user*/
+app.put('/update-user/:id', async (req, res) => {
+  try {
+      const id = req.params.id;
+      const updates = req.body;
+
+      const result = await UsersCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updates }
+      );
+
+      if (result.modifiedCount === 0) {
+          return res.status(404).send('Utente non trovato o nessun aggiornamento necessario');
+      }
+
+      res.status(200).send('Utente aggiornato con successo');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Errore durante l\'aggiornamento dell\'utente');
+  }
+});
+
+
 app.get('/get-listSqueals', async (req, res) => {
   try {
     const listSqueals = await ListSquealsCollection.find().toArray();
