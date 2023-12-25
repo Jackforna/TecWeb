@@ -76,6 +76,20 @@ export class SideMenuComponent implements OnInit {
       );
   }
   */
+
+  /* Funzione aggiornamento foto profilo utente
+  updateUserProfilePicture(userId: string, newPhotoProfileUrl: string) {
+    this.http.put(`http://localhost:8080/update-user/${userId}`, { photoprofile: newPhotoProfileUrl })
+      .subscribe(
+        response => {
+          console.log('Foto profilo utente aggiornata con successo', response);
+        },
+        error => {
+          console.error('Errore durante l\'aggiornamento della foto del profilo:', error);
+        }
+      );
+  }
+  */
   
 
 }
