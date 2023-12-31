@@ -10,53 +10,86 @@ import { HttpClient } from '@angular/common/http';
 })
 export class SideMenuComponent implements OnInit {
 
-  username: string | null = ''; // Definisce la variabile username a livello di classe
+  nickname: string | null = ''; // Definisce la variabile username a livello di classe
   profilePictureUrl: string | null = ''; // Definisce la variabile profileImage a livello di classe
   profileDescription: string = ''; // Definisce la variabile profileDescription a livello di classe
 
-  /*Test*/
-  //id: string | null= '';
-  id = localStorage.getItem('actualUserId');
+  
+  id_manager = localStorage.getItem('actualUserId');
+  id_user: string | null = '';
+
 
   constructor(private authService: AuthService, private databaseService: DatabaseService, private http: HttpClient) { }
 
   ngOnInit(): void {
-    const userDati = localStorage.getItem('Dati utente');
-    const datiUtente = userDati ? JSON.parse(userDati) : null;
-    this.username = datiUtente ? datiUtente.username : '';
-    this.profilePictureUrl = datiUtente ? datiUtente.profilePictureUrl : '';
-    this.profileDescription = datiUtente ? datiUtente.profileDescription : '';
-    console.log("Siamo qua side-menu.component.ts");
-    this.getAllUsers().subscribe(users => {
-      console.log('Utenti', users);
-    });
-    console.log(this.id);
-    this.getActualUser();
+    this.getManagerDetails();
+    this.setAccountData();
   }
 
+  // Da mettere a posto
   onLogout(): void {
-    this.authService.logOut()
+    localStorage.clear();
+    //this.authService.logOut()
   } 
 
+  getManagerDetails() {
+    const actualUserId = JSON.parse(localStorage.getItem("actualUserId")!);
 
-  getAllUsers() {
-    return this.http.get('/get-users');
-  }
+    this.databaseService.getUserData(actualUserId).subscribe(
+      (managerData: any) => {
 
-  getCurrentUser(id: string) {
-    return this.http.get(`/get-user/${id}`);
-  }
-
-  getActualUser() {
-    let actualUserId = JSON.parse(localStorage.getItem("actualUserId")!) ?? '';
-    this.http.get(`http://localhost:8080/get-user/${actualUserId}`).subscribe(
-      data => {
-        console.log(data);
+        // Se l'utente è un manager e ha almeno un account gestito
+        if (managerData.version === 'social media manager' && managerData.managedAccounts.length > 0) {
+          localStorage.setItem('Dati manager', JSON.stringify(managerData));
+          this.databaseService.getUserData(managerData.managedAccounts[0]).subscribe((userData: any) => {  
+            localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+            console.log("Dati user: ", userData);
+          }, error => {
+            console.error('Errore nella richiesta:', error);
+          });
+        }
       },
       error => {
         console.error('Errore nella richiesta:', error);
       }
     );
   }
+
+  setAccountData(){
+    const userDati = localStorage.getItem('Dati utente amministrato');
+    const datiUtente = userDati ? JSON.parse(userDati) : null;
+    this.nickname = datiUtente ? datiUtente.nickname : '';
+    this.profilePictureUrl = datiUtente ? datiUtente.photoprofile : '';
+    this.profileDescription = datiUtente ? datiUtente.profilebio : '';
+  }
+
+  /*Funzione per aggiornare gli account gestiti dall'utente
+  updateUserManagedAccounts(userId: string, managedAccounts: string[]) {
+    this.http.put(`http://localhost:8080/update-user/${userId}`, { managedAccounts })
+      .subscribe(
+        response => {
+          console.log('Utente aggiornato con successo', response);
+        },
+        error => {
+          console.error('Errore durante l\'aggiornamento dell\'utente:', error);
+        }
+      );
+  }
+  */
+
+  /* Funzione aggiornamento foto profilo utente
+  updateUserProfilePicture(userId: string, newPhotoProfileUrl: string) {
+    this.http.put(`http://localhost:8080/update-user/${userId}`, { photoprofile: newPhotoProfileUrl })
+      .subscribe(
+        response => {
+          console.log('Foto profilo utente aggiornata con successo', response);
+        },
+        error => {
+          console.error('Errore durante l\'aggiornamento della foto del profilo:', error);
+        }
+      );
+  }
+  */
+  
 
 }

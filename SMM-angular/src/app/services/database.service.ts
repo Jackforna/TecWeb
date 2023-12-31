@@ -11,11 +11,19 @@ import { Observable } from 'rxjs';
 
 export class DatabaseService {
 
-  //url = `https://angular-social-network-2b1a0.firebaseio.com/user.json`
-
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  
+  //Corrette
+  getUserData(userId: string) {
+    return this.http.get(`http://localhost:8080/get-user/${userId}`);
+  }
+
+  getAllUsers() {
+    return this.http.get('/get-users');
+  }
+
+
+  //Da sistemare
   insertUser(uid: string, email: string, username: string) {
     const signUpUrl = `https://squealer-b28ee-default-rtdb.europe-west1.firebasedatabase.app//persone/${uid}.json`; 
     const defaultProfilePictureUrl = 'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg';
@@ -44,10 +52,12 @@ export class DatabaseService {
     return this.http.put(signUpUrl, body);
   }
   
+  /* Aggiornata
   getUserData(uid: string) {
     const url = `https://squealer-b28ee-default-rtdb.europe-west1.firebasedatabase.app//persone/${uid}.json`; 
     return this.http.get(url);
   }
+  */
 
   getManagerData(uid: string) {
     const url = `https://squealer-b28ee-default-rtdb.europe-west1.firebasedatabase.app/user/${uid}.json`; 

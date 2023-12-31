@@ -35,7 +35,7 @@ export class EditProfileComponent implements OnInit{
 
 
   /*Dati utente*/
-  username: string | null = '';
+  nickname: string | null = '';
   profilePictureUrl: string | null = '';
   charLeftUser: number = 0;
   profileDescription: string = '';
@@ -57,10 +57,9 @@ export class EditProfileComponent implements OnInit{
 
   //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
   /*Dati utente loggato */
-  userDati = localStorage.getItem('Dati utente');
-  datiUtente = this.userDati ? JSON.parse(this.userDati) : null;
   user = localStorage.getItem('Dati manager');
-  userLogged = localStorage.getItem('ActuallyManagedAccount')
+  datiUtente = this.user ? JSON.parse(this.user) : null;
+  userLogged = localStorage.getItem('Dati utente amministrato')
   userId = this.userLogged ? JSON.parse(this.userLogged) : null;
 
 
@@ -77,11 +76,11 @@ export class EditProfileComponent implements OnInit{
   }
 
   laodUserData(): void {
-    this.username = this.datiUtente ? this.datiUtente.username : '';
-    this.profilePictureUrl = this.datiUtente ? this.datiUtente.profilePictureUrl : '';
-    this.charLeftUser = this.datiUtente ? this.datiUtente.charLeft : 0;
+    this.nickname = this.userId ? this.userId.nickname : '';
+    this.profilePictureUrl = this.userId ? this.userId.photoprofile : '';
+    this.charLeftUser = this.userId ? this.userId.char_d : 0;
     this.charLeft = (this.charLeftUser * 100) / this.charMaximun;
-    this.profileDescription = this.datiUtente ? this.datiUtente.profileDescription : '';
+    this.profileDescription = this.userId ? this.userId.bio : '';
   }
 
   /*Test gestione cambio immagini*/
@@ -93,7 +92,6 @@ export class EditProfileComponent implements OnInit{
   }
   /*Non funziona, non riesco ad allegare il file perchè il database non prende le immagini, ma solo json
   e l'unico modo per farlo è creare un backend che gestisca le immagini e le salvi in un storage
-  */
   modifiedImage(file?: File | null): void {
     if (file) {
       this.databaseService.uploadImage(file).subscribe(response => {
@@ -119,13 +117,13 @@ export class EditProfileComponent implements OnInit{
     }
     this.dialogRef.close();
   }
-  
+  */
   
 
   onFileSelected(event: Event): void { }
 
 
-  /*Gestione cambio vip*/
+  /*Gestione cambio vip funzionante*/
   loadManagedUsers(): void {
     const managerData = JSON.parse(localStorage.getItem('Dati manager') || '{}');  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
     const managedAccounts = managerData.managedAccounts || [];
@@ -151,16 +149,17 @@ export class EditProfileComponent implements OnInit{
     if (this.selectedVIP) {
       console.log('VIP selezionato:', this.selectedVIP);
   
-      const selectedVIPIndex = this.vipList.findIndex(vip => vip.username === this.selectedVIP.username);
+      const selectedVIPIndex = this.vipList.findIndex(vip => vip.nickname === this.selectedVIP.nickname);
   
       if (selectedVIPIndex !== -1) {
         console.log('Indice dell\'utente selezionato:', selectedVIPIndex);
         this.userId = this.user ? JSON.parse(this.user).managedAccounts[selectedVIPIndex] : null;
-        localStorage.removeItem('ActuallyManagedAccount');  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
-        localStorage.setItem('ActuallyManagedAccount', JSON.stringify(this.userId));  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
+        localStorage.removeItem('ActuallyUserId');  
+        localStorage.setItem('actualUserId', JSON.stringify(this.userId));  
         
         this.databaseService.getUserData(this.userId).subscribe((data: any) => {
-          localStorage.setItem('Dati utente', JSON.stringify(data));  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
+          localStorage.removeItem('Dati utente amministrato');  
+          localStorage.setItem('Dati utente amministrato', JSON.stringify(data)); 
           this.laodUserData(); // Ricarica i dati dell'utente
   
           this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -183,7 +182,7 @@ export class EditProfileComponent implements OnInit{
 
 
 
-  /*Gestione cambio descrizione*/
+  /*Gestione cambio descrizione DA FARE*/
   openDescriptionModule(): void {
     this.dialogDescriptionRef = this.dialog.open(this.selectDescriptionDialogRef);
   }
@@ -197,7 +196,7 @@ export class EditProfileComponent implements OnInit{
       console.log(response);
       console.log(this.userId);
       localStorage.removeItem('Dati utente'); //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
-      localStorage.setItem('Dati utente', JSON.stringify({username: this.username, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser, profileDescription: newDescription})); //CONTROLLARE CHIAMATA
+      localStorage.setItem('Dati utente', JSON.stringify({nickname: this.nickname, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser, profileDescription: newDescription})); //CONTROLLARE CHIAMATA
       // Force a refresh of the page
       this.router.routeReuseStrategy.shouldReuseRoute = () => false;
       this.router.onSameUrlNavigation = 'reload';
@@ -208,7 +207,6 @@ export class EditProfileComponent implements OnInit{
     // Ad esempio, puoi chiamare un servizio per aggiornare la descrizione nel database
     this.closeDescriptionDialog(); // Chiudi il modale dopo aver salvato la descrizione
   }
-
 
   closeDescriptionDialog(): void {
     this.dialogDescriptionRef.close();
@@ -234,7 +232,7 @@ export class EditProfileComponent implements OnInit{
     this.databaseService.patchUserData(this.userId, {charLeft: this.charLeftUser + amountNumber}).subscribe(response => { //CONTROLLARE CHIAMATA
       console.log(response);
       localStorage.removeItem('Dati utente'); //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
-      localStorage.setItem('Dati utente', JSON.stringify({username: this.username, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser + amountNumber, profileDescription: this.profileDescription})); //CONTROLLARE CHIAMATA
+      localStorage.setItem('Dati utente', JSON.stringify({nickname: this.nickname, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser + amountNumber, profileDescription: this.profileDescription})); //CONTROLLARE CHIAMATA
       // Force a refresh of the page
       this.router.routeReuseStrategy.shouldReuseRoute = () => false;
       this.router.onSameUrlNavigation = 'reload';
