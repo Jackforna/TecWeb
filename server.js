@@ -134,6 +134,21 @@ app.put('/update-users', async (req, res) => {
   }
 });
 
+app.delete('/delete-user/:id', async (req, res) => {
+  try {
+    const idToDelete = req.params.id; // Ottieni l'ID dall'URL
+    if (!ObjectId.isValid(idToDelete)) {
+      return res.status(400).send('ID non valido');
+    }
+    await UsersCollection.deleteOne({ _id: new ObjectId(idToDelete) });
+      
+      const listUsers = await UsersCollection.find().toArray();
+    res.status(200).json(listUsers);
+  } catch (error) {
+    res.status(500).send('Errore durante la lettura dei dati della lista dei messaggi');
+  }
+});
+
 app.get('/get-listSqueals', async (req, res) => {
   try {
     const listSqueals = await ListSquealsCollection.find().toArray();
@@ -197,6 +212,7 @@ app.put('/update-channels', async (req, res) => {
 
       await ListChannelsCollection.deleteMany({});
 
+      if(updatedChannels.length>0)
       await ListChannelsCollection.insertMany(updatedChannels);
       
       const listChannels = await ListChannelsCollection.find().toArray();

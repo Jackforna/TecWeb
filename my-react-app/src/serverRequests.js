@@ -121,6 +121,24 @@ export async function updateUsers(updatedUsers) {
     }
 }
 
+export async function deleteUsers(updatedUsers) {
+    try {
+        const response = await fetch(`http://localhost:8080/delete-user/${updatedUsers}`, {
+            method: 'DELETE'
+          });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
 export async function updateSqueals(updatedSqueals) {
     try {
         const response = await fetch('http://localhost:8080/update-squeals', {

@@ -3,7 +3,7 @@ import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Dropdown
 import { BrowserRouter as Router, Route, Link, Routes, useLocation} from 'react-router-dom';
 import './App.css';
 import Webcam from 'react-webcam';
-import { Camera, Globe, Link as LinkLogo, Gear, NodeMinus, PersonCircle, BoxArrowLeft, BoxArrowInDown, Trash3, XCircle, CardImage, PatchCheckFill } from 'react-bootstrap-icons';
+import { Camera, GeoAlt, Link45deg as LinkLogo, Gear, NodeMinus, PersonCircle, BoxArrowLeft, BoxArrowInDown, Trash3, XCircle, CardImage, PatchCheckFill, CameraVideo } from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import pos_reaction1 from '../src/img/reaction_positive1.png'
 import pos_reaction2 from '../src/img/reaction_positive2.png'
@@ -14,7 +14,7 @@ import neg_reaction3 from '../src/img/reaction_negative3.png'
 import channel_profile from '../src/img/channel_profile.png';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 function Profile() {
     const [actualuser, setactualuser] = useState({nickname: "", photoprofile: "", fullname: "", email: "", cell: "", password: "", version: "", blocked: false, popularity: 0, char_d: 0, char_w: 0, char_m: 0, bio: "", photoprofileX: 0, photoprofileY: 0, notifications: [false,false,false,false,false]})
@@ -46,9 +46,11 @@ function Profile() {
     const [showCameraModal, setShowCameraModal] = useState(false);
     const [showCameraModalchannel, setShowCameraModalchannel] = useState(false);
     const [showCameraModalmessage, setShowCameraModalmessage] = useState(false);
+    const [showCameraVideoModalmessage, setShowCameraVideoModalmessage] = useState(false);
     const webcamRef = useRef(null);
     const webcamRef2 = useRef(null);
     const webcamRef3 = useRef(null);
+    const videoRef = useRef(null);
     const [dragging, setDragging] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
@@ -85,6 +87,7 @@ function Profile() {
         iconAnchor: [12, 41]
       });
     const [capturedImage, setCapturedImage] = useState(null);
+    const [capturedVideo, setCapturedVideo] = useState(null);
     const [newmessage, setNewmessage] = useState({body:{text:'', position:[], link:'', photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', video:''}, request:'', type:'', remind:{every:'',dayMonth:'',dayWeek:'',hour:''}})
     const [showLinkModal, setShowLinkModal] = useState(false);
     const [inputLink, setinputLink] = useState('');
@@ -98,7 +101,12 @@ function Profile() {
     const [newPhotoKeyword, setNewPhotoKeyword] = useState('');
     const [positionKeyword, setPositionKeyword] = useState({ x: 0, y: 0 });
     const [inKeyword, setInKeyword] = useState(false);
-
+    const [ChannelPostsDeleted, setChannelPostsDeleted] = useState([]);
+    const [isRecording, setIsRecording] = useState(false);
+    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [recordedChunks, setRecordedChunks] = useState([]);
+    const [stopRecording, setStopRecording] = useState(false);
+    const [stream, setStream] = useState(null);
 
     useEffect(() => {
         if (location.pathname.endsWith('/profile')) {
@@ -203,8 +211,19 @@ function Profile() {
         }
     }
 
+    async function deleteUser(UsersToUpdate){
+        try{
+          const user = await deleteUsers(UsersToUpdate);
+          console.log(user)
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+    }
+
     async function updateAllChannels(ChannelsToUpdate){
         try{
+            console.log(ChannelsToUpdate)
           const chan = await updateChannels(ChannelsToUpdate);
           console.log(chan);
         } catch (error) {
@@ -231,11 +250,55 @@ function Profile() {
     const deletesqueal = (eliminate) => {
         if(eliminate){
         const newallSqueals = [...allSquealsprint];
-        const newSqueals = allSqueals.filter(squeal => !((squeal.sender==allSquealsprint[indexsquealtodelete].sender)&(squeal.date==allSquealsprint[indexsquealtodelete].date)&(squeal.hour==allSquealsprint[indexsquealtodelete].hour)&(squeal.seconds==allSquealsprint[indexsquealtodelete].seconds)));
+        let listnewchannels = [...allchannels];
+        let listnewCHANNELS = [...allCHANNELS];
+        let listnewkeywords = [...allkeywords];
+        if(allSquealsprint[indexsquealtodelete].channel!=""){
+            switch(allSquealsprint[indexsquealtodelete].typesender){
+                case 'channels':
+                    for(let i=0;i<allchannels.length;i++){
+                        if(allSquealsprint[indexsquealtodelete].channel===allchannels[i].name){
+                            listnewchannels[i].list_posts = [];
+                            for(let j=0;j<allchannels[i].list_posts.length;j++){
+                                if((allSquealsprint[indexsquealtodelete].sender!=allchannels[i].list_posts[j].sender)|(allSquealsprint[indexsquealtodelete].date!=allchannels[i].list_posts[j].date)|(allSquealsprint[indexsquealtodelete].hour!=allchannels[i].list_posts[j].hour)|(allSquealsprint[indexsquealtodelete].seconds!=allchannels[i].list_posts[j].seconds)){
+                                    listnewchannels[i].list_posts.push(allSquealsprint[indexsquealtodelete]);
+                                }
+                            }
+                        }
+                    }
+                break;
+                case 'CHANNELS':
+                    for(let i=0;i<allCHANNELS.length;i++){
+                        if(allSquealsprint[indexsquealtodelete].channel===allCHANNELS[i].name){
+                            listnewCHANNELS[i].list_posts = [];
+                            for(let j=0;j<allCHANNELS[i].list_posts.length;j++){
+                                if((allSquealsprint[indexsquealtodelete].sender!=allCHANNELS[i].list_posts[j].sender)|(allSquealsprint[indexsquealtodelete].date!=allCHANNELS[i].list_posts[j].date)|(allSquealsprint[indexsquealtodelete].hour!=allCHANNELS[i].list_posts[j].hour)|(allSquealsprint[indexsquealtodelete].seconds!=allCHANNELS[i].list_posts[j].seconds)){
+                                    listnewCHANNELS[i].list_posts.push(allSquealsprint[indexsquealtodelete]);
+                                }
+                            }
+                        }
+                    }
+                break;
+                case 'keywords':
+                    for(let i=0;i<allkeywords.length;i++){
+                        if(allSquealsprint[indexsquealtodelete].channel===allkeywords[i].name){
+                            listnewkeywords[i].list_posts = [];
+                            for(let j=0;j<allkeywords[i].list_posts.length;j++){
+                                if((allSquealsprint[indexsquealtodelete].sender!=allkeywords[i].list_posts[j].sender)|(allSquealsprint[indexsquealtodelete].date!=allkeywords[i].list_posts[j].date)|(allSquealsprint[indexsquealtodelete].hour!=allkeywords[i].list_posts[j].hour)|(allSquealsprint[indexsquealtodelete].seconds!=allkeywords[i].list_posts[j].seconds)){
+                                    listnewkeywords[i].list_posts.push(allSquealsprint[indexsquealtodelete]);
+                                }
+                            }
+                        }
+                    }
+                break;
+            }
+        }
         newallSqueals.splice(indexsquealtodelete, 1);
         setallSquealsprint(newallSqueals);
         setallSqueals(newallSqueals);
         updateAllSqueals(newallSqueals);
+        let allnewChannels = [...listnewchannels,...listnewCHANNELS,...listnewkeywords];
+        updateAllChannels(allnewChannels);
         }
         setconfirmdeletesqueal(false);
     }
@@ -456,6 +519,23 @@ function Profile() {
                     }
                 }
             }
+            const ListSqueals = allSqueals.filter(message =>
+                !ChannelPostsDeleted.some(toDelete =>
+                  message.sender == toDelete.sender &&
+                  message.date == toDelete.date &&
+                  message.hour == toDelete.hour &&
+                  message.seconds == toDelete.seconds
+                )
+              );
+            updateAllSqueals(ListSqueals);
+            const ListSquealsUser = allSquealsprint.filter(message =>
+                !ChannelPostsDeleted.some(toDelete =>
+                  message.sender == toDelete.sender &&
+                  message.date == toDelete.date &&
+                  message.hour == toDelete.hour &&
+                  message.seconds == toDelete.seconds
+                ));
+            setallSquealsprint(ListSquealsUser);
             let ListChannelsToUpdate = [...allchannels,...allCHANNELS,...allkeywords];
             updateAllChannels(ListChannelsToUpdate);
         }
@@ -634,6 +714,9 @@ function Profile() {
     const deletepostchannel = (eliminate) => {
         if(eliminate){
         const newallSqueals = [...newchannelposts];
+        let postsDeleted = [...ChannelPostsDeleted];
+        postsDeleted.push(newallSqueals[indexposttodelete]);
+        setChannelPostsDeleted(postsDeleted);
         newallSqueals.splice(indexposttodelete, 1);
         setnewchannelposts(newallSqueals);
         }
@@ -657,21 +740,29 @@ function Profile() {
         setconfirmleavechannel(true);
     }
 
-    const deletechannel = (confirm) => {            //backend
+    const deletechannel = (confirm) => {
         if(confirm){
             seteditchannelvisible(false);
-            let newlistchannel;
-            let newlistCHANNEL;
-            for(let i=0; i<allchannels.length; i++){
-                if(allchannels[i].name==allChannelsprint[indexchanneledit].name){
-                    newlistchannel = allchannels.splice(i,1);
-                }
-            }
-            for(let i=0; i<allCHANNELS.length; i++){
-                if(allCHANNELS[i].name==allChannelsprint[indexchanneledit].name){
-                    newlistCHANNEL = allCHANNELS.splice(i,1);
-                }
-            }
+            let newlistchannel = allchannels.filter(oggetto => oggetto.name !== allChannelsprint[indexchanneledit].name);
+            let newlistCHANNEL = allCHANNELS.filter(oggetto => oggetto.name !== allChannelsprint[indexchanneledit].name);
+            const ListSqueals = allSqueals.filter(message =>
+                !allChannelsprint[indexchanneledit].list_posts.some(toDelete =>
+                  message.sender == toDelete.sender &&
+                  message.date == toDelete.date &&
+                  message.hour == toDelete.hour &&
+                  message.seconds == toDelete.seconds
+                )
+              );
+            updateAllSqueals(ListSqueals);
+            setallSqueals(ListSqueals);
+            const ListSquealsUser = allSquealsprint.filter(message =>
+                !allChannelsprint[indexchanneledit].list_posts.some(toDelete =>
+                  message.sender == toDelete.sender &&
+                  message.date == toDelete.date &&
+                  message.hour == toDelete.hour &&
+                  message.seconds == toDelete.seconds
+                ));
+            setallSquealsprint(ListSquealsUser);
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
             let allChannelsModified = [...newlistchannel, ...newlistCHANNEL, ...allkeywords];
@@ -691,7 +782,7 @@ function Profile() {
         setconfirmdeletechannel(false);    
     }
 
-    const leavechannel = (confirm) => {             //backend
+    const leavechannel = (confirm) => {             //backend aggiungere allkeywords
         if(confirm){
             seteditchannelvisible(false);
             for(let i=0; i<allChannelsprint[indexchanneledit].list_users.length;i++){
@@ -741,6 +832,7 @@ function Profile() {
         if(isModifier){
         setconfirmaddmessagechannel(true);
         setCapturedImage(null);
+        setCapturedVideo(null);
         setIsMapVisible(false); 
         setPositionMap([]);
         setDisplayedLink(null);
@@ -838,6 +930,10 @@ function Profile() {
         setShowCameraModalmessage(true);
     }
 
+    const takevideonewmessage = () => {
+        setShowCameraVideoModalmessage(true);
+    }
+
     const changenewmessagerequest = (e) => {
         let text = e.target.value;
         setNewmessage(prevmess => ({
@@ -906,7 +1002,19 @@ function Profile() {
     setShowCameraModalmessage(false);
     }
 
-    const deleteprofile = (confirm) => {                //backend finire!!!
+    const capturevideo = () => {
+        setNewmessage(prevmess => ({
+            ...prevmess,
+            body: {
+                ...prevmess.body,
+                video: videoRef.current.src
+            }
+        }));
+        setCapturedVideo(videoRef.current.src);
+        setShowCameraVideoModalmessage(false);
+    }
+
+    const deleteprofile = (confirm) => {
         if(confirm){
             let newlistusers = [];
             for(let i=0; i<allUsers.length; i++){
@@ -915,46 +1023,52 @@ function Profile() {
                         }
                     }
             setAllUsers(newlistusers);
-            let newlistchannel = [...allchannels];
-            let newlistCHANNEL = [...allCHANNELS];
+            let newlistchannel = [];
+            let newlistCHANNEL = [];
             let newlistkeywords = [...allkeywords];
+            let k=-1;
             for(let i=0; i<allchannels.length; i++){
-                if(allchannels[i].name==allChannelsprint[indexchanneledit].name){
-                    newlistchannel[i].list_users = [];
+                if(allchannels[i].creator!=actualuser.nickname){
+                    newlistchannel.push(allchannels[i]);
+                    k += 1;
+                    newlistchannel[k].list_users = [];
                     for(let j=0;j<allchannels[i].list_users.length;j++){
                         if(allchannels[i].list_users[j].nickname!=actualuser.nickname){
-                            newlistchannel[i].list_users.push(allchannels[i].list_users[j]);
+                            newlistchannel[k].list_users.push(allchannels[i].list_users[j]);
                         }
                     }
                 }
             }
+            k = -1;
             for(let i=0; i<allCHANNELS.length; i++){
-                if(allCHANNELS[i].name==allChannelsprint[indexchanneledit].name){
-                    newlistCHANNEL[i].list_users = [];
+                if(allCHANNELS[i].creator!=actualuser.nickname){
+                    newlistCHANNEL.push(allCHANNELS[i]);
+                    k += 1;
+                    newlistCHANNEL[k].list_users = [];
                     for(let j=0;j<allCHANNELS[i].list_users.length;j++){
                         if(allCHANNELS[i].list_users[j].nickname!=actualuser.nickname){
-                            newlistCHANNEL[i].list_users.push(allCHANNELS[i].list_users[j]);
+                            newlistCHANNEL[k].list_users.push(allCHANNELS[i].list_users[j]);
                         }
                     }
                 }
             }
             for(let i=0; i<allkeywords.length; i++){
-                if(allkeywords[i].name==allChannelsprint[indexchanneledit].name){
                     newlistkeywords[i].list_users = [];
                     for(let j=0;j<allkeywords[i].list_users.length;j++){
                         if(allkeywords[i].list_users[j].nickname!=actualuser.nickname){
                             newlistkeywords[i].list_users.push(allkeywords[i].list_users[j]);
                         }
                     }
-                }
             }
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
             setallkeywords(newlistkeywords);
-            setactualuser(null);
             let allChannelsModified = [...newlistchannel,...newlistCHANNEL,...newlistkeywords];
+            let newlistSqueals = allSqueals.filter(oggetto => oggetto.sender !== actualuser.nickname);
+            updateAllSqueals(newlistSqueals);
             updateAllChannels(allChannelsModified);
-            updateAllUsers(newlistusers);
+            let idActualUser = JSON.parse(localStorage.getItem("actualUserId"));
+            deleteUser(idActualUser);
             window.location.href = 'http://localhost:8080';
         }
         setSectiondeleteprofile(false);
@@ -1031,6 +1145,48 @@ function Profile() {
           setInKeyword(!inKeyword);
     }
 
+    const handleStartRecording = async () => {
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio:true });
+            videoRef.current.src = null;
+            videoRef.current.srcObject = mediaStream;
+            videoRef.current.controls = false;
+            videoRef.current.play();
+            setStream(mediaStream);
+      
+            const recorder = new MediaRecorder(mediaStream);
+            recorder.start(300);
+            setMediaRecorder(recorder);
+            setRecordedChunks([]);
+            recorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    setRecordedChunks(prev => [...prev, event.data]);
+                }
+              };
+            setStopRecording(false);
+            setIsRecording(true);
+          } catch (error) {
+            console.error("Error accessing the webcam", error);
+          }
+      };
+    
+      const handleStopRecording = () => {
+        if (mediaRecorder) {
+            mediaRecorder.onstop = () => {
+              const blob = new Blob(recordedChunks, { 'type' : 'video/mp4' });
+              const videoURL = URL.createObjectURL(blob);
+              setRecordedChunks([]);
+              videoRef.current.srcObject = null;
+              videoRef.current.src = videoURL;
+              videoRef.current.controls = true;
+              stream.getTracks().forEach(track => track.stop());
+            };
+            mediaRecorder.stop();
+            setStopRecording(true);
+            setIsRecording(false);
+          }
+      };
+
     return (
         <>
         <Container style={{ width: '80%', left:'20%', height: '100vh', position:'absolute', alignItems: 'center', overflow:'hidden'}} className="d-flex flex-column">
@@ -1075,10 +1231,15 @@ function Profile() {
                                     {squeal.body.text}
                                 </Card.Text>
                                 {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
-                              <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                <img src={squeal.body.photo} alt="squeal photo" width="100%" />
-                              </div>
-                            )} 
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <img src={squeal.body.photo} alt="squeal photo" width="100%" />
+                                </div>
+                                )} 
+                                {squeal.body.video!='' && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                </div>
+                                )}
                             {squeal.body.position.length!=0 &&(
                                 <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                     <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
@@ -1240,6 +1401,11 @@ function Profile() {
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
                                 )} 
+                                {squeal.body.video!='' && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                </div>
+                                )}
                                 {squeal.body.position.length!=0 &&(
                                     <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                         <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
@@ -1299,6 +1465,11 @@ function Profile() {
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
                                 )} 
+                                {squeal.body.video!='' && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                </div>
+                                )}
                                 {squeal.body.position.length!=0 &&(
                                     <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                         <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
@@ -1432,7 +1603,13 @@ function Profile() {
                             {capturedImage && (
                               <div style={{ position: 'relative', width: '300px', maxHeight: '300px', overflow: 'hidden' }}>
                                 <img src={capturedImage} alt="Taken" width="100%" />
-                                <button onClick={() => {setCapturedImage(null); newmessage.body.photo=''}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '10px' }}>X</button>
+                                <button onClick={() => {setCapturedImage(null); newmessage.body.photo='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '10px' }}>X</button>
+                              </div>
+                            )} 
+                            {capturedVideo && (
+                              <div style={{ position: 'relative', width: '300px', maxHeight: '300px', overflow: 'hidden' }}>
+                                <video src={capturedVideo} alt="Taken" width="100%" controls/>
+                                <button onClick={() => {setCapturedVideo(null); newmessage.body.video=''}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '10px' }}>X</button>
                               </div>
                             )} 
                             {isMapVisible &&(
@@ -1459,9 +1636,10 @@ function Profile() {
                             )}
                         </Card.Body>
                         <Card.Footer>
-                            <Camera size={25} color='white' className='me-3' style={{cursor:'pointer'}} onClick={takephotonewmessage}></Camera>
                             <LinkLogo size={25} color='white' className='me-3' style={{cursor:'pointer'}} onClick={() => setShowLinkModal(true)}></LinkLogo>
-                            <Globe size={25} color="white" style={{cursor:'pointer'}} onClick={() => {if (!isMapVisible) {handleLocationButtonClick()}}}/>
+                            <Camera size={25} color='white' className='me-3' style={{cursor:'pointer'}} onClick={takephotonewmessage}></Camera>
+                            <CameraVideo size={25} color='white' className='me-3' style={{cursor:'pointer'}} onClick={takevideonewmessage}></CameraVideo>
+                            <GeoAlt size={25} color="white" style={{cursor:'pointer'}} onClick={() => {if (!isMapVisible) {handleLocationButtonClick()}}}/>
                         </Card.Footer>
                     </Card>
                     {selection === "Answer" && (
@@ -1476,10 +1654,6 @@ function Profile() {
                         <Button onClick={() => sectionaddmessagechannel(true)} style={{width:'20%'}} className='mt-3'>Add</Button>
                     </Row>
                 </Col>
-
-
-
-
             <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:'100%', left:'0', height:'100vh', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
                 <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeViewKeyword}>Back</Button>
                 <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribekeyword}>{inKeyword ? "Unsubscribe" : "Subscribe"}</Button>
@@ -1526,6 +1700,11 @@ function Profile() {
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
                                 )} 
+                                {squeal.body.video!='' && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                </div>
+                                )}
                                 {squeal.body.position.length!=0 &&(
                                     <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                         <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
@@ -1572,7 +1751,7 @@ function Profile() {
         
         <Modal show={showCameraModal} style={{position:'absolute', top:'0', width:'80%', left:'20%', height:'100%'}} onHide={() => setShowCameraModal(false)}>
             <Modal.Header closeButton>
-            <Modal.Title>Scatta una foto</Modal.Title>
+            <Modal.Title>Take a photo</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" width="100%"/>
@@ -1581,7 +1760,7 @@ function Profile() {
         </Modal>
         <Modal show={showCameraModalchannel} style={{position:'absolute', top:'0', left:'20%', width:'80%', height:'100%'}} onHide={() => setShowCameraModalchannel(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Scatta una foto</Modal.Title>
+          <Modal.Title>Take a photo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Webcam audio={false} ref={webcamRef2} screenshotFormat="image/jpeg" width="100%"/>
@@ -1590,22 +1769,46 @@ function Profile() {
         </Modal>
         <Modal show={showCameraModalmessage} style={{position:'absolute', top:'0', left:'20%', width:'80%', height:'100%'}} onHide={() => setShowCameraModalmessage(false)}>
             <Modal.Header closeButton>
-            <Modal.Title>Scatta una foto</Modal.Title>
+            <Modal.Title>Take a photo</Modal.Title>
             </Modal.Header>
             <Modal.Body>
             <Webcam audio={false} ref={webcamRef3} screenshotFormat="image/jpeg" width="100%"/>
             <Button className="mt-2" onClick={capturemessage}>Scatta</Button>
             </Modal.Body>
         </Modal>
+        <Modal show={showCameraVideoModalmessage} style={{position:'absolute', top:'0', left:'20%', width:'80%', height:'100%'}} onHide={() => {setShowCameraVideoModalmessage(false); setStopRecording(false);}}>
+            <Modal.Header closeButton>
+                <Modal.Title>Record Video</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="video-preview">
+                    <video ref={videoRef} width="100%" height="auto" autoplay/>
+                </div>
+                {isRecording ? (
+                <Button variant="danger" onClick={handleStopRecording}>
+                    Stop Recording
+                </Button>
+                ) : (
+                <Button variant="primary" onClick={handleStartRecording}>
+                    Start Recording
+                </Button>
+                )}
+            </Modal.Body>
+            <Modal.Footer className={stopRecording ? '': 'd-none'}>
+                <Button variant="success" onClick={capturevideo} >
+                Use Video
+                </Button>
+            </Modal.Footer>
+        </Modal>
         <Modal show={showLinkModal} onHide={() => setShowLinkModal(false)}>
             <Modal.Header closeButton>
-                <Modal.Title>Inserisci Link</Modal.Title>
+                <Modal.Title>Insert a Link</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <InputGroup>
                     <FormControl placeholder="Inserisci il tuo link qui" value={inputLink} onChange={handleInputChange}/>
                     <InputGroup.Text>
-                        <Button variant="primary" onClick={handleSubmitLink}>Invia</Button>
+                        <Button variant="primary" onClick={handleSubmitLink}>Send</Button>
                             {displayedLink && (
                                 <Button variant="danger" className="ms-2" onClick={() => {setDisplayedLink(''); setinputLink('');}}>Rimuovi</Button>
                             )}

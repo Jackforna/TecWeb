@@ -589,10 +589,15 @@ const subscribekeyword = () => {
                                         {squeal.body.text}
                                     </Card.Text>
                                     {squeal.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' && (
-                                  <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <img src={squeal.body.photo} alt="squeal photo" width="100%" />
-                                  </div>
-                                )} 
+                                      <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                        <img src={squeal.body.photo} alt="squeal photo" width="100%" />
+                                      </div>
+                                    )} 
+                                    {squeal.body.video!='' && (
+                                    <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                        <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                    </div>
+                                    )}
                                 {squeal.body.position.length!=0 &&(
                                     <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                         <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
@@ -700,6 +705,11 @@ const subscribekeyword = () => {
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
                                 )} 
+                                {squeal.body.video!='' && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                </div>
+                                )}
                                 {squeal.body.position.length!=0 &&(
                                     <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                         <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
@@ -758,6 +768,11 @@ const subscribekeyword = () => {
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
                                 )} 
+                                {squeal.body.video!='' && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                </div>
+                                )}
                                 {squeal.body.position.length!=0 &&(
                                     <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                         <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
@@ -845,6 +860,11 @@ const subscribekeyword = () => {
                                     <img src={squeal.body.photo} alt="squeal photo" width="100%" />
                                 </div>
                                 )} 
+                                {squeal.body.video!='' && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                </div>
+                                )}
                                 {squeal.body.position.length!=0 &&(
                                     <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                         <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
