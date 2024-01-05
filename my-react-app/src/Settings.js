@@ -108,7 +108,7 @@ function Settings() {
         let newdate = actualdate.getDate() +"/"+ (actualdate.getMonth()+1) +"/"+ actualdate.getFullYear();
         let newhour = actualdate.getHours() +"/"+ actualdate.getMinutes();
         let newseconds = actualdate.getSeconds();
-        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request verified', body:{text:'Request verified', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], receivers:['@Jack', '@Gabriel Betti'], category:''}
+        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request verified', body:{text:'Request verified', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], receivers:['@Jack', '@Gabriel Betti'], category:'', impressions:0}
         setallSqueals([...allSqueals, newsqueal]);
         addnewSqueal(newsqueal);
     };
@@ -118,7 +118,7 @@ function Settings() {
         let newdate = actualdate.getDate() +"/"+ (actualdate.getMonth()+1) +"/"+ actualdate.getFullYear();
         let newhour = actualdate.getHours() +"/"+ actualdate.getMinutes();
         let newseconds = actualdate.getSeconds();
-        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request SMM', body:{text:'Request SMM', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], receivers:['@Jack', '@Gabriel Betti'], category:''}
+        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request SMM', body:{text:'Request SMM', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], receivers:['@Jack', '@Gabriel Betti'], category:'', impressions:0}
         setallSqueals([...allSqueals, newsqueal]);
         addnewSqueal(newsqueal);
     };
@@ -270,7 +270,7 @@ function Settings() {
                         <Bell alt="house-door" color='white' size="30" className='ms-4 mt-1'/>
                         <p onClick={openNotifications} className='nav-link text-white' style={{width:'80%', marginBottom:'0'}}>Notifications</p>
                     </Nav.Item>
-                    <Nav.Item className="mb-2 d-flex" style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
+                    <Nav.Item className={`${actualuser.version=='moderator' ? "d-none" : "mb-2 d-flex"}`} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
                         <PersonFillUp alt="search" color='white' size="30" className='ms-4 mt-1'/>
                         <p onClick={openAccount} className='nav-link text-white' style={{width:'80%', marginBottom:'0'}}>Account</p>
                     </Nav.Item>

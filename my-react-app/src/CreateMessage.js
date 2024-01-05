@@ -80,7 +80,26 @@ function CreateMessage(props) {
     const [reminderImage, setReminderImage] = useState(null);
     const [reminderLink, setReminderLink] = useState(null);
     const [showReminderLinkModal, setShowReminderLinkModal] = useState(false);
-
+    /*beep acustico*/
+    const beep = (frequency = 520, duration = 200, volume = 1, type = 'sine') => {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+    
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+    
+      gainNode.gain.value = volume;
+      oscillator.frequency.value = frequency;
+      oscillator.type = type;
+    
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration * 0.001); // duration in milliseconds
+    };
+    /*funzione per il beep*/
+    const playBeep = () => {
+      beep(520, 200, 1, 'sine'); // Gioca un beep di 520Hz per 200ms
+    };
 
   useEffect(() => {
       const remaining = calculateCharCount();
@@ -94,6 +113,82 @@ function CreateMessage(props) {
       }
     }, [squealChatTextareaValue, capturedImage, displayedLink, position, searchInput]);
   
+  /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
+  const [intervalId, setIntervalId] = useState(null);
+
+  const startInterval = () => {
+      // Assicurati che non ci siano intervalli già in esecuzione
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+  
+      // Imposta un nuovo intervallo
+      const id = setInterval(() => {
+        console.log('Questo messaggio appare ogni n secondi');
+        // Aggiungi qui il tuo codice che vuoi eseguire ad ogni intervallo
+      }, 5000); // Sostituisci 5000 con il numero di millisecondi che desideri
+  
+      // Salva l'ID dell'intervallo nello stato
+      setIntervalId(id);
+  };
+  
+    // Aggiungi una funzione per fermare l'intervallo se necessario
+  const stopInterval = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+  };
+
+  /*funzione per generare una immagine random dalla API unsplash*/
+  function randomUnsplashImage(width, height) {
+    return(`https://source.unsplash.com/random/${width}x${height}`);
+  }
+
+  /*funzione per generare una news casuale usando la API Saurav Kanchan*/
+  const [article, setArticle] = useState(null);
+
+  const fetchRandomNews = async () => {
+    try {
+      const response = await fetch('https://saurav.tech/NewsAPI/top-headlines/category/general/us.json');
+      const data = await response.json();
+      const randomIndex = Math.floor(Math.random() * data.articles.length);
+      setArticle(data.articles[randomIndex]);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    }
+  };
+
+  /*funzione per ottenere un tweet casuale da twitter*/
+  const [tweet, setTweet] = useState(null);
+
+  const fetchTweet = async () => {
+    try {
+      const response = await fetch('/api/getTweet');
+      const data = await response.json();
+      setTweet(data.data[0]); // Prendi il primo tweet dall'array di tweet
+    } catch (error) {
+      console.error('Errore nel caricamento del tweet:', error);
+    }
+  };
+  /*funzione per ottenere un'informazione casuale da wikipedia*/
+  const [articleUrl, setArticleUrl] = useState('');
+
+  const fetchRandomWikiArticle = async () => {
+    const url = "https://en.wikipedia.org/w/api.php?action=query&format=json&list=random&rnlimit=1&origin=*";
+    
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const title = data.query.random[0].title;
+      const pageUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+      
+      setArticleUrl(pageUrl);
+    } catch (error) {
+      console.error('Error fetching random Wikipedia article:', error);
+    }
+  };
+
   const handleFocus = () => {
     setShowIcon(false);
     setSuggestedProfiles(["Profilo 1", "Profilo 2", "Profilo 3"]);

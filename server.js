@@ -4,6 +4,7 @@ const multer = require('multer');
 const { MongoClient, ObjectId } = require('mongodb');
 const path = require('path');
 const app = express();
+const needle = require('needle');
 const port = 8080; // Puoi cambiare la porta se necessario
 const dbUrl = 'mongodb://root:example@localhost:27017';
 const client = new MongoClient(dbUrl);
@@ -39,6 +40,23 @@ if (!client.connect()) {
 } else {
   console.log("Connesso correttamente al server MongoDB");
 }
+
+const token = process.env.TWITTER_BEARER_TOKEN; // Assicurati di impostare questa variabile d'ambiente (da ottenere)
+
+app.get('/api/getTweet', async (req, res) => {
+    const url = `https://api.twitter.com/2/tweets/search/recent?query=from:twitterdev`; // Esempio di URL per ottenere tweet recenti
+
+    try {
+        const response = await needle('get', url, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        res.status(200).json(response.body);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

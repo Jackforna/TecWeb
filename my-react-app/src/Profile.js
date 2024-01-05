@@ -1187,6 +1187,11 @@ function Profile() {
           }
       };
 
+      const exitprofile = () => {
+        localStorage.setItem("actualUserId", JSON.stringify(1));
+        window.location.href = "http://localhost:8080";
+      }
+
     return (
         <>
         <Container style={{ width: '80%', left:'20%', height: '100vh', position:'absolute', alignItems: 'center', overflow:'hidden'}} className="d-flex flex-column">
@@ -1203,6 +1208,7 @@ function Profile() {
                 </Row>
                 <p className='text-white' style={{width:'90%', padding:'0'}}>{actualuser.bio}</p>
                 <Button onClick={() => editprofile()} style={{position:'absolute', top:'20px', right:'20px', backgroundColor:'#696969', borderColor:'white'}}>Edit Profile</Button>
+                <Button onClick={() => exitprofile()} style={{position:'absolute', left:'20px', top:'20px'}}>Exit</Button>
             </header>
             <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}></hr>
             <Row  style={{width:'40%', justifyContent:'space-between'}}>
