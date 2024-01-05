@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Image, Dropdown, Card, Row, Col, Modal, CardGroup} from 'react-bootstrap';
 import { BrowserRouter as Router, Route, Link, Routes, useNavigate, useLocation} from 'react-router-dom';
@@ -41,8 +41,9 @@ function Home(){
     shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
     iconAnchor: [12, 41]
   });
+  const observer = useRef(null);
 
-  useEffect(() => {
+  useEffect( () => {
     if(location.pathname.endsWith('/home')){
         async function getAll1(){
             try{
@@ -55,23 +56,19 @@ function Home(){
           }
           async function getAll2(){
             try{
-                const user = await getActualUser();
-                setactualuser(user);
-            } catch (error) {
-                console.error('There has been a problem with your fetch operation:', error);
-                throw error;
-            }
-          }
-          async function getAll3(){
-            try{
-                const squeals = await getListSqueals();
-                setAllSquealsReceived(squeals);
+                let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
+                if(actualUserId=="1"){
+                  setactualuser("none");
+                } else {
+                  const user = await getActualUser();
+                  setactualuser(user);
+                }
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
                 throw error;
             }
           }  
-          async function getAll4(){
+          async function getAll3(){
             try{
                 const Channels = await getListChannels();
                 Channels.forEach(channel => {
@@ -92,6 +89,15 @@ function Home(){
                 throw error;
             }
           }
+          async function getAll4(){
+            try{
+                const squeals = await getListSqueals();
+                setAllSquealsReceived(squeals);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+                throw error;
+            }
+          }
         getAll1();
         getAll2();
         getAll3();
@@ -100,23 +106,197 @@ function Home(){
 },[location.pathname]);
 
 useEffect(()=>{
-    if(actualuser && allSquealsReceived){
+  if(actualuser && allSquealsReceived){
     let squealsReceived = [];
-        for(let i=0; i<allSquealsReceived.length;i++){
-            for(let j=0; j<allSquealsReceived[i].receivers.length; j++){
-                if(allSquealsReceived[i].receivers[j]=="@"+actualuser.nickname){
-                    squealsReceived.push(allSquealsReceived[i]);
-                }
-            }
+    if(JSON.parse(localStorage.getItem("actualUserId"))!="1"){
+      for(let i=0; i<allSquealsReceived.length;i++){
+          for(let j=0; j<allSquealsReceived[i].receivers.length; j++){
+              if(allSquealsReceived[i].receivers[j]=="@"+actualuser.nickname){
+                  squealsReceived.push(allSquealsReceived[i]);
+              }
+          }
+      }
+    } else {
+      for(let i=0;i<allCHANNELS.length;i++){
+        for(let j=0;j<allCHANNELS[i].list_posts.length;j++){
+          squealsReceived.push(allCHANNELS[i].list_posts[j]);
         }
-    setallSquealsprint(squealsReceived);
-    setallSqueals(squealsReceived);
+      }
     }
-}, [actualuser, allSquealsReceived]);
+  setallSquealsprint(squealsReceived);
+  setallSqueals(squealsReceived);
+  console.log(squealsReceived);
+  }
+}, [actualuser, allSquealsReceived, allCHANNELS]);
+
+  const callback = (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const viewedMessage = allSqueals.find(
+          (msg) => msg._id === entry.target.getAttribute('data-id')
+        );
+        if (viewedMessage && !viewedMessage.usersViewed.includes(actualuser.nickname)) {
+          let updatedMessages = [];
+            for (let i = 0; i < allSqueals.length; i++) {
+              if (allSqueals[i]._id === viewedMessage._id) {
+                let updatedMessage = {
+                  ...allSqueals[i],
+                  impressions: allSqueals[i].impressions + 1,
+                  usersViewed: [...allSqueals[i].usersViewed, actualuser.nickname]
+                };
+                updatedMessages.push(updatedMessage);
+              } else {
+                updatedMessages.push(allSqueals[i]);
+              }
+            }
+            setallSqueals(updatedMessages);
+          updatedMessages = [];
+            for (let i = 0; i < allSqueals.length; i++) {
+              if (allSquealsReceived[i]._id === viewedMessage._id) {
+                let updatedMessage = {
+                  ...allSquealsReceived[i],
+                  impressions: allSquealsReceived[i].impressions + 1,
+                  usersViewed: [...allSquealsReceived[i].usersViewed, actualuser.nickname]
+                };
+                updatedMessages.push(updatedMessage);
+              } else {
+                updatedMessages.push(allSquealsReceived[i]);
+              }
+            }
+            setAllSquealsReceived(updatedMessages);
+            updateAllSqueals(updatedMessages);
+        let updatedChannels = [...allchannels];
+        let updatedCHANNELS = [...allCHANNELS];
+        let updatedkeywords = [...allkeywords];
+        switch(viewedMessage.typesender){
+          case 'channels':
+            updatedChannels = [];
+            for (let i = 0; i < allchannels.length; i++) {
+              let channel = allchannels[i];
+              if (channel.name === viewedMessage.channel) {
+                let updatedPosts = [];
+                for (let j = 0; j < channel.list_posts.length; j++) {
+                  let post = channel.list_posts[j];
+                  if (post.sender === viewedMessage.sender & post.date === viewedMessage.date & post.hour === viewedMessage.hour & post.seconds === viewedMessage.seconds) {
+                    let updatedPost = {
+                      ...post,
+                      impressions: post.impressions + 1,
+                      usersViewed: [...post.usersViewed, actualuser.nickname]
+                    };
+                    updatedPosts.push(updatedPost);
+                  } else {
+                    updatedPosts.push(post);
+                  }
+                }
+                updatedChannels.push({
+                  ...channel,
+                  list_posts: updatedPosts
+                });
+              } else {
+                updatedChannels.push(channel);
+              }
+            }
+            setallchannels(updatedChannels);
+          break;
+          case 'CHANNELS':
+            updatedCHANNELS = [];
+            console.log(allCHANNELS);
+            for (let i = 0; i < allCHANNELS.length; i++) {
+              let channel = allCHANNELS[i];
+              if (channel.name === viewedMessage.channel) {
+                let updatedPosts = [];
+                for (let j = 0; j < channel.list_posts.length; j++) {
+                  let post = channel.list_posts[j];
+                  if (post.sender === viewedMessage.sender & post.date === viewedMessage.date & post.hour === viewedMessage.hour & post.seconds === viewedMessage.seconds) {
+                    let updatedPost = {
+                      ...post,
+                      impressions: post.impressions + 1,
+                      usersViewed: [...post.usersViewed, actualuser.nickname]
+                    };
+                    updatedPosts.push(updatedPost);
+                  } else {
+                    updatedPosts.push(post);
+                  }
+                }
+                updatedCHANNELS.push({
+                  ...channel,
+                  list_posts: updatedPosts
+                });
+              } else {
+                updatedCHANNELS.push(channel);
+              }
+            }
+            console.log(updatedCHANNELS);
+            setallCHANNELS(updatedCHANNELS);
+          break;
+          case 'keywords':
+            updatedkeywords = [];
+            for (let i = 0; i < allkeywords.length; i++) {
+              let channel = allkeywords[i];
+              if (channel.name === viewedMessage.channel) {
+                let updatedPosts = [];
+                for (let j = 0; j < channel.list_posts.length; j++) {
+                  let post = channel.list_posts[j];
+                  if (post.sender === viewedMessage.sender & post.date === viewedMessage.date & post.hour === viewedMessage.hour & post.seconds === viewedMessage.seconds) {
+                    let updatedPost = {
+                      ...post,
+                      impressions: post.impressions + 1,
+                      usersViewed: [...post.usersViewed, actualuser.nickname]
+                    };
+                    updatedPosts.push(updatedPost);
+                  } else {
+                    updatedPosts.push(post);
+                  }
+                }
+                updatedkeywords.push({
+                  ...channel,
+                  list_posts: updatedPosts
+                });
+              } else {
+                updatedkeywords.push(channel);
+              }
+            }
+            setallkeywords(updatedkeywords);
+          break;
+          default:
+
+          break;
+        }
+        let allupdatedChannels = [...updatedChannels,...updatedCHANNELS,...updatedkeywords];
+        updateAllChannels(allupdatedChannels);
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    if(allSquealsReceived!=[]){
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver(callback, { threshold: 1 });
+      document.querySelectorAll('.message').forEach((element) => {
+        observer.current.observe(element);
+      });
+
+      return () => {
+        if (observer.current) observer.current.disconnect();
+      };
+    }
+  }, [allSquealsReceived]);
+
+  async function updateAllUsers(UsersToUpdate){
+    try{
+      await updateUsers(UsersToUpdate);
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
+    }
+}
 
 async function updateAllSqueals(squealsToUpdate){
   try{
     const squeal = await updateSqueals(squealsToUpdate);
+    console.log(squeal);
   } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
@@ -126,6 +306,7 @@ async function updateAllSqueals(squealsToUpdate){
 async function updateAllChannels(ChannelsToUpdate){
   try{
     const chan = await updateChannels(ChannelsToUpdate);
+    console.log(chan);
   } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
@@ -210,9 +391,10 @@ const handleFocus = () => {
     }
   };
 
-  const reactionSqueal = (indexSqueal,x) => {  //devo controllare che se un messaggio fa parte di un canale ne vengano modificate le reazioni
+  const reactionSqueal = (indexSqueal,x) => {
       
     let newallSqueals = [...allSqueals];
+    let newallUsers = [...allUsers];
     let channelsModified = [...allchannels];
     let CHANNELSModified = [...allCHANNELS];
     let keywordsModified = [...allkeywords];
@@ -234,17 +416,49 @@ const handleFocus = () => {
         if(!find){
           newallSqueals[indexSqueal].usersReactions.push({nickname: actualuser.nickname, posReactions:x, negReactions:0});
         }
+        if(newallSqueals[indexSqueal].pos_reactions>0.25*newallSqueals[indexSqueal].impressions){
+          if(newallSqueals[indexSqueal].neg_reactions>0.25*newallSqueals[indexSqueal].impressions){
+            newallSqueals[indexSqueal].category = "controversial";
+          } else {
+            newallSqueals[indexSqueal].category = "popular";
+          }
+        } else if(newallSqueals[indexSqueal].neg_reactions>0.25*newallSqueals[indexSqueal].impressions) {
+          newallSqueals[indexSqueal].category = "unpopular";
+        }
+        let count=0;
+        for(let i=0;i<newallSqueals.length;i++){
+          if(newallSqueals[i].category=="popular" & newallSqueals[indexSqueal].sender==newallSqueals[i].sender){
+            count++;
+          }
+        }
+        if(count%10==0 & count>0){
+          for(let i=0;i<allUsers.length;i++){
+            if(allUsers[i].nickname==newallSqueals[indexSqueal].sender){
+              newallUsers[i].char_d = newallUsers[i].char_d + (newallUsers[i].char_d*0.01);
+              newallUsers[i].char_w = newallUsers[i].char_w + (newallUsers[i].char_w*0.01);
+              newallUsers[i].char_m = newallUsers[i].char_m + (newallUsers[i].char_m*0.01);
+              newallUsers[i].popularity = newallUsers[i].popularity + 1;
+            }
+          }
+        }
         if(newallSqueals[indexSqueal].channel!=""){
           switch(newallSqueals[indexSqueal].typesender){
             case "channels":
               for(let i=0; i<allchannels.length; i++){
                 if(allchannels[i].name===newallSqueals[indexSqueal].channel){
+                  let counter = 0;
                   for(let j=0; j<allchannels[i].list_posts.length; j++){
                     if((newallSqueals[indexSqueal].sender===allchannels[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allchannels[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allchannels[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allchannels[i].list_posts[j].seconds)){
                       channelsModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
                       channelsModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
                       channelsModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
                     }
+                    if(channelsModified[i].list_posts[j].category=="popular"){
+                      counter += 1;
+                    }
+                  }
+                  if(counter%10==0 & counter>0){
+                    channelsModified[i].popularity = channelsModified[i].popularity + 1;
                   }
                 }
               }
@@ -252,12 +466,19 @@ const handleFocus = () => {
             case "CHANNELS":
               for(let i=0; i<allCHANNELS.length; i++){
                 if(allCHANNELS[i].name===newallSqueals[indexSqueal].channel){
+                  let counter = 0;
                   for(let j=0; j<allCHANNELS[i].list_posts.length; j++){
                     if((newallSqueals[indexSqueal].sender===allCHANNELS[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allCHANNELS[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allCHANNELS[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allCHANNELS[i].list_posts[j].seconds)){
                       CHANNELSModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
                       CHANNELSModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
                       CHANNELSModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
                     }
+                    if(CHANNELSModified[i].list_posts[j].category=="popular"){
+                      counter += 1;
+                    }
+                  }
+                  if(counter%10==0 & counter>0){
+                    CHANNELSModified[i].popularity = CHANNELSModified[i].popularity + 1;
                   }
                 }
               }
@@ -265,12 +486,19 @@ const handleFocus = () => {
             case "keywords":
               for(let i=0; i<allkeywords.length; i++){
                 if(allkeywords[i].name===newallSqueals[indexSqueal].channel){
+                  let counter = 0;
                   for(let j=0; j<allkeywords[i].list_posts.length; j++){
                     if((newallSqueals[indexSqueal].sender===allkeywords[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allkeywords[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allkeywords[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allkeywords[i].list_posts[j].seconds)){
                       keywordsModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
                       keywordsModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
                       keywordsModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
                     }
+                    if(keywordsModified[i].list_posts[j].category=="popular"){
+                      counter += 1;
+                    }
+                  }
+                  if(counter%10==0 & counter>0){
+                    keywordsModified[i].popularity = keywordsModified[i].popularity + 1;
                   }
                 }
               }
@@ -296,17 +524,49 @@ const handleFocus = () => {
         if(!find){
           newallSqueals[indexSqueal].usersReactions.push({nickname: actualuser.nickname, posReactions:0, negReactions:x});
         }
+        if(newallSqueals[indexSqueal].pos_reactions>0.25*newallSqueals[indexSqueal].impressions){
+          if(newallSqueals[indexSqueal].neg_reactions>0.25*newallSqueals[indexSqueal].impressions){
+            newallSqueals[indexSqueal].category = "controversial";
+          } else {
+            newallSqueals[indexSqueal].category = "popular";
+          }
+        } else if(newallSqueals[indexSqueal].neg_reactions>0.25*newallSqueals[indexSqueal].impressions) {
+          newallSqueals[indexSqueal].category = "unpopular";
+        }
+        let count=0;
+        for(let i=0;i<newallSqueals.length;i++){
+          if(newallSqueals[i].category=="unpopular" & newallSqueals[indexSqueal].sender==newallSqueals[i].sender){
+            count++;
+          }
+        }
+        if(count%10==0 & count>0){
+          for(let i=0;i<allUsers.length;i++){
+            if(allUsers[i].nickname==newallSqueals[indexSqueal].sender){
+              newallUsers[i].char_d = newallUsers[i].char_d - (newallUsers[i].char_d*0.01);
+              newallUsers[i].char_w = newallUsers[i].char_w - (newallUsers[i].char_w*0.01);
+              newallUsers[i].char_m = newallUsers[i].char_m - (newallUsers[i].char_m*0.01);
+              newallUsers[i].popularity = newallUsers[i].popularity - 1;
+            }
+          }
+        }
         if(newallSqueals[indexSqueal].channel!=""){
           switch(newallSqueals[indexSqueal].typesender){
             case "channels":
               for(let i=0; i<allchannels.length; i++){
                 if(allchannels[i].name===newallSqueals[indexSqueal].channel){
+                  let counter = 0;
                   for(let j=0; j<allchannels[i].list_posts.length; j++){
                     if((newallSqueals[indexSqueal].sender===allchannels[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allchannels[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allchannels[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allchannels[i].list_posts[j].seconds)){
                       channelsModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
                       channelsModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
                       channelsModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
                     }
+                    if(channelsModified[i].list_posts[j].category=="unpopular"){
+                      counter += 1;
+                    }
+                  }
+                  if(counter%10==0 & counter>0){
+                    channelsModified[i].popularity = channelsModified[i].popularity - 1;
                   }
                 }
               }
@@ -314,12 +574,19 @@ const handleFocus = () => {
             case "CHANNELS":
               for(let i=0; i<allCHANNELS.length; i++){
                 if(allCHANNELS[i].name===newallSqueals[indexSqueal].channel){
+                  let counter = 0;
                   for(let j=0; j<allCHANNELS[i].list_posts.length; j++){
                     if((newallSqueals[indexSqueal].sender===allCHANNELS[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allCHANNELS[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allCHANNELS[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allCHANNELS[i].list_posts[j].seconds)){
                       CHANNELSModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
                       CHANNELSModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
                       CHANNELSModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
                     }
+                    if(CHANNELSModified[i].list_posts[j].category=="unpopular"){
+                      counter += 1;
+                    }
+                  }
+                  if(counter%10==0 & counter>0){
+                    CHANNELSModified[i].popularity = CHANNELSModified[i].popularity - 1;
                   }
                 }
               }
@@ -327,12 +594,19 @@ const handleFocus = () => {
             case "keywords":
               for(let i=0; i<allkeywords.length; i++){
                 if(allkeywords[i].name===newallSqueals[indexSqueal].channel){
+                  let counter = 0;
                   for(let j=0; j<allkeywords[i].list_posts.length; j++){
                     if((newallSqueals[indexSqueal].sender===allkeywords[i].list_posts[j].sender)&(newallSqueals[indexSqueal].date===allkeywords[i].list_posts[j].date)&(newallSqueals[indexSqueal].hour===allkeywords[i].list_posts[j].hour)&(newallSqueals[indexSqueal].seconds===allkeywords[i].list_posts[j].seconds)){
                       keywordsModified[i].list_posts[j].pos_reactions = newallSqueals[indexSqueal].pos_reactions;
                       keywordsModified[i].list_posts[j].neg_reactions = newallSqueals[indexSqueal].neg_reactions;
                       keywordsModified[i].list_posts[j].usersReactions = newallSqueals[indexSqueal].usersReactions;
                     }
+                    if(keywordsModified[i].list_posts[j].category=="unpopular"){
+                      counter += 1;
+                    }
+                  }
+                  if(counter%10==0 & counter>0){
+                    keywordsModified[i].popularity = keywordsModified[i].popularity - 1;
                   }
                 }
               }
@@ -344,6 +618,8 @@ const handleFocus = () => {
     updateAllSqueals(newallSqueals);
     let ListChannelsModified = [...channelsModified, ...CHANNELSModified, ...keywordsModified];
     updateAllChannels(ListChannelsModified);
+    setAllUsers(newallUsers);
+    updateAllUsers(newallUsers);
   };
 
     return(
@@ -360,7 +636,7 @@ const handleFocus = () => {
               >
               <div style={{position:'relative', marginTop:'13%', height:'100%', overflowY:'scroll'}}>
                   {allSquealsprint.length!=0 && allSquealsprint.map((squeal,index) => (
-                    <Card key={index} style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
+                    <Card key={index} data-id={squeal._id} className='message' style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
                     <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                       <CardGroup>
                         {squeal.typesender=='Users' ?
