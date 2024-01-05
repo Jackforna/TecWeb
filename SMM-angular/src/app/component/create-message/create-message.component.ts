@@ -25,7 +25,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   remainingChars: number = 0;
   userText: string = '';
 
-  userDati = localStorage.getItem('Dati utente');
+  userDati = localStorage.getItem('Dati utente amministrato');
   datiUtente = this.userDati ? JSON.parse(this.userDati) : null;
 
   /*Modale fotocamera*/
@@ -55,19 +55,58 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     ) { }
 
   ngOnInit() {
-    this.profilePictureUrl = this.datiUtente ? this.datiUtente.profilePictureUrl : '';
-    this.charLeftUser = this.datiUtente ? this.datiUtente.charLeft : 0;
-    this.remainingChars = this.charLeftUser;
+    this.profilePictureUrl = this.datiUtente ? this.datiUtente.photoprofile : '';
+    this.charLeftUser = this.datiUtente ? this.datiUtente.char_d : 0;   
+    this.remainingChars = this.charLeftUser; 
   }
 
   ngAfterViewInit() {
 
   }
 
+  /* Da aggiornare
   updateCharLeftUser(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
     this.remainingChars = this.charLeftUser - textarea.value.length; // Sostituisci 150 con il tuo valore massimo di caratteri se diverso
   }
+  */
+  updateCharLeftUser(event: Event) {
+    const textarea = event.target as HTMLTextAreaElement;
+    let textLength = textarea.value.length;
+  
+    // Calcola i caratteri usati dagli allegati
+    const attachmentChars = this.calculateAttachmentChars();
+  
+    // Calcola i caratteri rimanenti
+    let remainingChars = this.charLeftUser - textLength - attachmentChars;
+  
+    // Se i caratteri rimanenti sono sotto zero, tronca il testo
+    if (remainingChars < 0) {
+      textLength += remainingChars; // Aumenta per portare a zero
+      textarea.value = textarea.value.substring(0, textLength);
+      remainingChars = 0; // Resetta a zero
+    }
+  
+    this.remainingChars = remainingChars;
+  }
+
+  updateRemainingChars() {
+    const attachmentChars = this.calculateAttachmentChars();
+    const textLength = this.userText.length;
+    this.remainingChars = this.charLeftUser - textLength - attachmentChars;
+  }
+  
+  
+  
+  calculateAttachmentChars() {
+    let chars = 0;
+    if (this.sentImageUrl) chars += 150; // Costo per l'immagine
+    if (this.sentLink) chars += 150; // Costo per il link
+    if (this.userLocation) chars += 150; // Costo per la posizione
+    // Aggiungi qui altri costi per altri tipi di allegati se necessario
+    return chars;
+  }
+  
 
   setCursorAtStart(event: any) {
     const target = event.target;
@@ -221,29 +260,29 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
   
   sendImage(): void {
-    // Se non c'è un'immagine selezionata o scattata, scatta una foto.
-    if (!this.imageDataUrl) {
-      this.capturePhoto();
+    if (this.remainingChars >= 150) {
+      if (!this.imageDataUrl) {
+        this.capturePhoto();
+      }
+  
+      // Chiudi il modale della fotocamera se è aperto
+      this.closeCameraModal();
+  
+      if (this.imageDataUrl) {
+        this.sentImageUrl = this.imageDataUrl;
+        //this.remainingChars -= 150; // Sottrai il costo dell'immagine
+        this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+        this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+      }
+    } else {
+      alert("Caratteri rimanenti insufficienti per allegare un'immagine.");
     }
-  
-    // Chiudi il modale della fotocamera se è aperto
-    this.closeCameraModal();
-  
-    // Controlla se una foto è stata scattata e se l'URL dell'immagine è disponibile
-    if (this.imageDataUrl) {
-      // Usa l'URL dell'immagine catturata o caricata
-      this.sentImageUrl = this.imageDataUrl;
-  
-      // Puoi anche fare altre cose qui, come inviare l'immagine al server
-      // ...
-    }
-    this.remainingChars = this.remainingChars - 125; /*Non funzionante da ottimizzare*/
   }
   
   removeSentImage(): void {
     this.sentImageUrl = null; // Rimuove l'URL dell'immagine, quindi non sarà più visualizzata
     this.imageDataUrl = null; // Rimuove l'URL dell'immagine, quindi non sarà più visualizzata
-
+    this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
   }
 
 
@@ -264,10 +303,19 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   validateAndSendLink(): void {
-    if (this.isValidUrl(this.linkInput)) {
-      // Salva il link e chiudi il modale
-      this.sentLink = this.linkInput;
-      this.closeLinkModal();
+    if (this.remainingChars >= 150) {
+      if (this.isValidUrl(this.linkInput)) {
+        // Salva il link e chiudi il modale
+        this.sentLink = this.linkInput;
+        this.closeLinkModal();
+  
+        // Aggiorna il conteggio dei caratteri rimanenti
+        //this.remainingChars -= 150;  // O usa la lunghezza del link se preferisci
+        this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+        this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+      } else {
+        alert('Il link inserito non è valido.');
+      }
     } else {
       alert('Il link inserito non è valido.');
     }
@@ -275,6 +323,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
   removeSentLink(): void {
     this.sentLink = null; // Rimuove il link, quindi non sarà più visualizzato
+    this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
   }
 
 
@@ -283,37 +332,44 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   // Metodo per ottenere la posizione dell'utente e generare la mappa
   
   getUserLocation(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          this.userLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          this.isMapActive = true; // Imposta la mappa come attiva
-          setTimeout(() => { // Aggiunge un breve ritardo
-            this.generateMap();
-            this.addMarkerToMap();
-          }, 0);
-          if (this.map) {
-            this.map.setView([this.userLocation.lat, this.userLocation.lng], 15);
-            setTimeout(() => {
-              this.map.invalidateSize();
+    if (this.remainingChars >= 150) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            this.userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            this.isMapActive = true; // Imposta la mappa come attiva
+            setTimeout(() => { // Aggiunge un breve ritardo
+              this.generateMap();
+              this.addMarkerToMap();
             }, 0);
+            if (this.map) {
+              this.map.setView([this.userLocation.lat, this.userLocation.lng], 15);
+              setTimeout(() => {
+                this.map.invalidateSize();
+              }, 0);
+            }
+            //this.remainingChars -= 150; // Sottrai il costo della posizione
+            this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+            this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+          },
+          error => {
+            console.error("Errore nell'ottenere la posizione: ", error);
+            alert("Non è stato possibile ottenere la tua posizione. Errore: " + error.message);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
           }
-        },
-        error => {
-          console.error("Errore nell'ottenere la posizione: ", error);
-          alert("Non è stato possibile ottenere la tua posizione. Errore: " + error.message);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        }
-      );
+        );
+      } else {
+        alert("La geolocalizzazione non è supportata dal tuo browser.");
+      }
     } else {
-      alert("La geolocalizzazione non è supportata dal tuo browser.");
+      alert('Caratteri rimanenti insufficienti per aggiungere la posizione.');
     }
   }
   
@@ -367,16 +423,23 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
   
   confirmLocation(): void {
-    if (this.selectedLocation) {
-      const latLng = this.selectedLocation.getLatLng();
-      this.userLocation = { lat: latLng.lat, lng: latLng.lng };
-      this.isMapActive = true;
-      setTimeout(() => {
-        this.generateMap();
-        this.addMarkerToMap();
-      }, 0);
+    if (this.remainingChars >= 150) {
+      if (this.selectedLocation) {
+        const latLng = this.selectedLocation.getLatLng();
+        this.userLocation = { lat: latLng.lat, lng: latLng.lng };
+        this.isMapActive = true;
+        setTimeout(() => {
+          this.generateMap();
+          this.addMarkerToMap();
+        }, 0);
+        //this.remainingChars -= 150; // Sottrai il costo della posizione
+        this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+        this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+      }
+      this.closeMapModal();
+    } else {
+      alert('Caratteri rimanenti insufficienti per selezionare una posizione.');
     }
-    this.closeMapModal();
   }
   
   removeMap(): void {
@@ -386,6 +449,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     if (this.map) {
       this.map.remove();
       this.map = null;
+      this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
     }
   }
   
