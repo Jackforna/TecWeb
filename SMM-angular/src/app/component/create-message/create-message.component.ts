@@ -5,6 +5,8 @@ import { DatabaseService } from 'src/app/services/database.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
+import { FormControl } from '@angular/forms';
+import { Observable, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-create-message',
@@ -24,6 +26,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   charLeftUser: number = 0;
   remainingChars: number = 0;
   userText: string = '';
+  private maxLengthPrivate = 200; // Lunghezza massima per i messaggi privati
+  originalCharLeftUser: number = 0; //Backup numero caratteri per il privato
 
   userDati = localStorage.getItem('Dati utente amministrato');
   datiUtente = this.userDati ? JSON.parse(this.userDati) : null;
@@ -47,6 +51,16 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   selectedLocation: L.Marker | null = null;
   tempMap: any;
 
+  //Inserimento #hashtag
+  myControl = new FormControl('');
+  isPrivate: boolean = false;
+  userControl = new FormControl(''); // Controllo per l'input utente
+
+  //Gestione caso private
+  isImageAttachmentEnabled = true;
+  isLinkAttachmentEnabled = true;
+  isLocationAttachmentEnabled = true;
+
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -59,21 +73,30 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.charLeftUser = this.datiUtente ? this.datiUtente.char_d : 0;   
     this.remainingChars = this.charLeftUser; 
   }
+  
 
   ngAfterViewInit() {
 
   }
 
-  /* Da aggiornare
-  updateCharLeftUser(event: Event) {
-    const textarea = event.target as HTMLTextAreaElement;
-    this.remainingChars = this.charLeftUser - textarea.value.length; // Sostituisci 150 con il tuo valore massimo di caratteri se diverso
-  }
-  */
+  /*Aggiornamnto caratteri rimanenti*/
   updateCharLeftUser(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
     let textLength = textarea.value.length;
+
+    const attachmentChars = this.calculateAttachmentChars();
   
+    if (this.isPrivate) { 
+      let remainingCharsPrivate = this.maxLengthPrivate - textLength - attachmentChars;
+
+      // Se i caratteri rimanenti sono sotto zero, tronca il testo
+      if (remainingCharsPrivate < 0) {
+        textLength = this.maxLengthPrivate - attachmentChars; // Limita il testo alla lunghezza massima meno il peso degli allegati
+        textarea.value = textarea.value.substring(0, textLength);
+        remainingCharsPrivate = 0; // Resetta a zero
+      }
+      this.remainingChars = remainingCharsPrivate;
+    } else {
     // Calcola i caratteri usati dagli allegati
     const attachmentChars = this.calculateAttachmentChars();
   
@@ -88,6 +111,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     }
   
     this.remainingChars = remainingChars;
+    }
   }
 
   updateRemainingChars() {
@@ -95,8 +119,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     const textLength = this.userText.length;
     this.remainingChars = this.charLeftUser - textLength - attachmentChars;
   }
-  
-  
   
   calculateAttachmentChars() {
     let chars = 0;
@@ -277,12 +299,14 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     } else {
       alert("Caratteri rimanenti insufficienti per allegare un'immagine.");
     }
+    this.disableOtherAttachments('image'); // Disabilita gli altri pulsanti di allegato
   }
   
   removeSentImage(): void {
     this.sentImageUrl = null; // Rimuove l'URL dell'immagine, quindi non sarà più visualizzata
     this.imageDataUrl = null; // Rimuove l'URL dell'immagine, quindi non sarà più visualizzata
     this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+    this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
   }
 
 
@@ -319,11 +343,13 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     } else {
       alert('Il link inserito non è valido.');
     }
+    this.disableOtherAttachments('link'); // Disabilita gli altri pulsanti di allegato
   }
 
   removeSentLink(): void {
     this.sentLink = null; // Rimuove il link, quindi non sarà più visualizzato
     this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+    this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
   }
 
 
@@ -371,6 +397,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     } else {
       alert('Caratteri rimanenti insufficienti per aggiungere la posizione.');
     }
+    this.disableOtherAttachments('location'); // Disabilita gli altri pulsanti di allegato
   }
   
   addMarkerToMap(): void {
@@ -451,6 +478,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       this.map = null;
       this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
     }
+    this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
   }
   
   initTempMap(): void {
@@ -487,7 +515,59 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   
+  /*Hashtag vs Private*/
+  onSelectChange(event: any) {
+    this.isPrivate = event.target.value === 'private';
+    if (this.isPrivate) {
+      // Salva il valore originale e imposta il limite a 200 in modalità privata
+      this.originalCharLeftUser = this.charLeftUser;
+      this.charLeftUser = 200;
+    } else {
+      // Ripristina il valore originale in modalità pubblica
+      this.charLeftUser = this.originalCharLeftUser;
+    }
+    // Aggiorna i caratteri rimanenti
+    this.updateCharLeftUser({} as Event);
+  }
   
+
+  onHashtagInput(event: any) {
+    let value = event.target.value;
+    if (value.length > 25) {
+      // Tronca la stringa a 25 caratteri
+      value = value.substr(0, 25);
+    }
+    // Sostituisce ogni spazio con "_"
+    value = value.replace(/\s+/g, '_');
+    // Aggiorna il valore dell'input con la stringa modificata
+    event.target.value = value;
+  }
+
+  onUserInput(event: any) {
+    let value = event.target.value;
+    if (value.length > 25) {
+      // Tronca la stringa a 25 caratteri
+      value = value.substr(0, 25);
+    }
+    // Sostituisce ogni spazio con "_"
+    value = value.replace(/\s+/g, '_');
+    // Aggiorna il valore dell'input con la stringa modificata
+    event.target.value = value;
+  }
+
+  disableOtherAttachments(selectedAttachment: string) {
+    if (this.isPrivate) {
+      this.isImageAttachmentEnabled = selectedAttachment === 'image';
+      this.isLinkAttachmentEnabled = selectedAttachment === 'link';
+      this.isLocationAttachmentEnabled = selectedAttachment === 'location';
+    }
+  }
+
+  enableOtherAttachments() {
+    this.isImageAttachmentEnabled = true;
+    this.isLinkAttachmentEnabled = true;
+    this.isLocationAttachmentEnabled = true;
+  }
   
 }
   

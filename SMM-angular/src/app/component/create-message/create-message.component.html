@@ -10,7 +10,7 @@
             </select>
         </div>
         <div class="custom-select-wrapper">
-            <select>
+            <select (change)="onSelectChange($event)">
               <option value="public" selected>Public</option>
               <option value="private">Private</option>
             </select>
@@ -19,6 +19,19 @@
         </mat-card-header>
         
         <div class="post-content">
+            <div *ngIf="!isPrivate" class="example-form">
+                <div class="custom-input-field">
+                  <label for="hashtagInput" class="hashtag-label">#</label>
+                  <input id="hashtagInput" type="text" [formControl]="myControl" placeholder="Inserisci il tuo hashtag" (input)="onHashtagInput($event)" />
+                </div>
+            </div>
+            
+            <div *ngIf="isPrivate" class="example-form">
+                <div class="custom-input-field">
+                    <label for="userInput" class="user-label">&#64;</label>
+                    <input id="userInput" type="text" [formControl]="userControl" placeholder="Utenti" (input)="onUserInput($event)" />
+                </div>
+            </div>                   
             <div class="post-textarea">
                 <textarea 
                     placeholder="A cosa stai pensando?" 

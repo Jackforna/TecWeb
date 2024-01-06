@@ -352,3 +352,48 @@ margin-left: 4%;
   height: 300px;
   width: 500px;
 }
+
+/*Inserimento hashatag*/
+.example-form {
+  display: flex;
+  align-items: center;
+  margin-top: 2%;
+  margin-left: 2%; /* Allinea con la textarea */
+}
+
+.custom-input-field {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  padding-left: 10px;
+  font-size: 16px;
+}
+
+.hashtag-label {
+  margin-right: 5px;
+  font-size: 1em;
+  color: grey;
+}
+
+#hashtagInput {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  font-size: 1em;
+}
+
+.user-label {
+  margin-right: 5px;
+  font-size: 1em;
+  color: grey;
+
+}
+
+#userInput{
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  font-size: 1em;
+}
