@@ -61,6 +61,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   isLinkAttachmentEnabled = true;
   isLocationAttachmentEnabled = true;
 
+  //Gestione canali
+  isChannel: boolean = false;
+  accessType: string = 'write';  // Opzione di default per Canale
+  channelControl = new FormControl('');  // Controllo per l'input del nome del canale
+
+
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -567,6 +573,39 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.isImageAttachmentEnabled = true;
     this.isLinkAttachmentEnabled = true;
     this.isLocationAttachmentEnabled = true;
+  }
+
+
+  /*Canale vs Squeal*/
+  onTypeChange(event: any) {
+    const newType = event.target.value;
+    this.isChannel = newType === 'channel';
+  
+    // Se stavi in "Squeal Privato" e passi a un'altra modalità, ripristina il conteggio dei caratteri
+    if (this.isPrivate && newType !== 'private') {
+      this.charLeftUser = this.originalCharLeftUser;
+    }
+  
+    // Aggiorna lo stato "isPrivate" in base alla nuova selezione
+    this.isPrivate = newType === 'private';
+  
+    // Resetta i controlli se cambia la selezione
+    this.myControl.reset();
+    this.userControl.reset();
+    this.channelControl.reset();
+  
+    // Aggiorna i caratteri rimanenti
+    this.updateCharLeftUser({} as Event);
+  }
+  
+  
+  
+  onAccessChange(event: any) {
+    this.accessType = event.target.value;
+  }
+
+  onChannelInput(event: any) {
+    // Logica per gestire l'input del nome del canale
   }
   
 }

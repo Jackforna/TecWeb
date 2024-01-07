@@ -357,8 +357,12 @@ margin-left: 4%;
 .example-form {
   display: flex;
   align-items: center;
-  margin-top: 2%;
-  margin-left: 2%; /* Allinea con la textarea */
+  /*margin-top: 2%;
+  margin-left: 2%;  Allinea con la textarea */
+}
+
+#hashtagInputField{
+  margin-left: 2%;
 }
 
 .custom-input-field {
@@ -384,6 +388,7 @@ margin-left: 4%;
   font-size: 1em;
 }
 
+/*Inserimento utente*/
 .user-label {
   margin-right: 5px;
   font-size: 1em;
@@ -396,4 +401,21 @@ margin-left: 4%;
   outline: none;
   flex-grow: 1;
   font-size: 1em;
+}
+
+#userInputField{
+  margin-left: 2%;
+}
+
+/*Inserimento canale*/
+#channeInputFIeld{
+  width: 60%;
+  margin-left: 2%;
+}
+
+#channelInput{
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding-left: 2%;
 }
