@@ -42,16 +42,28 @@
                     <div class="custom-input-field">
                     <label for="hashtagInput" class="hashtag-label">#</label>
                     <input id="hashtagInput" type="text" [formControl]="myControl" placeholder="Inserisci il tuo hashtag" (input)="onHashtagInput($event)" />
-                    </div>
                 </div>
-                
-                <div *ngIf="isPrivate" class="example-form" id = "userInputField">
-                    <div class="custom-input-field">
-                        <label for="userInput" class="user-label">&#64;</label>
-                        <input id="userInput" type="text" [formControl]="userControl" placeholder="Utenti" (input)="onUserInput($event)" />
-                    </div>
-                </div>      
             </div>
+                
+            <div *ngIf="isPrivate" class="example-form" id="userInputField">
+                <div class="custom-input-field">
+                    <label for="userInput" class="user-label">&#64;</label>
+                    <input type="text" id="userInput" placeholder="Utenti" [matAutocomplete]="auto" [formControl]="userControl">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUserSelected($event)">
+                        <mat-option *ngFor="let user of filteredUsers | async" [value]="user">
+                            {{ user }}
+                        </mat-option>
+                    </mat-autocomplete>
+                </div>
+                <!-- Contenitore per visualizzare gli utenti selezionati -->
+                <div *ngFor="let user of selectedUsers; let i = index" class="selected-user-container">
+                    <img [src]="user.photoprofile" [alt]="user.nickname" class="selected-user-image">
+                    <span class="remove-user-icon" (click)="removeSelectedUser(i)">&#10006;</span> <!-- x rossa -->
+                </div>
+            </div>
+            
+                
+        </div>
 
             <div *ngIf="isChannel && accessType === 'write'" class="custom-input-field" id="channeInputFIeld">
                 <label for="channelInput" class="channel-label">&#64;</label>

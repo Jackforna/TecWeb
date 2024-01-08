@@ -33,7 +33,7 @@ export class RegisterComponent implements OnInit{
         const token = signUpData.idToken; // Replace with the actual property name
         const expirationDate = new Date(new Date().getTime() + +signUpData.expiresIn * 1000); // Replace with the actual property name
         const uid = signUpData.localId; // Ottieni l'UID dall'utente registrat
-        this.authService.createUser(email, uid, token, expirationDate);
+        //this.authService.createUser(email, uid, token, expirationDate);
         if (role === 'user') {
           this.databaseService.insertUser(uid, email, username).subscribe((insertUserData: any) => {
             console.log('User inserted in the database');

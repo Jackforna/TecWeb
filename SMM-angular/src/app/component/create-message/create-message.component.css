@@ -407,6 +407,35 @@ margin-left: 4%;
   margin-left: 2%;
 }
 
+.selected-user-image {
+  width: 30px; /* o la dimensione che preferisci */
+  height: 30px; /* deve essere uguale alla larghezza per essere circolare */
+  border-radius: 50%; /* rende l'immagine circolare */
+  object-fit: cover; /* assicura che l'immagine copra tutto lo spazio senza essere distorta */
+  margin-right: 5px; /* spazio tra le immagini */
+}
+
+.remove-user-icon {
+  position: absolute;
+  top: -5px; /* regola in base alle tue necessità */
+  right: -5px; /* regola in base alle tue necessità */
+  background-color: red;
+  color: white;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 15px; /* per centrare il testo verticalmente */
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.selected-user-container {
+  position: relative;
+  display: inline-block; /* o flex a seconda della tua struttura */
+  margin-right: 10px;
+}
+
 /*Inserimento canale*/
 #channeInputFIeld{
   width: 60%;

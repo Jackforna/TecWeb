@@ -17,10 +17,12 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
+  /*
   createUser(email: string, id: string, token: string, expirationDate: Date){
     this.user = new User(email, id, token, expirationDate)
     this.isLoggedIn = true
   }
+  */
 
   signUp(email: string, username: string, password: string) {
     return this.http.post(this.signUpUrl, {

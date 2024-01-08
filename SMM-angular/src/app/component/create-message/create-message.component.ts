@@ -6,7 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import { FormControl } from '@angular/forms';
-import { Observable, startWith } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map, startWith, filter } from 'rxjs/operators';;
+import { User } from 'src/app/models/user.moduls';
+
 
 @Component({
   selector: 'app-create-message',
@@ -66,6 +69,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   accessType: string = 'write';  // Opzione di default per Canale
   channelControl = new FormControl('');  // Controllo per l'input del nome del canale
 
+  //Inserimento utenti
+  allUsers: User[] = []; // Questo ora conterrà un array di oggetti User
+  filteredUsers: Observable<string[]> | undefined;
+  userControl2 = new FormControl();
+  selectedUser: string | null = null;
+  selectedUsers: { nickname: string, photoprofile: string }[] = [];;
 
   constructor(
     private route: ActivatedRoute, 
@@ -78,6 +87,18 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.profilePictureUrl = this.datiUtente ? this.datiUtente.photoprofile : '';
     this.charLeftUser = this.datiUtente ? this.datiUtente.char_d : 0;   
     this.remainingChars = this.charLeftUser; 
+
+    // Nel tuo componente
+    this.databaseService.getAllUsers2().subscribe((users: User[]) => {
+      this.allUsers = users;
+    });
+
+
+    this.filteredUsers = this.userControl.valueChanges.pipe(
+      startWith(''),
+      filter(value => value !== null),
+      map(value => value ? this._filter(value) : [])
+    );
   }
   
 
@@ -511,7 +532,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     });
   }
   
-  
   closeMapModal(): void {
     this.showMapModal = false;
     if (this.tempMap) {
@@ -536,7 +556,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.updateCharLeftUser({} as Event);
   }
   
-
   onHashtagInput(event: any) {
     let value = event.target.value;
     if (value.length > 25) {
@@ -598,8 +617,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.updateCharLeftUser({} as Event);
   }
   
-  
-  
   onAccessChange(event: any) {
     this.accessType = event.target.value;
   }
@@ -608,5 +625,40 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // Logica per gestire l'input del nome del canale
   }
   
+  /*Inserimento user*/
+  onSelectUser(user: string): void {
+    this.selectedUser = user;
+    console.log("Selezionato: ", user);
+    this.userControl.setValue(user);  // Imposta il valore del campo input su quello selezionato
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    // Mappa allUsers per estrarre solo i nickname
+    return this.allUsers
+      .filter(user => user.nickname.toLowerCase().includes(filterValue))
+      .map(user => user.nickname);
+  }
+
+  onUserSelected(event: any) {
+    // Trova l'oggetto utente selezionato basato sul nickname
+    const selectedUser = this.allUsers.find(user => user.nickname === event.option.value);
+    if (selectedUser 
+        && this.selectedUsers.length < 3 
+        && !this.selectedUsers.map(u => u.nickname).includes(selectedUser.nickname)
+        && selectedUser.photoprofile) { // Assicurati che selectedUser abbia la proprietà photoprofile
+      this.selectedUsers.push(selectedUser);
+    }
+    // Resetta il campo input dopo la selezione
+    this.userControl.reset();
+  }
+
+  removeSelectedUser(index: number): void {
+    // Rimuove l'utente dall'array degli utenti selezionati
+    this.selectedUsers.splice(index, 1);
+  }
+  
+  
+
 }
   
