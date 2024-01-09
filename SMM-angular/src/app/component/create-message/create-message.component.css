@@ -448,3 +448,21 @@ margin-left: 4%;
   font-size: 16px;
   padding-left: 2%;
 }
+
+/*Creazione canale*/
+.create-channel-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.create-channel-input {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.channel-mute-switch {
+  margin-right: 20px;
+}

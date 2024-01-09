@@ -33,7 +33,11 @@ export class DatabaseService {
       map(response => response as User[])
     );
   }
-  
+
+  addSqueal(squealData: any): Observable<any> {
+    const url = 'http://localhost:8080/add-squeal';
+    return this.http.post(url, squealData);
+  }
 
 
   //Da sistemare

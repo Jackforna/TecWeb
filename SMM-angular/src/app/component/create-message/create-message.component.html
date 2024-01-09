@@ -3,18 +3,6 @@
     <mat-card class="post-input-container">
         <mat-card-header>
             <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
-        <!--<div class="custom-select-wrapper">
-            <select>
-            <option value="squeal" selected>Squeal</option>
-            <option value="channel">Channel</option>
-            </select>
-        </div>
-        <div class="custom-select-wrapper">
-            <select (change)="onSelectChange($event)">
-              <option value="public" selected>Public</option>
-              <option value="private">Private</option>
-            </select>
-        </div>-->
         <div class="custom-select-wrapper">
             <select (change)="onTypeChange($event)">
                 <option value="squeal" selected>Squeal</option>
@@ -41,7 +29,7 @@
                 <div *ngIf="!isPrivate" class="example-form" id = "hashtagInputField">
                     <div class="custom-input-field">
                     <label for="hashtagInput" class="hashtag-label">#</label>
-                    <input id="hashtagInput" type="text" [formControl]="myControl" placeholder="Inserisci il tuo hashtag" (input)="onHashtagInput($event)" />
+                    <input id="hashtagInput" type="text" [formControl]="myControl" [(ngModel)]="hashtag" placeholder="Inserisci il tuo hashtag" (input)="onHashtagInput($event)" />
                 </div>
             </div>
                 
@@ -70,9 +58,17 @@
                 <input id="channelInput" type="text" [formControl]="channelControl" placeholder="Inserisci nome canale" (input)="onChannelInput($event)" />
             </div>
 
-            <div *ngIf="isChannel && accessType === 'create'" class="channel-create-actions">
-                <button >Sì</button>
-                <button >No</button>
+            <div *ngIf="isChannel && accessType === 'create'">
+                <div class="create-channel-container">
+                    <div class="create-channel-input">
+                        <label for="channelInput" class="channel-label">&#64;</label>
+                        <input id="channelInput" type="text" [(ngModel)]="newChannelName" placeholder="Nome  del canale"/>
+                    </div>
+                    <div class="channel-mute-switch">
+                        <mat-slide-toggle [(ngModel)]="muteChannel">Silenziare il canale</mat-slide-toggle>
+                    </div>
+                </div>
+                <button mat-raised-button color="primary" (click)="createChannel()">Crea Canale</button>
             </div>
             
 
@@ -116,7 +112,7 @@
                 <button class="icon-button" (click)="openCameraDialog()"><i class="material-icons">photo_camera</i></button>
                 <button class="icon-button" (click)="getUserLocation()"><i class="material-icons">place</i></button>
                 <button class="icon-button" (click)="openMapModal()"><i class="material-icons">pin_drop</i></button>
-                <button class="icon-button send-icon"><i class="material-icons">send</i></button>
+                <button class="icon-button send-icon"><i class="material-icons" (click)="createPublicSqueal()">send</i></button>
             </div>              
         </mat-card-actions>
 

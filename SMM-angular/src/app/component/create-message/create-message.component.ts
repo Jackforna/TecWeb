@@ -11,6 +11,7 @@ import { map, startWith, filter } from 'rxjs/operators';;
 import { User } from 'src/app/models/user.moduls';
 
 
+
 @Component({
   selector: 'app-create-message',
   templateUrl: './create-message.component.html',
@@ -59,6 +60,9 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   isPrivate: boolean = false;
   userControl = new FormControl(''); // Controllo per l'input utente
 
+  //Invio squeal
+  hashtag: string = '';
+
   //Gestione caso private
   isImageAttachmentEnabled = true;
   isLinkAttachmentEnabled = true;
@@ -75,6 +79,11 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   userControl2 = new FormControl();
   selectedUser: string | null = null;
   selectedUsers: { nickname: string, photoprofile: string }[] = [];;
+
+  //Gestione crea canali
+  newChannelName: string = ''; // Il nome per il nuovo canale
+  muteChannel: boolean = false; // Lo stato del toggle per silenziare il canale
+
 
   constructor(
     private route: ActivatedRoute, 
@@ -658,7 +667,42 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.selectedUsers.splice(index, 1);
   }
   
-  
+  /*Crea canale*/
+  createChannel(): void {
+    const channelData = {
+      name: this.newChannelName,
+      isMuted: this.muteChannel
+    };
 
+    /*
+    this.channelService.createChannel(channelData).subscribe(
+      response => {
+        console.log('Canale creato con successo:', response);
+        // Qui puoi implementare la logica dopo la creazione del canale, come reindirizzare o aggiornare la lista dei canali
+      },
+      error => {
+        console.error('Errore nella creazione del canale:', error);
+      }
+    );
+    */
+  }
+
+  /*Creazione squeal pubblico*/
+  createPublicSqueal(): void {
+    const squealData = {
+      hashtag: this.hashtag,
+      content: this.userText,
+      type: 'public' // Assumendo che tu voglia specificare il tipo di squeal
+    };
+
+    this.databaseService.addSqueal(squealData).subscribe({
+      next: (response) => {
+        console.log('Squeal added successfully', response);
+      },
+      error: (error) => {
+        console.error('Error adding squeal', error);
+      }
+    });
+  }
 }
-  
+
