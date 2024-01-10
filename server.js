@@ -10,7 +10,11 @@ const dbUrl = 'mongodb://root:example@localhost:27017';
 const client = new MongoClient(dbUrl);
 const dbName = 'my-mongo-container';
 
-app.use(bodyParser.json());
+/*Modificato per problemi di limiti*/ 
+//Prima era app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/squealer-app', express.static(path.join(__dirname, 'my-react-app/build')));
 

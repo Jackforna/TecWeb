@@ -28,6 +28,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
   profilePictureUrl: string | null = '';
   charLeftUser: number = 0;
+  charLeftUserWeekly: number = 0;
+  charLeftUserMonthly: number = 0;
   remainingChars: number = 0;
   userText: string = '';
   private maxLengthPrivate = 200; // Lunghezza massima per i messaggi privati
@@ -94,7 +96,9 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
   ngOnInit() {
     this.profilePictureUrl = this.datiUtente ? this.datiUtente.photoprofile : '';
-    this.charLeftUser = this.datiUtente ? this.datiUtente.char_d : 0;   
+    this.charLeftUser = this.datiUtente ? this.datiUtente.char_d : 0; 
+    this.charLeftUserWeekly = this.datiUtente ? this.datiUtente.char_w : 0;
+    this.charLeftUserMonthly = this.datiUtente ? this.datiUtente.char_m : 0;  
     this.remainingChars = this.charLeftUser; 
 
     // Nel tuo componente
@@ -689,20 +693,115 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
   /*Creazione squeal pubblico*/
   createPublicSqueal(): void {
+    // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
+    const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
+    const typeSender = 'keyword'; // O altro valore a seconda della logica
+    const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
+    const currentDate = new Date();
+    const date = currentDate.toLocaleDateString();
+    const hour = currentDate.getHours();
+    const seconds = currentDate.getSeconds();
+    const hashtag = this.hashtag;
+  
+    // Creazione dell'oggetto squeal
     const squealData = {
-      hashtag: this.hashtag,
-      content: this.userText,
-      type: 'public' // Assumendo che tu voglia specificare il tipo di squeal
+      sender: sender,
+      typeSender: typeSender,
+      body: {
+        text: this.userText,
+        link: this.sentLink || '',
+        photo: this.sentImageUrl || '',
+        position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
+        video: '', // Assumo che non ci sia supporto per video al momento
+      },
+      photoprofile: photoProfile,
+      date: date,
+      hour: hour,
+      seconds: seconds,
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      usersViewed: [],
+      category: '', // Aggiungi logica per determinare la categoria se necessario
+      receivers: [], // Aggiungi logica se ci sono destinatari specifici
+      channel: hashtag, // Aggiungi logica se il squeal è associato a un canale
+      impressions: 0
     };
-
+  
+    // Chiamata al servizio per aggiungere il squeal
     this.databaseService.addSqueal(squealData).subscribe({
       next: (response) => {
         console.log('Squeal added successfully', response);
+        this.resetForm();
       },
       error: (error) => {
         console.error('Error adding squeal', error);
       }
     });
-  }
-}
 
+    // Calcola i caratteri utilizzati (inclusi gli allegati)
+    const charsUsed = this.userText.length + this.calculateAttachmentChars();
+    const userId = this.datiUtente ? this.datiUtente._id : null;
+    // Calcola i nuovi valori dei caratteri rimanenti
+    const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed); // Giornalieri
+    const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed); // Settimanali
+    const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed); // Mensili
+
+    // Aggiorna i dati dell'utente nel backend
+    this.databaseService.updateUserProfile(userId, {
+      char_d: newCharLeftDaily,
+      char_w: newCharLeftWeekly,
+      char_m: newCharLeftMonthly
+    }).subscribe({
+      next: (response) => {
+        // Aggiornamento riuscito
+        this.charLeftUser = newCharLeftDaily;
+        this.charLeftUserWeekly = newCharLeftWeekly;
+        this.charLeftUserMonthly = newCharLeftMonthly;
+        
+        // Resetta il form dopo l'invio
+        this.resetForm();
+      },
+      error: (error) => {
+        // Gestire l'errore
+        console.error("Errore durante l'aggiornamento dei caratteri rimanenti dell'utente", error);
+      }
+    });
+    }
+
+    /*Reset della card*/
+    resetForm() {
+      // Svuota il testo dello squeal e l'hashtag
+      this.userText = '';
+      this.hashtag = '';
+    
+      // Rimuove gli allegati
+      this.sentImageUrl = null;
+      this.sentLink = null;
+    
+      // Rimuove la posizione e resetta la mappa
+      this.userLocation = null;
+      this.isMapActive = false;
+      if (this.map) {
+        this.map.remove(); // Rimuove la mappa per resettarla
+        this.map = null;
+      }
+      if (this.selectedLocation) {
+        this.selectedLocation = null; // Rimuove il marker selezionato
+      }
+    
+      // Resetta la selezione degli utenti (per i messaggi privati)
+      this.selectedUsers = [];
+    
+      // Aggiorna i caratteri rimanenti
+      this.remainingChars = this.charLeftUser;
+    
+      // Se necessario, reimposta ulteriori campi o variabili qui
+    }
+    
+    /*Gestione caratteri*/
+  
+
+
+
+}
