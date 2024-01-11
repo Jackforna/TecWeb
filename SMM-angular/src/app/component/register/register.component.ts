@@ -34,6 +34,7 @@ export class RegisterComponent implements OnInit{
         const expirationDate = new Date(new Date().getTime() + +signUpData.expiresIn * 1000); // Replace with the actual property name
         const uid = signUpData.localId; // Ottieni l'UID dall'utente registrat
         //this.authService.createUser(email, uid, token, expirationDate);
+        /*
         if (role === 'user') {
           this.databaseService.insertUser(uid, email, username).subscribe((insertUserData: any) => {
             console.log('User inserted in the database');
@@ -57,7 +58,10 @@ export class RegisterComponent implements OnInit{
         console.error('Error occurred during sign-up:', error);
         // Handle the error here, e.g., display an error message to the user
       });
-    }
+      */
+    });
+  }
+    
     
 
     

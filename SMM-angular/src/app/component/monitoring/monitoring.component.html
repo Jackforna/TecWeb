@@ -1,1 +1,24 @@
-<p>monitoring works!</p>
+<body>
+    <div class = "answerSqueal-container">
+        <h3>Answer to my squeals</h3>
+    </div>
+    <div class = "mostReactedSqueal-container">
+        <h3>Most Reacted Squeals</h3>
+        <div *ngFor="let squeal of mostReactedSqueals">
+            <p>{{ squeal.body.text }}</p>
+            <p>Reazioni: {{ squeal.totalReactions }}</p>
+        </div>
+    </div> 
+    <div class = "lessReactedSqueal-container">
+        <h3>Less Reacted Squeals</h3>
+    </div> 
+    <div class = "mostPopularSqueal-container">
+        <h3>Most Popular Squeals</h3>    
+    </div>
+    <div class = "inpopularSqueal-container">
+        <h3>Inpopular Squeals</h3>
+    </div>
+    <div class = "controversialSqueal-container">
+        <h3>Squeals at risk of controversy</h3>
+    </div>
+</body>

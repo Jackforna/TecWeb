@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit{
         const expirationDate = new Date(new Date().getTime() + data.expiresIn * 1000)
         //this.authService.createUser(data.email, data.localId, data.idToken, data.expiresIn) //Creo User
         localStorage.setItem('manager', JSON.stringify(this.authService.user))
-        this.databaseService.getManagerData(data.localId).subscribe((data: any) => {
+        //this.databaseService.getManagerData(data.localId).subscribe((data: any) => {
           console.log(data)
           localStorage.setItem('Dati manager', JSON.stringify(data))
           const managerData = localStorage.getItem('Dati manager');
@@ -43,10 +43,10 @@ export class LoginComponent implements OnInit{
           console.log("Errore in getManagerData")
           console.log(error)
         });       
-      }, error => {
+      //}, error => {
         console.log("Errore in signIn")
-        console.log(error)
-      });
+       // console.log(error)
+      //});
     }
 
 }

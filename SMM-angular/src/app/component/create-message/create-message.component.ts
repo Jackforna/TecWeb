@@ -101,7 +101,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.charLeftUserMonthly = this.datiUtente ? this.datiUtente.char_m : 0;  
     this.remainingChars = this.charLeftUser; 
 
-    // Nel tuo componente
+    // Recupera tutti gli utenti dal backend
     this.databaseService.getAllUsers2().subscribe((users: User[]) => {
       this.allUsers = users;
     });
@@ -112,6 +112,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       filter(value => value !== null),
       map(value => value ? this._filter(value) : [])
     );
+
+    /*
+    this.updateSquealPositive();
+    this.updateSquealNegative();
+    */
+
   }
   
 
@@ -799,9 +805,42 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       // Se necessario, reimposta ulteriori campi o variabili qui
     }
     
-    /*Gestione caratteri*/
-  
+    /*Aggiornamento squeal SOLO TEST*/
+    updateSquealPositive() {
+      const squealId = '659fff999a2ed0c41edbdfbe'; // Sostituisci con l'ID effettivo dello Squeal
+      const updateData = {
+        pos_reactions: 12,
+        neg_reactions: 3,
+        impressions: 4
+      };
 
+      this.databaseService.updateSqueal(squealId, updateData).subscribe({
+        next: (response) => {
+          console.log('Squeal aggiornato con successo:', response);
+        },
+        error: (error) => {
+          console.error('Errore durante l\'aggiornamento dello Squeal:', error);
+        }
+      });
+    }
+
+    updateSquealNegative() {
+      const squealId = '659f1a341960dfb59df623e8'; // Sostituisci con l'ID effettivo dello Squeal
+      const updateData = {
+        pos_reactions: 2,
+        neg_reactions: 6,
+        impressions: 5
+      };
+
+      this.databaseService.updateSqueal(squealId, updateData).subscribe({
+        next: (response) => {
+          console.log('Squeal aggiornato con successo:', response);
+        },
+        error: (error) => {
+          console.error('Errore durante l\'aggiornamento dello Squeal:', error);
+        }
+      });
+    }
 
 
 }
