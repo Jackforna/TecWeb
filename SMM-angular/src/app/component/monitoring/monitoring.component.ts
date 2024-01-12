@@ -9,6 +9,9 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith, filter } from 'rxjs/operators';;
 import { User } from 'src/app/models/user.moduls';
+import { LeafletControlLayersConfig } from '@asymmetrik/ngx-leaflet';
+
+
 
 @Component({
   selector: 'app-monitoring',
@@ -25,6 +28,33 @@ export class MonitoringComponent implements OnInit{
 
   //Dati sui Squeal
   mostReactedSqueals: any[] = [];
+
+  //Struttura per cambio squeal
+  currentSquealIndex = 0;
+
+  //Dati sulla mappa
+  leafletOptions = {
+    layers: [
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '...'
+      })
+    ],
+    zoom: 13,
+    center: L.latLng(46.879966, -121.726909)
+  };
+  leafletTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '...'
+  });
+  leafletZoom = 13;
+  leafletCenter = L.latLng(46.879966, -121.726909);
+  private map: L.Map | undefined;
+  leafletLayersControl: LeafletControlLayersConfig = {
+    baseLayers: {},
+    overlays: {}
+  };
+  
 
   constructor(
     private route: ActivatedRoute, 
@@ -58,6 +88,38 @@ export class MonitoringComponent implements OnInit{
         console.error('Errore durante il recupero degli Squeals:', error);
       }
     );
+  }
+
+  showNextSqueal() {
+    if (this.currentSquealIndex < this.mostReactedSqueals.length - 1) {
+        this.currentSquealIndex++;
+    }
+  }
+
+  showPreviousSqueal() {
+      if (this.currentSquealIndex > 0) {
+          this.currentSquealIndex--;
+      }
+  }
+
+  /*Gestione visualizzazione mappa*/
+  getLatLng(position: any): any {
+    // Qui dovresti convertire la posizione dal tuo formato a un oggetto latLng
+    // Per esempio:
+    return L.latLng(position[0], position[1]);
+  }
+
+  onMapReady(map: L.Map, position: any): void {
+    // Aggiungi il marker alla mappa
+    this.map = map;
+    const markerPosition = this.getLatLng(position);
+    L.marker(markerPosition).addTo(map);
+  }
+
+  ngOnDestroy(): void {
+    if (this.map) {
+      this.map.remove();
+    }
   }
   
 
