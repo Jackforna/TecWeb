@@ -35,22 +35,20 @@
               <mat-card-title>{{ currentSqueal.sender }}</mat-card-title>
               <mat-card-subtitle>{{ currentSqueal.date | date }} at {{ currentSqueal.hour }}:{{ currentSqueal.seconds }}</mat-card-subtitle>
             </mat-card-header>
-            <img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo">
+            <!--<img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo">-->
             <mat-card-content>
+              <img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo">
               <p>{{ currentSqueal.body.text }}</p>
-              <a *ngIf="currentSqueal.body.link" [href]="currentSqueal.body.link" target="_blank">{{ currentSqueal.body.link }}</a>
-              <!-- Aggiungi qui altri campi allegati se necessario -->
-              <div *ngIf="currentSqueal.body.position.length > 0" class="map-container">
-                <div leaflet 
-                     [leafletOptions]="leafletOptions"
-                     [leafletLayers]="[leafletTileLayer]"
-                     [leafletLayersControl]="leafletLayersControl"
-                     [leafletZoom]="leafletZoom"
-                     [leafletCenter]="getLatLng(currentSqueal.body.position)"
-                     (leafletMapReady)="onMapReady($event, currentSqueal.body.position)"
-                     style="height: 200px;"> <!-- Assicurati di avere un'altezza definita -->
-                </div>
+              <!--
+              <div *ngIf="currentSqueal.body.position.length >= 2" id="map-container-{{ currentSqueal.nickname }}">
+                {{ currentSqueal.body.position }}
               </div>
+              -->
+              <div *ngIf="currentSqueal.body.position.length >= 2" class="map-container" 
+                [id]="'map-container-' + currentSquealIndex">
+                <!-- La mappa verrà generata qui -->
+              </div>
+              <a *ngIf="currentSqueal.body.link" [href]="currentSqueal.body.link" target="_blank">{{ currentSqueal.body.link }}</a>           
               <video *ngIf="currentSqueal.body.video" controls>
                 <source [src]="currentSqueal.body.video" type="video/mp4">
                 Your browser does not support the video tag.

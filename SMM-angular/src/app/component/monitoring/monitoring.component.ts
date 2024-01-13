@@ -10,6 +10,9 @@ import { Observable } from 'rxjs';
 import { map, startWith, filter } from 'rxjs/operators';;
 import { User } from 'src/app/models/user.moduls';
 import { LeafletControlLayersConfig } from '@asymmetrik/ngx-leaflet';
+import { Layer } from 'leaflet';
+import { TileLayer } from 'leaflet';
+
 
 
 
@@ -32,29 +35,10 @@ export class MonitoringComponent implements OnInit{
   //Struttura per cambio squeal
   currentSquealIndex = 0;
 
-  //Dati sulla mappa
-  leafletOptions = {
-    layers: [
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '...'
-      })
-    ],
-    zoom: 13,
-    center: L.latLng(46.879966, -121.726909)
-  };
-  leafletTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '...'
-  });
-  leafletZoom = 13;
-  leafletCenter = L.latLng(46.879966, -121.726909);
-  private map: L.Map | undefined;
-  leafletLayersControl: LeafletControlLayersConfig = {
-    baseLayers: {},
-    overlays: {}
-  };
-  
+
+  private mapInstances: Map<string, L.Map> = new Map();
+  currentSqueal: any;
+  maps: any;
 
   constructor(
     private route: ActivatedRoute, 
@@ -66,6 +50,13 @@ export class MonitoringComponent implements OnInit{
     console.log('Id utente:', this.userId);
     this.printUserSqueals();
   }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.renderMiniMaps();
+    }, 500); // Aumenta il ritardo se necessario
+  }
+  
 
   printUserSqueals() {
     this.databaseService.getAllSquealsByUser().subscribe(
@@ -102,26 +93,33 @@ export class MonitoringComponent implements OnInit{
       }
   }
 
-  /*Gestione visualizzazione mappa*/
-  getLatLng(position: any): any {
-    // Qui dovresti convertire la posizione dal tuo formato a un oggetto latLng
-    // Per esempio:
-    return L.latLng(position[0], position[1]);
-  }
-
-  onMapReady(map: L.Map, position: any): void {
-    // Aggiungi il marker alla mappa
-    this.map = map;
-    const markerPosition = this.getLatLng(position);
-    L.marker(markerPosition).addTo(map);
-  }
-
-  ngOnDestroy(): void {
-    if (this.map) {
-      this.map.remove();
-    }
+  initializeMap(containerId: string, position: [number, number]) {
+    const map = L.map(containerId).setView(position, 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    L.marker(position).addTo(map);
+    this.mapInstances.set(containerId, map);
   }
   
+  
+  // Questo metodo potrebbe essere chiamato dopo che i dati dei squeal sono stati caricati
+  renderMiniMaps() {
+    this.mostReactedSqueals.forEach((squeal, index) => {
+      if (squeal.body.position.length >= 2) {
+        const containerId = 'map-container-' + index;
+        const position: [number, number] = [squeal.body.position[0], squeal.body.position[1]];
+        this.initializeMap(containerId, position);
+      }
+    });
+  }
+  
+
+  ngOnDestroy() {
+    this.mapInstances.forEach((map, containerId) => {
+      map.remove();
+    });
+  }
 
 }
 
