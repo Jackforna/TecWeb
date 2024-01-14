@@ -32,8 +32,7 @@ import { EditProfileComponent } from './component/edit-profile/edit-profile.comp
 import { CreateMessageComponent } from './component/create-message/create-message.component';
 import { MonitoringComponent } from './component/monitoring/monitoring.component';
 import { SettingsComponent } from './component/settings/settings.component';
-import { LoginComponent } from './component/login/login.component';
-import { RegisterComponent } from './component/register/register.component';
+import { GraphicsComponent } from './graphics/graphics.component';
 
 @NgModule({
   declarations: [
@@ -43,8 +42,7 @@ import { RegisterComponent } from './component/register/register.component';
     CreateMessageComponent,
     MonitoringComponent,
     SettingsComponent,
-    LoginComponent,
-    RegisterComponent,
+    GraphicsComponent,
   ],
   imports: [
     BrowserModule,

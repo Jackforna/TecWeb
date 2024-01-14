@@ -34,20 +34,15 @@ export class MonitoringComponent implements OnInit{
   lessReactedSqueals: any[] = [];
   controversialSqueals: any[] = [];
   mostPopularSqueals: any[] = [];
+  inpopularSqueals: any[] = [];
 
   //Struttura per cambio squeal
   currentSquealIndex = 0;
   currentLessReactedSquealIndex = 0;
   currentControversialSquealIndex = 0;
   currentPopularSquealIndex = 0;
+  currentInpopularSquealIndex = 0;
 
-  // mostPopularSqueals: any[] = [];
-  // leastPopularSqueals: any[] = [];
-  // controversialSqueals: any[] = [];
-  // currentPopularSquealIndex = 0;
-  // currentLeastPopularSquealIndex = 0;
-  // currentControversialSquealIndex = 0;
-  // criticalMass = 10; // Sostituisci con il valore effettivo di CM
 
   constructor(
     private route: ActivatedRoute, 
@@ -63,7 +58,7 @@ export class MonitoringComponent implements OnInit{
 
   ngAfterViewInit() { }
   
-  
+  /*
   printUserSqueals() {
     this.databaseService.getAllSquealsByUser().subscribe(
       (squeals) => {
@@ -112,35 +107,75 @@ export class MonitoringComponent implements OnInit{
       }
     );
   }
+  */
 
-  /*
-  loadSqueals() {
+  printUserSqueals() {
     this.databaseService.getAllSquealsByUser().subscribe(
       (squeals) => {
-        (squeals as Array<any>).forEach(squeal => {
-          const posReactions = squeal.pos_reactions;
-          const negReactions = squeal.neg_reactions;
+        const userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname);
+  
+        // La logica per mostReactedSqueals e lessReactedSqueals rimane invariata
+        this.mostReactedSqueals = userSqueals
+          .map(squeal => ({
+            ...squeal,
+            totalReactions: squeal.pos_reactions + squeal.neg_reactions
+          }))
+          .sort((a, b) => b.totalReactions - a.totalReactions)
+          .slice(0, 3);
+  
+        this.lessReactedSqueals = userSqueals
+          .map(squeal => ({
+            ...squeal,
+            totalReactions: squeal.pos_reactions + squeal.neg_reactions
+          }))
+          .sort((a, b) => a.totalReactions - b.totalReactions)
+          .slice(0, 3);
+  
+        this.controversialSqueals = userSqueals
+          .filter(squeal => {
+            const criticalMass = 0.25 * squeal.impressions;
+            //return squeal.pos_reactions > criticalMass && squeal.neg_reactions > criticalMass;       /*Caso in cui non siano etichettati*/
+            return squeal.category === "Controversial"
+          })
+          .slice(0, 3);
+  
+        // Aggiornamento della logica per mostPopularSqueals
+        this.mostPopularSqueals = userSqueals
+          .filter(squeal => {
+            const criticalMass = 0.25 * squeal.impressions;
+            //return (squeal.pos_reactions > criticalMass)        /*Caso in cui non siano etichettati*/ 
+            return squeal.category === "Popular"
+          })
+          .sort((a, b) => {
+            return b.pos_reactions - a.pos_reactions; // Esempio di ordinamento basato su reazioni positive
+          })
+          .slice(0, 3);
 
-          if (posReactions > this.criticalMass && negReactions > this.criticalMass) {
-            this.controversialSqueals.push(squeal);
-          } else if (posReactions > this.criticalMass) {
-            this.mostPopularSqueals.push(squeal);
-          } else if (negReactions > this.criticalMass) {
-            this.leastPopularSqueals.push(squeal);
-          }
-        });
-
-        // Ordina gli squeals in base alle tue preferenze
-        this.mostPopularSqueals.sort((a, b) => b.pos_reactions - a.pos_reactions);
-        this.leastPopularSqueals.sort((a, b) => b.neg_reactions - a.neg_reactions);
-        this.controversialSqueals.sort((a, b) => (b.pos_reactions + b.neg_reactions) - (a.pos_reactions + a.neg_reactions));
+        this.inpopularSqueals = userSqueals
+          .filter(squeal => {
+            const criticalMass = 0.25 * squeal.impressions;
+            // return squeal.neg_reactions > criticalMass;      /*Caso in cui non siano etichettati*/       
+            return squeal.category === "Inpopular"          
+          })
+          .sort((a, b) => b.neg_reactions - a.neg_reactions)
+          .slice(0, 3);
+  
+        console.log('Squeals dell\'utente:', userSqueals);
+        console.log('Most Reacted User Squeals:', this.mostReactedSqueals);
+        console.log('Less Reacted User Squeals:', this.lessReactedSqueals);
+        console.log('Controversial User Squeals:', this.controversialSqueals);
+        console.log('Most Popular User Squeals:', this.mostPopularSqueals);
+        console.log('Inpopular User Squeals:', this.inpopularSqueals);
       },
       (error) => {
         console.error('Errore durante il recupero degli Squeals:', error);
       }
     );
   }
-*/
+  
+
+
+
   showNextSqueal() {
     if (this.currentSquealIndex < this.mostReactedSqueals.length - 1) {
         this.currentSquealIndex++;
@@ -189,42 +224,17 @@ export class MonitoringComponent implements OnInit{
     }
   }
 
-  /*
-  showNextLessReactedSqueal() {
-    if (this.currentLessReactedSquealIndex < this.lessReactedSqueals.length - 1) {
-      this.currentLessReactedSquealIndex++;
+  showNextInpopularSqueal() {
+    if (this.currentInpopularSquealIndex < this.inpopularSqueals.length - 1) {
+      this.currentInpopularSquealIndex++;
     }
   }
 
-  showPreviousLessReactedSqueal() {
-    if (this.currentLessReactedSquealIndex > 0) {
-      this.currentLessReactedSquealIndex--;
+  showPreviousInpopularSqueal() {
+    if (this.currentInpopularSquealIndex > 0) {
+      this.currentInpopularSquealIndex--;
     }
   }
 
-  showPreviousControversialSqueal() {
-    if (this.currentControversialSquealIndex > 0) {
-      this.currentControversialSquealIndex--;
-    }
-  }
-
-  showNextControversialSqueal() {
-    if (this.currentControversialSquealIndex < this.controversialSqueals.length - 1) {
-      this.currentControversialSquealIndex++;
-    }
-  }
-
-  showPreviousPopularSqueal() {
-    if (this.currentPopularSquealIndex > 0) {
-      this.currentPopularSquealIndex--;
-    }
-  }
-
-  showNextPopularSqueal() {
-    if (this.currentPopularSquealIndex < this.mostPopularSqueals.length - 1) {
-      this.currentPopularSquealIndex++;
-    }
-  }
-  */
 }
 

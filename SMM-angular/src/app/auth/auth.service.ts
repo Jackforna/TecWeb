@@ -43,7 +43,7 @@ export class AuthService {
 
   logOut(){
     this.isLoggedIn = false //Togli il log
-    this.router.navigate(['login']) //Vai alla home
+    // this.router.navigate(['login']) //Vai alla home
     localStorage.clear() //Pulisci il localStorage
     console.clear() //Pulisci la console
   }
