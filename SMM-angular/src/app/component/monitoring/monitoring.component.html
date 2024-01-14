@@ -2,100 +2,141 @@
     <div class = "answerSqueal-container">
         <h3>Answer to my squeals</h3>
     </div>
+
     <h3>Most Reacted Squeals</h3>
-    <!--
     <div class="carousel-container">
-        <button *ngIf="currentSquealIndex > 0" (click)="showPreviousSqueal()" class="nav-button left">◀</button>
-      
-        <div *ngIf="mostReactedSqueals.length" class="squeal-card-container">
-          <mat-card class="squeal-card" *ngIf="mostReactedSqueals[currentSquealIndex] as currentSqueal">
-            <mat-card-header>
-              <mat-card-title>{{ currentSqueal.sender }}</mat-card-title>
-              <mat-card-subtitle>{{ currentSqueal.date | date }} at {{ currentSqueal.hour }}:{{ currentSqueal.seconds }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <p>{{ currentSqueal.body.text }}</p>
-            </mat-card-content>
-            <mat-card-actions>
-              <button mat-button>Likes ({{ currentSqueal.pos_reactions }})</button>
-              <button mat-button>Dislikes ({{ currentSqueal.neg_reactions }})</button>
-            </mat-card-actions>
-          </mat-card>
-        </div>
-      
-        <button *ngIf="currentSquealIndex < mostReactedSqueals.length - 1" (click)="showNextSqueal()" class="nav-button right">▶</button>
+      <button *ngIf="currentSquealIndex > 0" (click)="showPreviousSqueal()" class="nav-button left">◀</button>
+    
+      <div *ngIf="mostReactedSqueals.length" class="squeal-card-container">
+        <mat-card class="squeal-card" *ngIf="mostReactedSqueals[currentSquealIndex] as currentSqueal">
+          <mat-card-header>
+            <mat-card-title>{{ currentSqueal.sender }}</mat-card-title>
+            <mat-card-subtitle>{{ currentSqueal.date | date }} at {{ currentSqueal.hour }}:{{ currentSqueal.seconds }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo" style = "width: 200px;">
+            <p>{{ currentSqueal.body.text }}</p>
+            <div *ngIf="currentSqueal.body.position.length >= 2" id="map-container-{{ currentSqueal.nickname }}">
+              {{ currentSqueal.body.position }}
+            </div>
+            <a *ngIf="currentSqueal.body.link" [href]="currentSqueal.body.link" target="_blank">{{ currentSqueal.body.link }}</a>           
+            <video *ngIf="currentSqueal.body.video" controls>
+              <source [src]="currentSqueal.body.video" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button>Likes ({{ currentSqueal.pos_reactions }})</button>
+            <button mat-button>Dislikes ({{ currentSqueal.neg_reactions }})</button>
+          </mat-card-actions>
+        </mat-card>
       </div>
-    -->
-    <div class="carousel-container">
-        <button *ngIf="currentSquealIndex > 0" (click)="showPreviousSqueal()" class="nav-button left">◀</button>
-      
-        <div *ngIf="mostReactedSqueals.length" class="squeal-card-container">
-          <mat-card class="squeal-card" *ngIf="mostReactedSqueals[currentSquealIndex] as currentSqueal">
-            <mat-card-header>
-              <mat-card-title>{{ currentSqueal.sender }}</mat-card-title>
-              <mat-card-subtitle>{{ currentSqueal.date | date }} at {{ currentSqueal.hour }}:{{ currentSqueal.seconds }}</mat-card-subtitle>
-            </mat-card-header>
-            <!--<img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo">-->
-            <mat-card-content>
-              <img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo">
-              <p>{{ currentSqueal.body.text }}</p>
-              <!--
-              <div *ngIf="currentSqueal.body.position.length >= 2" id="map-container-{{ currentSqueal.nickname }}">
-                {{ currentSqueal.body.position }}
-              </div>
-              -->
-              <div *ngIf="currentSqueal.body.position.length >= 2" class="map-container" 
-                [id]="'map-container-' + currentSquealIndex">
-                <!-- La mappa verrà generata qui -->
-              </div>
-              <a *ngIf="currentSqueal.body.link" [href]="currentSqueal.body.link" target="_blank">{{ currentSqueal.body.link }}</a>           
-              <video *ngIf="currentSqueal.body.video" controls>
-                <source [src]="currentSqueal.body.video" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </mat-card-content>
-            <mat-card-actions>
-              <button mat-button>Likes ({{ currentSqueal.pos_reactions }})</button>
-              <button mat-button>Dislikes ({{ currentSqueal.neg_reactions }})</button>
-            </mat-card-actions>
-          </mat-card>
-        </div>
-      
-        <button *ngIf="currentSquealIndex < mostReactedSqueals.length - 1" (click)="showNextSqueal()" class="nav-button right">▶</button>
-      </div>
-      
-    <div class = "lessReactedSqueal-container">
-        <h3>Less Reacted Squeals</h3>
-    </div> 
-    <div class = "mostPopularSqueal-container">
-        <h3>Most Popular Squeals</h3>    
+    
+      <button *ngIf="currentSquealIndex < mostReactedSqueals.length - 1" (click)="showNextSqueal()" class="nav-button right">▶</button>
     </div>
+      
+    <h3>Less Reacted Squeals</h3>
+    <div class="carousel-container">
+      <button *ngIf="currentLessReactedSquealIndex > 0" (click)="showPreviousLessReactedSqueal()" class="nav-button left">◀</button>
+      
+      <div *ngIf="lessReactedSqueals.length" class="squeal-card-container">
+        <mat-card class="squeal-card" *ngIf="lessReactedSqueals[currentLessReactedSquealIndex] as currentLessReactedSqueal">
+            <mat-card-header>
+                <mat-card-title>{{ currentLessReactedSqueal.sender }}</mat-card-title>
+                <mat-card-subtitle>{{ currentLessReactedSqueal.date | date }} at {{ currentLessReactedSqueal.hour }}:{{ currentLessReactedSqueal.seconds }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <img mat-card-image *ngIf="currentLessReactedSqueal.body.photo" [src]="currentLessReactedSqueal.body.photo" alt="Photo" style="width: 200px;">
+                <p>{{ currentLessReactedSqueal.body.text }}</p>
+                <div *ngIf="currentLessReactedSqueal.body.position.length >= 2" id="map-container-{{ currentLessReactedSqueal.nickname }}">
+                    {{ currentLessReactedSqueal.body.position }}
+                </div>
+                <a *ngIf="currentLessReactedSqueal.body.link" [href]="currentLessReactedSqueal.body.link" target="_blank">{{ currentLessReactedSqueal.body.link }}</a>
+                <video *ngIf="currentLessReactedSqueal.body.video" controls>
+                    <source [src]="currentLessReactedSqueal.body.video" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button>Likes ({{ currentLessReactedSqueal.pos_reactions }})</button>
+                <button mat-button>Dislikes ({{ currentLessReactedSqueal.neg_reactions }})</button>
+            </mat-card-actions>
+        </mat-card>
+      </div>
+    
+
+      <button *ngIf="currentLessReactedSquealIndex < lessReactedSqueals.length - 1" (click)="showNextLessReactedSqueal()" class="nav-button right">▶</button>
+    </div>
+    
+
+    <h3>Most Popular Squeals</h3>    
+    <div class = "carousel-container">
+      <button *ngIf="currentPopularSquealIndex > 0" (click)="showPreviousPopularSqueal()" class="nav-button left">◀</button>
+
+      <div *ngIf="mostPopularSqueals.length" class="squeal-card-container">
+        <mat-card class="squeal-card" *ngIf="mostPopularSqueals[currentPopularSquealIndex] as currentPopularSqueal">
+            <mat-card-header>
+                <mat-card-title>{{ currentPopularSqueal.sender }}</mat-card-title>
+                <mat-card-subtitle>{{ currentPopularSqueal.date | date }} at {{ currentPopularSqueal.hour }}:{{ currentPopularSqueal.seconds }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <img mat-card-image *ngIf="currentPopularSqueal.body.photo" [src]="currentPopularSqueal.body.photo" alt="Photo" style="width: 200px;">
+                <p>{{ currentPopularSqueal.body.text }}</p>
+                <div *ngIf="currentPopularSqueal.body.position.length >= 2" id="map-container-{{ currentPopularSqueal.nickname }}">
+                    {{ currentPopularSqueal.body.position }}
+                </div>
+                <a *ngIf="currentPopularSqueal.body.link" [href]="currentPopularSqueal.body.link" target="_blank">{{ currentPopularSqueal.body.link }}</a>
+                <video *ngIf="currentPopularSqueal.body.video" controls>
+                    <source [src]="currentPopularSqueal.body.video" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button>Likes ({{ currentPopularSqueal.pos_reactions }})</button>
+                <button mat-button>Dislikes ({{ currentPopularSqueal.neg_reactions }})</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+    
+      <button *ngIf="currentPopularSquealIndex < mostPopularSqueals.length - 1" (click)="showNextPopularSqueal()" class="nav-button right">▶</button>
+    </div>
+
+
     <div class = "inpopularSqueal-container">
         <h3>Inpopular Squeals</h3>
     </div>
-    <div class = "controversialSqueal-container">
-        <h3>Squeals at risk of controversy</h3>
+
+
+    <h3>Squeals at risk of controversy</h3>
+    <div class = "carousel-container" style = "margin-bottom: 20%;">
+      <button *ngIf="currentControversialSquealIndex > 0" (click)="showPreviousControversialSqueal()" class="nav-button left">◀</button>
+      
+      <div *ngIf="controversialSqueals.length" class="squeal-card-container">
+        <mat-card class="squeal-card" *ngIf="controversialSqueals[currentControversialSquealIndex] as currentControversialSqueal">
+            <mat-card-header>
+                <mat-card-title>{{ currentControversialSqueal.sender }}</mat-card-title>
+                <mat-card-subtitle>{{ currentControversialSqueal.date | date }} at {{ currentControversialSqueal.hour }}:{{ currentControversialSqueal.seconds }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <img mat-card-image *ngIf="currentControversialSqueal.body.photo" [src]="currentControversialSqueal.body.photo" alt="Photo" style="width: 200px;">
+                <p>{{ currentControversialSqueal.body.text }}</p>
+                <div *ngIf="currentControversialSqueal.body.position.length >= 2" id="map-container-{{ currentControversialSqueal.nickname }}">
+                    {{ currentControversialSqueal.body.position }}
+                </div>
+                <a *ngIf="currentControversialSqueal.body.link" [href]="currentControversialSqueal.body.link" target="_blank">{{ currentControversialSqueal.body.link }}</a>
+                <video *ngIf="currentControversialSqueal.body.video" controls>
+                    <source [src]="currentControversialSqueal.body.video" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button>Likes ({{ currentControversialSqueal.pos_reactions }})</button>
+                <button mat-button>Dislikes ({{ currentControversialSqueal.neg_reactions }})</button>
+            </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <button *ngIf="currentControversialSquealIndex < controversialSqueals.length - 1" (click)="showNextControversialSqueal()" class="nav-button right">▶</button>
     </div>
+  
 </body>
-
-
-<!--<div class="most-reacted-squeals-container">
-    <h3>Most Reacted Squeals</h3>
-    <mat-card *ngFor="let squeal of mostReactedSqueals" class="squeal-card">
-        <mat-card-header>
-            <div mat-card-avatar class="squeal-avatar" [style.backgroundImage]="'url(' + squeal.photoprofile + ')'"></div>
-            <mat-card-title>{{ squeal.sender }}</mat-card-title>
-            <mat-card-subtitle>{{ squeal.date | date:'medium' }} at {{ squeal.hour }}:{{ squeal.seconds }}</mat-card-subtitle>
-        </mat-card-header>
-        <img mat-card-image *ngIf="squeal.body.photo" [src]="squeal.body.photo" alt="Squeal photo">
-        <mat-card-content>
-            <p>{{ squeal.body.text }}</p>
-            <a *ngIf="squeal.body.link" [href]="squeal.body.link" target="_blank">Link</a>
-        </mat-card-content>
-        <mat-card-actions>
-            <button mat-button>Likes ({{ squeal.pos_reactions }})</button>
-            <button mat-button>Dislikes ({{ squeal.neg_reactions }})</button>
-        </mat-card-actions>
-    </mat-card>
-</div>
--->
