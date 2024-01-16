@@ -6,6 +6,12 @@ import * as moment from 'moment';
 
 Chart.register(...registerables);
 
+const chartOptions = {
+  responsive: true, // Se impostato su true, il grafico si adatterà al contenitore
+  maintainAspectRatio: false, // Se impostato su false, consente di impostare una dimensione fissa
+  // Altre opzioni...
+};
+
 @Component({
   selector: 'app-graphics',
   templateUrl: './graphics.component.html',
@@ -13,6 +19,7 @@ Chart.register(...registerables);
 })
 export class GraphicsComponent {
   userSqueals: any[] = []; // Array per archiviare i squeal dell'utente
+
 
   constructor(private databaseService: DatabaseService) {}
 
@@ -36,66 +43,139 @@ export class GraphicsComponent {
   }
 
   processUserReactionsOverTime() {
-    // In questo metodo, puoi elaborare this.userSqueals per ottenere le reazioni nel tempo
-    // Ad esempio, puoi scorrere this.userSqueals e raccogliere dati sulle reazioni nel tempo
-    // Utilizza le informazioni desiderate dal formato dei squeal che hai fornito
-
-    const reactionsOverTime: {
-      date: any; // Puoi utilizzare data e ora per costruire un timestamp
-      posReactions: any; negReactions: any;
-    }[] = []; // Archivia qui le reazioni nel tempo
-
-    // Esempio di come potresti raccogliere le reazioni nel tempo
-    this.userSqueals.forEach((squeal) => {
-      const reactionData = {
-        date: squeal.date, // Puoi utilizzare data e ora per costruire un timestamp
+    const reactionsOverTime = this.userSqueals.map(squeal => {
+      // Assicurati che la data sia nel formato corretto e valido prima di convertirla
+      const formattedDate = moment(squeal.date, 'DD/MM/YYYY').isValid() 
+        ? moment(squeal.date, 'DD/MM/YYYY').toDate() 
+        : undefined;  // o gestisci la data non valida in altro modo
+  
+      return {
+        date: formattedDate,
         posReactions: squeal.pos_reactions,
         negReactions: squeal.neg_reactions
       };
-      reactionsOverTime.push(reactionData);
     });
-
-    // Ora hai le reazioni dell'utente nel tempo in reactionsOverTime
-    console.log('Reazioni nel tempo:', reactionsOverTime);
-
-    // Ora puoi utilizzare questi dati per creare il grafico
-    this.createChart(); // Remove the argument from the method call
+  
+    // Filtra eventuali record con date non valide prima di passarli al grafico
+    const validReactionsOverTime = reactionsOverTime.filter(r => r.date !== undefined);
+  
+    // Ora hai le reazioni dell'utente nel tempo in validReactionsOverTime
+    console.log('Reazioni nel tempo:', validReactionsOverTime);
+  
+    // Passa questo array alla funzione createChart
+    this.createChart(validReactionsOverTime);
+    this.createDifferenceChart(validReactionsOverTime);
   }
-
-  createChart() {
+  
+  
+  createChart(reactionsOverTime: any[]) {
+    // Trova il valore massimo tra tutte le reazioni positive e negative
+    const maxReactions = Math.max(...reactionsOverTime.map(r => Math.max(r.posReactions, r.negReactions)));
+  
     const ctx = document.getElementById('myChart') as HTMLCanvasElement;
     if (ctx) {
       const chart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: [moment('2023-01-01'), moment('2023-01-02'), moment('2023-01-03')],
-          datasets: [
-            {
-              label: 'Reazioni Pos/Neg',
-              data: [10, 20, 15],
-              borderColor: 'blue',
-              borderWidth: 2
-            }
-          ]
+          labels: reactionsOverTime.map((r: { date: any; }) => r.date),
+          datasets: [{
+            label: 'Reazioni Totali',
+            data: reactionsOverTime.map((r: { posReactions: number; negReactions: number; }) => r.posReactions + r.negReactions),
+            borderColor: 'blue',
+            borderWidth: 2
+          }]
         },
         options: {
           scales: {
+            y: {
+              beginAtZero: true, // Fai iniziare l'asse Y da 0
+              min: 0, // Imposta il minimo dell'asse Y a 0 per evitare valori negativi
+              suggestedMax: maxReactions // Usa il valore massimo calcolato come prima
+            },
             x: {
               type: 'time',
               time: {
                 unit: 'day',
+                tooltipFormat: 'LL',
                 displayFormats: {
                   day: 'YYYY-MM-DD'
                 }
               }
-            },
-            y: {
-              // Altre opzioni per l'asse y se necessario
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                title: (tooltipItems) => {
+                  return tooltipItems[0].label;
+                },
+                label: (context) => {
+                  const reactionIndex = context.dataIndex;
+                  const posReactions = reactionsOverTime[reactionIndex].posReactions;
+                  const negReactions = reactionsOverTime[reactionIndex].negReactions;
+                  return `Positive: ${posReactions}, Negative: ${negReactions}`;
+                }
+              }
             }
           }
-        }
-        
-  });
-    }
+        }  
+      });
+    } 
   }
+
+  createDifferenceChart(reactionsOverTime: any[]) {
+    const ctxDifference = document.getElementById('myChartDifference') as HTMLCanvasElement;
+    if (ctxDifference) {
+      const differenceChart = new Chart(ctxDifference, {
+        type: 'line',
+        data: {
+          labels: reactionsOverTime.map((r: { date: any; }) => r.date),
+          datasets: [{
+            label: 'Differenza Reazioni Pos/Neg',
+            data: reactionsOverTime.map((r: { posReactions: number; negReactions: number; }) => r.posReactions - r.negReactions),
+            borderColor: 'red',
+            borderWidth: 2
+            }]
+            },
+            options: {
+            scales: {
+            y: {
+            beginAtZero: true,
+            // min: 0, // Potresti voler rimuovere questa linea se ti aspetti valori negativi
+            // suggestedMax: maxReactions // Commentato se non vuoi un valore massimo suggerito
+            },
+            x: {
+            type: 'time',
+            time: {
+            unit: 'day',
+            tooltipFormat: 'LL',
+            displayFormats: {
+            day: 'YYYY-MM-DD'
+            }
+            }
+            }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: (tooltipItems) => {
+                    return tooltipItems[0].label;
+                  },
+                  label: (context) => {
+                    const reactionIndex = context.dataIndex;
+                    const diffReactions = reactionsOverTime[reactionIndex].posReactions - reactionsOverTime[reactionIndex].negReactions;
+                    return `Diff: ${diffReactions}`;
+                  }
+                }
+              }
+            }
+            }
+            });
+            }
+  }
+  
+
+
+
 }
+
