@@ -5,8 +5,7 @@ import { EditProfileComponent } from './component/edit-profile/edit-profile.comp
 import { MonitoringComponent } from './component/monitoring/monitoring.component';
 import { CreateMessageComponent } from './component/create-message/create-message.component';
 import { SettingsComponent } from './component/settings/settings.component';
-import { LoginComponent } from './component/login/login.component';
-import { RegisterComponent } from './component/register/register.component';
+import { GraphicsComponent } from './graphics/graphics.component';
 import { authGuard } from './auth/auth.guard';
 
 const routes: Routes = [
@@ -15,13 +14,9 @@ const routes: Routes = [
     { path: 'edit-profile', component: EditProfileComponent },
     { path: 'monitoring', component: MonitoringComponent },
     { path: 'create-message', component: CreateMessageComponent },
+    { path: 'graphics', component: GraphicsComponent },
     { path: 'settings', component: SettingsComponent },
   ]},
-
-  /* inutile
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  */
 ];
 
 @NgModule({

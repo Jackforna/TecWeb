@@ -29,20 +29,21 @@
               "src/styles.css",
               "node_modules/leaflet/dist/leaflet.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": ["leaflet"]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1.1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "3kb",
-                  "maximumError": "5kb"
+                  "maximumWarning": "10kb",
+                  "maximumError": "15kb"
                 }
               ],
               "outputHashing": "all"

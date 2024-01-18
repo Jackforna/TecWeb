@@ -17,10 +17,12 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
+  /*
   createUser(email: string, id: string, token: string, expirationDate: Date){
     this.user = new User(email, id, token, expirationDate)
     this.isLoggedIn = true
   }
+  */
 
   signUp(email: string, username: string, password: string) {
     return this.http.post(this.signUpUrl, {
@@ -41,7 +43,7 @@ export class AuthService {
 
   logOut(){
     this.isLoggedIn = false //Togli il log
-    this.router.navigate(['login']) //Vai alla home
+    // this.router.navigate(['login']) //Vai alla home
     localStorage.clear() //Pulisci il localStorage
     console.clear() //Pulisci la console
   }

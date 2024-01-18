@@ -10,8 +10,7 @@ const dbUrl = 'mongodb://root:example@localhost:27017';
 const client = new MongoClient(dbUrl);
 const dbName = 'my-mongo-container';
 
-app.use(bodyParser.json({limit:'100mb'}));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/squealer-app', express.static(path.join(__dirname, 'my-react-app/build')));
 
@@ -199,6 +198,7 @@ app.get('/get-listSqueals', async (req, res) => {
   }
 });
 
+
 app.post('/add-squeal', async (req, res) => {
   try {
       await ListSquealsCollection.insertOne(req.body);
@@ -226,6 +226,29 @@ app.put('/update-squeals', async (req, res) => {
       res.status(500).send('Errore durante l\'aggiornamento degli squeals');
   }
 });
+
+//Aggiornamento single squeal
+app.put('/update-squeal/:id', async (req, res) => {
+  try {
+      const id = req.params.id;
+      const updates = req.body;
+
+      const result = await ListSquealsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updates }
+      );
+
+      if (result.modifiedCount === 0) {
+          return res.status(404).send('Squeal non trovato o nessun aggiornamento necessario');
+      }
+
+      res.status(200).send('Squeal aggiornato con successo');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Errore durante l\'aggiornamento dello Squeal');
+  }
+});
+
 
 app.get('/get-listChannels', async (req, res) => {
   try {

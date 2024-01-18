@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Input } from '@angular/core';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -37,7 +37,9 @@ export class EditProfileComponent implements OnInit{
   /*Dati utente*/
   nickname: string | null = '';
   profilePictureUrl: string | null = '';
-  charLeftUser: number = 0;
+  charLeftUserDaily: number = 0;
+  charLeftUserWeekly: number = 0;
+  charLeftUserMonthly: number = 0;
   profileDescription: string = '';
 
   
@@ -48,8 +50,12 @@ export class EditProfileComponent implements OnInit{
 
 
   /*Dati per il pagamento e aumento caratteri*/
-  charLeft: number = 0;  //Caratteri rimanenti in percentuale su 150
-  charMaximun: number = 500; //Caratteri massimi
+  charLeftDaily: number = 0;  //Caratteri rimanenti in percentuale su 150
+  charLeftWeekly: number = 0; //Caratteri rimanenti in percentuale su 1000
+  charLeftMonthly: number = 0; //Caratteri rimanenti in percentuale su 3000
+  charMaximunDaily: number = 500; //Caratteri massimi
+  charMaximunWeekly: number = 4000; //Caratteri massimi
+  charMaximunMonthly: number = 10000; //Caratteri massimi
   selectedAmount: string | number = '';
   otherAmount: number | null = null;
   selectedPaymentMethod: string = '';
@@ -67,7 +73,8 @@ export class EditProfileComponent implements OnInit{
     private route: ActivatedRoute, 
     private router: Router,
     private databaseService: DatabaseService, 
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit() { 
     this.laodUserData(); // Carica i dati utente 
@@ -78,8 +85,12 @@ export class EditProfileComponent implements OnInit{
   laodUserData(): void {
     this.nickname = this.userId ? this.userId.nickname : '';
     this.profilePictureUrl = this.userId ? this.userId.photoprofile : '';
-    this.charLeftUser = this.userId ? this.userId.char_d : 0;
-    this.charLeft = (this.charLeftUser * 100) / this.charMaximun;
+    this.charLeftUserDaily = this.userId ? this.userId.char_d : 0;
+    this.charLeftDaily = (this.charLeftUserDaily * 100) / this.charMaximunDaily;
+    this.charLeftUserWeekly = this.userId ? this.userId.char_w : 0;
+    this.charLeftWeekly = (this.charLeftUserWeekly * 100) / this.charMaximunWeekly;
+    this.charLeftUserMonthly = this.userId ? this.userId.char_m : 0;
+    this.charLeftMonthly = (this.charLeftUserMonthly * 100) / this.charMaximunMonthly;
     this.profileDescription = this.userId ? this.userId.bio : '';
   }
 
@@ -186,35 +197,45 @@ export class EditProfileComponent implements OnInit{
   openDescriptionModule(): void {
     this.dialogDescriptionRef = this.dialog.open(this.selectDescriptionDialogRef);
   }
-
+  
+  /*Problemi aggiornamento*/
   updateDescription(newDescription: string): void {
-    // Implementa qui la logica per salvare la nuova descrizione
-    console.log('Nuova descrizione:', newDescription);
-    console.log(this.userId);
-    this.databaseService.patchUserData(this.userId, {profileDescription: newDescription})
-    .subscribe(response => {
-      console.log(response);
-      console.log(this.userId);
-      localStorage.removeItem('Dati utente'); //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
-      localStorage.setItem('Dati utente', JSON.stringify({nickname: this.nickname, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser, profileDescription: newDescription})); //CONTROLLARE CHIAMATA
-      // Force a refresh of the page
-      this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-      this.router.onSameUrlNavigation = 'reload';
-      this.router.navigate([this.router.url]);
-    }, error => {
-      console.error(error);
-    });
-    // Ad esempio, puoi chiamare un servizio per aggiornare la descrizione nel database
-    this.closeDescriptionDialog(); // Chiudi il modale dopo aver salvato la descrizione
-  }
-
+    // Assicurati di ottenere l'ID utente corretto dal localStorage
+    const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
+    const userId = userData._id;
+  
+    if (userId) {
+      console.log('Aggiornamento descrizione per ID:', userId);
+      this.databaseService.updateUserProfile(userId, { bio: newDescription })
+        .subscribe(response => {
+          console.log('Risposta del server:', response);
+          // Aggiornamento dei dati dell'utente nel localStorage
+          userData.bio = newDescription;
+          localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+          this.profileDescription = newDescription; // Aggiorna la descrizione nel componente
+          this.laodUserData(); // Ricarica i dati dell'utente
+          // Force a refresh of the page
+          this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+          this.router.onSameUrlNavigation = 'reload';
+          this.router.navigate([this.router.url]);
+        }, error => {
+          console.error('Errore nell\'aggiornamento della descrizione:', error);
+        });
+    } else {
+      console.error('ID utente non trovato.');
+    }
+    this.closeDescriptionDialog(); // Chiudi il modale dopo il salvataggio
+  } 
+  
   closeDescriptionDialog(): void {
     this.dialogDescriptionRef.close();
   }
 
-  /*Gestione cambio caratteri*/
+
+
+  /*Gestione cambio caratteri DA FARE*/
   openConfirmationModal(): void {
-    if (this.selectedAmount && this.selectedPaymentMethod) {
+    if (this.selectedAmount) {
       this.dialogPaymentRef = this.dialog.open(this.confirmationDialog);
     } else {
       console.log('Seleziona entrambe le opzioni prima di procedere');
@@ -222,37 +243,69 @@ export class EditProfileComponent implements OnInit{
     }
   }
 
+  // Si aggiorna solo dopo due volte che aggiorni tu
   confirmSelection(): void {
     let amountValue = this.selectedAmount === 'other' ? this.otherAmount : this.selectedAmount;
-
-    // Assicurati che amountValue sia un numero
     let amountNumber = typeof amountValue === 'string' ? parseInt(amountValue, 10) : amountValue || 0;
-
+  
     console.log('Importo selezionato:', amountNumber, 'Metodo di pagamento:', this.selectedPaymentMethod);
-    this.databaseService.patchUserData(this.userId, {charLeft: this.charLeftUser + amountNumber}).subscribe(response => { //CONTROLLARE CHIAMATA
-      console.log(response);
-      localStorage.removeItem('Dati utente'); //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
-      localStorage.setItem('Dati utente', JSON.stringify({nickname: this.nickname, profilePictureUrl: this.profilePictureUrl, charLeft: this.charLeftUser + amountNumber, profileDescription: this.profileDescription})); //CONTROLLARE CHIAMATA
-      // Force a refresh of the page
-      this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-      this.router.onSameUrlNavigation = 'reload';
-      this.router.navigate([this.router.url]);
-    }, error => {
-      console.error(error);
-    });
 
-    /*  // Qui implementa la logica per la combinazione di opzioni selezionate per il tipo di pagamento
-      ?.subscribe(() => {
+    const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
+    const userId = userData._id;
 
-        this.dialogRef.close(); // Chiudi il modale di conferma
-      });
+    console.log('Aggiornamento caratteri per ID:', userId);
+  
+    // Assicurati che this.userId sia una stringa che rappresenta l'ID dell'utente
+    if (typeof userId === 'string' && userId) {
+      // Calcola i nuovi valori per charLeft
+      const newCharLeftDaily = this.charLeftUserDaily + amountNumber;
+      const newCharLeftWeekly = this.charLeftUserWeekly + amountNumber;
+      const newCharLeftMonthly = this.charLeftUserMonthly + amountNumber;
+  
+      const updateData = {
+        char_d: newCharLeftDaily,
+        char_w: newCharLeftWeekly,
+        char_m: newCharLeftMonthly
+      };
+  
+      this.databaseService.updateUserProfile(userId, updateData)
+        .subscribe({
+          next: (response) => {
+            console.log('Risposta del server:', response);
+  
+            // Aggiorna i valori locali e nel localStorage
+            this.charLeftUserDaily = newCharLeftDaily;
+            this.charLeftUserWeekly = newCharLeftWeekly;
+            this.charLeftUserMonthly = newCharLeftMonthly;
+            
+            // Aggiorna i valori percentuali
+            this.charLeftDaily = (this.charLeftUserDaily * 100) / this.charMaximunDaily;
+            this.charLeftWeekly = (this.charLeftUserWeekly * 100) / this.charMaximunWeekly;
+            this.charLeftMonthly = (this.charLeftUserMonthly * 100) / this.charMaximunMonthly;
+  
+            // Aggiorna il localStorage
+            const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
+            userData.char_d = newCharLeftDaily;
+            userData.char_w = newCharLeftWeekly;
+            userData.char_m = newCharLeftMonthly;
+            localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+          },
+          error: (error) => {
+            console.error("Errore durante l'aggiornamento dei dati utente:", error);
+          },
+          complete: () => {
+            // Chiudi il modale di conferma
+            this.closeConfirmationDialog();
+          }
+        });
+    } else {
+      console.error('ID utente non valido o non trovato.');
+    }
   }
-  */
-    this.closeConfirmationDialog(); // Chiudi il modale di conferma
-  }
-
+  
   closeConfirmationDialog(): void {
     this.dialogPaymentRef.close();
   }
+  
 
 }

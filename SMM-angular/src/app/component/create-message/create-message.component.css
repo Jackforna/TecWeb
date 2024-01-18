@@ -352,3 +352,117 @@ margin-left: 4%;
   height: 300px;
   width: 500px;
 }
+
+/*Inserimento hashatag*/
+.example-form {
+  display: flex;
+  align-items: center;
+  /*margin-top: 2%;
+  margin-left: 2%;  Allinea con la textarea */
+}
+
+#hashtagInputField{
+  margin-left: 2%;
+}
+
+.custom-input-field {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  padding-left: 10px;
+  font-size: 16px;
+}
+
+.hashtag-label {
+  margin-right: 5px;
+  font-size: 1em;
+  color: grey;
+}
+
+#hashtagInput {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  font-size: 1em;
+}
+
+/*Inserimento utente*/
+.user-label {
+  margin-right: 5px;
+  font-size: 1em;
+  color: grey;
+
+}
+
+#userInput{
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  font-size: 1em;
+}
+
+#userInputField{
+  margin-left: 2%;
+}
+
+.selected-user-image {
+  width: 30px; /* o la dimensione che preferisci */
+  height: 30px; /* deve essere uguale alla larghezza per essere circolare */
+  border-radius: 50%; /* rende l'immagine circolare */
+  object-fit: cover; /* assicura che l'immagine copra tutto lo spazio senza essere distorta */
+  margin-right: 5px; /* spazio tra le immagini */
+}
+
+.remove-user-icon {
+  position: absolute;
+  top: -5px; /* regola in base alle tue necessità */
+  right: -5px; /* regola in base alle tue necessità */
+  background-color: red;
+  color: white;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 15px; /* per centrare il testo verticalmente */
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.selected-user-container {
+  position: relative;
+  display: inline-block; /* o flex a seconda della tua struttura */
+  margin-right: 10px;
+}
+
+/*Inserimento canale*/
+#channeInputFIeld{
+  width: 60%;
+  margin-left: 2%;
+}
+
+#channelInput{
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding-left: 2%;
+}
+
+/*Creazione canale*/
+.create-channel-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.create-channel-input {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.channel-mute-switch {
+  margin-right: 20px;
+}

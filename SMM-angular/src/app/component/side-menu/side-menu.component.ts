@@ -24,6 +24,16 @@ export class SideMenuComponent implements OnInit {
   ngOnInit(): void {
     this.getManagerDetails();
     this.setAccountData();
+    /* Chiamata per ottenere tutti gli utenti
+    this.databaseService.getAllUsers().subscribe( 
+      (data: any) => {
+        console.log('Tutti gli utenti:', data);
+      },
+      error => {
+        console.error('Errore nella richiesta:', error);
+      }
+    );
+    */
   }
 
   // Da mettere a posto

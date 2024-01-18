@@ -5,6 +5,12 @@ import { DatabaseService } from 'src/app/services/database.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith, filter } from 'rxjs/operators';;
+import { User } from 'src/app/models/user.moduls';
+
+
 
 @Component({
   selector: 'app-create-message',
@@ -22,10 +28,14 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
   profilePictureUrl: string | null = '';
   charLeftUser: number = 0;
+  charLeftUserWeekly: number = 0;
+  charLeftUserMonthly: number = 0;
   remainingChars: number = 0;
   userText: string = '';
+  private maxLengthPrivate = 200; // Lunghezza massima per i messaggi privati
+  originalCharLeftUser: number = 0; //Backup numero caratteri per il privato
 
-  userDati = localStorage.getItem('Dati utente');
+  userDati = localStorage.getItem('Dati utente amministrato');
   datiUtente = this.userDati ? JSON.parse(this.userDati) : null;
 
   /*Modale fotocamera*/
@@ -47,6 +57,36 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   selectedLocation: L.Marker | null = null;
   tempMap: any;
 
+  //Inserimento #hashtag
+  myControl = new FormControl('');
+  isPrivate: boolean = false;
+  userControl = new FormControl(''); // Controllo per l'input utente
+
+  //Invio squeal
+  hashtag: string = '';
+
+  //Gestione caso private
+  isImageAttachmentEnabled = true;
+  isLinkAttachmentEnabled = true;
+  isLocationAttachmentEnabled = true;
+
+  //Gestione canali
+  isChannel: boolean = false;
+  accessType: string = 'write';  // Opzione di default per Canale
+  channelControl = new FormControl('');  // Controllo per l'input del nome del canale
+
+  //Inserimento utenti
+  allUsers: User[] = []; // Questo ora conterrà un array di oggetti User
+  filteredUsers: Observable<string[]> | undefined;
+  userControl2 = new FormControl();
+  selectedUser: string | null = null;
+  selectedUsers: { nickname: string, photoprofile: string }[] = [];;
+
+  //Gestione crea canali
+  newChannelName: string = ''; // Il nome per il nuovo canale
+  muteChannel: boolean = false; // Lo stato del toggle per silenziare il canale
+
+
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -55,19 +95,86 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     ) { }
 
   ngOnInit() {
-    this.profilePictureUrl = this.datiUtente ? this.datiUtente.profilePictureUrl : '';
-    this.charLeftUser = this.datiUtente ? this.datiUtente.charLeft : 0;
-    this.remainingChars = this.charLeftUser;
+    this.profilePictureUrl = this.datiUtente ? this.datiUtente.photoprofile : '';
+    this.charLeftUser = this.datiUtente ? this.datiUtente.char_d : 0; 
+    this.charLeftUserWeekly = this.datiUtente ? this.datiUtente.char_w : 0;
+    this.charLeftUserMonthly = this.datiUtente ? this.datiUtente.char_m : 0;  
+    this.remainingChars = this.charLeftUser; 
+
+    // Recupera tutti gli utenti dal backend
+    this.databaseService.getAllUsers2().subscribe((users: User[]) => {
+      this.allUsers = users;
+    });
+
+
+    this.filteredUsers = this.userControl.valueChanges.pipe(
+      startWith(''),
+      filter(value => value !== null),
+      map(value => value ? this._filter(value) : [])
+    );
+
+    /*
+    this.updateSquealPositive();
+    this.updateSquealNegative();
+    */
+
   }
+  
 
   ngAfterViewInit() {
 
   }
 
+  /*Aggiornamnto caratteri rimanenti*/
   updateCharLeftUser(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
-    this.remainingChars = this.charLeftUser - textarea.value.length; // Sostituisci 150 con il tuo valore massimo di caratteri se diverso
+    let textLength = textarea.value.length;
+
+    const attachmentChars = this.calculateAttachmentChars();
+  
+    if (this.isPrivate) { 
+      let remainingCharsPrivate = this.maxLengthPrivate - textLength - attachmentChars;
+
+      // Se i caratteri rimanenti sono sotto zero, tronca il testo
+      if (remainingCharsPrivate < 0) {
+        textLength = this.maxLengthPrivate - attachmentChars; // Limita il testo alla lunghezza massima meno il peso degli allegati
+        textarea.value = textarea.value.substring(0, textLength);
+        remainingCharsPrivate = 0; // Resetta a zero
+      }
+      this.remainingChars = remainingCharsPrivate;
+    } else {
+    // Calcola i caratteri usati dagli allegati
+    const attachmentChars = this.calculateAttachmentChars();
+  
+    // Calcola i caratteri rimanenti
+    let remainingChars = this.charLeftUser - textLength - attachmentChars;
+  
+    // Se i caratteri rimanenti sono sotto zero, tronca il testo
+    if (remainingChars < 0) {
+      textLength += remainingChars; // Aumenta per portare a zero
+      textarea.value = textarea.value.substring(0, textLength);
+      remainingChars = 0; // Resetta a zero
+    }
+  
+    this.remainingChars = remainingChars;
+    }
   }
+
+  updateRemainingChars() {
+    const attachmentChars = this.calculateAttachmentChars();
+    const textLength = this.userText.length;
+    this.remainingChars = this.charLeftUser - textLength - attachmentChars;
+  }
+  
+  calculateAttachmentChars() {
+    let chars = 0;
+    if (this.sentImageUrl) chars += 150; // Costo per l'immagine
+    if (this.sentLink) chars += 150; // Costo per il link
+    if (this.userLocation) chars += 150; // Costo per la posizione
+    // Aggiungi qui altri costi per altri tipi di allegati se necessario
+    return chars;
+  }
+  
 
   setCursorAtStart(event: any) {
     const target = event.target;
@@ -221,29 +328,31 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
   
   sendImage(): void {
-    // Se non c'è un'immagine selezionata o scattata, scatta una foto.
-    if (!this.imageDataUrl) {
-      this.capturePhoto();
+    if (this.remainingChars >= 150) {
+      if (!this.imageDataUrl) {
+        this.capturePhoto();
+      }
+  
+      // Chiudi il modale della fotocamera se è aperto
+      this.closeCameraModal();
+  
+      if (this.imageDataUrl) {
+        this.sentImageUrl = this.imageDataUrl;
+        //this.remainingChars -= 150; // Sottrai il costo dell'immagine
+        this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+        this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+      }
+    } else {
+      alert("Caratteri rimanenti insufficienti per allegare un'immagine.");
     }
-  
-    // Chiudi il modale della fotocamera se è aperto
-    this.closeCameraModal();
-  
-    // Controlla se una foto è stata scattata e se l'URL dell'immagine è disponibile
-    if (this.imageDataUrl) {
-      // Usa l'URL dell'immagine catturata o caricata
-      this.sentImageUrl = this.imageDataUrl;
-  
-      // Puoi anche fare altre cose qui, come inviare l'immagine al server
-      // ...
-    }
-    this.remainingChars = this.remainingChars - 125; /*Non funzionante da ottimizzare*/
+    this.disableOtherAttachments('image'); // Disabilita gli altri pulsanti di allegato
   }
   
   removeSentImage(): void {
     this.sentImageUrl = null; // Rimuove l'URL dell'immagine, quindi non sarà più visualizzata
     this.imageDataUrl = null; // Rimuove l'URL dell'immagine, quindi non sarà più visualizzata
-
+    this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+    this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
   }
 
 
@@ -264,17 +373,29 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   validateAndSendLink(): void {
-    if (this.isValidUrl(this.linkInput)) {
-      // Salva il link e chiudi il modale
-      this.sentLink = this.linkInput;
-      this.closeLinkModal();
+    if (this.remainingChars >= 150) {
+      if (this.isValidUrl(this.linkInput)) {
+        // Salva il link e chiudi il modale
+        this.sentLink = this.linkInput;
+        this.closeLinkModal();
+  
+        // Aggiorna il conteggio dei caratteri rimanenti
+        //this.remainingChars -= 150;  // O usa la lunghezza del link se preferisci
+        this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+        this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+      } else {
+        alert('Il link inserito non è valido.');
+      }
     } else {
       alert('Il link inserito non è valido.');
     }
+    this.disableOtherAttachments('link'); // Disabilita gli altri pulsanti di allegato
   }
 
   removeSentLink(): void {
     this.sentLink = null; // Rimuove il link, quindi non sarà più visualizzato
+    this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+    this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
   }
 
 
@@ -283,38 +404,46 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   // Metodo per ottenere la posizione dell'utente e generare la mappa
   
   getUserLocation(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          this.userLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          this.isMapActive = true; // Imposta la mappa come attiva
-          setTimeout(() => { // Aggiunge un breve ritardo
-            this.generateMap();
-            this.addMarkerToMap();
-          }, 0);
-          if (this.map) {
-            this.map.setView([this.userLocation.lat, this.userLocation.lng], 15);
-            setTimeout(() => {
-              this.map.invalidateSize();
+    if (this.remainingChars >= 150) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            this.userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            this.isMapActive = true; // Imposta la mappa come attiva
+            setTimeout(() => { // Aggiunge un breve ritardo
+              this.generateMap();
+              this.addMarkerToMap();
             }, 0);
+            if (this.map) {
+              this.map.setView([this.userLocation.lat, this.userLocation.lng], 15);
+              setTimeout(() => {
+                this.map.invalidateSize();
+              }, 0);
+            }
+            //this.remainingChars -= 150; // Sottrai il costo della posizione
+            this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+            this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+          },
+          error => {
+            console.error("Errore nell'ottenere la posizione: ", error);
+            alert("Non è stato possibile ottenere la tua posizione. Errore: " + error.message);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
           }
-        },
-        error => {
-          console.error("Errore nell'ottenere la posizione: ", error);
-          alert("Non è stato possibile ottenere la tua posizione. Errore: " + error.message);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        }
-      );
+        );
+      } else {
+        alert("La geolocalizzazione non è supportata dal tuo browser.");
+      }
     } else {
-      alert("La geolocalizzazione non è supportata dal tuo browser.");
+      alert('Caratteri rimanenti insufficienti per aggiungere la posizione.');
     }
+    this.disableOtherAttachments('location'); // Disabilita gli altri pulsanti di allegato
   }
   
   addMarkerToMap(): void {
@@ -367,16 +496,23 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
   
   confirmLocation(): void {
-    if (this.selectedLocation) {
-      const latLng = this.selectedLocation.getLatLng();
-      this.userLocation = { lat: latLng.lat, lng: latLng.lng };
-      this.isMapActive = true;
-      setTimeout(() => {
-        this.generateMap();
-        this.addMarkerToMap();
-      }, 0);
+    if (this.remainingChars >= 150) {
+      if (this.selectedLocation) {
+        const latLng = this.selectedLocation.getLatLng();
+        this.userLocation = { lat: latLng.lat, lng: latLng.lng };
+        this.isMapActive = true;
+        setTimeout(() => {
+          this.generateMap();
+          this.addMarkerToMap();
+        }, 0);
+        //this.remainingChars -= 150; // Sottrai il costo della posizione
+        this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+        this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+      }
+      this.closeMapModal();
+    } else {
+      alert('Caratteri rimanenti insufficienti per selezionare una posizione.');
     }
-    this.closeMapModal();
   }
   
   removeMap(): void {
@@ -386,7 +522,9 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     if (this.map) {
       this.map.remove();
       this.map = null;
+      this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
     }
+    this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
   }
   
   initTempMap(): void {
@@ -413,7 +551,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     });
   }
   
-  
   closeMapModal(): void {
     this.showMapModal = false;
     if (this.tempMap) {
@@ -423,7 +560,287 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   
+  /*Hashtag vs Private*/
+  onSelectChange(event: any) {
+    this.isPrivate = event.target.value === 'private';
+    if (this.isPrivate) {
+      // Salva il valore originale e imposta il limite a 200 in modalità privata
+      this.originalCharLeftUser = this.charLeftUser;
+      this.charLeftUser = 200;
+    } else {
+      // Ripristina il valore originale in modalità pubblica
+      this.charLeftUser = this.originalCharLeftUser;
+    }
+    // Aggiorna i caratteri rimanenti
+    this.updateCharLeftUser({} as Event);
+  }
   
+  onHashtagInput(event: any) {
+    let value = event.target.value;
+    if (value.length > 25) {
+      // Tronca la stringa a 25 caratteri
+      value = value.substr(0, 25);
+    }
+    // Sostituisce ogni spazio con "_"
+    value = value.replace(/\s+/g, '_');
+    // Aggiorna il valore dell'input con la stringa modificata
+    event.target.value = value;
+  }
+
+  onUserInput(event: any) {
+    let value = event.target.value;
+    if (value.length > 25) {
+      // Tronca la stringa a 25 caratteri
+      value = value.substr(0, 25);
+    }
+    // Sostituisce ogni spazio con "_"
+    value = value.replace(/\s+/g, '_');
+    // Aggiorna il valore dell'input con la stringa modificata
+    event.target.value = value;
+  }
+
+  disableOtherAttachments(selectedAttachment: string) {
+    if (this.isPrivate) {
+      this.isImageAttachmentEnabled = selectedAttachment === 'image';
+      this.isLinkAttachmentEnabled = selectedAttachment === 'link';
+      this.isLocationAttachmentEnabled = selectedAttachment === 'location';
+    }
+  }
+
+  enableOtherAttachments() {
+    this.isImageAttachmentEnabled = true;
+    this.isLinkAttachmentEnabled = true;
+    this.isLocationAttachmentEnabled = true;
+  }
+
+
+  /*Canale vs Squeal*/
+  onTypeChange(event: any) {
+    const newType = event.target.value;
+    this.isChannel = newType === 'channel';
   
+    // Se stavi in "Squeal Privato" e passi a un'altra modalità, ripristina il conteggio dei caratteri
+    if (this.isPrivate && newType !== 'private') {
+      this.charLeftUser = this.originalCharLeftUser;
+    }
+  
+    // Aggiorna lo stato "isPrivate" in base alla nuova selezione
+    this.isPrivate = newType === 'private';
+  
+    // Resetta i controlli se cambia la selezione
+    this.myControl.reset();
+    this.userControl.reset();
+    this.channelControl.reset();
+  
+    // Aggiorna i caratteri rimanenti
+    this.updateCharLeftUser({} as Event);
+  }
+  
+  onAccessChange(event: any) {
+    this.accessType = event.target.value;
+  }
+
+  onChannelInput(event: any) {
+    // Logica per gestire l'input del nome del canale
+  }
+  
+  /*Inserimento user*/
+  onSelectUser(user: string): void {
+    this.selectedUser = user;
+    console.log("Selezionato: ", user);
+    this.userControl.setValue(user);  // Imposta il valore del campo input su quello selezionato
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    // Mappa allUsers per estrarre solo i nickname
+    return this.allUsers
+      .filter(user => user.nickname.toLowerCase().includes(filterValue))
+      .map(user => user.nickname);
+  }
+
+  onUserSelected(event: any) {
+    // Trova l'oggetto utente selezionato basato sul nickname
+    const selectedUser = this.allUsers.find(user => user.nickname === event.option.value);
+    if (selectedUser 
+        && this.selectedUsers.length < 3 
+        && !this.selectedUsers.map(u => u.nickname).includes(selectedUser.nickname)
+        && selectedUser.photoprofile) { // Assicurati che selectedUser abbia la proprietà photoprofile
+      this.selectedUsers.push(selectedUser);
+    }
+    // Resetta il campo input dopo la selezione
+    this.userControl.reset();
+  }
+
+  removeSelectedUser(index: number): void {
+    // Rimuove l'utente dall'array degli utenti selezionati
+    this.selectedUsers.splice(index, 1);
+  }
+  
+  /*Crea canale*/
+  createChannel(): void {
+    const channelData = {
+      name: this.newChannelName,
+      isMuted: this.muteChannel
+    };
+
+    /*
+    this.channelService.createChannel(channelData).subscribe(
+      response => {
+        console.log('Canale creato con successo:', response);
+        // Qui puoi implementare la logica dopo la creazione del canale, come reindirizzare o aggiornare la lista dei canali
+      },
+      error => {
+        console.error('Errore nella creazione del canale:', error);
+      }
+    );
+    */
+  }
+
+  /*Creazione squeal pubblico*/
+  createPublicSqueal(): void {
+    // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
+    const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
+    const typeSender = 'keyword'; // O altro valore a seconda della logica
+    const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
+    const currentDate = new Date();
+    const date = currentDate.toLocaleDateString();
+    const hour = currentDate.getHours();
+    const seconds = currentDate.getSeconds();
+    const hashtag = this.hashtag;
+  
+    // Creazione dell'oggetto squeal
+    const squealData = {
+      sender: sender,
+      typeSender: typeSender,
+      body: {
+        text: this.userText,
+        link: this.sentLink || '',
+        photo: this.sentImageUrl || '',
+        position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
+        video: '', // Assumo che non ci sia supporto per video al momento
+      },
+      photoprofile: photoProfile,
+      date: date,
+      hour: hour,
+      seconds: seconds,
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      usersViewed: [],
+      category: '', // Aggiungi logica per determinare la categoria se necessario
+      receivers: [], // Aggiungi logica se ci sono destinatari specifici
+      channel: hashtag, // Aggiungi logica se il squeal è associato a un canale
+      impressions: 0
+    };
+  
+    // Chiamata al servizio per aggiungere il squeal
+    this.databaseService.addSqueal(squealData).subscribe({
+      next: (response) => {
+        console.log('Squeal added successfully', response);
+        this.resetForm();
+      },
+      error: (error) => {
+        console.error('Error adding squeal', error);
+      }
+    });
+
+    // Calcola i caratteri utilizzati (inclusi gli allegati)
+    const charsUsed = this.userText.length + this.calculateAttachmentChars();
+    const userId = this.datiUtente ? this.datiUtente._id : null;
+    // Calcola i nuovi valori dei caratteri rimanenti
+    const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed); // Giornalieri
+    const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed); // Settimanali
+    const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed); // Mensili
+
+    // Aggiorna i dati dell'utente nel backend
+    this.databaseService.updateUserProfile(userId, {
+      char_d: newCharLeftDaily,
+      char_w: newCharLeftWeekly,
+      char_m: newCharLeftMonthly
+    }).subscribe({
+      next: (response) => {
+        // Aggiornamento riuscito
+        this.charLeftUser = newCharLeftDaily;
+        this.charLeftUserWeekly = newCharLeftWeekly;
+        this.charLeftUserMonthly = newCharLeftMonthly;
+        
+        // Resetta il form dopo l'invio
+        this.resetForm();
+      },
+      error: (error) => {
+        // Gestire l'errore
+        console.error("Errore durante l'aggiornamento dei caratteri rimanenti dell'utente", error);
+      }
+    });
+    }
+
+    /*Reset della card*/
+    resetForm() {
+      // Svuota il testo dello squeal e l'hashtag
+      this.userText = '';
+      this.hashtag = '';
+    
+      // Rimuove gli allegati
+      this.sentImageUrl = null;
+      this.sentLink = null;
+    
+      // Rimuove la posizione e resetta la mappa
+      this.userLocation = null;
+      this.isMapActive = false;
+      if (this.map) {
+        this.map.remove(); // Rimuove la mappa per resettarla
+        this.map = null;
+      }
+      if (this.selectedLocation) {
+        this.selectedLocation = null; // Rimuove il marker selezionato
+      }
+    
+      // Resetta la selezione degli utenti (per i messaggi privati)
+      this.selectedUsers = [];
+    
+      // Aggiorna i caratteri rimanenti
+      this.remainingChars = this.charLeftUser;
+    
+      // Se necessario, reimposta ulteriori campi o variabili qui
+    }
+    
+    /*Aggiornamento squeal SOLO TEST*/
+    updateSquealPositive() {
+      const squealId = '659fff999a2ed0c41edbdfbe'; // Sostituisci con l'ID effettivo dello Squeal
+      const updateData = {
+        pos_reactions: 12,
+        neg_reactions: 3,
+        impressions: 4
+      };
+
+      this.databaseService.updateSqueal(squealId, updateData).subscribe({
+        next: (response) => {
+          console.log('Squeal aggiornato con successo:', response);
+        },
+        error: (error) => {
+          console.error('Errore durante l\'aggiornamento dello Squeal:', error);
+        }
+      });
+    }
+
+    updateSquealNegative() {
+      const squealId = '659f1a341960dfb59df623e8'; // Sostituisci con l'ID effettivo dello Squeal
+      const updateData = {
+        pos_reactions: 2,
+        neg_reactions: 6,
+        impressions: 5
+      };
+
+      this.databaseService.updateSqueal(squealId, updateData).subscribe({
+        next: (response) => {
+          console.log('Squeal aggiornato con successo:', response);
+        },
+        error: (error) => {
+          console.error('Errore durante l\'aggiornamento dello Squeal:', error);
+        }
+      });
+    }
+
+
 }
-  

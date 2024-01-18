@@ -60,8 +60,12 @@
     </ng-container>
     <hr>
     <div class = "characterSection-container">
-        <h3>Caratteri rimanenti: {{charLeftUser}}/{{charMaximun}}</h3>
-        <mat-progress-bar class = "barraCaratteriRimanenti" mode="determinate" [value]="charLeft" [bufferValue]=""></mat-progress-bar>
+        <h3>Caratteri rimanenti giornalieri: {{charLeftUserDaily}}/{{charMaximunDaily}}</h3>
+        <mat-progress-bar class = "barraCaratteriRimanenti" mode="determinate" [value]="charLeftDaily" [bufferValue]=""></mat-progress-bar>
+        <h3>Caratteri rimanenti settimanali: {{charLeftUserWeekly}}/{{charMaximunWeekly}}</h3>
+        <mat-progress-bar class = "barraCaratteriRimanenti" mode="determinate" [value]="charLeftWeekly" [bufferValue]=""></mat-progress-bar>
+        <h3>Caratteri rimanenti mensili: {{charLeftUserMonthly}}/{{charMaximunMonthly}}</h3>
+        <mat-progress-bar class = "barraCaratteriRimanenti" mode="determinate" [value]="charLeftMonthly" [bufferValue]=""></mat-progress-bar>
         <h2>Acquista caratteri</h2>
         <h3>Amount of character</h3>
         <section class="example-section" style="margin-bottom: 4%;">
@@ -69,12 +73,14 @@
                 <mat-radio-button class="example-margin" value="25">25</mat-radio-button>
                 <mat-radio-button class="example-margin" value="50">50</mat-radio-button>
                 <mat-radio-button class="example-margin" value="100">100</mat-radio-button>
-                <mat-radio-button class="example-margin" value="other">
-                    <input matInput [(ngModel)]="otherAmount" type="text" placeholder="Select amount">   
+                <mat-radio-button class="example-margin" value="other" style = "width: 30%;">
+                    <input matInput [(ngModel)]="otherAmount" type="text" placeholder="Select amount" style = "width: 85%; font-size:16px;">   
                 </mat-radio-button>
+                <button mat-raised-button (click)="openConfirmationModal()" style = "border-radius: 10px; background-color: aquamarine;">Buy</button>
             </mat-radio-group>
         </section>
         
+        <!--
         <div class="paymentMethod-container">
             <h3>Metodo di pagamento</h3>
             <mat-radio-group [(ngModel)]="selectedPaymentMethod">
@@ -84,9 +90,16 @@
             </mat-radio-group>
             <button mat-raised-button (click)="openConfirmationModal()">Go to payment</button>
         </div>
+        -->
         
         <ng-template #confirmationDialog>
             <h2 mat-dialog-title>Conferma</h2>
+            <h3>Metodo di pagamento</h3>
+            <mat-radio-group [(ngModel)]="selectedPaymentMethod">
+                <mat-radio-button class="example-margin" value="PayPal">PayPal</mat-radio-button>
+                <mat-radio-button class="example-margin" value="CreditCard">Carta di credito</mat-radio-button>
+                <mat-radio-button class="example-margin" value="GooglePay">GooglePay</mat-radio-button>
+            </mat-radio-group>
             <mat-dialog-content>Sei sicuro?</mat-dialog-content>
             <mat-dialog-actions>
               <button mat-button (click)="confirmSelection()">Sì</button>

@@ -24,14 +24,15 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 import { SideMenuComponent } from './component/side-menu/side-menu.component';
 import { EditProfileComponent } from './component/edit-profile/edit-profile.component';
 import { CreateMessageComponent } from './component/create-message/create-message.component';
 import { MonitoringComponent } from './component/monitoring/monitoring.component';
 import { SettingsComponent } from './component/settings/settings.component';
-import { LoginComponent } from './component/login/login.component';
-import { RegisterComponent } from './component/register/register.component';
+import { GraphicsComponent } from './graphics/graphics.component';
 
 @NgModule({
   declarations: [
@@ -41,8 +42,7 @@ import { RegisterComponent } from './component/register/register.component';
     CreateMessageComponent,
     MonitoringComponent,
     SettingsComponent,
-    LoginComponent,
-    RegisterComponent,
+    GraphicsComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,6 +68,8 @@ import { RegisterComponent } from './component/register/register.component';
     MatCheckboxModule,
     MatRadioModule,
     MatDialogModule,
+    MatAutocompleteModule,
+    LeafletModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

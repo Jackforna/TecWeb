@@ -9,7 +9,7 @@
             <mat-list-item role="button">
             -->
             <div class = "logoSquealer-container">
-                <img src = "../../../assets/images/image_enhanced.png" alt = "logo">
+                <img src = "/SMM-angular/dist/smm-squealer/assets/images/logo - Copia.png" alt = "logo">
             </div>
             <div class = "userLogged-container">
                 <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
@@ -32,6 +32,12 @@
                     <div class = "singleListItem-container">
                         <mat-icon>visibility</mat-icon>
                         <span>Monitoring</span>
+                    </div>
+                </mat-list-item>
+                <mat-list-item role="listitem" [routerLink]="['/graphics']" [routerLinkActive]="'active'">
+                    <div class = "singleListItem-container">
+                        <mat-icon>show_chart</mat-icon>
+                        <span>Graphics</span>
                     </div>
                 </mat-list-item>
                 <mat-list-item role="listitem" [routerLink]="['/settings']" [routerLinkActive]="'active'">

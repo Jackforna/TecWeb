@@ -242,6 +242,16 @@ function Profile() {
         }
     }
 
+    async function addSingleSqueal(SquealToAdd){
+        try{
+            const squeal = await addSqueal(SquealToAdd);
+            console.log(squeal);
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+    }
+
     const opendeletesqueal = (index) => {
         setindexsquealtodelete(index);
         setconfirmdeletesqueal(true);
