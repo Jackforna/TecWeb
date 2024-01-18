@@ -169,10 +169,23 @@ window.onload = function() {
                 videoURL = URL.createObjectURL(arrsqueals[i].body.video);
                 console.log(videoURL);
             }
-            if(arrsqueals[i].channel=="")
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
-            else
-                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+' from '+arrsqueals[i].channel+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+arrsqueals[i].body.position+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+            if(arrsqueals[i].channel==""){
+                const mapId = 'map' + i;
+                const mapDiv = '<div id="' + mapId + '" class="map-container" style="height: 180px;"></div>';
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p>'+ mapDiv +'<a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+                if (arrsqueals[i].body.position.length > 0)
+                    setTimeout(() => initializeMap(mapId, arrsqueals[i].body.position), 0);
+                else 
+                    document.getElementById(mapId).style.height = 0;
+            } else {
+                const mapId = 'map' + i;
+                const mapDiv = '<div id="' + mapId + '" class="map-container" style="height: 180px;"></div>';
+                document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4" style="width: 50%"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+' from '+arrsqueals[i].channel+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p>'+ mapDiv +'<a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions" style="margin-left:40%;margin-right:5%"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
+                if (arrsqueals[i].body.position.length > 0)
+                    initializeMap(mapId, arrsqueals[i].body.position);
+                else 
+                    document.getElementById(mapId).style.height = 0;
+            }
             if(arrsqueals[i].body.photo=="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"){
                 document.getElementById("imgsquealer").style = "display:none";
             }
@@ -204,6 +217,18 @@ window.onload = function() {
     })
     .catch(error => console.error('There has been a problem with your fetch operation:', error));
 }
+
+function initializeMap(mapId, position) {
+    if (position.length > 0) {
+    console.log(mapId)
+      var map = L.map(mapId).setView(position, 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+      L.marker(position).addTo(map);
+    }
+  }
 
 function updateUsers(updatedUsers) {
     fetch('http://localhost:8080/update-users', {
