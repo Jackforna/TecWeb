@@ -19,6 +19,9 @@ const chartOptions = {
 })
 export class GraphicsComponent {
   userSqueals: any[] = []; // Array per archiviare i squeal dell'utente
+  width = 400; // Larghezza in pixel
+  height = 200; // Altezza in pixel
+  postsChart: any;
 
 
   constructor(private databaseService: DatabaseService) {}
@@ -32,9 +35,10 @@ export class GraphicsComponent {
     this.databaseService.getAllSquealsByUser().subscribe(
       (squeals) => {
         this.userSqueals = squeals as any[]; // Archivia tutti i squeal dell'utente
-
+        
         // Ora puoi elaborare questi dati per ottenere le reazioni nel tempo
         this.processUserReactionsOverTime();
+        this.processUserPostsOverTime();
       },
       (error) => {
         console.error('Errore durante il recupero dei squeal dell\'utente:', error);
@@ -73,6 +77,8 @@ export class GraphicsComponent {
     const maxReactions = Math.max(...reactionsOverTime.map(r => Math.max(r.posReactions, r.negReactions)));
   
     const ctx = document.getElementById('myChart') as HTMLCanvasElement;
+    ctx.width = this.width;
+    ctx.height = this.height;
     if (ctx) {
       const chart = new Chart(ctx, {
         type: 'line',
@@ -86,6 +92,7 @@ export class GraphicsComponent {
           }]
         },
         options: {
+          responsive: false,
           scales: {
             y: {
               beginAtZero: true, // Fai iniziare l'asse Y da 0
@@ -125,6 +132,8 @@ export class GraphicsComponent {
 
   createDifferenceChart(reactionsOverTime: any[]) {
     const ctxDifference = document.getElementById('myChartDifference') as HTMLCanvasElement;
+    ctxDifference.width = this.width;
+    ctxDifference.height = this.height;
     if (ctxDifference) {
       const differenceChart = new Chart(ctxDifference, {
         type: 'line',
@@ -138,6 +147,7 @@ export class GraphicsComponent {
             }]
             },
             options: {
+            responsive: false,
             scales: {
             y: {
             beginAtZero: true,
@@ -173,9 +183,105 @@ export class GraphicsComponent {
             });
             }
   }
+
   
+  processUserPostsOverTime() {
+    const countsByDate: { [date: string]: number } = {};
+
+    // Assumendo che i tuoi squeal abbiano una proprietà 'date' in formato 'DD/MM/YYYY'
+    this.userSqueals.forEach(squeal => {
+      // Converti la data dello squeal in un formato consistente
+      const date = moment(squeal.date, 'DD/MM/YYYY').isValid() 
+        ? moment(squeal.date, 'DD/MM/YYYY').format('YYYY-MM-DD') 
+        : 'Invalid date'; // Usa un segnaposto come 'Invalid date' per le date non valide
+
+      if (date !== 'Invalid date' && date in countsByDate) {
+        countsByDate[date]++;
+      } else if (date !== 'Invalid date') {
+        countsByDate[date] = 1;
+      }
+    });
+
+    // Ora creiamo l'array dei dati per il grafico
+    const postsData = Object.keys(countsByDate).map(date => {
+      return { date, count: countsByDate[date] };
+    });
+
+    const validPostsData = postsData.filter(post => moment(post.date, 'YYYY-MM-DD').isValid());
+    // Ordina i dati per data
+    validPostsData.sort((a, b) => moment(a.date).diff(moment(b.date)));
+    // Crea il grafico con i dati
+    console.log('Posts nel tempo:', validPostsData);
+    this.createPostChart(validPostsData);
+  }
+
+  createPostChart(postsData: { date: string; count: number }[]): void {
+    // Find the maximum count value to set the y-axis range
+    const maxCount = Math.max(...postsData.map(post => post.count));
+  
+    const currentDate = moment().format('YYYY-MM-DD');
+    // Check if the current date exists in the postsData array
+    const currentDateIndex = postsData.findIndex(post => post.date === currentDate);
+
+    // If the current date does not exist, add it with a count of 0
+    if (currentDateIndex === -1) {
+      postsData.push({ date: currentDate, count: 0 });
+    }
+
+    postsData.sort((a, b) => moment(a.date).diff(moment(b.date)));
 
 
-
+    const ctx = document.getElementById('myChartPosts') as HTMLCanvasElement;
+    ctx.width = this.width;
+    ctx.height = this.height;
+    if (ctx) {
+      const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: postsData.map(post => moment(post.date, 'YYYY-MM-DD').toDate()),
+          datasets: [{
+            label: 'Posts per day',
+            data: postsData.map(post => post.count),
+            borderColor: 'green',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              min: 0,
+              suggestedMax: maxCount
+            },
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+                tooltipFormat: 'LL',
+                displayFormats: {
+                  day: 'YYYY-MM-DD'
+                }
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                title: (tooltipItems) => {
+                  return tooltipItems[0].label;
+                },
+                label: (context) => {
+                  const postIndex = context.dataIndex;
+                  const count = postsData[postIndex].count;
+                  return `Count: ${count}`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+  }
+  
 }
-
