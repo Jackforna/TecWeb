@@ -1,0 +1,33 @@
+body{
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vh;
+}
+
+/* Stili di base */
+.settings-container {
+    /* Stili per il contenitore delle impostazioni */
+  }
+  
+  /* Stili per la modalità chiara */
+  body, .light-theme {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  /* Stili per la modalità scura */
+  .dark-theme {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+  
+  /* Personalizza altri elementi dell'interfaccia per la modalità scura, come bottoni, intestazioni, ecc. */
+  .dark-theme button {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  /* E così via per altri elementi... */
+  

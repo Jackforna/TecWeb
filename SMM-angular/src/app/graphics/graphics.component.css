@@ -5,3 +5,26 @@ body{
     align-items: center;
     width: 100vh;
 }
+
+h2{
+    margin-top: 4%;
+}
+
+.chart-canvas {
+    width: 100%; /* o la larghezza fissa che preferisci */
+    height: auto; /* mantiene il rapporto di aspetto */
+    margin: 0 auto; /* centra il canvas */
+    display: block; /* elimina l'alignement inline di default */
+  }
+  
+.canvas-container {
+    margin-bottom: 7%; /* o quanto preferisci */
+}
+  
+hr{
+    width: 100%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    border: 0;
+    border-top: 1px solid grey;
+  }

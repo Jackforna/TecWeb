@@ -46,4 +46,14 @@ export class DatabaseService {
     return this.http.get(`http://localhost:8080/get-listSqueals`);
   }
   
+  sendEmail(subject: string, message: string, username: string): Observable<any> {
+    const emailData = {
+      subject: subject,
+      message: message,
+      username: username
+    };
+
+    return this.http.post(`http://localhost:8080/send-email`, emailData);
+  }
+
 }
