@@ -183,10 +183,10 @@ app.put('/update-user/:id', async (req, res) => {
           return res.status(404).send('Utente non trovato o nessun aggiornamento necessario');
       }
 
-      res.status(200).send('Utente aggiornato con successo');
+      res.status(200).json({ message: 'Utente aggiornato con successo' });
   } catch (error) {
       console.error(error);
-      res.status(500).send('Errore durante l\'aggiornamento dell\'utente');
+      res.status(500).json({ error: 'Errore durante l\'aggiornamento dell\'utente' });
   }
 });
 

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { User, Channel } from 'src/app/models/user.moduls';
 
 @Injectable({
@@ -23,7 +23,18 @@ export class DatabaseService {
   }
 
   updateUserProfile(userId: string, updateData: any): Observable<any> {
-    return this.http.put(`http://localhost:8080/update-user/${userId}`, updateData);
+    return this.http.put(`http://localhost:8080/update-user/${userId}`, updateData)
+      .pipe(
+        catchError(this.handleError),
+        map(response => response as { message: string }) // Aggiungi questa mappatura
+      );
+  }
+  
+
+  private handleError(error: HttpErrorResponse) {
+    // Qui puoi aggiungere la logica di gestione degli errori
+    console.error('An error occurred:', error.error);
+    return throwError('Something bad happened; please try again later.');
   }
 
   // Nuova funzione che restituisce un Observable di un array di User

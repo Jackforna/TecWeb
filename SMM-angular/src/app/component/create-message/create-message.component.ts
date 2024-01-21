@@ -169,6 +169,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   /*Aggiornamnto caratteri rimanenti*/
+  /*
   updateCharLeftUser(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
     let textLength = textarea.value.length;
@@ -202,6 +203,44 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.remainingChars = remainingChars;
     }
   }
+  */
+  updateCharLeftUser(event: Event) {
+    // Controlla se l'evento o il target dell'evento sono definiti
+    if (!event || !(event.target instanceof HTMLTextAreaElement)) {
+      // Se non lo sono, non eseguire la logica e termina la funzione
+      return;
+    }
+  
+    const textarea = event.target as HTMLTextAreaElement;
+    let textLength = textarea.value.length;
+  
+    const attachmentChars = this.calculateAttachmentChars();
+  
+    if (this.isPrivate) { 
+      let remainingCharsPrivate = this.maxLengthPrivate - textLength - attachmentChars;
+  
+      // Se i caratteri rimanenti sono sotto zero, tronca il testo
+      if (remainingCharsPrivate < 0) {
+        textLength = this.maxLengthPrivate - attachmentChars;
+        textarea.value = textarea.value.substring(0, textLength);
+        remainingCharsPrivate = 0;
+      }
+      this.remainingChars = remainingCharsPrivate;
+    } else {
+      // Calcola i caratteri rimanenti
+      let remainingChars = this.charLeftUser - textLength - attachmentChars;
+  
+      // Se i caratteri rimanenti sono sotto zero, tronca il testo
+      if (remainingChars < 0) {
+        textLength += remainingChars;
+        textarea.value = textarea.value.substring(0, textLength);
+        remainingChars = 0;
+      }
+  
+      this.remainingChars = remainingChars;
+    }
+  }
+  
 
   updateRemainingChars() {
     const attachmentChars = this.calculateAttachmentChars();
@@ -676,8 +715,10 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.userControl.reset();
     this.channelControl.reset();
   
-    // Aggiorna i caratteri rimanenti
-    this.updateCharLeftUser({} as Event);
+    // Prima di aggiornare i caratteri rimanenti, verifica se il controllo esiste
+    if (this.myControl && this.userControl && this.channelControl) {
+      this.updateCharLeftUser({} as Event); // Aggiorna solo se i controlli esistono
+    }
   }
   
   onAccessChange(event: any) {
