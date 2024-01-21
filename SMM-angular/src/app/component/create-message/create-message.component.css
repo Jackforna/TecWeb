@@ -466,3 +466,28 @@ margin-left: 4%;
 .channel-mute-switch {
   margin-right: 20px;
 }
+
+.channel-input-container {
+  /* Altre regole di stile che potresti avere */
+}
+
+.suggested-channels {
+  position: absolute;
+  top: 100%; /* posiziona i suggerimenti proprio sotto l'input */
+  left: 0;
+  right: 0;
+  z-index: 10; /* assicurati che i suggerimenti siano sopra gli altri elementi */
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.suggested-channels div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggested-channels div:hover {
+  background-color: #f0f0f0;
+}
+

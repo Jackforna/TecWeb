@@ -9,9 +9,6 @@ const port = 8080; // Puoi cambiare la porta se necessario
 const dbUrl = 'mongodb://root:example@localhost:27017';
 const client = new MongoClient(dbUrl);
 const dbName = 'my-mongo-container';
-/*invio email*/
-const nodemailer = require('nodemailer');
-app.use(express.json());
 
 
 app.use(bodyParser.json());
@@ -201,35 +198,6 @@ app.get('/get-listSqueals', async (req, res) => {
     res.status(500).send('Errore durante la lettura dei dati della lista dei messaggi');
   }
 });
-
-/*Invio form email*/
-app.post('/send-email', async (req, res) => {
-  const { subject, message, username } = req.body;
-
-  let transporter = nodemailer.createTransport({
-    service: 'gmail', // ad esempio, usa un altro servizio se necessario
-    auth: {
-      user: 'smmsquealer@gmail.com',
-      pass: 'SMM2024!'
-    }
-  });
-
-  let info = await transporter.sendMail({
-    from: '"Il tuo nome o il nome dell\'app" <smmsquealer@gmail.com>',
-    to: 'gabrielbetti8@gmail.com', // Modifica con l'indirizzo di destinazione
-    subject: subject,
-    text: `Messaggio da: ${username}\n\n${message}`
-  });
-
-  console.log('Messaggio inviato: %s', info.messageId);
-  res.send('Email inviata con successo');
-});
-
-app.listen(3000, () => {
-  console.log('Server in esecuzione sulla porta 3000');
-});
-
-
 
 
 app.post('/add-squeal', async (req, res) => {

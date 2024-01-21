@@ -1,5 +1,5 @@
 // settings.component.ts
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, Renderer2 } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DatabaseService } from 'src/app/services/database.service';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -10,29 +10,24 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent {
-  emailForm: FormGroup;
 
-  constructor(private databaseService: DatabaseService, private authService: AuthService) {
-    this.emailForm = new FormGroup({
-      subject: new FormControl('', [Validators.required]),
-      message: new FormControl('', [Validators.required])
-    });
+  constructor(private databaseService: DatabaseService, private cdr: ChangeDetectorRef, private authService: AuthService, private renderer: Renderer2) {
   }
 
-  onSubmit() {
-    if (this.emailForm.valid) {
-      const username = "Paolo" // Assumendo che il servizio di autenticazione fornisca il nome utente
-      this.databaseService.sendEmail(
-        this.emailForm.value.subject, 
-        this.emailForm.value.message, 
-        username
-      ).subscribe(
-        response => {
-          console.log('Email inviata con successo', response);
-          this.emailForm.reset();
-        },
-        error => console.error('Errore durante l\'invio dell\'email', error)
-      );
+  toggleDarkMode(): void {
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    const action = isDarkMode ? 'removeClass' : 'addClass';
+    this.renderer[action](document.body, 'dark-mode');
+    localStorage.setItem('darkMode', String(!isDarkMode));
+    this.cdr.detectChanges();
+  }
+
+  ngOnInit(): void {
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (isDarkMode) {
+      this.renderer.addClass(document.body, 'dark-mode');
     }
   }
+
+  
 }

@@ -4,7 +4,7 @@ import { AuthService } from '../auth/auth.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { User } from 'src/app/models/user.moduls';
+import { User, Channel } from 'src/app/models/user.moduls';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +54,23 @@ export class DatabaseService {
     };
 
     return this.http.post(`http://localhost:8080/send-email`, emailData);
+  }
+
+  addChannel(channelData: any): Observable<any> {
+    const url = 'http://localhost:8080/add-channel';
+    return this.http.post(url, channelData);
+  }
+
+  createChannel(channelName: string, sender: string): Observable<any> {
+    const channelData = {
+      name: channelName,
+      sender: sender
+    };
+    return this.http.post('http://localhost:8080/add-channel', channelData);
+  }
+
+  getAllChannels(): Observable<any> {
+    return this.http.get('/get-listChannels');
   }
 
 }
