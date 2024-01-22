@@ -112,6 +112,12 @@ font-size: 24px; /* O la dimensione che preferisci */
 margin-left: auto; /* Spinge il pulsante 'send' a destra */
 }
 
+.send-icon:disabled {
+  background-color: #cccccc; /* Colore di sfondo per il bottone disabilitato */
+  color: #666666; /* Colore del testo per il bottone disabilitato */
+  /* Altre proprietà... */
+}
+
 /*Modale camera*/
 
 .camera-modal {

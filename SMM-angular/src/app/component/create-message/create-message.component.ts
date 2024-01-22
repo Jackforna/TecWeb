@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith, filter } from 'rxjs/operators';;
 import { User, Channel } from 'src/app/models/user.moduls';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 
@@ -82,6 +83,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   selectedUser: string | null = null;
   selectedUsers: { nickname: string, photoprofile: string }[] = [];
   isSubmitting: boolean | undefined;
+  isValidChannel: boolean | undefined;
 ;
 
   //Gestione crea canali
@@ -90,13 +92,15 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   allChannels: any[] = []; // Questo ora conterrà un array di oggetti Channel
   suggestedChannels: Channel[] = [];
   channelName: string = '';
+  isChannelNameValid: boolean = false;
   
 
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
     private databaseService: DatabaseService, 
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef
     ) { }
 
   ngOnInit() {
@@ -728,20 +732,47 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   onChannelInput(event: any) {
-    const inputValue = event.target.value.toLowerCase();
+    const inputValue = event.target.value;
+    this.isChannelNameValid = this.allChannels.some(channel => channel.name === inputValue);
     this.suggestedChannels = this.allChannels
-      .filter(channel => channel.name.toLowerCase().includes(inputValue))
+      .filter(channel => channel.name.includes(inputValue))
       .slice(0, 3); // Prende solo i primi 3 canali corrispondenti
   }
 
+  /*
   selectSuggestedChannel(channel: Channel): void {
     this.channelControl.setValue(channel.name);
     this.suggestedChannels = []; // Pulisce i suggerimenti dopo la selezione
+    this.isChannelValid();
+  }
+  */
+
+  selectSuggestedChannel(channel: Channel): void {
+    this.channelControl.setValue(channel.name);
+    this.suggestedChannels = [];
+    this.validateChannelName(); // Convalida il nome del canale
+    this.changeDetectorRef.markForCheck(); // Forza il rilevamento dei cambiamenti
+  }
+  
+  validateChannelName(): void {
+    this.isChannelNameValid = this.allChannels.some(ch => ch.name === this.channelControl.value);
+    this.isSubmitting = !this.isChannelNameValid;
+  }
+  
+
+  isChannelValid(): void {
+    // Controlla se il nome del canale è nella lista dei canali esistenti
+    this.isValidChannel = this.allChannels.some(ch => ch.name === this.channelControl.value);
+    // Abilita o disabilita il bottone di invio in base alla validità del canale
+    this.isSubmitting = !this.isValidChannel;
+    this.changeDetectorRef.detectChanges(); // Forza il rilevamento dei cambiamenti
   }
 
+  /*
   isChannelNameValid(): boolean {
     return this.allChannels.some(channel => channel.name === this.channelName);
   }
+  */
   
   /*Inserimento user*/
   onSelectUser(user: string): void {
