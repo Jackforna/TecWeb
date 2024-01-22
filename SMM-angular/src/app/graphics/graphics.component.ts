@@ -27,6 +27,7 @@ export class GraphicsComponent {
   constructor(private databaseService: DatabaseService) {}
 
   ngOnInit() {
+    console.clear();
     // Chiama this.databaseService.getAllSquealsByUser() per ottenere tutti i squeal dell'utente
     this.getAllUserSqueals();
   }
@@ -35,7 +36,7 @@ export class GraphicsComponent {
     this.databaseService.getAllSquealsByUser().subscribe(
       (squeals) => {
         this.userSqueals = squeals as any[]; // Archivia tutti i squeal dell'utente
-        
+        console.log('Squeal dell\'utente:', this.userSqueals);
         // Ora puoi elaborare questi dati per ottenere le reazioni nel tempo
         this.processUserReactionsOverTime();
         this.processUserPostsOverTime();
@@ -48,11 +49,10 @@ export class GraphicsComponent {
 
   processUserReactionsOverTime() {
     const reactionsOverTime = this.userSqueals.map(squeal => {
-      // Assicurati che la data sia nel formato corretto e valido prima di convertirla
       const formattedDate = moment(squeal.date, 'DD/MM/YYYY').isValid() 
         ? moment(squeal.date, 'DD/MM/YYYY').toDate() 
-        : undefined;  // o gestisci la data non valida in altro modo
-  
+        : undefined;
+      
       return {
         date: formattedDate,
         posReactions: squeal.pos_reactions,
@@ -60,15 +60,32 @@ export class GraphicsComponent {
       };
     });
   
-    // Filtra eventuali record con date non valide prima di passarli al grafico
     const validReactionsOverTime = reactionsOverTime.filter(r => r.date !== undefined);
   
-    // Ora hai le reazioni dell'utente nel tempo in validReactionsOverTime
-    console.log('Reazioni nel tempo:', validReactionsOverTime);
-  
-    // Passa questo array alla funzione createChart
-    this.createChart(validReactionsOverTime);
-    this.createDifferenceChart(validReactionsOverTime);
+    // Assicurati che le reazioni del primo giorno siano incluse
+    const filledReactionsOverTime = [validReactionsOverTime[0]]; // Inizia con il primo giorno
+
+    // Aggiungi solo le date con reazioni o la prima/ultima di una serie di date senza reazioni
+    for (let i = 1; i < validReactionsOverTime.length - 1; i++) { // Cicla da secondo elemento al penultimo
+      const prev = validReactionsOverTime[i - 1];
+      const curr = validReactionsOverTime[i];
+      const next = validReactionsOverTime[i + 1];
+
+      // Se ci sono reazioni o se siamo all'inizio o alla fine di una serie senza reazioni
+      if (curr.posReactions + curr.negReactions > 0 ||
+          (prev.posReactions + prev.negReactions > 0 && next.posReactions + next.negReactions === 0) ||
+          (prev.posReactions + prev.negReactions === 0 && next.posReactions + next.negReactions > 0)) {
+        filledReactionsOverTime.push(curr);
+      }
+    }
+
+    // Assicurati che l'ultimo giorno sia incluso
+    filledReactionsOverTime.push(validReactionsOverTime[validReactionsOverTime.length - 1]);
+    
+    console.log('Reazioni nel tempo:', filledReactionsOverTime);
+    
+    this.createChart(filledReactionsOverTime);
+    this.createDifferenceChart(filledReactionsOverTime);
   }
   
   
@@ -83,7 +100,7 @@ export class GraphicsComponent {
       const chart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: reactionsOverTime.map((r: { date: any; }) => r.date),
+          labels: reactionsOverTime.map(r => moment(r.date).format('YYYY-MM-DD')),
           datasets: [{
             label: 'Reazioni Totali',
             data: reactionsOverTime.map((r: { posReactions: number; negReactions: number; }) => r.posReactions + r.negReactions),
@@ -134,54 +151,58 @@ export class GraphicsComponent {
     const ctxDifference = document.getElementById('myChartDifference') as HTMLCanvasElement;
     ctxDifference.width = this.width;
     ctxDifference.height = this.height;
+  
     if (ctxDifference) {
       const differenceChart = new Chart(ctxDifference, {
         type: 'line',
         data: {
-          labels: reactionsOverTime.map((r: { date: any; }) => r.date),
+          labels: reactionsOverTime.map(r => r.date),
           datasets: [{
             label: 'Differenza Reazioni Pos/Neg',
-            data: reactionsOverTime.map((r: { posReactions: number; negReactions: number; }) => r.posReactions - r.negReactions),
+            data: reactionsOverTime.map(r => r.posReactions - r.negReactions),
             borderColor: 'red',
             borderWidth: 2
-            }]
-            },
-            options: {
-            responsive: false,
-            scales: {
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
             y: {
-            beginAtZero: true,
-            // min: 0, // Potresti voler rimuovere questa linea se ti aspetti valori negativi
-            // suggestedMax: maxReactions // Commentato se non vuoi un valore massimo suggerito
+              // beginAtZero: true
             },
             x: {
-            type: 'time',
-            time: {
-            unit: 'day',
-            tooltipFormat: 'LL',
-            displayFormats: {
-            day: 'YYYY-MM-DD'
+              type: 'time',
+              time: {
+                unit: 'day',
+                tooltipFormat: 'LL',
+                displayFormats: {
+                  day: 'YYYY-MM-DD'
+                }
+              },
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 20
+              }
             }
-            }
-            }
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  title: (tooltipItems) => {
-                    return tooltipItems[0].label;
-                  },
-                  label: (context) => {
-                    const reactionIndex = context.dataIndex;
-                    const diffReactions = reactionsOverTime[reactionIndex].posReactions - reactionsOverTime[reactionIndex].negReactions;
-                    return `Diff: ${diffReactions}`;
-                  }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                title: (tooltipItems) => {
+                  return tooltipItems[0].label;
+                },
+                label: (context) => {
+                  const reactionIndex = context.dataIndex;
+                  const posReactions = reactionsOverTime[reactionIndex].posReactions;
+                  const negReactions = reactionsOverTime[reactionIndex].negReactions;
+                  return `Diff: ${posReactions - negReactions}`;
                 }
               }
             }
-            }
-            });
-            }
+          }
+        }
+      });
+    }
   }
 
   
