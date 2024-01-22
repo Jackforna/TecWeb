@@ -124,8 +124,8 @@
                 <button class="icon-button" (click)="getUserLocation()"><i class="material-icons">place</i></button>
                 <button class="icon-button" (click)="openMapModal()"><i class="material-icons">pin_drop</i></button>
                 <button class="icon-button send-icon"><i class="material-icons" (click)="createPublicSqueal()" *ngIf="!isChannel">send</i></button>
-                <button class="icon-button send-icon" [disabled]="!isChannelNameValid()" (click)="createChannelSqueal()" *ngIf="isChannel">
-                    <i class="material-icons" (click)="createChannelSqueal()" *ngIf="isChannel">send</i>
+                <button class="icon-button send-icon" [disabled]="isSubmitting" (click)="createChannelSqueal()" *ngIf="isChannel">
+                    <i class="material-icons" *ngIf="isChannel">send</i>
                 </button>
             </div>              
         </mat-card-actions>

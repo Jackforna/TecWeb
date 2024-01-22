@@ -80,7 +80,9 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   filteredUsers: Observable<string[]> | undefined;
   userControl2 = new FormControl();
   selectedUser: string | null = null;
-  selectedUsers: { nickname: string, photoprofile: string }[] = [];;
+  selectedUsers: { nickname: string, photoprofile: string }[] = [];
+  isSubmitting: boolean | undefined;
+;
 
   //Gestione crea canali
   newChannelName: string = ''; // Il nome per il nuovo canale
@@ -941,6 +943,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
     createChannelSqueal(): void {
       // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
+      this.isSubmitting = true;
       const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
       const typeSender = 'keyword'; // O altro valore a seconda della logica
       const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
@@ -980,10 +983,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       this.databaseService.addSqueal(squealData).subscribe({
         next: (response) => {
           console.log('Squeal added successfully', response);
+          this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
           this.resetForm();
         },
         error: (error) => {
           console.error('Error adding squeal', error);
+          this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
         }
       });
   
@@ -1015,7 +1020,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
           console.error("Errore durante l'aggiornamento dei caratteri rimanenti dell'utente", error);
         }
       });
-      }
+    }
 
 
 }
