@@ -163,14 +163,22 @@
         <!--Modale mappa custom-->
         <div class="map-modal" *ngIf="showMapModal">
             <div class="map-modal-content">
-            <h2>Scegli la Posizione</h2>
-            <div id="map-container" style="height: 400px;"></div>
-            <button (click)="confirmLocation()">Conferma Posizione</button>
-            <button (click)="closeMapModal()">Chiudi</button>
+                <h2>Scegli la Posizione</h2>
+                <div id="map-container" style="height: 400px;"></div>
+                <button (click)="confirmLocation()">Conferma Posizione</button>
+                <button (click)="closeMapModal()">Chiudi</button>
             </div>
         </div>
   
-          
+        <!-- Pop up mancanza caratteri -->
+        <div *ngIf="showPurchasePopup" class="remainingChars-modal">
+            <div class="remainingChars-modal-content">
+                <h2>Caratteri Insufficienti</h2>
+                <p>Vuoi acquistare più caratteri?</p>
+                <button (click)="redirectToEditProfile()">Acquista Caratteri</button>
+                <button (click)="closePopup()">Chiudi</button>
+            </div>
+        </div>
     
 
     </mat-card>

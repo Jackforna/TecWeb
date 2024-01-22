@@ -23,6 +23,7 @@ export class SettingsComponent {
   }
 
   ngOnInit(): void {
+    console.clear();
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
     if (isDarkMode) {
       this.renderer.addClass(document.body, 'dark-mode');

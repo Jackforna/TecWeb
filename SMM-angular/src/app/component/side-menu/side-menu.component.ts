@@ -22,6 +22,7 @@ export class SideMenuComponent implements OnInit {
   constructor(private authService: AuthService, private databaseService: DatabaseService, private http: HttpClient) { }
 
   ngOnInit(): void {
+    console.clear();
     this.getManagerDetails();
     this.setAccountData();
     /* Chiamata per ottenere tutti gli utenti

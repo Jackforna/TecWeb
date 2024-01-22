@@ -77,6 +77,7 @@ export class EditProfileComponent implements OnInit{
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit() { 
+    console.clear();
     this.laodUserData(); // Carica i dati utente 
     this.loadManagedUsers(); // Carica gli utenti gestiti (VIP)
     console.log(this.userId);

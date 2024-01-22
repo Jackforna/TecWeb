@@ -50,6 +50,7 @@ export class MonitoringComponent implements OnInit{
   ) { }
 
   ngOnInit() {
+    console.clear();
     //this.printUserSqueals(this.userId);
     console.log('Id utente:', this.userId);
     this.printUserSqueals();
@@ -57,57 +58,6 @@ export class MonitoringComponent implements OnInit{
   }
 
   ngAfterViewInit() { }
-  
-  /*
-  printUserSqueals() {
-    this.databaseService.getAllSquealsByUser().subscribe(
-      (squeals) => {
-        const userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname);
-
-        // Ordina gli squeal dell'utente in base al numero totale di reazioni e prendi i primi 3
-        this.mostReactedSqueals = userSqueals
-          .map(squeal => ({
-            ...squeal,
-            totalReactions: squeal.pos_reactions + squeal.neg_reactions
-          }))
-          .sort((a, b) => b.totalReactions - a.totalReactions)
-          .slice(0, 3);
-
-          this.lessReactedSqueals = userSqueals
-            .map(squeal => ({
-              ...squeal,
-              totalReactions: squeal.pos_reactions + squeal.neg_reactions
-            }))
-            .sort((a, b) => a.totalReactions - b.totalReactions)
-            .slice(0, 3); // Modifica il numero se necessario
-          
-          this.controversialSqueals = userSqueals
-            .filter(squeal => {
-              const posNegDiff = Math.abs(squeal.pos_reactions - squeal.neg_reactions);
-              return posNegDiff <= 10 && squeal.pos_reactions + squeal.neg_reactions >= 0.25 * squeal.impressions;
-            })
-            .slice(0, 3); // o qualsiasi altro numero desideri
-          
-            this.mostPopularSqueals = userSqueals
-              .map(squeal => ({
-                ...squeal,
-                reactionDifference: squeal.pos_reactions - squeal.neg_reactions // Calcola la differenza
-              }))
-              .sort((a, b) => b.reactionDifference - a.reactionDifference) // Ordina per differenza
-              .slice(0, 3); // Prendi i primi 3
-
-        console.log('Squeals dell\'utente:', userSqueals);
-        console.log('Most Reacted User Squeals:', this.mostReactedSqueals);
-        console.log('Less Reacted User Squeals:', this.lessReactedSqueals);
-        console.log('Controversial User Squeals:', this.controversialSqueals);
-        console.log('Most Popular User Squeals:', this.mostPopularSqueals);
-      },
-      (error) => {
-        console.error('Errore durante il recupero degli Squeals:', error);
-      }
-    );
-  }
-  */
 
   printUserSqueals() {
     this.databaseService.getAllSquealsByUser().subscribe(
