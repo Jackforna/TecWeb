@@ -15,7 +15,7 @@ import Settings from './Settings'
 
 //ogni user è composto da nickname, bio, photoprofile, fullname, email, password, clients, version (normal, verified, professional, SMM, moderator), blocked(booleano), char_d, char_w, char_m : 7000, popularity, notifications[]
 //ogni messaggio è composto da sender, typesender, body:{text:'', link:'', photo:'', position:[], video}, photoprofile, date, hour, seconds, pos_reactions, neg_reactions, usersReactions:[{nickname:'', posReaction:0, negReaction:0}], usersViewed:[], category, receivers:[], channel, impressions
-//ogni gruppo è composto da creator, name, type, rule, list_mess, silenceable, list_users, list_posts, blocked(booleano, solo se è di tipo channel), description, popularity
+//ogni gruppo è composto da creator, photoprofile, name, type, rule, list_mess, silenceable, list_users, list_posts, blocked(booleano, solo se è di tipo channel), description, popularity
 //ogni list_mess è composto da un messaggio(con tutte le componenti),type, request, remind:{every, dayMonth, dayWeek, hour}
 
 function App() {

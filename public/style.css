@@ -151,6 +151,33 @@ input[type="number"]::-webkit-outer-spin-button {
     flex-direction: row;
     height:100%;
     align-items: center;
+    margin-right:5%;
+}
+
+.editmexbtn {
+    margin-right:40%;
+}
+
+.deletemexbtn {
+    margin-right:38%;
+}
+
+.mexcard {
+    width:50%;
+}
+
+.navbarcell{
+    display:none;
+    align-items: center;
+    flex-basis: auto;
+    flex-grow: 1;
+}
+
+@media screen and (max-width:991px){
+    .navbarcell{
+        display:flex;
+        flex-direction: row;
+    }
 }
 
 .reactions img{
@@ -211,15 +238,18 @@ input[type="number"]::-webkit-outer-spin-button {
     display:flex;
     flex-direction: column;
     background-color: black;
+    z-index: 1001;
+    overflow:hidden;
 }
 
 .edithome header{
     position: relative;
     display:flex;
-    width:100%;
+    width:90%;
     flex-direction: row;
     justify-content: center;
     margin-top:5%;
+    flex-wrap:wrap;
 }
 
 .edithome main{
@@ -257,6 +287,10 @@ input[type="number"]::-webkit-outer-spin-button {
     margin-bottom:2em;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
+    padding-right:5%;
+    padding-left: 5%;
+    width:100%;
 }
 
 .edithome main div p{
@@ -275,6 +309,8 @@ input[type="number"]::-webkit-outer-spin-button {
     color:white;
     margin-right:1em;
     text-align:right;
+    margin-bottom:20px;
+    margin-top:20px;
 }
 
 .edithome header input[type="text"]{
@@ -386,6 +422,7 @@ input[type="number"]::-webkit-outer-spin-button {
     width:70%;
     display:flex;
     flex-direction:row;
+    flex-wrap:wrap;
     justify-content: center;
     margin-top:3%;
     margin-bottom:1%;
@@ -410,6 +447,7 @@ input[type="number"]::-webkit-outer-spin-button {
     justify-content: center;
     align-items: center;
     margin-right:20px;
+    margin-bottom:10px;
     overflow: hidden;
 }
 
@@ -419,6 +457,7 @@ input[type="number"]::-webkit-outer-spin-button {
     font-size:22px;
     padding:0.4em 0.6em 0.4em 0.6em;
     border:1px solid white;
+    margin-bottom:10px;
     border-radius:16px;
 }
 
@@ -530,7 +569,6 @@ input:checked + .slider:before{
 
 .addhome main section{
     margin-top:10px;
-    width:50%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -592,4 +630,58 @@ input:checked + .slider:before{
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+@media  screen and (max-width: 1150px) {
+    .editmexbtn{
+        margin-right:30%;
+    }
+
+    .deletemexbtn{
+        margin-right:27%;
+    }
+
+    .mexcard {
+        width:60%;
+    }
+}
+
+@media screen and (max-width: 800px){
+    .mexcard{
+        width:80%;
+    }
+
+    .filter{
+        width:90%;
+    }
+
+    .filter p{
+        font-size:16px;
+    }
+
+    .edithome main div p{
+        min-width:250px;
+    }
+}
+
+@media  screen and (max-width: 600px) {
+    .editmexbtn{
+        margin-right:18%;
+    }
+
+    .deletemexbtn{
+        margin-right:13%;
+    }
+
+    .filter{
+        width:97%;
+    }
+
+    .filter p{
+        font-size:14px;
+    }
+
+    .edithome main div p{
+        min-width:200px;
+    }
 }
