@@ -69,6 +69,9 @@ export class EditProfileComponent implements OnInit{
   userId = this.userLogged ? JSON.parse(this.userLogged) : null;
 
 
+  tempPhotoProfile: string = ''
+
+
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -102,37 +105,29 @@ export class EditProfileComponent implements OnInit{
   closeDialog(): void {
     this.dialogRef.close();
   }
-  /*Non funziona, non riesco ad allegare il file perchè il database non prende le immagini, ma solo json
-  e l'unico modo per farlo è creare un backend che gestisca le immagini e le salvi in un storage
-  modifiedImage(file?: File | null): void {
-    if (file) {
-      this.databaseService.uploadImage(file).subscribe(response => {
-        const imageUrl = response['imageUrl'];
 
-        this.databaseService.patchUserData(this.userId, { profilePictureUrl: imageUrl }).subscribe(() => {
-          // Aggiorna il localStorage e ricarica i dati utente
-          this.userDati = localStorage.getItem('Dati utente');  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
-          const updatedUserData = this.userDati ? JSON.parse(this.userDati) : {};
-          updatedUserData.profilePictureUrl = imageUrl;
-          localStorage.setItem('Dati utente', JSON.stringify(updatedUserData)); //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
+  updateProfilePicture(newImageUrl: string): void {
+    this.profilePictureUrl = newImageUrl;
+    const updateData = { photoprofile: newImageUrl };
 
-          this.laodUserData();
-          this.router.navigate(['/path-to-user-profile-or-current-page']).then(() => {
-            window.location.reload();
-          });
-        });
-      }, error => {
-        console.error("Errore durante l'invio del file al server:", error);
-      });
-    } else {
-      console.log('Nessun file selezionato per il caricamento.');
-    }
-    this.dialogRef.close();
+    this.databaseService.updateUserProfile(this.userId._id, updateData)
+      .subscribe(
+        response => {
+          console.log('Foto profilo aggiornata con successo');
+          // Non è necessario ricaricare la foto perché è già aggiornata nell'interfaccia utente
+        },
+        error => console.error('Errore nell\'aggiornamento della foto del profilo', error)
+      );
   }
-  */
-  
 
-  onFileSelected(event: Event): void { }
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      // Crea un URL temporaneo per il file selezionato
+      const temporaryUrl = URL.createObjectURL(file);
+      this.tempPhotoProfile = temporaryUrl;
+    }
+  }
 
 
   /*Gestione cambio vip funzionante*/
@@ -196,8 +191,15 @@ export class EditProfileComponent implements OnInit{
 
   /*Gestione cambio descrizione DA FARE*/
   openDescriptionModule(): void {
-    this.dialogDescriptionRef = this.dialog.open(this.selectDescriptionDialogRef);
+    this.dialogDescriptionRef = this.dialog.open(this.selectDescriptionDialogRef, {
+      width: '80%', // Imposta la larghezza desiderata
+      // marginLeft: '20%', // Imposta il margine sinistro
+      maxWidth: '500px', // Imposta una larghezza massima
+      panelClass: 'custom-dialog-margin'
+    });
   }
+  
+  
   
   /*Problemi aggiornamento*/
   updateDescription(newDescription: string): void {
