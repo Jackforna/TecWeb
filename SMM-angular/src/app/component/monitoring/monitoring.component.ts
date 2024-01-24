@@ -46,6 +46,7 @@ export class MonitoringComponent implements OnInit{
   currentLessReactedSqueal: any; // Assumi che questa sia la tua variabile
   addressForLessReactedSqueal: string = ''; // Per memorizzare l'indirizzo ottenuto
 
+  isLoading = true;
 
   constructor(
     private route: ActivatedRoute, 
@@ -65,16 +66,19 @@ export class MonitoringComponent implements OnInit{
   
 
   printUserSqueals() {
+    this.isLoading = true;
     this.databaseService.getAllSquealsByUser().subscribe(
       async (squeals) => {
         const userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname);
 
         for (const squeal of userSqueals) {
-          if (squeal.body.position) {
+          if (squeal.body.position && squeal.body.position.length === 2) {
             try {
               const [lat, lon] = squeal.body.position;
-              const address = await this.databaseService.getAddressGeolocation(lat, lon);
-              squeal.body.address = address;
+              if (!isNaN(lat) && !isNaN(lon)) { // Controlla se lat e lon sono numeri validi
+                const address = await this.databaseService.getAddressGeolocation(lat, lon);
+                squeal.body.address = address;
+              }
             } catch (error) {
               console.error('Errore nel recupero dell\'indirizzo:', error);
             }
@@ -133,6 +137,7 @@ export class MonitoringComponent implements OnInit{
         console.log('Controversial User Squeals:', this.controversialSqueals);
         console.log('Most Popular User Squeals:', this.mostPopularSqueals);
         console.log('Inpopular User Squeals:', this.inpopularSqueals);
+        this.isLoading = false;
         });
       (error: any) => {
         console.error('Errore durante il recupero degli Squeals:', error);
