@@ -114,6 +114,17 @@ export class EditProfileComponent implements OnInit{
       .subscribe(
         response => {
           console.log('Foto profilo aggiornata con successo');
+          // window.location.reload();
+          // Aggiorna i dati dell'utente nel localStorage
+          this.databaseService.getUserData(this.userId._id).subscribe((data: any) => {
+            localStorage.removeItem('Dati utente amministrato');  
+            localStorage.setItem('Dati utente amministrato', JSON.stringify(data)); 
+          }, error => {
+            console.error('Errore nel caricamento dei dati dell\'utente:', error);
+          });
+          this.laodUserData(); // Ricarica i dati dell'utente
+          window.location.reload();
+          this.closeDialog();
           // Non è necessario ricaricare la foto perché è già aggiornata nell'interfaccia utente
         },
         error => console.error('Errore nell\'aggiornamento della foto del profilo', error)
@@ -190,9 +201,6 @@ export class EditProfileComponent implements OnInit{
       console.error('Nessun VIP selezionato');
     }
   }
-  
-
-
 
   /*Gestione cambio descrizione DA FARE*/
   openDescriptionModule(): void {
@@ -203,8 +211,6 @@ export class EditProfileComponent implements OnInit{
       panelClass: 'custom-dialog-margin'
     });
   }
-  
-  
   
   /*Problemi aggiornamento*/
   updateDescription(newDescription: string): void {
@@ -238,8 +244,6 @@ export class EditProfileComponent implements OnInit{
   closeDescriptionDialog(): void {
     this.dialogDescriptionRef.close();
   }
-
-
 
   /*Gestione cambio caratteri DA FARE*/
   openConfirmationModal(): void {

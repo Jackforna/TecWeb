@@ -13,8 +13,6 @@
                 <h1 mat-dialog-title>Scegli una Foto</h1>
                 <div mat-dialog-content>
                 <input type="file" #fileInput (change)="onFileSelected($event)" id="fileInput" accept="image/*">
-                <label for="fileInput">Scegli File</label>
-        
                 <!-- Pulsante per Confermare l'Invio dell'Immagine Selezionata -->
                 <button (click)="updateProfilePicture(tempPhotoProfile)">Conferma</button>
                 </div>
