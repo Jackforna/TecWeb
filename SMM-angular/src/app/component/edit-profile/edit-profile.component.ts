@@ -69,7 +69,7 @@ export class EditProfileComponent implements OnInit{
   userId = this.userLogged ? JSON.parse(this.userLogged) : null;
 
 
-  tempPhotoProfile: string = ''
+  tempPhotoProfile: any = ''
 
 
   constructor(
@@ -106,7 +106,7 @@ export class EditProfileComponent implements OnInit{
     this.dialogRef.close();
   }
 
-  updateProfilePicture(newImageUrl: string): void {
+  updateProfilePicture(newImageUrl: any): void {
     this.profilePictureUrl = newImageUrl;
     const updateData = { photoprofile: newImageUrl };
 
@@ -124,8 +124,13 @@ export class EditProfileComponent implements OnInit{
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       // Crea un URL temporaneo per il file selezionato
-      const temporaryUrl = URL.createObjectURL(file);
-      this.tempPhotoProfile = temporaryUrl;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const dataUrl = e.target.result;
+        console.log(dataUrl); 
+        this.tempPhotoProfile = dataUrl;
+      }
+      reader.readAsDataURL(file);
     }
   }
 

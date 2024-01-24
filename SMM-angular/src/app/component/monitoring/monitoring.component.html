@@ -16,8 +16,9 @@
           <mat-card-content>
             <img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo" style = "width: 200px;">
             <p>{{ currentSqueal.body.text }}</p>
-            <div *ngIf="currentSqueal.body.position.length >= 2" id="map-container-{{ currentSqueal.nickname }}">
-              {{ currentSqueal.body.position }}
+            <!-- Sostituisci {{ currentSqueal.body.position }} con l'indirizzo -->
+            <div *ngIf="currentSqueal.body.address" id="address-container-{{ currentSqueal.nickname }}">
+              {{ currentSqueal.body.address }}
             </div>
             <a *ngIf="currentSqueal.body.link" [href]="currentSqueal.body.link" target="_blank">{{ currentSqueal.body.link }}</a>           
             <video *ngIf="currentSqueal.body.video" controls>
@@ -47,10 +48,11 @@
             </mat-card-header>
             <mat-card-content>
                 <img mat-card-image *ngIf="currentLessReactedSqueal.body.photo" [src]="currentLessReactedSqueal.body.photo" alt="Photo" style="width: 200px;">
-                <p>{{ currentLessReactedSqueal.body.text }}</p>
-                <div *ngIf="currentLessReactedSqueal.body.position.length >= 2" id="map-container-{{ currentLessReactedSqueal.nickname }}">
-                    {{ currentLessReactedSqueal.body.position }}
-                </div>
+                <p>{{ currentLessReactedSqueal.body.text }}</p>             
+                <div *ngIf="currentLessReactedSqueal.body.position.length >= 2">
+                  <div>Coordinate: {{ currentLessReactedSqueal.body.position }}</div>
+                  <div *ngIf="currentLessReactedSqueal.body.address">{{ currentLessReactedSqueal.body.address }}</div>
+                </div>                
                 <a *ngIf="currentLessReactedSqueal.body.link" [href]="currentLessReactedSqueal.body.link" target="_blank">{{ currentLessReactedSqueal.body.link }}</a>
                 <video *ngIf="currentLessReactedSqueal.body.video" controls>
                     <source [src]="currentLessReactedSqueal.body.video" type="video/mp4">
