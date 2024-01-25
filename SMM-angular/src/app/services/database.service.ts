@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { Observable, throwError } from 'rxjs';
+import { Observable, lastValueFrom, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { User, Channel } from 'src/app/models/user.moduls';
 
@@ -84,4 +84,66 @@ export class DatabaseService {
     return this.http.get('/get-listChannels');
   }
 
+  getAdressFromCoordinates(lat: number, lon: number): Observable<any> {
+    // Usa l'API di geocoding scelta qui
+    const url = `https://api.geocoding.com/reverse?lat=${lat}&lon=${lon}`;
+    return this.http.get(url);
+  }
+
+  getMapLinkFromCoordinates(lat: number, lon: number): string {
+    return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+  }
+  
+  /*
+  async getAddressGeolocation(lat: number, lon: number): Promise<string> {
+    if (lat === undefined || lon === undefined) {
+      throw new Error("Latitudine o longitudine non definita");
+    }
+
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+
+    try {
+      const response = await lastValueFrom(
+        this.http.get<any>(url).pipe(
+          map(data => {
+            const via = data.address.road || data.address.name || '';
+            const citta = data.address.town || data.address.city || data.address.village || '';
+            const cap = data.address.postcode || '';
+            const nazione = data.address.country || '';
+            return `${via}, ${citta}, ${cap}, ${nazione}`;
+          })
+        )
+      );
+      return response;
+    } catch (error) {
+      console.error("Errore nella richiesta:", error);
+      throw new Error("Errore nella richiesta di geocoding");
+    }
+  }
+  */
+
+  async getAddressGeolocation(lat: number, lon: number): Promise<string> {
+    if (lat === undefined || lon === undefined) {
+      throw new Error("Latitudine o longitudine non definita");
+    }
+  
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+  
+    try {
+      const response = await this.http.get<any>(url).pipe(
+        map(data => {
+          const via = data.address.road || data.address.name || '';
+          const citta = data.address.town || data.address.city || data.address.village || '';
+          const cap = data.address.postcode || '';
+          const nazione = data.address.country || '';
+          return `${via}, ${citta}, ${cap}, ${nazione}`;
+        })
+      ).toPromise(); // Utilizzo .toPromise() per attendere la risposta HTTP
+      return response || ''; // Add default value to handle undefined case
+    } catch (error) {
+      console.error("Errore nella richiesta:", error);
+      throw new Error("Errore nella richiesta di geocoding");
+    }
+  }
+  
 }

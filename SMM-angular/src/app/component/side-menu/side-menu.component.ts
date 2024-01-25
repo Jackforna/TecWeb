@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-side-menu',
@@ -13,15 +14,17 @@ export class SideMenuComponent implements OnInit {
   nickname: string | null = ''; // Definisce la variabile username a livello di classe
   profilePictureUrl: string | null = ''; // Definisce la variabile profileImage a livello di classe
   profileDescription: string = ''; // Definisce la variabile profileDescription a livello di classe
+  logoUrl: string = 'assets/images/logo - Copia.png'; // Definisce la variabile logoUrl a livello di classe
 
   
   id_manager = localStorage.getItem('actualUserId');
   id_user: string | null = '';
 
 
-  constructor(private authService: AuthService, private databaseService: DatabaseService, private http: HttpClient) { }
+  constructor(private authService: AuthService, private databaseService: DatabaseService, private http: HttpClient, private router: Router) { }
 
   ngOnInit(): void {
+    console.clear();
     this.getManagerDetails();
     this.setAccountData();
     /* Chiamata per ottenere tutti gli utenti
@@ -40,6 +43,7 @@ export class SideMenuComponent implements OnInit {
   onLogout(): void {
     localStorage.clear();
     //this.authService.logOut()
+    window.location.href = 'http://localhost:8080/';
   } 
 
   getManagerDetails() {

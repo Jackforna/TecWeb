@@ -12,7 +12,9 @@
             <ng-template #selectPhotoDialog>
                 <h1 mat-dialog-title>Scegli una Foto</h1>
                 <div mat-dialog-content>
-                <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*">
+                <input type="file" #fileInput (change)="onFileSelected($event)" id="fileInput" accept="image/*">
+                <!-- Pulsante per Confermare l'Invio dell'Immagine Selezionata -->
+                <button (click)="updateProfilePicture(tempPhotoProfile)">Conferma</button>
                 </div>
                 <div mat-dialog-actions>
                 <button mat-button (click)="closeDialog()">Annulla</button>
@@ -35,8 +37,6 @@
                 <button mat-button (click)="selectVIP()">Seleziona</button>
                 </div>
             </ng-template>
-  
-
     </div>
     <ng-container class = "descriptionPart-invisibleContainer">
         <div class = "description-container">
@@ -44,17 +44,19 @@
             <a (click)="openDescriptionModule()">Modifica descrizione</a>
         </div>
         <!--Cambio descrizione modale-->
-        <ng-template #selectDescriptionDialog>
-            <h1 mat-dialog-title>Cambia la descrizione</h1>
-            <div mat-dialog-content>
-            <!-- Textarea per l'input del testo con un limite di 150 caratteri -->
-            <textarea #descriptionInput matInput maxlength="150" rows="4" placeholder="Inserisci la tua descrizione qui..."></textarea>
-            <p>{{ descriptionInput.value.length }}/150 caratteri</p>
-            </div>
-            <div mat-dialog-actions>
-            <button mat-button (click)="closeDescriptionDialog()">Annulla</button>
-            <!-- Aggiorna la funzione di click per gestire l'input del testo -->
-            <button mat-button (click)="updateDescription(descriptionInput.value)">Salva</button>
+        <ng-template #selectDescriptionDialog id = "selectDescriptionDialog">
+            <div>
+                <h1 mat-dialog-title>Cambia la descrizione</h1>
+                <div mat-dialog-content>
+                <!-- Textarea per l'input del testo con un limite di 150 caratteri -->
+                <textarea #descriptionInput matInput maxlength="150" rows="4" placeholder="Inserisci la tua descrizione qui..." style = "width: 90%; resize: none;"></textarea>
+                <p>{{ descriptionInput.value.length }}/150 caratteri</p>
+                </div>
+                <div mat-dialog-actions>
+                <button mat-button (click)="closeDescriptionDialog()">Annulla</button>
+                <!-- Aggiorna la funzione di click per gestire l'input del testo -->
+                <button mat-button (click)="updateDescription(descriptionInput.value)">Salva</button>
+                </div>
             </div>
         </ng-template>
     </ng-container>

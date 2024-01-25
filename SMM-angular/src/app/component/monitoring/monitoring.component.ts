@@ -6,13 +6,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, startWith, filter } from 'rxjs/operators';;
+import { Observable, forkJoin, of, throwError } from 'rxjs';
+import { map, startWith, filter, catchError } from 'rxjs/operators';;
 import { User } from 'src/app/models/user.moduls';
 import { LeafletControlLayersConfig } from '@asymmetrik/ngx-leaflet';
 import { Layer } from 'leaflet';
 import { TileLayer } from 'leaflet';
-
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -43,13 +43,19 @@ export class MonitoringComponent implements OnInit{
   currentPopularSquealIndex = 0;
   currentInpopularSquealIndex = 0;
 
+  currentLessReactedSqueal: any; // Assumi che questa sia la tua variabile
+  addressForLessReactedSqueal: string = ''; // Per memorizzare l'indirizzo ottenuto
+
+  isLoading = true;
 
   constructor(
     private route: ActivatedRoute, 
     private databaseService: DatabaseService, 
+    private http: HttpClient,
   ) { }
 
   ngOnInit() {
+    console.clear();
     //this.printUserSqueals(this.userId);
     console.log('Id utente:', this.userId);
     this.printUserSqueals();
@@ -58,62 +64,28 @@ export class MonitoringComponent implements OnInit{
 
   ngAfterViewInit() { }
   
-  /*
-  printUserSqueals() {
-    this.databaseService.getAllSquealsByUser().subscribe(
-      (squeals) => {
-        const userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname);
-
-        // Ordina gli squeal dell'utente in base al numero totale di reazioni e prendi i primi 3
-        this.mostReactedSqueals = userSqueals
-          .map(squeal => ({
-            ...squeal,
-            totalReactions: squeal.pos_reactions + squeal.neg_reactions
-          }))
-          .sort((a, b) => b.totalReactions - a.totalReactions)
-          .slice(0, 3);
-
-          this.lessReactedSqueals = userSqueals
-            .map(squeal => ({
-              ...squeal,
-              totalReactions: squeal.pos_reactions + squeal.neg_reactions
-            }))
-            .sort((a, b) => a.totalReactions - b.totalReactions)
-            .slice(0, 3); // Modifica il numero se necessario
-          
-          this.controversialSqueals = userSqueals
-            .filter(squeal => {
-              const posNegDiff = Math.abs(squeal.pos_reactions - squeal.neg_reactions);
-              return posNegDiff <= 10 && squeal.pos_reactions + squeal.neg_reactions >= 0.25 * squeal.impressions;
-            })
-            .slice(0, 3); // o qualsiasi altro numero desideri
-          
-            this.mostPopularSqueals = userSqueals
-              .map(squeal => ({
-                ...squeal,
-                reactionDifference: squeal.pos_reactions - squeal.neg_reactions // Calcola la differenza
-              }))
-              .sort((a, b) => b.reactionDifference - a.reactionDifference) // Ordina per differenza
-              .slice(0, 3); // Prendi i primi 3
-
-        console.log('Squeals dell\'utente:', userSqueals);
-        console.log('Most Reacted User Squeals:', this.mostReactedSqueals);
-        console.log('Less Reacted User Squeals:', this.lessReactedSqueals);
-        console.log('Controversial User Squeals:', this.controversialSqueals);
-        console.log('Most Popular User Squeals:', this.mostPopularSqueals);
-      },
-      (error) => {
-        console.error('Errore durante il recupero degli Squeals:', error);
-      }
-    );
-  }
-  */
 
   printUserSqueals() {
+    this.isLoading = true;
     this.databaseService.getAllSquealsByUser().subscribe(
-      (squeals) => {
+      async (squeals) => {
         const userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname);
-  
+
+        for (const squeal of userSqueals) {
+          squeal.date = this.formatDate(squeal.date);
+          if (squeal.body.position && squeal.body.position.length === 2) {
+            try {
+              const [lat, lon] = squeal.body.position;
+              if (!isNaN(lat) && !isNaN(lon)) { // Controlla se lat e lon sono numeri validi
+                const address = await this.databaseService.getAddressGeolocation(lat, lon);
+                squeal.body.address = address;
+              }
+            } catch (error) {
+              console.error('Errore nel recupero dell\'indirizzo:', error);
+            }
+          }
+        }
+        
         // La logica per mostReactedSqueals e lessReactedSqueals rimane invariata
         this.mostReactedSqueals = userSqueals
           .map(squeal => ({
@@ -166,13 +138,19 @@ export class MonitoringComponent implements OnInit{
         console.log('Controversial User Squeals:', this.controversialSqueals);
         console.log('Most Popular User Squeals:', this.mostPopularSqueals);
         console.log('Inpopular User Squeals:', this.inpopularSqueals);
-      },
-      (error) => {
+        this.isLoading = false;
+        });
+      (error: any) => {
         console.error('Errore durante il recupero degli Squeals:', error);
       }
-    );
   }
-  
+
+  // Funzione per verificare e convertire le date
+  formatDate(dateString: string | number | Date) {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? null : date;
+  }
 
 
 

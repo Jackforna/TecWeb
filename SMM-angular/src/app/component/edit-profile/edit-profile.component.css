@@ -145,3 +145,8 @@ input{
     margin-top: 4%;
     margin-bottom: 4%;
   }
+
+  .custom-dialog-margin {
+    margin: 20px; /* Aggiungi qui il margine desiderato */
+  }
+  

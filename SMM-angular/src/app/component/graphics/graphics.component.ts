@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DatabaseService } from '../services/database.service';
+import { DatabaseService } from '../../services/database.service';
 import { Chart, registerables } from 'chart.js';
 import 'chartjs-adapter-moment';
 import * as moment from 'moment';
@@ -23,6 +23,12 @@ export class GraphicsComponent {
   height = 200; // Altezza in pixel
   postsChart: any;
 
+  //Informazioni utente
+  userDati = localStorage.getItem('Dati utente amministrato');
+  datiUtente = this.userDati ? JSON.parse(this.userDati) : null;
+  userId = this.datiUtente ? this.datiUtente._id : null;
+  userNickname = this.datiUtente ? this.datiUtente.nickname : null;
+
 
   constructor(private databaseService: DatabaseService) {}
 
@@ -35,7 +41,7 @@ export class GraphicsComponent {
   getAllUserSqueals() {
     this.databaseService.getAllSquealsByUser().subscribe(
       (squeals) => {
-        this.userSqueals = squeals as any[]; // Archivia tutti i squeal dell'utente
+        this.userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname); // Archivia tutti i squeal dell'utente
         console.log('Squeal dell\'utente:', this.userSqueals);
         // Ora puoi elaborare questi dati per ottenere le reazioni nel tempo
         this.processUserReactionsOverTime();

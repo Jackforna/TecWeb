@@ -44,6 +44,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   imageDataUrl: string | null = null; // Variabile per tenere l'immagine
   sentImageUrl: string | null = null; // URL dell'immagine inviata
 
+  /*Modale video*/
+  showVideoModal: boolean = false;
+  sentVideoUrl: string | null = null; 
+  videoDataUrl: string | null = null; // Variabile per tenere il video
+  videoPreviewUrl: string | null = null; // Variabile per tenere l'immagine del video
+
   /*Modale link*/
   showLinkModal: boolean = false;
   linkInput: string = '';
@@ -93,7 +99,9 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   suggestedChannels: Channel[] = [];
   channelName: string = '';
   isChannelNameValid: boolean = false;
-  
+
+  //Gestione pop up caratteri
+  showPurchasePopup = false;
 
   constructor(
     private route: ActivatedRoute, 
@@ -104,6 +112,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     ) { }
 
   ngOnInit() {
+    console.clear();
     this.profilePictureUrl = this.datiUtente ? this.datiUtente.photoprofile : '';
     this.charLeftUser = this.datiUtente ? this.datiUtente.char_d : 0; 
     this.charLeftUserWeekly = this.datiUtente ? this.datiUtente.char_w : 0;
@@ -160,13 +169,9 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       map(value => value ? this._filter(value) : [])
     );
 
-    /*
-    this.updateSquealPositive();
-    this.updateSquealNegative();
-    */
-
-
-
+    /*Test only*/
+    // this.updateSquealPositive();
+    // this.updateSquealNegative();
   }
   
 
@@ -175,41 +180,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   /*Aggiornamnto caratteri rimanenti*/
-  /*
-  updateCharLeftUser(event: Event) {
-    const textarea = event.target as HTMLTextAreaElement;
-    let textLength = textarea.value.length;
-
-    const attachmentChars = this.calculateAttachmentChars();
-  
-    if (this.isPrivate) { 
-      let remainingCharsPrivate = this.maxLengthPrivate - textLength - attachmentChars;
-
-      // Se i caratteri rimanenti sono sotto zero, tronca il testo
-      if (remainingCharsPrivate < 0) {
-        textLength = this.maxLengthPrivate - attachmentChars; // Limita il testo alla lunghezza massima meno il peso degli allegati
-        textarea.value = textarea.value.substring(0, textLength);
-        remainingCharsPrivate = 0; // Resetta a zero
-      }
-      this.remainingChars = remainingCharsPrivate;
-    } else {
-    // Calcola i caratteri usati dagli allegati
-    const attachmentChars = this.calculateAttachmentChars();
-  
-    // Calcola i caratteri rimanenti
-    let remainingChars = this.charLeftUser - textLength - attachmentChars;
-  
-    // Se i caratteri rimanenti sono sotto zero, tronca il testo
-    if (remainingChars < 0) {
-      textLength += remainingChars; // Aumenta per portare a zero
-      textarea.value = textarea.value.substring(0, textLength);
-      remainingChars = 0; // Resetta a zero
-    }
-  
-    this.remainingChars = remainingChars;
-    }
-  }
-  */
   updateCharLeftUser(event: Event) {
     // Controlla se l'evento o il target dell'evento sono definiti
     if (!event || !(event.target instanceof HTMLTextAreaElement)) {
@@ -242,6 +212,10 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
         textarea.value = textarea.value.substring(0, textLength);
         remainingChars = 0;
       }
+
+      if (remainingChars < 10) {
+        this.showPurchasePopup = true;
+      }
   
       this.remainingChars = remainingChars;
     }
@@ -257,13 +231,13 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   calculateAttachmentChars() {
     let chars = 0;
     if (this.sentImageUrl) chars += 150; // Costo per l'immagine
+    if (this.sentVideoUrl) chars += 150; // Costo per il video
     if (this.sentLink) chars += 150; // Costo per il link
     if (this.userLocation) chars += 150; // Costo per la posizione
-    // Aggiungi qui altri costi per altri tipi di allegati se necessario
+    this.checkForCharacterLimit();
     return chars;
   }
   
-
   setCursorAtStart(event: any) {
     const target = event.target;
 
@@ -281,6 +255,11 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.startCamera(); // Sposta qui l'avvio della webcam
   }
 
+  openVideoDialog(): void {
+    this.showVideoModal = true;
+  }
+
+  /*
   onFileSelected(event: Event): void {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
@@ -334,7 +313,97 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       reader.readAsDataURL(file);
     }
   }
+  */
+
+  onFileSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0];
+      const fileType = file.type;
+      const reader = new FileReader();
+  
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        const fileSrc = (e.target as FileReader).result as string;
+        // this.videoDataUrl = fileSrc;
+  
+        if (fileType.startsWith('image/')) {
+          // Gestione dell'immagine come prima
+          this.handleImage(fileSrc);
+        } else if (fileType.startsWith('video/')) {
+          // Gestione del video
+          // this.handleVideo(this.videoDataUrl);
+          this.videoDataUrl = fileSrc; // Imposta l'URL del video
+          this.videoPreviewUrl = fileSrc; // Utilizzato per l'anteprima nel modale
+        }
+      };
+  
+      reader.readAsDataURL(file);
+    }
+  }
+  
+  handleImage(imgSrc: string): void {
+    this.imageDataUrl = imgSrc;
+    const image = new Image();
+    image.onload = () => {
+      const canvasElement = this.canvasElement.nativeElement;
+      const context = canvasElement.getContext('2d');
+      const maxWidth = 300;
+      const maxHeight = 300;
+  
+      let width = image.width;
+      let height = image.height;
+  
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+  
+      if (context) {
+        context.drawImage(image, 0, 0, width, height);
+        canvasElement.style.display = 'block';
+        this.videoElement.nativeElement.style.display = 'none';
+      }
+    };
+    image.src = imgSrc;
+  }
+  
+  handleVideo(videoSrc: string): void {
+    // Salva l'URL del video per l'uso successivo
+    this.videoDataUrl = videoSrc;
+  
+    // Crea un elemento video temporaneo per estrarre un frame
+    const videoElement = document.createElement('video');
+    videoElement.src = videoSrc;
+  
+    // Aspetta che il metadato del video sia caricato per assicurarsi che le dimensioni siano disponibili
+    videoElement.addEventListener('loadedmetadata', () => {
+      // Crea un canvas per disegnare il frame
+      const canvas = document.createElement('canvas');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+  
+      const context = canvas.getContext('2d');
+      if (context) {
+        // Disegna un frame del video sul canvas
+        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+  
+        // Converti il canvas in un'immagine per l'anteprima
+        this.videoPreviewUrl = canvas.toDataURL('image/png');
+      }
+    });
     
+    // Carica il video (è necessario per alcuni browser per attivare l'evento loadedmetadata)
+    videoElement.load();
+  }
+
+  /*Foto modale*/
   closeCameraModal(): void {
     // Ferma la webcam
     if (this.videoElement && this.videoElement.nativeElement.srcObject) {
@@ -432,6 +501,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       }
     } else {
       alert("Caratteri rimanenti insufficienti per allegare un'immagine.");
+      this.showPurchasePopup = true;
+
     }
     this.disableOtherAttachments('image'); // Disabilita gli altri pulsanti di allegato
   }
@@ -442,6 +513,51 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
     this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
   }
+
+
+  /*Video modale*/
+  removeSentVideo(): void {
+    this.videoDataUrl = null;
+    this.sentVideoUrl = null;
+    this.videoPreviewUrl = null; // Utilizzato per l'anteprima nel modale
+    this.showVideoModal = false;
+    this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+    this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
+  }
+  
+  sendVideo(): void {
+    if (this.remainingChars >= 150) { // Assumi che il costo di un video sia 150 caratteri
+      if (!this.videoDataUrl) {
+        alert("Nessun video selezionato.");
+        return;
+      }
+  
+      // Chiudi il modale del video se è aperto
+      this.closeVideoModal();
+  
+      // Imposta l'URL del video inviato
+      this.sentVideoUrl = this.videoDataUrl;
+  
+      // Aggiorna il conteggio dei caratteri rimanenti
+      this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+      this.updateRemainingChars();
+  
+      // Resetta l'URL del video per evitare riutilizzi
+      this.videoDataUrl = null;
+    } else {
+      alert("Caratteri rimanenti insufficienti per allegare un video.");
+      this.showPurchasePopup = true;
+    }
+  
+    // Disabilita gli altri pulsanti di allegato se necessario
+    this.disableOtherAttachments('video');
+  }
+  
+  closeVideoModal(): void {
+    this.showVideoModal = false;
+  }
+
+  
 
 
   /*Modale link*/
@@ -475,7 +591,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
         alert('Il link inserito non è valido.');
       }
     } else {
-      alert('Il link inserito non è valido.');
+      alert('Caratteri insufficienti per allegare un link.');
+      this.showPurchasePopup = true;
     }
     this.disableOtherAttachments('link'); // Disabilita gli altri pulsanti di allegato
   }
@@ -530,6 +647,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       }
     } else {
       alert('Caratteri rimanenti insufficienti per aggiungere la posizione.');
+      this.showPurchasePopup = true;
     }
     this.disableOtherAttachments('location'); // Disabilita gli altri pulsanti di allegato
   }
@@ -600,6 +718,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       this.closeMapModal();
     } else {
       alert('Caratteri rimanenti insufficienti per selezionare una posizione.');
+      this.showPurchasePopup = true;
     }
   }
   
@@ -848,7 +967,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
         link: this.sentLink || '',
         photo: this.sentImageUrl || '',
         position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
-        video: '', // Assumo che non ci sia supporto per video al momento
+        video: this.sentVideoUrl || '',
       },
       photoprofile: photoProfile,
       date: date,
@@ -868,190 +987,233 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.databaseService.addSqueal(squealData).subscribe({
       next: (response) => {
         console.log('Squeal added successfully', response);
+        // Calcola i caratteri utilizzati (inclusi gli allegati)
+        const charsUsed = this.userText.length + this.calculateAttachmentChars();
+        const userId = this.datiUtente ? this.datiUtente._id : null;
+        console.log('Caratteri utilizzati:', charsUsed);
+        console.log('ID utente:', userId);
+
+        // Assicurati che userId sia valido
+        if (userId) {
+          const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed);
+          const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed);
+          const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed);
+
+          const updateData = {
+            char_d: newCharLeftDaily,
+            char_w: newCharLeftWeekly,
+            char_m: newCharLeftMonthly
+          };
+    
+          // Aggiorna i dati dell'utente nel backend
+          this.databaseService.updateUserProfile(userId, updateData).subscribe({
+            next: (updateResponse) => {
+              console.log('Risposta del server:', updateResponse);
+    
+              // Aggiorna i valori locali
+              this.charLeftUser = newCharLeftDaily;
+              this.charLeftUserWeekly = newCharLeftWeekly;
+              this.charLeftUserMonthly = newCharLeftMonthly;
+    
+              // Aggiorna il localStorage
+              const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
+              userData.char_d = newCharLeftDaily;
+              userData.char_w = newCharLeftWeekly;
+              userData.char_m = newCharLeftMonthly;
+              localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+            },
+            error: (updateError) => {
+              console.error("Errore durante l'aggiornamento dei dati utente:", updateError);
+            }
+          });
+        }
         this.resetForm();
+        window.location.reload();
       },
       error: (error) => {
         console.error('Error adding squeal', error);
       }
     });
+  }
 
-    // Calcola i caratteri utilizzati (inclusi gli allegati)
-    const charsUsed = this.userText.length + this.calculateAttachmentChars();
-    const userId = this.datiUtente ? this.datiUtente._id : null;
-    // Calcola i nuovi valori dei caratteri rimanenti
-    const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed); // Giornalieri
-    const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed); // Settimanali
-    const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed); // Mensili
+  /*Reset della card*/
+  resetForm() {
+    // Svuota il testo dello squeal e l'hashtag
+    this.userText = '';
+    this.hashtag = '';
+  
+    // Rimuove gli allegati
+    this.sentImageUrl = null;
+    this.sentLink = null;
+  
+    // Rimuove la posizione e resetta la mappa
+    this.userLocation = null;
+    this.isMapActive = false;
+    if (this.map) {
+      this.map.remove(); // Rimuove la mappa per resettarla
+      this.map = null;
+    }
+    if (this.selectedLocation) {
+      this.selectedLocation = null; // Rimuove il marker selezionato
+    }
+  
+    // Resetta la selezione degli utenti (per i messaggi privati)
+    this.selectedUsers = [];
+  
+    // Aggiorna i caratteri rimanenti
+    this.remainingChars = this.charLeftUser;
+  
+    // Se necessario, reimposta ulteriori campi o variabili qui
+  }
+  
+  /*Aggiornamento squeal SOLO TEST*/
+  updateSquealPositive() {
+    const squealId = '65b24034e51664bf7e5b37d8'; // Sostituisci con l'ID effettivo dello Squeal
+    const updateData = {
+      pos_reactions: 20,
+      neg_reactions: 5,
+      impressions: 10,
+      category: "Popular"
+    };
 
-    // Aggiorna i dati dell'utente nel backend
-    this.databaseService.updateUserProfile(userId, {
-      char_d: newCharLeftDaily,
-      char_w: newCharLeftWeekly,
-      char_m: newCharLeftMonthly
-    }).subscribe({
+    this.databaseService.updateSqueal(squealId, updateData).subscribe({
       next: (response) => {
-        // Aggiornamento riuscito
-        this.charLeftUser = newCharLeftDaily;
-        this.charLeftUserWeekly = newCharLeftWeekly;
-        this.charLeftUserMonthly = newCharLeftMonthly;
-        
-        // Resetta il form dopo l'invio
-        this.resetForm();
+        console.log('Squeal aggiornato con successo:', response);
       },
       error: (error) => {
-        // Gestire l'errore
-        console.error("Errore durante l'aggiornamento dei caratteri rimanenti dell'utente", error);
+        console.error('Errore durante l\'aggiornamento dello Squeal:', error);
       }
     });
   }
 
-    /*Reset della card*/
-    resetForm() {
-      // Svuota il testo dello squeal e l'hashtag
-      this.userText = '';
-      this.hashtag = '';
-    
-      // Rimuove gli allegati
-      this.sentImageUrl = null;
-      this.sentLink = null;
-    
-      // Rimuove la posizione e resetta la mappa
-      this.userLocation = null;
-      this.isMapActive = false;
-      if (this.map) {
-        this.map.remove(); // Rimuove la mappa per resettarla
-        this.map = null;
+  updateSquealNegative() {
+    const squealId = '65b24ad238b3749c21126bcc'; // Sostituisci con l'ID effettivo dello Squeal
+    const updateData = {
+      pos_reactions: 1,
+      neg_reactions: 8,
+      impressions: 20,
+      category: "Controversial"
+    };
+
+    this.databaseService.updateSqueal(squealId, updateData).subscribe({
+      next: (response) => {
+        console.log('Squeal aggiornato con successo:', response);
+      },
+      error: (error) => {
+        console.error('Errore durante l\'aggiornamento dello Squeal:', error);
       }
-      if (this.selectedLocation) {
-        this.selectedLocation = null; // Rimuove il marker selezionato
+    });
+  }
+
+  createChannelSqueal(): void {
+    // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
+    this.isSubmitting = true;
+    const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
+    const typeSender = 'keyword'; // O altro valore a seconda della logica
+    const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
+    const currentDate = new Date();
+    const date = currentDate.toLocaleDateString();
+    const hour = currentDate.getHours();
+    const seconds = currentDate.getSeconds();
+    const hashtag = this.hashtag;
+    const channel = this.channelControl.value;
+  
+    // Creazione dell'oggetto squeal
+    const squealData = {
+      sender: sender,
+      typeSender: typeSender,
+      body: {
+        text: this.userText,
+        link: this.sentLink || '',
+        photo: this.sentImageUrl || '',
+        position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
+        video: this.sentVideoUrl || '', 
+      },
+      photoprofile: photoProfile,
+      date: date,
+      hour: hour,
+      seconds: seconds,
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      usersViewed: [],
+      category: '', // Aggiungi logica per determinare la categoria se necessario
+      receivers: [], // Aggiungi logica se ci sono destinatari specifici
+      channel: channel, // Aggiungi logica se il squeal è associato a un canale
+      impressions: 0
+    };
+  
+    // Chiamata al servizio per aggiungere il squeal
+    this.databaseService.addSqueal(squealData).subscribe({
+      next: (response) => {
+        console.log('Squeal added successfully', response);
+        const charsUsed = this.userText.length + this.calculateAttachmentChars();
+        const userId = this.datiUtente ? this.datiUtente._id : null;
+        console.log('Caratteri utilizzati:', charsUsed);
+        console.log('ID utente:', userId);
+
+        // Assicurati che userId sia valido
+        if (userId) {
+          const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed);
+          const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed);
+          const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed);
+
+          const updateData = {
+            char_d: newCharLeftDaily,
+            char_w: newCharLeftWeekly,
+            char_m: newCharLeftMonthly
+          };
+    
+          // Aggiorna i dati dell'utente nel backend
+          this.databaseService.updateUserProfile(userId, updateData).subscribe({
+            next: (updateResponse) => {
+              console.log('Risposta del server:', updateResponse);
+    
+              // Aggiorna i valori locali
+              this.charLeftUser = newCharLeftDaily;
+              this.charLeftUserWeekly = newCharLeftWeekly;
+              this.charLeftUserMonthly = newCharLeftMonthly;
+    
+              // Aggiorna il localStorage
+              const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
+              userData.char_d = newCharLeftDaily;
+              userData.char_w = newCharLeftWeekly;
+              userData.char_m = newCharLeftMonthly;
+              localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+            },
+            error: (updateError) => {
+              console.error("Errore durante l'aggiornamento dei dati utente:", updateError);
+            }
+          });
+        }
+        this.resetForm();
+        window.location.reload();
+        // this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
+      },
+      error: (error) => {
+        console.error('Error adding squeal', error);
+        this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
       }
-    
-      // Resetta la selezione degli utenti (per i messaggi privati)
-      this.selectedUsers = [];
-    
-      // Aggiorna i caratteri rimanenti
-      this.remainingChars = this.charLeftUser;
-    
-      // Se necessario, reimposta ulteriori campi o variabili qui
+    });
+  }
+
+  /*Gestione pop up caratteri rimanenti*/
+  redirectToEditProfile() {
+    this.router.navigate(['/edit-profile']);
+    this.showPurchasePopup = false;
+  }
+
+  closePopup() {
+    this.showPurchasePopup = false;
+  }
+
+  checkForCharacterLimit() {
+    const sogliaMinima = 10;
+    if (this.remainingChars < sogliaMinima) {
+      this.showPurchasePopup = true;
+    } else {
+      this.showPurchasePopup = false;
     }
-    
-    /*Aggiornamento squeal SOLO TEST*/
-    updateSquealPositive() {
-      const squealId = '659fff999a2ed0c41edbdfbe'; // Sostituisci con l'ID effettivo dello Squeal
-      const updateData = {
-        pos_reactions: 12,
-        neg_reactions: 3,
-        impressions: 4
-      };
-
-      this.databaseService.updateSqueal(squealId, updateData).subscribe({
-        next: (response) => {
-          console.log('Squeal aggiornato con successo:', response);
-        },
-        error: (error) => {
-          console.error('Errore durante l\'aggiornamento dello Squeal:', error);
-        }
-      });
-    }
-
-    updateSquealNegative() {
-      const squealId = '659f1a341960dfb59df623e8'; // Sostituisci con l'ID effettivo dello Squeal
-      const updateData = {
-        pos_reactions: 2,
-        neg_reactions: 6,
-        impressions: 5
-      };
-
-      this.databaseService.updateSqueal(squealId, updateData).subscribe({
-        next: (response) => {
-          console.log('Squeal aggiornato con successo:', response);
-        },
-        error: (error) => {
-          console.error('Errore durante l\'aggiornamento dello Squeal:', error);
-        }
-      });
-    }
-
-    createChannelSqueal(): void {
-      // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
-      this.isSubmitting = true;
-      const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
-      const typeSender = 'keyword'; // O altro valore a seconda della logica
-      const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
-      const currentDate = new Date();
-      const date = currentDate.toLocaleDateString();
-      const hour = currentDate.getHours();
-      const seconds = currentDate.getSeconds();
-      const hashtag = this.hashtag;
-      const channel = this.channelControl.value;
-    
-      // Creazione dell'oggetto squeal
-      const squealData = {
-        sender: sender,
-        typeSender: typeSender,
-        body: {
-          text: this.userText,
-          link: this.sentLink || '',
-          photo: this.sentImageUrl || '',
-          position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
-          video: '', // Assumo che non ci sia supporto per video al momento
-        },
-        photoprofile: photoProfile,
-        date: date,
-        hour: hour,
-        seconds: seconds,
-        pos_reactions: 0,
-        neg_reactions: 0,
-        usersReactions: [],
-        usersViewed: [],
-        category: '', // Aggiungi logica per determinare la categoria se necessario
-        receivers: [], // Aggiungi logica se ci sono destinatari specifici
-        channel: channel, // Aggiungi logica se il squeal è associato a un canale
-        impressions: 0
-      };
-    
-      // Chiamata al servizio per aggiungere il squeal
-      this.databaseService.addSqueal(squealData).subscribe({
-        next: (response) => {
-          console.log('Squeal added successfully', response);
-          this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
-          this.resetForm();
-        },
-        error: (error) => {
-          console.error('Error adding squeal', error);
-          this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
-        }
-      });
-  
-      // Calcola i caratteri utilizzati (inclusi gli allegati)
-      const charsUsed = this.userText.length + this.calculateAttachmentChars();
-      const userId = this.datiUtente ? this.datiUtente._id : null;
-      // Calcola i nuovi valori dei caratteri rimanenti
-      const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed); // Giornalieri
-      const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed); // Settimanali
-      const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed); // Mensili
-  
-      // Aggiorna i dati dell'utente nel backend
-      this.databaseService.updateUserProfile(userId, {
-        char_d: newCharLeftDaily,
-        char_w: newCharLeftWeekly,
-        char_m: newCharLeftMonthly
-      }).subscribe({
-        next: (response) => {
-          // Aggiornamento riuscito
-          this.charLeftUser = newCharLeftDaily;
-          this.charLeftUserWeekly = newCharLeftWeekly;
-          this.charLeftUserMonthly = newCharLeftMonthly;
-          
-          // Resetta il form dopo l'invio
-          this.resetForm();
-        },
-        error: (error) => {
-          // Gestire l'errore
-          console.error("Errore durante l'aggiornamento dei caratteri rimanenti dell'utente", error);
-        }
-      });
-    }
-
+  }
 
 }

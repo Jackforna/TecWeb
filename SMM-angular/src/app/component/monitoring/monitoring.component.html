@@ -1,4 +1,9 @@
 <body>
+
+    <div class="loader-container" *ngIf="isLoading">
+      <div class="loader"></div>
+    </div>
+
     <div class = "answerSqueal-container">
         <h3>Answer to my squeals</h3>
     </div>
@@ -16,14 +21,16 @@
           <mat-card-content>
             <img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo" style = "width: 200px;">
             <p>{{ currentSqueal.body.text }}</p>
-            <div *ngIf="currentSqueal.body.position.length >= 2" id="map-container-{{ currentSqueal.nickname }}">
-              {{ currentSqueal.body.position }}
-            </div>
+            <div *ngIf="currentSqueal.body.position.length >= 2">
+              <div *ngIf="currentSqueal.body.address">{{ currentSqueal.body.address }}</div>
+            </div>  
             <a *ngIf="currentSqueal.body.link" [href]="currentSqueal.body.link" target="_blank">{{ currentSqueal.body.link }}</a>           
-            <video *ngIf="currentSqueal.body.video" controls>
-              <source [src]="currentSqueal.body.video" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
+            <div *ngIf="currentSqueal.body.video" class = "video-container">
+              <video *ngIf="currentSqueal.body.video" controls>
+                <source [src]="currentSqueal.body.video">
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </mat-card-content>
           <mat-card-actions>
             <button mat-button>Likes ({{ currentSqueal.pos_reactions }})</button>
@@ -47,15 +54,17 @@
             </mat-card-header>
             <mat-card-content>
                 <img mat-card-image *ngIf="currentLessReactedSqueal.body.photo" [src]="currentLessReactedSqueal.body.photo" alt="Photo" style="width: 200px;">
-                <p>{{ currentLessReactedSqueal.body.text }}</p>
-                <div *ngIf="currentLessReactedSqueal.body.position.length >= 2" id="map-container-{{ currentLessReactedSqueal.nickname }}">
-                    {{ currentLessReactedSqueal.body.position }}
-                </div>
+                <p>{{ currentLessReactedSqueal.body.text }}</p>             
+                <div *ngIf="currentLessReactedSqueal.body.position.length >= 2">
+                  <div *ngIf="currentLessReactedSqueal.body.address">{{ currentLessReactedSqueal.body.address }}</div>
+                </div>                
                 <a *ngIf="currentLessReactedSqueal.body.link" [href]="currentLessReactedSqueal.body.link" target="_blank">{{ currentLessReactedSqueal.body.link }}</a>
-                <video *ngIf="currentLessReactedSqueal.body.video" controls>
-                    <source [src]="currentLessReactedSqueal.body.video" type="video/mp4">
+                <div *ngIf="currentLessReactedSqueal.body.video" class = "video-container">
+                  <video *ngIf="currentLessReactedSqueal.body.video" controls>
+                    <source [src]="currentLessReactedSqueal.body.video">
                     Your browser does not support the video tag.
-                </video>
+                  </video>
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <button mat-button>Likes ({{ currentLessReactedSqueal.pos_reactions }})</button>
@@ -82,14 +91,16 @@
             <mat-card-content>
                 <img mat-card-image *ngIf="currentPopularSqueal.body.photo" [src]="currentPopularSqueal.body.photo" alt="Photo" style="width: 200px;">
                 <p>{{ currentPopularSqueal.body.text }}</p>
-                <div *ngIf="currentPopularSqueal.body.position.length >= 2" id="map-container-{{ currentPopularSqueal.nickname }}">
-                    {{ currentPopularSqueal.body.position }}
-                </div>
+                <div *ngIf="currentPopularSqueal.body.position.length >= 2">
+                  <div *ngIf="currentPopularSqueal.body.address">{{ currentPopularSqueal.body.address }}</div>
+                </div>  
                 <a *ngIf="currentPopularSqueal.body.link" [href]="currentPopularSqueal.body.link" target="_blank">{{ currentPopularSqueal.body.link }}</a>
-                <video *ngIf="currentPopularSqueal.body.video" controls>
-                    <source [src]="currentPopularSqueal.body.video" type="video/mp4">
+                <div *ngIf="currentPopularSqueal.body.video" class = "video-container">
+                  <video *ngIf="currentPopularSqueal.body.video" controls>
+                    <source [src]="currentPopularSqueal.body.video">
                     Your browser does not support the video tag.
-                </video>
+                  </video>
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <button mat-button>Likes ({{ currentPopularSqueal.pos_reactions }})</button>
@@ -115,7 +126,16 @@
           <mat-card-content>
             <img mat-card-image *ngIf="currentInpopularSqueal.body.photo" [src]="currentInpopularSqueal.body.photo" alt="Photo" style="width: 200px;">
             <p>{{ currentInpopularSqueal.body.text }}</p>
-            <!-- ... altro contenuto della card ... -->
+            <div *ngIf="currentInpopularSqueal.body.position.length >= 2">
+              <div *ngIf="currentInpopularSqueal.body.address">{{ currentInpopularSqueal.body.address }}</div>
+            </div>  
+            <a *ngIf="currentInpopularSqueal.body.link" [href]="currentInpopularSqueal.body.link" target="_blank">{{ currentInpopularSqueal.body.link }}</a>
+            <div *ngIf="currentInpopularSqueal.body.video" class = "video-container">
+              <video *ngIf="currentInpopularSqueal.body.video" controls>
+                <source [src]="currentInpopularSqueal.body.video">
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </mat-card-content>
           <mat-card-actions>
             <button mat-button>Likes ({{ currentInpopularSqueal.pos_reactions }})</button>
@@ -141,14 +161,16 @@
             <mat-card-content>
                 <img mat-card-image *ngIf="currentControversialSqueal.body.photo" [src]="currentControversialSqueal.body.photo" alt="Photo" style="width: 200px;">
                 <p>{{ currentControversialSqueal.body.text }}</p>
-                <div *ngIf="currentControversialSqueal.body.position.length >= 2" id="map-container-{{ currentControversialSqueal.nickname }}">
-                    {{ currentControversialSqueal.body.position }}
-                </div>
+                <div *ngIf="currentControversialSqueal.body.position.length >= 2">
+                  <div *ngIf="currentControversialSqueal.body.address">{{ currentControversialSqueal.body.address }}</div>
+                </div>  
                 <a *ngIf="currentControversialSqueal.body.link" [href]="currentControversialSqueal.body.link" target="_blank">{{ currentControversialSqueal.body.link }}</a>
-                <video *ngIf="currentControversialSqueal.body.video" controls>
-                    <source [src]="currentControversialSqueal.body.video" type="video/mp4">
+                <div *ngIf="currentControversialSqueal.body.video" class = "video-container">
+                  <video *ngIf="currentControversialSqueal.body.video" controls>
+                    <source [src]="currentControversialSqueal.body.video">
                     Your browser does not support the video tag.
-                </video>
+                  </video>
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <button mat-button>Likes ({{ currentControversialSqueal.pos_reactions }})</button>

@@ -5,7 +5,7 @@ import { EditProfileComponent } from './component/edit-profile/edit-profile.comp
 import { MonitoringComponent } from './component/monitoring/monitoring.component';
 import { CreateMessageComponent } from './component/create-message/create-message.component';
 import { SettingsComponent } from './component/settings/settings.component';
-import { GraphicsComponent } from './graphics/graphics.component';
+import { GraphicsComponent } from './component/graphics/graphics.component';
 import { authGuard } from './auth/auth.guard';
 
 const routes: Routes = [
