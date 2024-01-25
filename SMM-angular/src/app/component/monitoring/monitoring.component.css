@@ -91,4 +91,18 @@ h3{
   100% { transform: rotate(360deg); }
 }
 
+.video-container{
+  position: relative;
+  width: 300px; /* Larghezza fissa del contenitore dell'immagine */
+  height: 300px; /* Altezza fissa del contenitore dell'immagine */
+  margin-left: 4%;
+  margin-top: 1%;
+  overflow: hidden; /* Nasconde le parti dell'immagine che eccedono il contenitore */
+}
+
+.video-container video {
+  width: 100%; /* Adatta la larghezza del video alla larghezza del contenitore */
+  height: 100%; /* Adatta l'altezza del video all'altezza del contenitore */
+  object-fit: contain; /* Mantiene le proporzioni del video e lo adatta all'interno del contenitore senza tagliarlo */
+}
   

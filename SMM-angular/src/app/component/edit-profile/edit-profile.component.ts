@@ -6,13 +6,6 @@ import { Router } from '@angular/router';
 import { ViewChild, TemplateRef } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-
-/*Cosa manca:
-- Logica per cambiare la foto profilo (Problema nel caricamento dell'immagine, prende solo json, devo usare degli stroage del db)
-- Logica per cambiare il vip 
-- Logica gestione del pagamento (in forse)
-*/
-
 @Component({
   selector: 'app-edit-profile',
   templateUrl: './edit-profile.component.html',

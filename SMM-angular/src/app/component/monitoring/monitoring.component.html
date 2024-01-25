@@ -25,10 +25,12 @@
               <div *ngIf="currentSqueal.body.address">{{ currentSqueal.body.address }}</div>
             </div>  
             <a *ngIf="currentSqueal.body.link" [href]="currentSqueal.body.link" target="_blank">{{ currentSqueal.body.link }}</a>           
-            <video *ngIf="currentSqueal.body.video" controls>
-              <source [src]="currentSqueal.body.video" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
+            <div *ngIf="currentSqueal.body.video" class = "video-container">
+              <video *ngIf="currentSqueal.body.video" controls>
+                <source [src]="currentSqueal.body.video">
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </mat-card-content>
           <mat-card-actions>
             <button mat-button>Likes ({{ currentSqueal.pos_reactions }})</button>
@@ -57,10 +59,12 @@
                   <div *ngIf="currentLessReactedSqueal.body.address">{{ currentLessReactedSqueal.body.address }}</div>
                 </div>                
                 <a *ngIf="currentLessReactedSqueal.body.link" [href]="currentLessReactedSqueal.body.link" target="_blank">{{ currentLessReactedSqueal.body.link }}</a>
-                <video *ngIf="currentLessReactedSqueal.body.video" controls>
-                    <source [src]="currentLessReactedSqueal.body.video" type="video/mp4">
+                <div *ngIf="currentLessReactedSqueal.body.video" class = "video-container">
+                  <video *ngIf="currentLessReactedSqueal.body.video" controls>
+                    <source [src]="currentLessReactedSqueal.body.video">
                     Your browser does not support the video tag.
-                </video>
+                  </video>
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <button mat-button>Likes ({{ currentLessReactedSqueal.pos_reactions }})</button>
@@ -91,10 +95,12 @@
                   <div *ngIf="currentPopularSqueal.body.address">{{ currentPopularSqueal.body.address }}</div>
                 </div>  
                 <a *ngIf="currentPopularSqueal.body.link" [href]="currentPopularSqueal.body.link" target="_blank">{{ currentPopularSqueal.body.link }}</a>
-                <video *ngIf="currentPopularSqueal.body.video" controls>
-                    <source [src]="currentPopularSqueal.body.video" type="video/mp4">
+                <div *ngIf="currentPopularSqueal.body.video" class = "video-container">
+                  <video *ngIf="currentPopularSqueal.body.video" controls>
+                    <source [src]="currentPopularSqueal.body.video">
                     Your browser does not support the video tag.
-                </video>
+                  </video>
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <button mat-button>Likes ({{ currentPopularSqueal.pos_reactions }})</button>
@@ -124,10 +130,12 @@
               <div *ngIf="currentInpopularSqueal.body.address">{{ currentInpopularSqueal.body.address }}</div>
             </div>  
             <a *ngIf="currentInpopularSqueal.body.link" [href]="currentInpopularSqueal.body.link" target="_blank">{{ currentInpopularSqueal.body.link }}</a>
-                <video *ngIf="currentInpopularSqueal.body.video" controls>
-                    <source [src]="currentInpopularSqueal.body.video" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+            <div *ngIf="currentInpopularSqueal.body.video" class = "video-container">
+              <video *ngIf="currentInpopularSqueal.body.video" controls>
+                <source [src]="currentInpopularSqueal.body.video">
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </mat-card-content>
           <mat-card-actions>
             <button mat-button>Likes ({{ currentInpopularSqueal.pos_reactions }})</button>
@@ -157,10 +165,12 @@
                   <div *ngIf="currentControversialSqueal.body.address">{{ currentControversialSqueal.body.address }}</div>
                 </div>  
                 <a *ngIf="currentControversialSqueal.body.link" [href]="currentControversialSqueal.body.link" target="_blank">{{ currentControversialSqueal.body.link }}</a>
-                <video *ngIf="currentControversialSqueal.body.video" controls>
-                    <source [src]="currentControversialSqueal.body.video" type="video/mp4">
+                <div *ngIf="currentControversialSqueal.body.video" class = "video-container">
+                  <video *ngIf="currentControversialSqueal.body.video" controls>
+                    <source [src]="currentControversialSqueal.body.video">
                     Your browser does not support the video tag.
-                </video>
+                  </video>
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <button mat-button>Likes ({{ currentControversialSqueal.pos_reactions }})</button>

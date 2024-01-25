@@ -169,10 +169,9 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       map(value => value ? this._filter(value) : [])
     );
 
-    /*
-    this.updateSquealPositive();
-    this.updateSquealNegative();
-    */
+    /*Test only*/
+    // this.updateSquealPositive();
+    // this.updateSquealNegative();
   }
   
 
@@ -403,10 +402,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // Carica il video (è necessario per alcuni browser per attivare l'evento loadedmetadata)
     videoElement.load();
   }
-  
-  
-  
 
+  /*Foto modale*/
   closeCameraModal(): void {
     // Ferma la webcam
     if (this.videoElement && this.videoElement.nativeElement.srcObject) {
@@ -1071,11 +1068,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   
   /*Aggiornamento squeal SOLO TEST*/
   updateSquealPositive() {
-    const squealId = '659fff999a2ed0c41edbdfbe'; // Sostituisci con l'ID effettivo dello Squeal
+    const squealId = '65b24034e51664bf7e5b37d8'; // Sostituisci con l'ID effettivo dello Squeal
     const updateData = {
-      pos_reactions: 12,
-      neg_reactions: 3,
-      impressions: 4
+      pos_reactions: 20,
+      neg_reactions: 5,
+      impressions: 10,
+      category: "Popular"
     };
 
     this.databaseService.updateSqueal(squealId, updateData).subscribe({
@@ -1089,11 +1087,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   updateSquealNegative() {
-    const squealId = '659f1a341960dfb59df623e8'; // Sostituisci con l'ID effettivo dello Squeal
+    const squealId = '65b24ad238b3749c21126bcc'; // Sostituisci con l'ID effettivo dello Squeal
     const updateData = {
-      pos_reactions: 2,
-      neg_reactions: 6,
-      impressions: 5
+      pos_reactions: 1,
+      neg_reactions: 8,
+      impressions: 20,
+      category: "Controversial"
     };
 
     this.databaseService.updateSqueal(squealId, updateData).subscribe({
