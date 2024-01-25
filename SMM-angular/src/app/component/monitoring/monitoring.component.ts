@@ -30,6 +30,7 @@ export class MonitoringComponent implements OnInit{
   userNickname = this.datiUtente ? this.datiUtente.nickname : null;
 
   //Dati sui Squeal
+  squealsWithAnswers: any[] = [];
   mostReactedSqueals: any[] = [];
   lessReactedSqueals: any[] = [];
   controversialSqueals: any[] = [];
@@ -37,6 +38,7 @@ export class MonitoringComponent implements OnInit{
   inpopularSqueals: any[] = [];
 
   //Struttura per cambio squeal
+  currentAnswerSquealIndex = 0;
   currentSquealIndex = 0;
   currentLessReactedSquealIndex = 0;
   currentControversialSquealIndex = 0;
@@ -47,6 +49,8 @@ export class MonitoringComponent implements OnInit{
   addressForLessReactedSqueal: string = ''; // Per memorizzare l'indirizzo ottenuto
 
   isLoading = true;
+  isModalOpen = false;
+  selectedSquealAnswers: any[] = [];
 
   constructor(
     private route: ActivatedRoute, 
@@ -85,6 +89,8 @@ export class MonitoringComponent implements OnInit{
             }
           }
         }
+
+        this.squealsWithAnswers = userSqueals.filter(squeal => squeal.answers && squeal.answers.length > 0);
         
         // La logica per mostReactedSqueals e lessReactedSqueals rimane invariata
         this.mostReactedSqueals = userSqueals
@@ -152,7 +158,27 @@ export class MonitoringComponent implements OnInit{
     return isNaN(date.getTime()) ? null : date;
   }
 
+  openAnswerModal(squeal: any) {
+    this.selectedSquealAnswers = squeal.answers;
+    this.isModalOpen = true;
+  }
 
+  // Funzione per chiudere il modale
+  closeAnswerModal() {
+    this.isModalOpen = false;
+  }
+
+  showNextAnswerSqueal() {
+    if (this.currentAnswerSquealIndex < this.squealsWithAnswers.length - 1) {
+        this.currentAnswerSquealIndex++;
+    }
+  }
+
+  showPreviousAnswerSqueal() {
+    if (this.currentAnswerSquealIndex > 0) {
+        this.currentAnswerSquealIndex--;
+    }
+  }
 
   showNextSqueal() {
     if (this.currentSquealIndex < this.mostReactedSqueals.length - 1) {

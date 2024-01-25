@@ -106,3 +106,36 @@ h3{
   object-fit: contain; /* Mantiene le proporzioni del video e lo adatta all'interno del contenitore senza tagliarlo */
 }
   
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75); /* Rendi lo sfondo più scuro per oscurare il contenuto sottostante */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Assicurati che il modale sia sopra a tutto il resto */
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  max-height: 80%; /* Imposta un'altezza massima */
+  overflow-y: auto; /* Permetti lo scorrimento se il contenuto è troppo lungo */
+}
+
+/* Stile per i contenuti delle risposte */
+.modal-content .answer {
+  margin-bottom: 15px; /* Aggiunge spazio tra le risposte */
+}
+
+.close-button {
+  float: right;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
