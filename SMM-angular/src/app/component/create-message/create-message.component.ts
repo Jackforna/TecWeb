@@ -44,6 +44,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   imageDataUrl: string | null = null; // Variabile per tenere l'immagine
   sentImageUrl: string | null = null; // URL dell'immagine inviata
 
+  /*Modale video*/
+  showVideoModal: boolean = false;
+  sentVideoUrl: string | null = null; 
+  videoDataUrl: string | null = null; // Variabile per tenere il video
+  videoPreviewUrl: string | null = null; // Variabile per tenere l'immagine del video
+
   /*Modale link*/
   showLinkModal: boolean = false;
   linkInput: string = '';
@@ -96,7 +102,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
   //Gestione pop up caratteri
   showPurchasePopup = false;
-  
 
   constructor(
     private route: ActivatedRoute, 
@@ -227,9 +232,9 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   calculateAttachmentChars() {
     let chars = 0;
     if (this.sentImageUrl) chars += 150; // Costo per l'immagine
+    if (this.sentVideoUrl) chars += 150; // Costo per il video
     if (this.sentLink) chars += 150; // Costo per il link
     if (this.userLocation) chars += 150; // Costo per la posizione
-    // Aggiungi qui altri costi per altri tipi di allegati se necessario
     this.checkForCharacterLimit();
     return chars;
   }
@@ -251,6 +256,11 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.startCamera(); // Sposta qui l'avvio della webcam
   }
 
+  openVideoDialog(): void {
+    this.showVideoModal = true;
+  }
+
+  /*
   onFileSelected(event: Event): void {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
@@ -304,7 +314,99 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       reader.readAsDataURL(file);
     }
   }
+  */
+
+  onFileSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0];
+      const fileType = file.type;
+      const reader = new FileReader();
+  
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        const fileSrc = (e.target as FileReader).result as string;
+        // this.videoDataUrl = fileSrc;
+  
+        if (fileType.startsWith('image/')) {
+          // Gestione dell'immagine come prima
+          this.handleImage(fileSrc);
+        } else if (fileType.startsWith('video/')) {
+          // Gestione del video
+          // this.handleVideo(this.videoDataUrl);
+          this.videoDataUrl = fileSrc; // Imposta l'URL del video
+          this.videoPreviewUrl = fileSrc; // Utilizzato per l'anteprima nel modale
+        }
+      };
+  
+      reader.readAsDataURL(file);
+    }
+  }
+  
+  handleImage(imgSrc: string): void {
+    this.imageDataUrl = imgSrc;
+    const image = new Image();
+    image.onload = () => {
+      const canvasElement = this.canvasElement.nativeElement;
+      const context = canvasElement.getContext('2d');
+      const maxWidth = 300;
+      const maxHeight = 300;
+  
+      let width = image.width;
+      let height = image.height;
+  
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+  
+      if (context) {
+        context.drawImage(image, 0, 0, width, height);
+        canvasElement.style.display = 'block';
+        this.videoElement.nativeElement.style.display = 'none';
+      }
+    };
+    image.src = imgSrc;
+  }
+  
+  handleVideo(videoSrc: string): void {
+    // Salva l'URL del video per l'uso successivo
+    this.videoDataUrl = videoSrc;
+  
+    // Crea un elemento video temporaneo per estrarre un frame
+    const videoElement = document.createElement('video');
+    videoElement.src = videoSrc;
+  
+    // Aspetta che il metadato del video sia caricato per assicurarsi che le dimensioni siano disponibili
+    videoElement.addEventListener('loadedmetadata', () => {
+      // Crea un canvas per disegnare il frame
+      const canvas = document.createElement('canvas');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+  
+      const context = canvas.getContext('2d');
+      if (context) {
+        // Disegna un frame del video sul canvas
+        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+  
+        // Converti il canvas in un'immagine per l'anteprima
+        this.videoPreviewUrl = canvas.toDataURL('image/png');
+      }
+    });
     
+    // Carica il video (è necessario per alcuni browser per attivare l'evento loadedmetadata)
+    videoElement.load();
+  }
+  
+  
+  
+
   closeCameraModal(): void {
     // Ferma la webcam
     if (this.videoElement && this.videoElement.nativeElement.srcObject) {
@@ -414,6 +516,51 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
     this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
   }
+
+
+  /*Video modale*/
+  removeSentVideo(): void {
+    this.videoDataUrl = null;
+    this.sentVideoUrl = null;
+    this.videoPreviewUrl = null; // Utilizzato per l'anteprima nel modale
+    this.showVideoModal = false;
+    this.updateRemainingChars(); // Aggiorna dopo l'invio dell'immagine
+    this.enableOtherAttachments(); // Riabilita gli altri pulsanti di allegato
+  }
+  
+  sendVideo(): void {
+    if (this.remainingChars >= 150) { // Assumi che il costo di un video sia 150 caratteri
+      if (!this.videoDataUrl) {
+        alert("Nessun video selezionato.");
+        return;
+      }
+  
+      // Chiudi il modale del video se è aperto
+      this.closeVideoModal();
+  
+      // Imposta l'URL del video inviato
+      this.sentVideoUrl = this.videoDataUrl;
+  
+      // Aggiorna il conteggio dei caratteri rimanenti
+      this.updateCharLeftUser({ target: { value: this.userText } } as unknown as Event);
+      this.updateRemainingChars();
+  
+      // Resetta l'URL del video per evitare riutilizzi
+      this.videoDataUrl = null;
+    } else {
+      alert("Caratteri rimanenti insufficienti per allegare un video.");
+      this.showPurchasePopup = true;
+    }
+  
+    // Disabilita gli altri pulsanti di allegato se necessario
+    this.disableOtherAttachments('video');
+  }
+  
+  closeVideoModal(): void {
+    this.showVideoModal = false;
+  }
+
+  
 
 
   /*Modale link*/
@@ -823,7 +970,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
         link: this.sentLink || '',
         photo: this.sentImageUrl || '',
         position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
-        video: '', // Assumo che non ci sia supporto per video al momento
+        video: this.sentVideoUrl || '',
       },
       photoprofile: photoProfile,
       date: date,
@@ -981,7 +1128,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
         link: this.sentLink || '',
         photo: this.sentImageUrl || '',
         position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
-        video: '', // Assumo che non ci sia supporto per video al momento
+        video: this.sentVideoUrl || '', 
       },
       photoprofile: photoProfile,
       date: date,

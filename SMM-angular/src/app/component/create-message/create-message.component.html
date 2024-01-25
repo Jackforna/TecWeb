@@ -104,6 +104,15 @@
             </div>
         </div>
 
+        <!-- Video container -->
+        <div *ngIf="sentVideoUrl" class="sent-video-container">
+            <video [src]="sentVideoUrl" controls>
+                Your browser does not support the video tag.
+            </video>
+            <span class="close-icon" (click)="removeSentVideo()">&#10006;</span>
+        </div>
+           
+
         <!-- Link container -->
         <div *ngIf="sentLink" class="sent-link-container">
             <a [href]="sentLink" target="_blank">{{ sentLink }}</a>
@@ -121,6 +130,7 @@
             <div class="input-icons">
                 <button class="icon-button" (click)="openLinkDialog()"><i class="material-icons">attach_file</i></button>
                 <button class="icon-button" (click)="openCameraDialog()"><i class="material-icons">photo_camera</i></button>
+                <button class="icon-button" (click)="openVideoDialog()"><i class="material-icons">videocam</i></button>
                 <button class="icon-button" (click)="getUserLocation()"><i class="material-icons">place</i></button>
                 <button class="icon-button" (click)="openMapModal()"><i class="material-icons">pin_drop</i></button>
                 <button class="icon-button send-icon"><i class="material-icons" (click)="createPublicSqueal()" *ngIf="!isChannel">send</i></button>
@@ -144,6 +154,23 @@
                     <input type="file" id="file-input" accept="image/*,video/*,.gif" (change)="onFileSelected($event)" hidden>                    
                     <button class="icon-button" (click)="closeCameraModal()"><i class="material-icons">close</i></button>
                     <button class="icon-button send-icon" (click)="sendImage()"><i class="material-icons">send</i></button>
+                </div>
+            </div>
+        </div>
+
+        <!--Modale video-->
+        <div class="video-modal" *ngIf="showVideoModal">
+            <div class="video-modal-content">
+              <h2>Carica o Registra un Video</h2>
+              <!-- <canvas #canvasElement width="300px" height="300px" style="display:none; width: 300px; height: 300px;"></canvas> -->
+              <video *ngIf="videoPreviewUrl" [src]="videoPreviewUrl" controls style="width: 300px; height: 300px;"></video>
+                <div class = "video-modal-buttons">
+                    <label for="file-input" class="icon-button">
+                        <i class="material-icons">file_upload</i>
+                    </label>
+                    <input type="file" id="file-input" accept="video/*,.gif" (change)="onFileSelected($event)" hidden>                    
+                    <button class="icon-button" (click)="closeVideoModal()"><i class="material-icons">close</i></button>
+                    <button class="icon-button send-icon" (click)="sendVideo()"><i class="material-icons">send</i></button>
                 </div>
             </div>
         </div>
