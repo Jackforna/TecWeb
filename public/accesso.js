@@ -89,7 +89,7 @@ async function addUserAndActualUser(nickname, email, password, fullname, type) {
             char_d: 300, 
             char_w: 2000,
             char_m: 7000, 
-            notifications: [false, false, false, false, false]
+            notifications: [false, false, false, false]
         };
 
         // Aggiungi il campo managedAccounts se l'utente è un social media manager

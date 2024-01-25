@@ -1013,6 +1013,11 @@ function editpositivereactions(){
     if(editsqueal.pos_reactions>0.25*editsqueal.impressions){
         if(editsqueal.neg_reactions>0.25*editsqueal.impressions){
           editsqueal.category = "controversial";
+          for(let i=0;i<channels;i++){
+            if(channels[i].name == "CONTROVERSIAL"){
+                channels[i].list_posts.push(editsqueal);
+            }
+          }
         } else {
           editsqueal.category = "popular";
         }
@@ -1022,6 +1027,7 @@ function editpositivereactions(){
     document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
     document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
     savechangessqueal();
+    updateChannels(channels);
     }
 }
 
@@ -1035,6 +1041,11 @@ function editnegativereactions(){
     if(editsqueal.pos_reactions>0.25*editsqueal.impressions){
         if(editsqueal.neg_reactions>0.25*editsqueal.impressions){
           editsqueal.category = "controversial";
+          for(let i=0;i<channels;i++){
+            if(channels[i].name == "CONTROVERSIAL"){
+                channels[i].list_posts.push(editsqueal);
+            }
+          }
         } else {
           editsqueal.category = "popular";
         }
@@ -1044,6 +1055,7 @@ function editnegativereactions(){
     document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
     document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
     savechangessqueal();
+    updateChannels(channels);
     }
 }
 
@@ -1268,7 +1280,7 @@ document.getElementById("filterchanneltype").addEventListener("change",()=>{
             } else {
                 for(i=0;i<7;i++)
                     document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
-                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore4()">Show more</p>';
             }
         break;
     }
@@ -1369,7 +1381,7 @@ document.getElementById("searchchannel").addEventListener("input",()=>{
             } else {
                 for(i=0;i<7;i++)
                     document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
-                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore4()">Show more</p>';
             }
         } else {
             arrsearchCHANNEL = arrCHANNELS;
@@ -1379,7 +1391,7 @@ document.getElementById("searchchannel").addEventListener("input",()=>{
             } else {
                 for(i=0;i<7;i++)
                     document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
-                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore4()">Show more</p>';
             }
         }
     }
@@ -1472,37 +1484,29 @@ function showless2(){
     }
 }
 
-function showmore3(){
+function showmore4(){
     document.getElementById("listchannel_find").innerHTML = "";
-    if(arrchannelpopularity.length>0){
-        for(i=0;i<arrchannelpopularity.length;i++)
-            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrchannelpopularity[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showless3()">Show less</p>';
-    } else if(arrsearchchannel.length>0){
-        for(i=0;i<arrsearchchannel.length;i++)
-            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showless3()">Show less</p>';
+    if(arrsearchCHANNEL.length>0){
+        for(i=0;i<arrsearchCHANNEL.length;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showless4()">Show less</p>';
     } else {
-        for(i=0;i<arrchannels.length;i++)
-            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrchannels[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showless3()">Show less</p>';
+        for(i=0;i<arrCHANNELS.length;i++)
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showless4()">Show less</p>';
     }
 }
 
-function showless3(){
+function showless4(){
     document.getElementById("listchannel_find").innerHTML = "";
-    if(arrchannelpopularity.length>0){
+    if(arrsearchCHANNEL.length>0){
         for(i=0;i<7;i++)
-            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrchannelpopularity[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
-    } else if(arrsearchchannel.length>0){
-        for(i=0;i<7;i++)
-            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchchannel[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore4()">Show more</p>';
     } else {
         for(i=0;i<7;i++)
-            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrchannels[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
-        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+            document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editchan('+i+')">Edit</button></div>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore4()">Show more</p>';
     }
 }
 
@@ -1624,7 +1628,7 @@ document.getElementById("createnewCHANNEL").addEventListener("click",()=>{
     document.getElementById("sectioncreateCHANNELdescription").value = "";
     document.getElementById("imgnewmessageCHANNEL").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     document.getElementById("textnewmessageCHANNEL").value = "";
-    document.getElementById("typenewmessageCHANNEL").value = "welcome";
+    document.getElementById("typenewmessageCHANNEL").value = "Welcome";
     document.getElementById("userrequestnewmessageCHANNEL").value = "";
     document.getElementById("remindernewmessageCHANNEL").value = "day";
     document.getElementById("userrepeatnewmessageCHANNEL").value = "";
@@ -1762,7 +1766,7 @@ document.getElementById("sectioneditCHANNELdelete").addEventListener("click",()=
     } else if(arrsearchCHANNEL.length>7){
         for(i=0;i<7;i++)
             document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrsearchCHANNEL[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
-        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+        document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore4()">Show more</p>';
     }
 });
 
@@ -1807,28 +1811,28 @@ document.getElementById("viewCHANNELmessages").addEventListener("click",async ()
             }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
         switch(arrcreateCHANNELmessages[i].type){
-            case 'welcome':
+            case 'Welcome':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p>'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
-            case 'answer':
+            case 'Answer':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p>'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
-            case 'reminder':
-                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p>'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+            case 'Reminder':
+                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].remind.every+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p>'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
-            case 'repeat':
+            case 'Repeat':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].repetition+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p>'+Address+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
-            case 'casual images':
+            case 'Casual Images':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
-            case 'news':
+            case 'News':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
-            case 'twitter':
+            case 'Twitter':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
-            case 'wikipedia':
+            case 'WikiInfo':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
         }
@@ -1967,7 +1971,7 @@ function removeownerCHANNEL(x){
 document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
     let select = document.getElementById("typenewmessageCHANNEL").value;
     switch(select){
-        case 'welcome':
+        case 'Welcome':
             if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
             if(!document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
@@ -1977,7 +1981,7 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
             if(document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("squealnewmessageCHANNEL").classList.remove('d-none');
         break;
-        case 'answer':
+        case 'Answer':
             if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
             if(document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
@@ -1987,7 +1991,7 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
             if(document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("squealnewmessageCHANNEL").classList.remove('d-none');
         break;
-        case 'reminder':
+        case 'Reminder':
             if(document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("remindernewmessageCHANNEL").classList.remove('d-none');
             if(!document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
@@ -1997,7 +2001,7 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
             if(document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("squealnewmessageCHANNEL").classList.remove('d-none');
         break;
-        case 'repeat':
+        case 'Repeat':
             if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
             if(!document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
@@ -2007,7 +2011,7 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
             if(!document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("squealnewmessageCHANNEL").classList.add('d-none');
         break;
-        case 'casual images':
+        case 'Casual Images':
             if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
             if(document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
@@ -2017,7 +2021,7 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
             if(!document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("squealnewmessageCHANNEL").classList.add('d-none');
         break;
-        case 'news':
+        case 'News':
             if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
             if(document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
@@ -2027,7 +2031,7 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
             if(!document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("squealnewmessageCHANNEL").classList.add('d-none');
         break;
-        case 'twitter':
+        case 'Twitter':
             if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
             if(document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
@@ -2037,7 +2041,7 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
             if(!document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("squealnewmessageCHANNEL").classList.add('d-none');
         break;
-        case 'wikipedia':
+        case 'WikiInfo':
             if(!document.getElementById("remindernewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("remindernewmessageCHANNEL").classList.add('d-none');
             if(document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
@@ -2074,11 +2078,10 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
     if(document.getElementById("videonewmessageCHANNEL").src!=window.location.href)
         video = await fetchBlobFromUrl(document.getElementById("videonewmessageCHANNEL").src);
     document.getElementById("map").classList.add("d-none");
-    document.getElementById("map").innerHTML = '<button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletemap()"><i class="bi-x" style="font-size:20px"></i></button><button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>';
     document.getElementById("linknewmessageCHANNEL").innerHTML = '';
     let newmessage;
     switch(select){
-        case 'welcome':
+        case 'Welcome':
             if((textmessage_empty!="")|(link!="")|(video!="")|(photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")|(position.length!=0)){
             newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:textmessage, link:link, photo:photo, position:position, video:video}};
             arrcreateCHANNELmessages.push(newmessage);
@@ -2086,9 +2089,9 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
                 alert("The message is empty!");
             }
         break;
-        case 'answer':
+        case 'Answer':
             if((textmessage_empty!="")|(link!="")|(photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")|(position.length!=0)){
-                if(request!=""){
+                if(request!="" && request.startsWith('to/') && request!='to/'){
                 newmessage = {type:select, request:userrequesttext, remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:textmessage, link:link, photo:photo, position:position, video:video}};
                 arrcreateCHANNELmessages.push(newmessage);
                 } else {
@@ -2098,7 +2101,7 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
                 alert("The message is empty!");
             }
         break;
-        case 'reminder':
+        case 'Reminder':
             if((textmessage_empty!="")|(link!="")|(photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")|(position.length!=0)){
                 let date = new Date();
                 let hour = date.getHours() + ":" + date.getMinutes();
@@ -2109,40 +2112,50 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
                 } else if(frequencymessage=="every month"){
                     dayMonth = date.getDate()+1;
                 }
-                newmessage = {type:select, request:"", remind:{every:frequencymessage, dayWeek:dayWeek, dayMonth:dayMonth, hour:hour}, repetition:"", frequency:frequencymessage, body:{text:textmessage, link:link, photo:photo, position:position, video:video}};
+                newmessage = {type:select, request:"", remind:{every:frequencymessage, dayWeek:dayWeek, dayMonth:dayMonth, hour:hour}, repetition:"", body:{text:textmessage, link:link, photo:photo, position:position, video:video}};
                 arrcreateCHANNELmessages.push(newmessage);
             } else {
                 alert("The message is empty!");
             }
         break;
-        case 'repeat':
-            if(repetitionmessage!=""){
-                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:repetitionmessage, body:{text:"/begin", link:"", photo:"", position:[], video:""}};
+        case 'Repeat':
+            if(document.getElementById("userrepeatnewmessageCHANNEL").value!=""){
+                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:repetitionmessage, body:{text:"to /begin", link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
                 arrcreateCHANNELmessages.push(newmessage);
+            } else {
+                alert('You must write the number of times you want to repeat this message');
             }
         break;
-        case 'casual images':
-            if(userrequesttext!=""){
-                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:userrequesttext, link:"", photo:"", position:[], video:""}};
+        case 'Casual Images':
+            if(userrequesttext!="to /" && userrequesttext.startsWith("to /")){
+                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:userrequesttext, link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
                 arrcreateCHANNELmessages.push(newmessage);
+            } else {
+                alert('User request not valid');
             }
         break;
-        case 'news':
-            if(userrequesttext!=""){
-                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:userrequesttext, link:"", photo:"", position:[], video:""}};
+        case 'News':
+            if(userrequesttext!="to /" && userrequesttext.startsWith("to /")){
+                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:userrequesttext, link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
                 arrcreateCHANNELmessages.push(newmessage);
+            } else {
+                alert('User request not valid');
             }
         break;
-        case 'twitter':
-            if(userrequesttext!=""){
-                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:userrequesttext, link:"", photo:"", position:[], video:""}};
+        case 'Twitter':
+            if(userrequesttext!="to /" && userrequesttext.startsWith("to /")){
+                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:userrequesttext, link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
                 arrcreateCHANNELmessages.push(newmessage);
+            } else {
+                alert('User request not valid');
             }
         break;
-        case 'wikipedia':
-            if(userrequesttext!=""){
-                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:userrequesttext, link:"", photo:"", position:[], video:""}};
+        case 'WikiInfo':
+            if(userrequesttext!="to /" && userrequesttext.startsWith("to /")){
+                newmessage = {type:select, request:"", remind:{every:"", dayWeek:"", dayMonth:"", hour:""}, repetition:"", body:{text:userrequesttext, link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
                 arrcreateCHANNELmessages.push(newmessage);
+            } else {
+                alert('User request not valid');
             }
         break;
     }
@@ -2155,40 +2168,42 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
             }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
             switch(arrcreateCHANNELmessages[i].type){
-                case 'welcome':
+                case 'Welcome':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p class="card-text">'+ Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'answer':
+                case 'Answer':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'reminder':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                case 'Reminder':
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].remind.every+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'repeat':
+                case 'Repeat':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].repetition+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'casual images':
+                case 'Casual Images':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'news':
+                case 'News':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'twitter':
+                case 'Twitter':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'wikipedia':
+                case 'WikiInfo':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
             }
-            if(document.getElementById("recordedVideosquealer").src!=window.location.href)
-                document.getElementById("recordedVideosquealer").classList.remove("d-none");
-            document.getElementById("recordedVideosquealer").removeAttribute("id");
+            if(arrcreateCHANNELmessages[i].type=='Welcome' | arrcreateCHANNELmessages[i].type=='Answer' | arrcreateCHANNELmessages[i].type=='Reminder'){
+                if(document.getElementById("recordedVideosquealer").src!=window.location.href)
+                    document.getElementById("recordedVideosquealer").classList.remove("d-none");
+                document.getElementById("recordedVideosquealer").removeAttribute("id");
+            }
                 
         }
         document.getElementById("viewCHANNELmessageslist").innerHTML += '<button class="btn btn-outline-info m-2" onclick="closeCHANNELmessageslist()">Hide CHANNEL messages</button>';
     }
     document.getElementById("textnewmessageCHANNEL").value = "";
-    document.getElementById("typenewmessageCHANNEL").value = "welcome";
+    document.getElementById("typenewmessageCHANNEL").value = "Welcome";
     document.getElementById("userrequestnewmessageCHANNEL").value = "";
     document.getElementById("remindernewmessageCHANNEL").value = "day";
     document.getElementById("linknewmessageCHANNEL").value = "";
@@ -2222,28 +2237,28 @@ async function deletenewmessageCHANNEL(x){
             }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
             switch(arrcreateCHANNELmessages[i].type){
-                case 'welcome':
+                case 'Welcome':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'answer':
+                case 'Answer':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'reminder':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].frequency+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
+                case 'Reminder':
+                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].remind.every+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" style="width:100%;overflow-x:100%" href="'+arrcreateCHANNELmessages[i].body.link+'">'+arrcreateCHANNELmessages[i].body.link+'</a><div class="text-center"><img src="'+arrcreateCHANNELmessages[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'repeat':
+                case 'Repeat':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].repetition+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'casual images':
+                case 'Casual Images':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'news':
+                case 'News':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'twitter':
+                case 'Twitter':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
-                case 'wikipedia':
+                case 'WikiInfo':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+'</p></div><div class="card-body" style=" flex-direction:column"><p class="card-text">'+arrcreateCHANNELmessages[i].body.text+'</p></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
             }
@@ -2293,7 +2308,6 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
     let silenceable = CHANNELsilenceable.checked;
     let list_users = arrcreateCHANNELowners;
     let list_mess = arrcreateCHANNELmessages;
-    let rule = document.getElementById("sectioncreateCHANNELrule").value;
     let creator = actualuser.nickname;
     let name_empty = name.replace(/\s/g,"");
     let Valid = true;
@@ -2305,14 +2319,14 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
             }
         }
         if(Valid){
-        let newCHANNEL = {creator:creator, photoprofile:photo, photoprofileX:0, photoprofileY:0, name:name, rule:rule, description:description, silenceable:silenceable, list_users:list_users, list_mess:list_mess, type:'$', list_posts:[], popularity:0};
+        let newCHANNEL = {creator:creator, photoprofile:photo, photoprofileX:0, photoprofileY:0, name:name, description:description, silenceable:silenceable, list_users:list_users, list_mess:list_mess, usersSilenced:[], type:'$', list_posts:[], popularity:0};
         channels.push(newCHANNEL);
         addChannel(newCHANNEL);
         alert("CHANNEL creation successfully");
         document.getElementById("sectioncreateCHANNEL").classList.remove("d-flex");
         document.getElementById("sectioncreateCHANNEL").classList.add("d-none");
-        document.getElementById("sectioncreateCHANNEL").innerHTML = "";
         document.getElementById("listchannel_find").innerHTML = "";
+        arrCHANNELS = [];
         for(i=0;i<channels.length;i++){
             if(channels[i].type=="$"){
                 arrCHANNELS.push(channels[i]);
@@ -2326,7 +2340,7 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
             } else {
                 for(i=0;i<7;i++)
                     document.getElementById("listchannel_find").innerHTML += '<div class="found"><p>'+arrCHANNELS[i].name+'</p><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em; max-height:45px" onclick="editCHAN('+i+')">Edit</button></div>';
-                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore3()">Show more</p>';
+                document.getElementById("listchannel_find").innerHTML += '<p class="showmore" onclick="showmore4()">Show more</p>';
             }
         }
     } else {
@@ -2380,9 +2394,9 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
             if(editCHANNEL.list_users[i].nickname!=actualuser.nickname)
                 receivers.push("@" + editCHANNEL.list_users[i].nickname);
         }
-        squeals.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], category:null, receivers:receivers, channel:channel, impressions:0});
-        addSqueal({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], category:null, receivers:receivers, channel:channel, impressions:0});
-        editCHANNEL.list_posts.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], category:null, receivers:receivers, channel:channel, impressions:0});
+        squeals.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:receivers, channel:channel, impressions:0});
+        addSqueal({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:receivers, channel:channel, impressions:0});
+        editCHANNEL.list_posts.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:receivers, channel:channel, impressions:0});
         document.getElementById("photonewsqueal").innerHTML = '';
         document.getElementById("linknewsqueal").innerHTML = '';
         if(!document.getElementById("mapnewsqueal").classList.contains('d-none'));
@@ -2410,6 +2424,8 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
             if(editCHANNEL.list_posts[i].photoprofile=="")
                 document.getElementById("imgprofilesquealer").src = "img/profile_photo1.png";
             document.getElementById("imgprofilesquealer").removeAttribute("id");
+            latitude = "";
+            longitude = "";
         }
     } else {
         alert("The message is empty!");
@@ -2449,6 +2465,7 @@ function accesscamera(x){
     num_message = x;
     document.getElementById("access-camera").classList.remove("d-none");
     document.getElementById("access-camera").classList.add("d-flex");
+    videoElement.classList.remove("d-none");
 }
 
 startButton.addEventListener('click', async () => {
@@ -2461,6 +2478,7 @@ startButton.addEventListener('click', async () => {
         usePhoto.classList.add("d-none");
         startButton.classList.add("d-none");
         captureButton.classList.remove("d-none");
+        document.getElementById("labelpicturewebcam").classList.add("d-none");
         mediaStream = stream;
     } catch (error) {
         console.error('Errore durante l\'accesso alla fotocamera:', error);
@@ -2475,23 +2493,12 @@ captureButton.addEventListener('click', () => {
         canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
         // Mostra l'immagine catturata su un elemento immagine
         capturedPhoto.src = canvas.toDataURL('image/jpeg');
-        if(num_message==1){
-            document.getElementById("imgnewmessageCHANNEL").src = capturedPhoto.src;
-            document.getElementById("photonewmessage").innerHTML = '<img src="'+capturedPhoto.src+'" class="rounded" alt="..." style="width:100%; height:100%"></img><button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletephoto(1)"><i class="bi-x" style="font-size:20px"></i></button>';
-        } else if(num_message==3){
-            document.getElementById("imgnewsqueal").src = capturedPhoto.src;
-            document.getElementById("photonewsqueal").innerHTML += '<img src="'+capturedPhoto.src+'" class="rounded" alt="..." style="width:100%; height:100%"></img><button style="position: absolute; top: 10px; right: 10px; color:white; background-color: red; border-radius:8px; border:0" onclick="deletephoto(3)"><i class="bi-x" style="font-size:20px"></i></button>';
-        } else { 
-            newphotoprofile = capturedPhoto.src;
-            document.getElementById("sectioncreateCHANNELphotoimg").src = newphotoprofile;
-            document.getElementById("sectioncreateCHANNELphotoimg").style = "filter:invert(0); height:100%; width:auto";
-        }
         capturedPhoto.classList.remove("d-none");
         videoElement.classList.add("d-none");
         usePhoto.classList.remove("d-none");
         startButton.classList.remove("d-none");
         captureButton.classList.add("d-none");
-        //blocca il mediaStream
+        document.getElementById("labelpicturewebcam").classList.remove("d-none");
         mediaStream.getTracks().forEach(track => track.stop());
     }
 });
@@ -2508,16 +2515,38 @@ function deletephoto(x){
 
 usePhoto.addEventListener("click",()=>{
     document.getElementById("access-camera").classList.add("d-none");
-    capturedPhoto.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     capturedPhoto.classList.add("d-none");
     usePhoto.classList.add("d-none");
+    if(num_message==1){
+        document.getElementById("imgnewmessageCHANNEL").src = capturedPhoto.src;
+        document.getElementById("photonewmessage").innerHTML = '<img src="'+capturedPhoto.src+'" class="rounded" alt="..." style="width:100%; height:100%"></img><button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletephoto(1)"><i class="bi-x" style="font-size:20px"></i></button>';
+    } else if(num_message==3){
+        document.getElementById("imgnewsqueal").src = capturedPhoto.src;
+        document.getElementById("photonewsqueal").innerHTML = '<img src="'+capturedPhoto.src+'" class="rounded" alt="..." style="width:100%; height:100%"></img><button style="position: absolute; top: 10px; right: 10px; color:white; background-color: red; border-radius:8px; border:0" onclick="deletephoto(3)"><i class="bi-x" style="font-size:20px"></i></button>';
+    } else { 
+        newphotoprofile = capturedPhoto.src;
+        document.getElementById("sectioncreateCHANNELphotoimg").src = newphotoprofile;
+        document.getElementById("sectioncreateCHANNELphotoimg").style = "filter:invert(0); height:100%; width:auto";
+    }
 });
 
 document.getElementById("closetakephoto").addEventListener("click",()=>{
     document.getElementById("access-camera").classList.add("d-none");
-    capturedPhoto.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     capturedPhoto.classList.add("d-none");
     usePhoto.classList.add("d-none");
+    if(capturedPhoto.src==""){
+        if(num_message==1){
+            document.getElementById("imgnewmessageCHANNEL").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            document.getElementById("photonewmessage").innerHTML = '';
+        } else if(num_message==3){
+            document.getElementById("imgnewsqueal").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            document.getElementById("photonewsqueal").innerHTML = '';
+        } else { 
+            newphotoprofile = capturedPhoto.src;
+            document.getElementById("sectioncreateCHANNELphotoimg").src = newphotoprofile;
+            document.getElementById("sectioncreateCHANNELphotoimg").style = "filter:invert(0); height:100%; width:auto";
+        }
+    }
 });
 
 function dataURLtoBlob(dataurl) {
@@ -2529,11 +2558,35 @@ function dataURLtoBlob(dataurl) {
     return new Blob([u8arr], {type:mime});
   }
 
+function loadImage(event){
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            canvas.getContext('2d').drawImage(videoElement, 0, 0);
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            capturedPhoto.src = canvas.toDataURL('image/jpeg');
+        }
+        img.src = e.target.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+    capturedPhoto.classList.remove("d-none");
+    videoElement.classList.add("d-none");
+    usePhoto.classList.remove("d-none");
+    startButton.classList.remove("d-none");
+    captureButton.classList.add("d-none");
+    document.getElementById("labelpicturewebcam").classList.remove("d-none");
+}
+
 /*-------------------------------------Accesso geolocalizzazione----------------------------------------------*/
 
 function getposition(x){
+    num_message = x;
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
+        navigator.geolocation.getCurrentPosition(async(position) => {
             latitude = position.coords.latitude;
             longitude = position.coords.longitude;
             if(x==1){
@@ -2541,17 +2594,14 @@ function getposition(x){
                 if (map != null) {
                     map.remove();
                 }
-                document.getElementById("map").innerHTML = '<button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletemap()"><i class="bi-x" style="font-size:20px"></i></button><button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>';
-                map = L.map('map').setView([latitude, longitude], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
-
-                L.marker([latitude, longitude]).addTo(map);
+                let Address = await getAddressGeolocation(latitude, longitude);
+                document.getElementById("map").innerHTML = '<p class="text-light" style="font-size:16px">'+Address+'</p><button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletemap()"><i class="bi-x" style="font-size:20px"></i></button>';
             } else {
                 document.getElementById("mapnewsqueal").classList.remove("d-none");
                 if (map2 != null) {
                     map2.remove();
                 }
-                document.getElementById("map").innerHTML = '<button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletemap()"><i class="bi-x" style="font-size:20px"></i></button><button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>';
+                document.getElementById("mapnewsqueal").innerHTML = '<button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletemap()"><i class="bi-x" style="font-size:20px"></i></button><button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>';
                 map2 = L.map('mapnewsqueal').setView([latitude, longitude], 13);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map2);
                 
@@ -2577,6 +2627,32 @@ function deletemap() {
 function openGoogleMaps() {
     var url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     window.open(url, '_blank');
+}
+
+async function getAddressGeolocation(lat, lon) {
+    if (lat === undefined || lon === undefined) {
+        return("");
+    }
+    console.log(lat,lon);
+    var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`Errore di rete: ${response.status} ${response.statusText}`);
+        }
+
+        let via = data.address.road || data.address.name || '';
+        let citta = data.address.town || data.address.city || data.address.village || '';
+        let cap = data.address.postcode || '';
+        let nazione = data.address.country || '';
+
+        return `${via}, ${citta}, ${cap}, ${nazione}`;
+    } catch (error) {
+        console.error("Errore nella richiesta:", error);
+        return ""; // Restituisci una stringa vuota o gestisci l'errore come preferisci
+    }
 }
 
 /*--------------------------------------------accesso videocamera--------------------------------------------*/
@@ -2684,31 +2760,5 @@ async function fetchBlobFromUrl(blobUrl) {
         return blob;
     } catch (error) {
         console.error('Error fetching Blob from URL:', error);
-    }
-}
-
-async function getAddressGeolocation(lat, lon) {
-    if (lat === undefined || lon === undefined) {
-        return("");
-    }
-    console.log(lat,lon);
-    var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(`Errore di rete: ${response.status} ${response.statusText}`);
-        }
-
-        let via = data.address.road || data.address.name || '';
-        let citta = data.address.town || data.address.city || data.address.village || '';
-        let cap = data.address.postcode || '';
-        let nazione = data.address.country || '';
-
-        return `${via}, ${citta}, ${cap}, ${nazione}`;
-    } catch (error) {
-        console.error("Errore nella richiesta:", error);
-        return ""; // Restituisci una stringa vuota o gestisci l'errore come preferisci
     }
 }

@@ -64,6 +64,7 @@ function Search() {
       shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
       iconAnchor: [12, 41]
     });
+    const [silenceChannel, setSilenceChannel] = useState(false);
 
   useEffect(() => {
         if (location.pathname.endsWith('/search')) {
@@ -249,6 +250,12 @@ function Search() {
                         setInChannel(true);
                     }
                   }
+                  setSilenceChannel(false);
+                  for(let k=0; k<allchannels[x].usersSilenced.length;k++){
+                    if(allchannels[x].usersSilenced[k] == (actualuser.nickname)){
+                      setSilenceChannel(true);
+                    }
+                  }
                   setnewphotochannel(allchannels[x].photoprofile);
                   setPositionchannel({x:allchannels[x].photoprofileX, y:allchannels[x].photoprofileY});
                 }
@@ -269,6 +276,12 @@ function Search() {
                   for(let j=0;j<allCHANNELS[x].list_users.length;j++){
                     if(allCHANNELS[x].list_users[j].nickname==(actualuser.nickname)){
                         setInChannel(true);
+                    }
+                  }
+                  setSilenceChannel(false);
+                  for(let k=0; k<allCHANNELS[x].usersSilenced.length;k++){
+                    if(allCHANNELS[x].usersSilenced[k] == (actualuser.nickname)){
+                      setSilenceChannel(true);
                     }
                   }
                   setnewphotochannel(allCHANNELS[x].photoprofile);
@@ -482,6 +495,52 @@ const subscribekeyword = () => {
   }
   setallkeywords(allkeywords);
   setInKeyword(!inKeyword);
+  let ListChannels = [...allchannels, ...allCHANNELS, ...allkeywords];
+  updateAllChannels(ListChannels);
+}
+
+const toggleSilenceChannel = () => {
+  if(!silenceChannel){
+    for(let i=0; i<allchannels.length; i++){
+      if(allchannels[i].name==newnamechannel){
+        allchannels[i].usersSilenced.push(actualuser.nickname);
+      }
+    }
+    for(let i=0; i<allCHANNELS.length; i++){
+      if(allCHANNELS[i].name==newnamechannel){
+            allCHANNELS[i].usersSilenced.push(actualuser.nickname);
+      }
+    }
+  } else {
+    console.log("Entrato");
+    for(let i=0; i<allchannels.length; i++){
+      if(allchannels[i].name==newnamechannel){
+        let newArr = [...allchannels[i].usersSilenced];
+        allchannels[i].usersSilenced = [];
+        for(let j=0; j<newArr.length;j++){        
+          if (newArr[j]!=actualuser.nickname){
+            allchannels[i].usersSilenced.push(newArr[j]);
+          }
+        }
+      }
+    }
+    for(let i=0; i<allCHANNELS.length; i++){
+      if(allCHANNELS[i].name==newnamechannel){
+        let newArr = [...allCHANNELS[i].usersSilenced];
+        allCHANNELS[i].usersSilenced = [];
+        for(let j=0; j<newArr.length;j++){        
+          if (newArr[j]!=actualuser.nickname){
+            allCHANNELS[i].usersSilenced.push(newArr[j]);
+          }
+        }
+      }
+    }
+  }
+  setallCHANNELS(allCHANNELS);
+  setallchannels(allchannels);
+  let ListChannels = [...allchannels, ...allCHANNELS, ...allkeywords];
+  updateAllChannels(ListChannels);
+  setSilenceChannel(!silenceChannel);
 }
 
     return (
@@ -666,11 +725,13 @@ const subscribekeyword = () => {
                     <Container style={{ maxWidth: '800px', alignItems:'center'}} className="d-flex flex-column mt-3">
                         <Row className='d-flex flex-row' style={{width:'100%', justifyContent:'center'}}>
                             <p className='mb-3' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>{newnamechannel}</p>
+                            {inChannel && newsilenceablechannel && (
                             <label className="switch" style={{width:'30%', padding:'0.5em'}}>
-                                <p style={{color:'white', width:'50%'}}>Silenceable</p>
-                                <input type="checkbox" style={{cursor:'default'}} disabled={true} checked={newsilenceablechannel}/>
+                                <p style={{color:'white', width:'50%'}}>Silence</p>
+                                <input type="checkbox" style={{cursor:'pointer'}} checked={silenceChannel} onChange={toggleSilenceChannel}/>
                                 <span className="slider"></span>
                             </label>
+                            )}
                         </Row>
                         <textarea spellCheck='false' readOnly className='textareaprofile' value={newbiochannel} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
@@ -755,7 +816,7 @@ const subscribekeyword = () => {
                             <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                                     <CardGroup>
-                                    {squeal.type} {squeal.remind.every} {squeal.request}
+                                    {squeal.type} {squeal.remind.every!="" && squeal.remind.every!=undefined && (" "+squeal.remind.every)} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
                                     </CardGroup>
                                     <Card.Text>{squeal.hour}</Card.Text>
                                 </Card.Header>

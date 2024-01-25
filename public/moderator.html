@@ -178,14 +178,6 @@
                         <main>
                             <textarea id="sectioncreateCHANNELdescription" placeholder="Description"></textarea>
                             <div>
-                                <select class="form-select mt-0 me-4 bg-black text-light" id="sectioncreateCHANNELrule" aria-label="Default select example">
-                                    <option value="nothing" selected>No rules</option>
-                                    <option value="pos_reactions">Among the most positive reactions</option>
-                                    <option value="neg_reactions">Among the most negative reactions</option>
-                                    <option value="lot_reactions">Among the most reactions</option>
-                                    <option value="last_hour">Of the last hour</option>
-                                    <option value="last_day">Of the last day</option>
-                                </select>
                                 <p class="me-4 mt-2 text-light">Silenceable</p>
                                 <label class="switch">
                                     <input type="checkbox" id="sectioncreateCHANNELsilenceable">
@@ -214,14 +206,14 @@
                                         <div id="flush-collapseOne" class="accordion-collapse collapse">
                                             <section class="accordion-body text-light" style="width:100%">
                                                 <select class="form-select mt-0 bg-black text-light" id="typenewmessageCHANNEL" aria-label="Default select example">
-                                                    <option value="welcome" selected>Welcome</option>
-                                                    <option value="answer">Answer</option>
-                                                    <option value="reminder">Reminder</option>
-                                                    <option value="repeat">Repeat</option>
-                                                    <option value="casual images">Casual Images</option>
-                                                    <option value="news">News</option>
-                                                    <option value="twitter">Twitter</option>
-                                                    <option value="wikipedia">Wiki Info</option>
+                                                    <option value="Welcome" selected>Welcome</option>
+                                                    <option value="Answer">Answer</option>
+                                                    <option value="Reminder">Reminder</option>
+                                                    <option value="Repeat">Repeat</option>
+                                                    <option value="Casual Images">Casual Images</option>
+                                                    <option value="News">News</option>
+                                                    <option value="Twitter">Twitter</option>
+                                                    <option value="WikiInfo">Wiki Info</option>
                                                 </select>
                                                 <select class="form-select mt-3 bg-black text-light d-none" id="remindernewmessageCHANNEL" aria-label="Default select example">
                                                     <option value="day" selected>Every day</option>
@@ -231,14 +223,13 @@
                                                 <div class="card bg-black border-success text-light mt-3" style="min-width:400px" id="squealnewmessageCHANNEL">
                                                     <section style="width:100%">
                                                         <div class="card-header text-center" style="width:100%">
-                                                            <textarea class="text-light bg-transparent border-0" id="textnewmessageCHANNEL" style="width:100%; resize: none;" placeholder="What're you thinking about?" required></textarea>
+                                                            <textarea class="text-light bg-transparent border-0" id="textnewmessageCHANNEL" style="width:100%; resize: none;" placeholder="What're you thinking about?"></textarea>
                                                         </div>
                                                         <div class="card-body" id="inputnewmessageCHANNEL" style="flex-direction: column;">
-                                                            <section id="map" class="d-none" style="width:100%; height: 200px; position: relative; margin-top: 20px; margin-bottom: 20px">
-                                                                <button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletemap()"><i class="bi-x" style="font-size:20px"></i></button>
-                                                                <button style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; border-radius:8px; border:0; padding:6px 12px 6px 12px;" onclick="openGoogleMaps()">Open Map</button>
+                                                            <section id="map" class="d-none">
+                                                                
                                                             </section>
-                                                            <div style="width:200px; max-height:150px" id="photonewmessage"></div>
+                                                            <div style="width:200px; max-height:150px; position:relative" id="photonewmessage"></div>
                                                             <div style="width:200px; max-height:150px; position:relative" class="mt-2" id="videonewmessage"></div>
                                                             <div id="linknewmessageCHANNEL" style="width:100%"></div>
                                                         </div>
@@ -339,12 +330,14 @@
     </section>
     <section id="access-camera" class="container-fluid position-absolute d-none flex-column bg-black overflow-y-scroll align-items-center" style="width:100%; height:100%; top:0; left:0; z-index:1003">
         <button type="button" class="btn-close" aria-label="Close" id="closetakephoto" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1);z-index:2"></button>
-        <h1 class="text-light mt-3">Capture photo from webcam</h1>
+        <h1 class="text-light mt-3">Capture or select photo</h1>
         <video id="webcam" style="max-height:300px" autoplay></video>
         <canvas id="canvas" style="display: none"></canvas>
         <img id="fotoCatturata" class="d-none" src="" alt="Foto Catturata" style="height:300px; width:400px">
         <button class="btn btn-outline-primary m-3" id="avviaFotocamera">Open webcam</button>
         <button class="btn btn-outline-primary m-3 d-none" id="catturaFoto">Take photo</button>
+        <input type="file" id="selectpicturewebcam" class="d-none" accept="image/*" onchange="loadImage(event)">
+        <label for="selectpicturewebcam" id="labelpicturewebcam" class="btn btn-outline-primary m-3">Select picture</label>
         <button id="usephoto" class="btn btn-outline-primary m-3 d-none">Use photo</button>
     </section>
     <section id="access-video" class="container-fluid position-absolute d-none flex-column bg-black overflow-y-scroll align-items-center" style="width:100%; height:100%; top:0; left:0; z-index:1003">

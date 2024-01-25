@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 function Settings() {
-    const [actualuser, setactualuser] = useState({nickname:"", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000, notifications:[false, true, true, false, true]})
+    const [actualuser, setactualuser] = useState({nickname:"", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000, notifications:[false, false, false, false]})
     const [openBar, setOpenBar] = useState(true);
     const location = useLocation();
     const [isNotifications, setIsNotifications] = useState(true);
@@ -308,11 +308,6 @@ function Settings() {
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[3]} onChange={() => changenotification(3)}/>
                         <span className="slider" style={{left:'0'}}></span>
                         <p style={{color:'white', width:'50%', marginLeft:'70px'}}>Personal squeals</p>
-                    </label>
-                    <label className="switch d-flex flex-row mb-3" style={{width:'50%', padding:'0.5em'}}>
-                        <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[4]} onChange={() => changenotification(4)}/>
-                        <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'50%', marginLeft:'70px'}}>Comments to my squeals</p>
                     </label>
                 </Container>
                 <Container className={isAccount ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center', overflowY:'scroll', height:'100%'}}>

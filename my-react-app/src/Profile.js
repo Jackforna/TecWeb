@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect, useReducer} from 'react';
 import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Dropdown, Card, Row, Col, Modal, Image, CardGroup} from 'react-bootstrap';
 import { BrowserRouter as Router, Route, Link, Routes, useLocation} from 'react-router-dom';
 import './App.css';
 import Webcam from 'react-webcam';
-import { Camera, GeoAlt, Link45deg as LinkLogo, Gear, NodeMinus, PersonCircle, BoxArrowLeft, BoxArrowInDown, Trash3, XCircle, CardImage, PatchCheckFill, CameraVideo } from 'react-bootstrap-icons';
+import { Camera, GeoAlt, Link45deg as LinkLogo, Gear, NodeMinus, PersonCircle, BoxArrowLeft, BoxArrowInDown, Trash3, XCircle, CardImage, PatchCheckFill, CameraVideo, Send } from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import pos_reaction1 from '../src/img/reaction_positive1.png'
 import pos_reaction2 from '../src/img/reaction_positive2.png'
@@ -107,6 +107,10 @@ function Profile() {
     const [recordedChunks, setRecordedChunks] = useState([]);
     const [stopRecording, setStopRecording] = useState(false);
     const [stream, setStream] = useState(null);
+    const [viewAnswers, setViewAnswers] = useState(false);
+    const [allAnswersprint, setAllAnswersprint] = useState([]);
+    const [userRequest, setUserRequest] = useState('');
+    const [numSeconds, setNumSeconds] = useState('');
 
     useEffect(() => {
         if (location.pathname.endsWith('/profile')) {
@@ -847,6 +851,8 @@ function Profile() {
         setPositionMap([]);
         setDisplayedLink(null);
         setNewmessagetext('');
+        setNumSeconds('');
+        setUserRequest('');
         setNewmessage({body:{text:'', position:[], link:'', photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', video:''}, request:'', type:'', remind:{every:'',dayMonth:'',dayWeek:'',hour:''}});
         setSelection("Select an option");
         setReminder("Select reminder frequency");
@@ -857,43 +863,9 @@ function Profile() {
 
     const sectionaddmessagechannel = (confirm) => {
         if(confirm){
-            if((newmessage.body.text!='')|(newmessage.body.link!='')|(newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')|(newmessage.body.position.length!=0)|(newmessage.body.video!="")){
                 switch(selection){
                     case "Welcome":
-                        setnewchannelmessages(prevmess => ([...prevmess, {
-                            body: {
-                                text: newmessage.body.text,
-                                position: newmessage.body.position,
-                                link: newmessage.body.link,
-                                photo:newmessage.body.photo,
-                                video:newmessage.body.video,
-                            },
-                            request: '',
-                            type: selection,
-                            remind: {},
-                        }]));
-                    break;
-                    case "Answer":
-                        if((newmessage.request!="/")&(newmessage.request.startsWith("/"))){
-                            setnewchannelmessages(prevmess => ([...prevmess, {
-                                body: {
-                                    text: newmessage.body.text,
-                                    position: newmessage.body.position,
-                                    link: newmessage.body.link,
-                                    photo:newmessage.body.photo,
-                                    video:newmessage.body.video,
-                                },
-                                request: "to "+newmessage.request,
-                                type: selection,
-                                remind: {},
-                            }]));
-                        } else {
-                            alert("Insert a valid request");
-                            return;
-                        }
-                    break;
-                    case "Reminder":
-                        if(reminder!="Select reminder frequency"){
+                        if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
                             setnewchannelmessages(prevmess => ([...prevmess, {
                                 body: {
                                     text: newmessage.body.text,
@@ -904,22 +876,160 @@ function Profile() {
                                 },
                                 request: '',
                                 type: selection,
-                                remind: {every:reminder, dayMonth:'1', dayWeek:'0', hour:'17:00'},
+                                repetition:'',
+                                remind: {},
                             }]));
+                        } else {
+                            alert("The message is empty");
+                        }
+                    break;
+                    case "Answer":
+                        if((newmessage.request!="/")&&(newmessage.request.startsWith("/"))&&(newmessage.request!="")){
+                            if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
+                                setnewchannelmessages(prevmess => ([...prevmess, {
+                                    body: {
+                                        text: newmessage.body.text,
+                                        position: newmessage.body.position,
+                                        link: newmessage.body.link,
+                                        photo:newmessage.body.photo,
+                                        video:newmessage.body.video,
+                                    },
+                                    request: "to "+newmessage.request,
+                                    type: selection,
+                                    repetition:'',
+                                    remind: {},
+                                }]));
+                            } else {
+                                alert("The message is empty");
+                            }
+                        } else {
+                            alert("Insert a valid request");
+                            return;
+                        }
+                    break;
+                    case "Reminder":
+                        if(reminder!="Select reminder frequency"){
+                            if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
+                                setnewchannelmessages(prevmess => ([...prevmess, {
+                                    body: {
+                                        text: newmessage.body.text,
+                                        position: newmessage.body.position,
+                                        link: newmessage.body.link,
+                                        photo:newmessage.body.photo,
+                                        video:newmessage.body.video,
+                                    },
+                                    request: '',
+                                    type: selection,
+                                    repetition:'',
+                                    remind: {every:reminder, dayMonth:'1', dayWeek:'0', hour:'17:00'},
+                                }]));
+                            } else {
+                                alert("The message is empty");
+                            }
                         } else {
                             alert("Insert a valid reminder frequency");
                             return;
+                        }
+                    break;
+                    case "Repeat":
+                        if(numSeconds!=""){
+                            setnewchannelmessages(prevmess => ([...prevmess, {
+                                body: {
+                                    text: "to /begin",
+                                    position: [],
+                                    link: '',
+                                    photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                                    video:'',
+                                },
+                                request: '',
+                                type: selection,
+                                repetition:"every "+numSeconds+" seconds",
+                                remind: {},
+                            }]));
+                        } else {
+                            alert('Insert the number of seconds for repeat');
+                        }
+                    break;
+                    case "Casual Images":
+                        if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
+                            setnewchannelmessages(prevmess => ([...prevmess, {
+                                body: {
+                                    text: "to "+userRequest,
+                                    position: [],
+                                    link: '',
+                                    photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                                    video:'',
+                                },
+                                request: '',
+                                type: selection,
+                                repetition:'',
+                                remind: {},
+                            }]));
+                        } else {
+                            alert('Insert a valid request');
+                        }
+                    break;
+                    case "News":
+                        if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
+                            setnewchannelmessages(prevmess => ([...prevmess, {
+                                body: {
+                                    text: "to "+userRequest,
+                                    position: [],
+                                    link: '',
+                                    photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                                    video:'',
+                                },
+                                request: '',
+                                type: selection,
+                                repetition:'',
+                                remind: {},
+                            }]));
+                        } else {
+                            alert('Insert a valid request');
+                        }
+                    break;
+                    case "Twitter":
+                        if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
+                            setnewchannelmessages(prevmess => ([...prevmess, {
+                                body: {
+                                    text: "to "+userRequest,
+                                    position: [],
+                                    link: '',
+                                    photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                                    video:'',
+                                },
+                                request: '',
+                                type: selection,
+                                repetition:'',
+                                remind: {},
+                            }]));
+                        } else {
+                            alert('Insert a valid request');
+                        }
+                    break;
+                    case "WikiInfo":
+                        if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
+                            setnewchannelmessages(prevmess => ([...prevmess, {
+                                body: {
+                                    text: "to "+userRequest,
+                                    position: [],
+                                    link: '',
+                                    photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                                    video:'',
+                                },
+                                request: '',
+                                type: selection,
+                                repetition:'',
+                                remind: {},
+                            }]));
+                        } else {
+                            alert('Insert a valid request');
                         }
                     break;
                     default:
                         alert("Insert a valid message type");
                         return;
                 }
-                
-            } else {
-                alert("The message is empty");
-                return;
-            }
         }
         setconfirmaddmessagechannel(false);
     }
@@ -950,6 +1060,16 @@ function Profile() {
             ...prevmess,
             request: text
           }));
+    }
+
+    const changenewmessageseconds = (e) => {
+        let num = e.target.value;
+        setNumSeconds(num);
+    }
+
+    const changenewmessageuserrequest = (e) => {
+        let req = e.target.value;
+        setUserRequest(req);
     }
 
     const handleLocationButtonClick = () => {
@@ -1086,18 +1206,21 @@ function Profile() {
     
     const profilepostsactive = () => {
         setmypostsactive(true);
+        setViewAnswers(false);
         setmychannelsactive(false);
         setmycharacteractive(false);
     }
 
     const profilechannelsactive = () => {
         setmypostsactive(false);
+        setViewAnswers(false);
         setmychannelsactive(true);
         setmycharacteractive(false);
     }
 
     const profilecharacteractive = () => {
         setmypostsactive(false);
+        setViewAnswers(false);
         setmychannelsactive(false);
         setmycharacteractive(true);
     }
@@ -1202,6 +1325,33 @@ function Profile() {
         window.location.href = "http://localhost:8080";
       }
 
+      const OpenAnswers = (index) => {
+        const newAnswers = [...allSquealsprint[index].answers];
+        setAllAnswersprint(newAnswers);
+        setViewAnswers(true);
+        setmypostsactive(false);
+      }
+
+      
+const loadImage = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setNewmessage(prevmess => ({
+            ...prevmess,
+            body: {
+                ...prevmess.body,
+                photo: e.target.result
+            }
+          }));
+          setCapturedImage(e.target.result);
+        setShowCameraModalmessage(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
     return (
         <>
         <Container style={{ width: '80%', left:'20%', height: '100vh', position:'absolute', alignItems: 'center', overflow:'hidden'}} className="d-flex flex-column">
@@ -1277,6 +1427,7 @@ function Profile() {
                         </Card.Body>
                         <Card.Footer className='d-flex' style={{justifyContent:'space-between'}}>
                         <Button className='mb-1' onClick={() => opendeletesqueal(index)}>Delete</Button>
+                        <Button className="text-white" style={{backgroundColor:'transparent',border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
                         <div className='d-flex'>
                             <Card.Text className='me-1' style={{cursor:'default'}}>
                             {squeal.pos_reactions}
@@ -1296,6 +1447,60 @@ function Profile() {
                   </Col>
                   ))}
                 </Row>
+                <Container style={{alignItems:'center'}} className={`${viewAnswers ? 'd-flex flex-column' : 'd-none'}`} >
+                    <div className='d-flex flex-row'><button type="button" className="btn-close" aria-label="Close" style={{position: 'relative', marginLeft: '2%', marginRight:'30px', fontSize: '30px', filter: 'invert(1)'}} onClick={()=>{setViewAnswers(false); setmypostsactive(true)}}></button>
+                    <h5 className="text-light text-center mt-4 mb-4">All Answers</h5></div>
+                {allAnswersprint.map((squeal,index) => (
+                <Col key={index} className='m-5 mt-3' style={{width:'40%'}}>
+                    <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
+                        <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
+                            <CardGroup>
+                            { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                            <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
+                            </div>)
+                            : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
+                            }
+                            {squeal.sender}
+                            </CardGroup>
+                            <Card.Text>{squeal.date+" "+squeal.hour}</Card.Text>
+                        </Card.Header>
+                        <Card.Body>
+                        <Card.Text style={{textAlign:'left'}}>
+                                    {squeal.body.text}
+                                </Card.Text>
+                                {squeal.body.photo!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <img src={squeal.body.photo} alt="squeal photo" width="100%" />
+                                </div>
+                                )} 
+                                {squeal.body.video!='' && (
+                                <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                </div>
+                                )}
+                            {squeal.body.position.length!=0 &&(
+                                <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
+                                    <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+                                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'/>
+                                            <Marker position={squeal.body.position} icon={markerIcon}>
+                                                <Popup>Sei qui!</Popup>
+                                            </Marker>
+                                    </MapContainer>
+                                    <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
+                                        <Button variant="light" onClick={() => {const url = `https://www.google.com/maps/search/?api=1&query=${squeal.body.position[0]},${squeal.body.position[1]}`; window.open(url, '_blank');}}>Open Map</Button>
+                                    </div>
+                                </Card>
+                            )}
+                            {squeal.body.link!='' && (
+                                <div style={{ marginTop: '10px', wordBreak: 'break-all', width:'100%', display:'flex', alignItems:'center', justifyContent:'left'}}>
+                                    <a href={squeal.body.link} target="_blank" rel="noreferrer">{squeal.body.link}</a>
+                                </div>
+                            )}
+                        </Card.Body>
+                    </Card>
+                  </Col>
+                  ))}
+                </Container>
                 <Row style={{width:'70%', marginLeft:'20%'}} className={`${mychannelsactive ? 'row-cols-2' : 'd-none row-cols-2'}`} >
                 {allChannelsprint.map((channel,index) => (
                     <Row key={index} onClick={() => editchannel(index)} className='m-5 d-flex rowchannel_profile' style={{width:'35%',justifyContent:'center',alignItems:'center',cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
@@ -1314,7 +1519,7 @@ function Profile() {
                     <h5>Monthly characters remaining: {actualuser.char_m}</h5>
                 </Col>
             </Container>
-            <Col className={confirmdeletesqueal ? 'text-white text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'black'}}>
+            <Col className={confirmdeletesqueal ? 'text-white text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'black', zIndex:'1001'}}>
                 <h4 className='mb-3'>Delete Squeal</h4>
                 <p>Are you sure you want to delete this squeal? It will no longer visible to anyone!</p>
                 <Row style={{display:'flex',justifyContent:'center'}}>
@@ -1468,7 +1673,7 @@ function Profile() {
                             <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                                     <CardGroup>
-                                    {squeal.type} {squeal.remind.every} {squeal.request}
+                                    {squeal.type} {squeal.remind.every!="" && squeal.remind.every!=undefined && (" "+squeal.remind.every)} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
                                     </CardGroup>
                                     <Card.Text>{squeal.hour}</Card.Text>
                                 </Card.Header>
@@ -1594,6 +1799,11 @@ function Profile() {
                             <Dropdown.Item eventKey="Welcome">Welcome</Dropdown.Item>
                             <Dropdown.Item eventKey="Answer">Answer</Dropdown.Item>
                             <Dropdown.Item eventKey="Reminder">Reminder</Dropdown.Item>
+                            <Dropdown.Item eventKey="Repeat">Repeat</Dropdown.Item>
+                            <Dropdown.Item eventKey="Casual Images">Casual Images</Dropdown.Item>
+                            <Dropdown.Item eventKey="News">News</Dropdown.Item>
+                            <Dropdown.Item eventKey="Twitter">Twitter</Dropdown.Item>
+                            <Dropdown.Item eventKey="WikiInfo">Wiki info</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
 
@@ -1613,6 +1823,7 @@ function Profile() {
                             </div>
                         )}
                     </Container>
+                    { (selection==="Welcome" || selection==="Answer" || selection==="Reminder" || selection==="Select an option" || selection===null) && (
                     <Card className='mt-5' style={{width:'70%', minHeight:'200px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body className='d-flex flex-column' style={{alignItems:'center'}}>
                             <textarea placeholder='Message text' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none'}} value={newmessagetext} onChange={changenewmessagetext}></textarea>
@@ -1658,10 +1869,25 @@ function Profile() {
                             <GeoAlt size={25} color="white" style={{cursor:'pointer'}} onClick={() => {if (!isMapVisible) {handleLocationButtonClick()}}}/>
                         </Card.Footer>
                     </Card>
+                            )}
                     {selection === "Answer" && (
                     <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body>
-                                <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none'}} value={newmessage.request} onChange={changenewmessagerequest}/>
+                                <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none', outline:'none'}} value={newmessage.request} onChange={changenewmessagerequest}/>
+                        </Card.Body>
+                    </Card>
+                    )}
+                    {selection === "Repeat" && (
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                        <Card.Body>
+                                <input type="number" placeholder='Number of seconds' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none', outline:'none'}} value={numSeconds} onChange={changenewmessageseconds}/>
+                        </Card.Body>
+                    </Card>
+                    )}
+                    {(selection === "Casual Images" || selection === "WikiInfo" || selection === "News" || selection === "Twitter") && (
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                        <Card.Body>
+                                <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none', outline:'none'}} value={userRequest} onChange={changenewmessageuserrequest}/>
                         </Card.Body>
                     </Card>
                     )}
@@ -1771,7 +1997,7 @@ function Profile() {
             </Modal.Header>
             <Modal.Body>
                 <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" width="100%"/>
-                <Button className="mt-2" onClick={capture}>Scatta</Button>
+                <Button className="mt-2" onClick={capture}>Take</Button>
             </Modal.Body>
         </Modal>
         <Modal show={showCameraModalchannel} style={{position:'absolute', top:'0', left:'20%', width:'80%', height:'100%'}} onHide={() => setShowCameraModalchannel(false)}>
@@ -1780,7 +2006,7 @@ function Profile() {
         </Modal.Header>
         <Modal.Body>
           <Webcam audio={false} ref={webcamRef2} screenshotFormat="image/jpeg" width="100%"/>
-          <Button className="mt-2" onClick={capturechannel}>Scatta</Button>
+          <Button className="mt-2" onClick={capturechannel}>Take</Button>
         </Modal.Body>
         </Modal>
         <Modal show={showCameraModalmessage} style={{position:'absolute', top:'0', left:'20%', width:'80%', height:'100%'}} onHide={() => setShowCameraModalmessage(false)}>
@@ -1789,7 +2015,9 @@ function Profile() {
             </Modal.Header>
             <Modal.Body>
             <Webcam audio={false} ref={webcamRef3} screenshotFormat="image/jpeg" width="100%"/>
-            <Button className="mt-2" onClick={capturemessage}>Scatta</Button>
+            <Button className="mt-2" onClick={capturemessage}>Take</Button>
+            <input type="file" id="selectpicturewebcam" class="d-none" accept="image/*" onChange={loadImage}></input>
+            <label htmlFor="selectpicturewebcam" class="btn btn-primary mt-2 ms-2">Select picture</label>
             </Modal.Body>
         </Modal>
         <Modal show={showCameraVideoModalmessage} style={{position:'absolute', top:'0', left:'20%', width:'80%', height:'100%'}} onHide={() => {setShowCameraVideoModalmessage(false); setStopRecording(false);}}>
