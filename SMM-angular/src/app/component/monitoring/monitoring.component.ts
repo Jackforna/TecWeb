@@ -72,6 +72,7 @@ export class MonitoringComponent implements OnInit{
         const userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname);
 
         for (const squeal of userSqueals) {
+          squeal.date = this.formatDate(squeal.date);
           if (squeal.body.position && squeal.body.position.length === 2) {
             try {
               const [lat, lon] = squeal.body.position;
@@ -144,7 +145,12 @@ export class MonitoringComponent implements OnInit{
       }
   }
 
-  
+  // Funzione per verificare e convertire le date
+  formatDate(dateString: string | number | Date) {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? null : date;
+  }
 
 
 
