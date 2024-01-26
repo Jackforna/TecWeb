@@ -139,6 +139,7 @@ export class MonitoringComponent implements OnInit{
           .slice(0, 3);
   
         console.log('Squeals dell\'utente:', userSqueals);
+        console.log('Squeals dell\'utente con risposte:', this.squealsWithAnswers);
         console.log('Most Reacted User Squeals:', this.mostReactedSqueals);
         console.log('Less Reacted User Squeals:', this.lessReactedSqueals);
         console.log('Controversial User Squeals:', this.controversialSqueals);
