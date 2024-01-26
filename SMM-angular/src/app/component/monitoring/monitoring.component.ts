@@ -158,10 +158,11 @@ export class MonitoringComponent implements OnInit{
     return isNaN(date.getTime()) ? null : date;
   }
 
-  openAnswerModal(squeal: any) {
-    this.selectedSquealAnswers = squeal.answers;
+  openAnswerModal(squealIndex: number) {
+    this.selectedSquealAnswers = this.squealsWithAnswers[squealIndex].answers;
     this.isModalOpen = true;
   }
+  
 
   // Funzione per chiudere il modale
   closeAnswerModal() {

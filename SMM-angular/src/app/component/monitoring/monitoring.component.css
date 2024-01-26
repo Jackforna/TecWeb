@@ -139,3 +139,31 @@ h3{
   font-size: 1.5rem;
 }
 
+.modal-content {
+  max-width: 40vw; /* larghezza massima del contenuto del modale */
+  max-height: 80vh; /* altezza massima del contenuto del modale */
+  overflow-y: auto; /* permette la scorribilità se il contenuto è troppo lungo */
+  margin-left: 20%;
+}
+
+.modal-content img, .modal-content video {
+  max-width: 100%; /* le immagini e i video non saranno più larghi del loro contenitore */
+  height: auto; /* mantiene le proporzioni dell'immagine */
+}
+
+.modal-content p {
+  font-size: 1rem; /* dimensione del testo */
+}
+
+.close-button {
+  font-size: 1.5rem; /* dimensione del bottone di chiusura */
+}
+
+hr{
+  width: 100%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+  border: 0;
+  border-top: 1px solid grey;
+}
+
