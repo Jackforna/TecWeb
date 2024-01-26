@@ -16,7 +16,7 @@ import { Camera, Globe, Link as LinkLogo, PersonCircle, Gear, NodeMinus, Send, C
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, uploadVideo} from './serverRequests.js';
 
 function Home(){
   const location = useLocation();
@@ -812,13 +812,28 @@ const getPosition = () => {
   }
 };
 
+async function fetchVideoAsBlob(videoUrl) {
+  try {
+    const response = await fetch(videoUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const videoBlob = await response.blob();
+    return videoBlob;
+  } catch (error) {
+    console.error("Could not fetch the video:", error);
+  }
+}
+
 const sendAnswer = async () => {
   let text = textAnswer;
   let link = linkAnswer;
   let img = photoAnswer;
   let video = "";
-  if(videoAnswer!=window.location.href)
-    video = videoAnswer;             
+  if(videoAnswer!=window.location.href){
+    let blob = await fetchVideoAsBlob(videoAnswer);
+    video = await uploadVideo(blob);
+  }             
   let position = [];
   if(positionAnswer.length!=0){
     position[0] = positionAnswer[0];
@@ -955,7 +970,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                             {squeal.body.position.length!=0 &&(
@@ -1005,7 +1020,7 @@ const loadImage = (event) => {
               </button>
 
               <Form className="d-flex flex-column" style={{position:'absolute', top:'5%'}}>
-                <InputGroup style={{ width: '500px'}} className="d-flex flex-column">
+                <InputGroup style={{ width: '500px', zIndex:'1002'}} className="d-flex flex-column">
                     <FormControl
                       type="text"
                       placeholder={inputSearch}
@@ -1107,7 +1122,7 @@ const loadImage = (event) => {
                       </div>
                 </InputGroup>
               </Form> 
-              <Container style={{width: '100%', height: '100vh', position:'absolute', alignItems: 'center', overflowY:'scroll', overflowX:'hidden', alignItems:'center', zIndex:'1001', backgroundColor:'black'}} className={`${viewAnswers ? 'd-flex flex-column' : 'd-none'}`}>
+              <Container style={{width: '100%', height: '100vh', position:'absolute', alignItems: 'center', overflowY:'scroll', overflowX:'hidden', alignItems:'center', zIndex:'1003', backgroundColor:'black'}} className={`${viewAnswers ? 'd-flex flex-column' : 'd-none'}`}>
                 <Form id="writenewsqueal" className="container-fluid position-relative flex-column align-items-center" style={{display: 'flex', width: '100%', top: '0', left: '0', backgroundColor:'black', marginBottom:'5%'}}>
                   <button type="button" className="btn-close" aria-label="Close" id="closewritenewsqueal" style={{position: 'absolute', top: '3%', right: '2%', fontSize: '30px', filter: 'invert(1)', zIndex: 2}} onClick={handleClose}></button>
                   <h3 className="text-light text-center mt-5 mb-4">Write new Answer</h3>
@@ -1187,7 +1202,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                             {squeal.body.position.length!=0 &&(

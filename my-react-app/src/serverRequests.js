@@ -226,3 +226,32 @@ export async function addChannel(channelData) {
         throw error;
     }
 }
+
+export async function uploadVideo(blob) {
+    const formData = new FormData();
+    const file = new File([blob], { type: 'video/mp4' });
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://localhost:8080/upload-video', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Errore di upload: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      return(result); 
+    } catch (error) {
+      console.error('Errore durante l\'upload del video:', error);
+    }
+}
+
+export async function getVideo(fileName) {
+    if(fileName!=""){
+        let url = await fetch(`http://localhost:8080/get-video/${fileName}`);
+        return(url);
+    }
+}

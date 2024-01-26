@@ -14,7 +14,7 @@ import neg_reaction3 from '../src/img/reaction_negative3.png'
 import channel_profile from '../src/img/channel_profile.png';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, uploadVideo, getVideo} from './serverRequests.js';
 
 function Profile() {
     const [actualuser, setactualuser] = useState({nickname: "", photoprofile: "", fullname: "", email: "", cell: "", password: "", version: "", blocked: false, popularity: 0, char_d: 0, char_w: 0, char_m: 0, bio: "", photoprofileX: 0, photoprofileY: 0, notifications: [false,false,false,false,false]})
@@ -240,16 +240,6 @@ function Profile() {
         try{
           const squeal = await updateSqueals(SquealsToUpdate);
           console.log(squeal);
-        } catch (error) {
-            console.error('There has been a problem with your fetch operation:', error);
-            throw error;
-        }
-    }
-
-    async function addSingleSqueal(SquealToAdd){
-        try{
-            const squeal = await addSqueal(SquealToAdd);
-            console.log(squeal);
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
             throw error;
@@ -861,18 +851,23 @@ function Profile() {
         }
     }
 
-    const sectionaddmessagechannel = (confirm) => {
+    const sectionaddmessagechannel = async (confirm) => {
         if(confirm){
                 switch(selection){
                     case "Welcome":
                         if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
+                            let video = "";
+                            if(newmessage.body.video!=window.location.href){
+                                let blob = await fetchVideoAsBlob(newmessage.body.video);
+                                video = await uploadVideo(blob);
+                            } 
                             setnewchannelmessages(prevmess => ([...prevmess, {
                                 body: {
                                     text: newmessage.body.text,
                                     position: newmessage.body.position,
                                     link: newmessage.body.link,
                                     photo:newmessage.body.photo,
-                                    video:newmessage.body.video,
+                                    video:video,
                                 },
                                 request: '',
                                 type: selection,
@@ -886,13 +881,18 @@ function Profile() {
                     case "Answer":
                         if((newmessage.request!="/")&&(newmessage.request.startsWith("/"))&&(newmessage.request!="")){
                             if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
+                                let video = "";
+                                if(newmessage.body.video!=window.location.href){
+                                    let blob = await fetchVideoAsBlob(newmessage.body.video);
+                                    video = await uploadVideo(blob);
+                                } 
                                 setnewchannelmessages(prevmess => ([...prevmess, {
                                     body: {
                                         text: newmessage.body.text,
                                         position: newmessage.body.position,
                                         link: newmessage.body.link,
                                         photo:newmessage.body.photo,
-                                        video:newmessage.body.video,
+                                        video:video,
                                     },
                                     request: "to "+newmessage.request,
                                     type: selection,
@@ -910,13 +910,18 @@ function Profile() {
                     case "Reminder":
                         if(reminder!="Select reminder frequency"){
                             if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
+                                let video = "";
+                                if(newmessage.body.video!=window.location.href){
+                                    let blob = await fetchVideoAsBlob(newmessage.body.video);
+                                    video = await uploadVideo(blob);
+                                } 
                                 setnewchannelmessages(prevmess => ([...prevmess, {
                                     body: {
                                         text: newmessage.body.text,
                                         position: newmessage.body.position,
                                         link: newmessage.body.link,
                                         photo:newmessage.body.photo,
-                                        video:newmessage.body.video,
+                                        video:video,
                                     },
                                     request: '',
                                     type: selection,
@@ -1352,6 +1357,19 @@ const loadImage = (event) => {
     }
   };
 
+  async function fetchVideoAsBlob(videoUrl) {
+    try {
+      const response = await fetch(videoUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const videoBlob = await response.blob();
+      return videoBlob;
+    } catch (error) {
+      console.error("Could not fetch the video:", error);
+    }
+  }
+
     return (
         <>
         <Container style={{ width: '80%', left:'20%', height: '100vh', position:'absolute', alignItems: 'center', overflow:'hidden'}} className="d-flex flex-column">
@@ -1403,7 +1421,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                             {squeal.body.position.length!=0 &&(
@@ -1475,7 +1493,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                             {squeal.body.position.length!=0 &&(
@@ -1624,7 +1642,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                                 {squeal.body.position.length!=0 &&(
@@ -1688,7 +1706,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                                 {squeal.body.position.length!=0 &&(
@@ -1944,7 +1962,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
+                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                                 {squeal.body.position.length!=0 &&(

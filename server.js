@@ -1,6 +1,5 @@
 const bodyParser = require('body-parser');
 const express = require('express');
-const multer = require('multer');
 const { MongoClient, ObjectId } = require('mongodb');
 const path = require('path');
 const app = express();
@@ -9,6 +8,8 @@ const port = 8080; // Puoi cambiare la porta se necessario
 const dbUrl = 'mongodb://root:example@localhost:27017';
 const client = new MongoClient(dbUrl);
 const dbName = 'my-mongo-container';
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // i file vengono salvati nella cartella 'uploads'
 
 
 app.use(bodyParser.json({ limit: '100mb' }));
@@ -60,34 +61,13 @@ app.get('/api/getTweet', async (req, res) => {
     }
 });
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'data/db');
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const uniqueFilename = uniqueSuffix + '-' + file.originalname;
-    cb(null, uniqueFilename);
-  }
-});
-
-const upload = multer({ storage: storage });
-
-app.post('/upload', upload.single('file'), function (req, res) {
-  const file = req.file;
-  if (!file) {
-    return res.status(400).send('Nessun file caricato.');
-  }
-
-  res.status(200).json({filePath: `/path/inside/container/${file.filename}` });
-});
-
 initializeCollections();
 
   const db = client.db(dbName);  
   const UsersCollection = db.collection('Users');
   const ListChannelsCollection = db.collection('ListChannels');
   const ListSquealsCollection = db.collection('ListSqueals');
+  const videoCollection = db.collection('ListVideos');
 
 app.get('/get-users', async (req, res) => {
   try {
@@ -229,7 +209,6 @@ app.put('/update-squeals', async (req, res) => {
   }
 });
 
-//Aggiornamento single squeal
 app.put('/update-squeal/:id', async (req, res) => {
   try {
       const id = req.params.id;
@@ -289,6 +268,40 @@ app.put('/update-channels', async (req, res) => {
   }
 });
 
+app.post('/upload-video', upload.single('file'), async (req, res) => {
+  try {
+    const videoDetails = {
+      fileName: req.file.filename, // o usa un nome personalizzato se necessario
+      filePath: '/uploads',
+      mimeType: req.file.mimetype,
+      size: req.file.size,
+      uploadedAt: new Date(),
+  };
+    const result = await videoCollection.insertOne(videoDetails);
+    res.status(201).json(req.file.filename);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Errore durante l\'aggiunta del nuovo video');
+  }
+});
+
+app.get('/get-video/:fileName', async (req, res) => {
+    const fileName = req.params.fileName;
+    const filePath = path.join(__dirname, 'uploads', fileName);
+
+    // Verifica se il file esiste e invialo, altrimenti restituisci un errore 404
+    res.sendFile(filePath, function (err) {
+        if (err) {
+            if (err.code === 'ENOENT') {
+                // File non trovato
+                return res.status(404).send('Video non trovato');
+            }
+            // Errore sconosciuto durante l'invio del file
+            return res.status(500).send('Errore durante il recupero del video');
+        }
+    });
+});
+
 async function initializeCollections() {
   try {
     await client.connect();
@@ -311,14 +324,19 @@ async function initializeCollections() {
       console.log("La collezione 'ListSqueals' esiste già");
     }
 
-    // Controlla se la collezione 'Users' esiste
+    const collections4 = await db.listCollections({ name: 'ListVideos' }).toArray();
+    if (collections4.length === 0) {
+      const ListVideos = await db.createCollection('ListVideos');
+      console.log("Collezione 'ListVideos' creata");
+    } else {
+      console.log("La collezione 'ListVideos' esiste già");
+    }
+
     const collections3 = await db.listCollections({ name: 'Users' }).toArray();
     if (collections3.length === 0) {
-        // La collezione 'Users' non esiste, quindi la crea
         const usersCollection = await db.createCollection('Users');
         console.log("Collezione 'Users' creata");
 
-        // Elemento da inserire
         const usersToInsert = {
             nickname: "Jack",
             photoprofile: "",

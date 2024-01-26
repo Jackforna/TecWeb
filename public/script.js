@@ -33,14 +33,15 @@ let longitude = '';
 var inputLink = '';
 var map = null;
 var map2 = null;
+var arrVideo = [];
 
-async function uploadVideo(blob, fileName) {
+async function uploadVideo(blob) {
     const formData = new FormData();
-    const file = new File([blob], fileName, { type: 'video/mp4' });
+    const file = new File([blob], { type: 'video/mp4' });
     formData.append('file', file);
-  
+
     try {
-      const response = await fetch('http://localhost:8080/upload', {
+      const response = await fetch('http://localhost:8080/upload-video', {
         method: 'POST',
         body: formData,
       });
@@ -50,67 +51,17 @@ async function uploadVideo(blob, fileName) {
       }
   
       const result = await response.json();
-      return result.filePath; 
+      return(result); 
     } catch (error) {
       console.error('Errore durante l\'upload del video:', error);
     }
 }
 
-async function uploadImage(blob, fileName) {
-    const formData = new FormData();
-    // Crea un File dal Blob
-    const file = new File([blob], fileName, { type: 'image/jpeg' });
-    formData.append('file', file);
-  
-    try {
-      const response = await fetch('http://localhost:3000/upload', {
-        method: 'POST',
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Errore di upload: ${response.statusText}`);
-      }
-  
-      const result = await response.json();
-      return result.filePath;
-    } catch (error) {
-      console.error('Errore durante l\'upload dell\'immagine:', error);
+async function getVideo(fileName) {
+    if(fileName!=""){
+        return(`http://localhost:8080/get-video/${fileName}`);
     }
 }
-
-/*     //script da usare per salvare un video e un'immagine
-let videoBlob; // Il tuo Blob va qui
-let fileName = 'mioVideo.mp4'; // Scegli un nome di file per il video
-
-uploadVideo(videoBlob, fileName)
-  .then(filePath => {
-    if (filePath) {
-      console.log('Video caricato con successo. Percorso:', filePath);
-      // Qui potresti voler aggiungere il video all'interfaccia utente
-      // video.src = filePath;
-    }
-  })
-  .catch(error => {
-    console.error(error);
-  });
-
-
-// Supponiamo che questa sia la tua Data URL ottenuta da toDataURL()
-let imageDataUrl = canvas.toDataURL('image/jpeg'); // Usa il tipo MIME appropriato
-
-// Converti la Data URL in un Blob
-let imageBlob = dataURLtoBlob(imageDataUrl);
-
-// Ora puoi usare la funzione uploadImage come prima, passando il Blob e un nome file
-let fileName = 'immagineCaricata.jpeg'; // Scegli un nome file
-uploadImage(imageBlob, fileName).then(filePath => {
-  // Gestisci il percorso del file restituito come necessario
-  img.src = filePath;
-}).catch(error => {
-  console.error(error);
-});
-  */
 
 function getActualUser(){
     let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
@@ -164,11 +115,7 @@ window.onload = function() {
             }
         }
         for(i=0;i<arrsqueals.length;i++){
-            let videoURL = "";
-            if(arrsqueals[i].body.video instanceof Blob){
-                videoURL = URL.createObjectURL(arrsqueals[i].body.video);
-                console.log(videoURL);
-            }
+            let videoURL = await getVideo(arrsqueals[i].body.video);
             let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1])
             if(arrsqueals[i].channel==""){
                 document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
@@ -603,10 +550,7 @@ async function squealbtnclick(){
         }
     }
     for(i=0;i<squeals.length;i++){
-        let videoURL = "";
-            if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
-                videoURL = URL.createObjectURL(squeals[i].body.video);
-            }
+        let videoURL = await getVideo(squeals[i].body.video);
         let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
         if(squeals[i].channel=="")
             document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -642,10 +586,7 @@ document.getElementById("filtersqueal").addEventListener("change",async ()=>{
                 }
             }
             for(i=0;i<squeals.length;i++){
-                let videoURL = "";
-                if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
-                    videoURL = URL.createObjectURL(squeals[i].body.video);
-                }
+                let videoURL = await getVideo(squeals[i].body.video);
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -675,10 +616,7 @@ document.getElementById("filtersqueal").addEventListener("change",async ()=>{
                 }
             }
             for(i=0;i<squeals.length;i++){
-                let videoURL = "";
-                if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
-                    videoURL = URL.createObjectURL(squeals[i].body.video);
-                }
+                let videoURL = await getVideo(squeals[i].body.video);
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -720,10 +658,7 @@ document.getElementById("datesqueal").addEventListener("change",async ()=>{
             if(datesqueal==squeals[i].date){
                 arrsquealsdate.push(squeals[i]);
                 j += 1;
-                let videoURL = "";
-                if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
-                    videoURL = URL.createObjectURL(squeals[i].body.video);
-                }
+                let videoURL = await getVideo(squeals[i].body.video);
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -758,10 +693,7 @@ document.getElementById("datesqueal").addEventListener("change",async ()=>{
                 if(datesqueal==arrsqueals[i].date){
                 arrsquealsdate.push(arrsqueals[i]);
                 j += 1;
-                let videoURL = "";
-                if((arrsqueals[i].body.video instanceof Blob)&(arrsqueals[i].body.video!=window.location.href)){
-                    videoURL = URL.createObjectURL(arrsqueals[i].body.video);
-                }
+                let videoURL = await getVideo(arrsqueals[i].body.video);
                 let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1]);
                 if(arrsqueals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
@@ -829,10 +761,7 @@ document.getElementById("searchsqueal").addEventListener("input",async ()=>{
                 }
             } 
             for(i=0;i<arrsqueals.length;i++){
-                let videoURL = "";
-                if((arrsqueals[i].body.video instanceof Blob)&(arrsqueals[i].body.video!=window.location.href)){
-                    videoURL = URL.createObjectURL(arrsqueals[i].body.video);
-                }
+                let videoURL = await getVideo(arrsqueals[i].body.video);
                 let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1])
                 if(arrsqueals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
@@ -864,10 +793,7 @@ document.getElementById("searchsqueal").addEventListener("input",async ()=>{
             }
         }
         for(i=0;i<arrsqueals.length;i++){
-            let videoURL = "";
-                if((arrsqueals[i].body.video instanceof Blob)&(arrsqueals[i].body.video!=window.location.href)){
-                    videoURL = URL.createObjectURL(arrsqueals[i].body.video);
-                }
+            let videoURL = await getVideo(arrsqueals[i].body.video);
             let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1]);
             if(arrsqueals[i].channel=="")
                 document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
@@ -956,10 +882,7 @@ document.getElementById("closeeditsqueal").addEventListener("click",async ()=>{
         }
     }
     for(i=0;i<squeals.length;i++){
-        let videoURL = "";
-        if((squeals[i].body.video instanceof Blob)&(squeals[i].body.video!=window.location.href)){
-            videoURL = URL.createObjectURL(squeals[i].body.video);
-        }
+        let videoURL = await getVideo(squeals[i].body.video);
         let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
         if(squeals[i].channel=="")
             document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -1676,10 +1599,7 @@ async function editCHAN(x){
     document.getElementById("sectioneditCHANNELname").innerText = editCHANNEL.name;
     document.getElementById("sectioneditCHANNELdescription").value = editCHANNEL.description;
     for(i=0;i<editCHANNEL.list_posts.length;i++){
-        let videoURL = "";
-            if((editCHANNEL.list_posts[i].body.video instanceof Blob)&(editCHANNEL.list_posts[i].body.video!=window.location.href)){
-                videoURL = URL.createObjectURL(editCHANNEL.list_posts[i].body.video);
-            }
+        let videoURL = await getVideo(editCHANNEL.list_posts[i].body.video);
         if(editCHANNEL.list_posts[i].body.photo=="")
             editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         let Address = await getAddressGeolocation(editCHANNEL.list_posts[i].body.position[0], editCHANNEL.list_posts[i].body.position[1])
@@ -1721,10 +1641,7 @@ async function deletesquealCHANNEL(x){
     savechangesCHANNEL();
     document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div class="d-flex flex-row mb-3"><h3 class="me-3 text-light">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
     for(i=0;i<editCHANNEL.list_posts.length;i++){
-        let videoURL = "";
-            if((editCHANNEL.list_posts[i].body.video instanceof Blob)&(editCHANNEL.list_posts[i].body.video!=window.location.href)){
-                videoURL = URL.createObjectURL(editCHANNEL.list_posts[i].body.video);
-            }
+        let videoURL = await getVideo(editCHANNEL.list_posts[i].body.video);
         if(editCHANNEL.list_posts[i].body.photo=="")
             editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         let Address = await getAddressGeolocation(editCHANNEL.list_posts[i].body.position[0], editCHANNEL.list_posts[i].body.position[1])
@@ -1805,10 +1722,7 @@ document.getElementById("viewCHANNELmessages").addEventListener("click",async ()
         document.getElementById("viewCHANNELmessageslist").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no messages already added</p>';
     }
     for(i=0;i<arrcreateCHANNELmessages.length;i++){
-        let videoURL = "";
-            if((arrcreateCHANNELmessages[i].body.video instanceof Blob)&(arrcreateCHANNELmessages[i].body.video!=window.location.href)){
-                videoURL = URL.createObjectURL(arrcreateCHANNELmessages[i].body.video);
-            }
+        let videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
         switch(arrcreateCHANNELmessages[i].type){
             case 'Welcome':
@@ -2075,8 +1989,10 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
     position[1] = longitude;
     }
     let video = "";
-    if(document.getElementById("videonewmessageCHANNEL").src!=window.location.href)
-        video = await fetchBlobFromUrl(document.getElementById("videonewmessageCHANNEL").src);
+    if(document.getElementById("videonewmessageCHANNEL").src!=window.location.href){
+        videoBlob = await fetchBlobFromUrl(document.getElementById("videonewmessageCHANNEL").src);
+        video = await uploadVideo(videoBlob);
+    }
     document.getElementById("map").classList.add("d-none");
     document.getElementById("linknewmessageCHANNEL").innerHTML = '';
     let newmessage;
@@ -2162,10 +2078,7 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
     if(!document.getElementById("viewCHANNELmessageslist").classList.contains('d-none')){
     document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
         for(i=0;i<arrcreateCHANNELmessages.length;i++){
-            let videoURL = "";
-            if((arrcreateCHANNELmessages[i].body.video instanceof Blob)&(arrcreateCHANNELmessages[i].body.video!=window.location.href)){
-                videoURL = URL.createObjectURL(arrcreateCHANNELmessages[i].body.video);
-            }
+            let videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
             switch(arrcreateCHANNELmessages[i].type){
                 case 'Welcome':
@@ -2230,11 +2143,7 @@ async function deletenewmessageCHANNEL(x){
     arrcreateCHANNELmessages.splice(x,1);
     document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
         for(i=0;i<arrcreateCHANNELmessages.length;i++){
-            let videoURL = "";
-            if((arrcreateCHANNELmessages[i].body.video instanceof Blob)&(arrcreateCHANNELmessages[i].body.video!=window.location.href)){
-                videoURL = URL.createObjectURL(arrcreateCHANNELmessages[i].body.video);
-                console.log(videoURL);
-            }
+            let videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
             switch(arrcreateCHANNELmessages[i].type){
                 case 'Welcome':
@@ -2356,9 +2265,10 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
     }
     let img = document.getElementById("imgnewsqueal").src;
     let video = "";
-    if(document.getElementById("videonewsquealCHANNEL").src!=window.location.href)
-        video = await fetchBlobFromUrl(document.getElementById("videonewsquealCHANNEL").src);
-    console.log(document.getElementById("videonewsquealCHANNEL").src);                     
+    if(document.getElementById("videonewsquealCHANNEL").src!=window.location.href){
+        videoBlob = await fetchBlobFromUrl(document.getElementById("videonewsquealCHANNEL").src);
+        video = await uploadVideo(videoBlob);
+    }                     
     let position = [];
     if(latitude!=""){
     position[0] = latitude;
@@ -2412,9 +2322,7 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
         for(i=0;i<editCHANNEL.list_posts.length;i++){
             if(editCHANNEL.list_posts[i].body.photo=="")
                 editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-            let videoURL = "";
-            if((arrsqueals[i].body.video instanceof Blob)&(arrsqueals[i].body.video!=window.location.href))
-                videoURL = URL.createObjectURL(arrsqueals[i].body.video);
+            let videoURL = await getVideo(arrsqueals[i].body.video);
             let Address = await getAddressGeolocation(editCHANNEL.list_posts[i].body.position[0], editCHANNEL.list_posts[i].body.position[1]);
             document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column mexcard"><div class="card-header" style="width:100%; height:70px"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height: 150px;"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary deletemexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
             document.getElementById("imgsquealer").removeAttribute("id");
