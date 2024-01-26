@@ -1087,12 +1087,18 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   updateSquealNegative() {
-    const squealId = '65b24ad238b3749c21126bcc'; // Sostituisci con l'ID effettivo dello Squeal
+    const squealId = '65acec75253112144f1557d8'; // Sostituisci con l'ID effettivo dello Squeal
     const updateData = {
-      pos_reactions: 1,
-      neg_reactions: 8,
-      impressions: 20,
-      category: "Controversial"
+      pos_reactions: 2,
+      neg_reactions: 6,
+      impressions: 10,
+      answers:[
+        {sender:"UserProva2@gmail.com",body:{text:'Gattino',photo:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',video:'',link:'https://www.google.com/search?q=june+the++cat&sca_esv=601534305&sxsrf=ACQVn09zpoG0RzI5HnYRtEBk6T65oUB6hw%3A1706219487362&ei=39eyZdbRFYWei-gP0YmL0Ac&ved=0ahUKEwiWvc_zwvmDAxUFzwIHHdHEAnoQ4dUDCBA&uact=5&oq=june+the++cat&gs_lp=Egxnd3Mtd2l6LXNlcnAiDWp1bmUgdGhlICBjYXQyBRAAGIAEMgYQABgFGB4yBhAAGAUYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeSJQWUNIRWM4UcAJ4AZABAJgBsQGgAfsCqgEDMC4zuAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAggQABgIGAcYHsICCxAAGIAEGIoFGIYD4gMEGAAgQYgGAZAGCA&sclient=gws-wiz-serp#vhid=7VL_JGYORZcw7M&vssid=l',position:[]},photoprofile:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',date: "",hour: "10",seconds: "01"},
+        {sender:"UserProva2@gmail.com",body:{text:'Gattone',photo:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',video:'',link:'https://www.google.com/search?q=june+the++cat&sca_esv=601534305&sxsrf=ACQVn09zpoG0RzI5HnYRtEBk6T65oUB6hw%3A1706219487362&ei=39eyZdbRFYWei-gP0YmL0Ac&ved=0ahUKEwiWvc_zwvmDAxUFzwIHHdHEAnoQ4dUDCBA&uact=5&oq=june+the++cat&gs_lp=Egxnd3Mtd2l6LXNlcnAiDWp1bmUgdGhlICBjYXQyBRAAGIAEMgYQABgFGB4yBhAAGAUYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeSJQWUNIRWM4UcAJ4AZABAJgBsQGgAfsCqgEDMC4zuAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAggQABgIGAcYHsICCxAAGIAEGIoFGIYD4gMEGAAgQYgGAZAGCA&sclient=gws-wiz-serp#vhid=7VL_JGYORZcw7M&vssid=l',position:[]},photoprofile:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',date: "",hour: "12",seconds: "02"},
+        {sender:"UserProva2@gmail.com",body:{text:'Gattaccio',photo:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',video:'',link:'https://www.google.com/search?q=june+the++cat&sca_esv=601534305&sxsrf=ACQVn09zpoG0RzI5HnYRtEBk6T65oUB6hw%3A1706219487362&ei=39eyZdbRFYWei-gP0YmL0Ac&ved=0ahUKEwiWvc_zwvmDAxUFzwIHHdHEAnoQ4dUDCBA&uact=5&oq=june+the++cat&gs_lp=Egxnd3Mtd2l6LXNlcnAiDWp1bmUgdGhlICBjYXQyBRAAGIAEMgYQABgFGB4yBhAAGAUYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeSJQWUNIRWM4UcAJ4AZABAJgBsQGgAfsCqgEDMC4zuAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAggQABgIGAcYHsICCxAAGIAEGIoFGIYD4gMEGAAgQYgGAZAGCA&sclient=gws-wiz-serp#vhid=7VL_JGYORZcw7M&vssid=l',position:[]},photoprofile:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',date: "",hour: "13",seconds: "03"},
+        {sender:"UserProva2@gmail.com",body:{text:'Gattaro',photo:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',video:'',link:'https://www.google.com/search?q=june+the++cat&sca_esv=601534305&sxsrf=ACQVn09zpoG0RzI5HnYRtEBk6T65oUB6hw%3A1706219487362&ei=39eyZdbRFYWei-gP0YmL0Ac&ved=0ahUKEwiWvc_zwvmDAxUFzwIHHdHEAnoQ4dUDCBA&uact=5&oq=june+the++cat&gs_lp=Egxnd3Mtd2l6LXNlcnAiDWp1bmUgdGhlICBjYXQyBRAAGIAEMgYQABgFGB4yBhAAGAUYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeSJQWUNIRWM4UcAJ4AZABAJgBsQGgAfsCqgEDMC4zuAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAggQABgIGAcYHsICCxAAGIAEGIoFGIYD4gMEGAAgQYgGAZAGCA&sclient=gws-wiz-serp#vhid=7VL_JGYORZcw7M&vssid=l',position:[]},photoprofile:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',date: "",hour: "20",seconds: "04"},
+      ]
+      // category: "Controversial"
     };
 
     this.databaseService.updateSqueal(squealId, updateData).subscribe({
