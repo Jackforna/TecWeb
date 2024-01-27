@@ -188,4 +188,16 @@ input{
       align-items: center;
     }
 
+
+  }
+
+  @media screen and (max-width: 350px) {
+    body{
+      width: 400px !important;
+    }
+
+    #pagamento-dialog{
+      width: 200px !important;
+    }
+    
   }

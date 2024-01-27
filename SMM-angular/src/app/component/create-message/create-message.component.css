@@ -599,4 +599,17 @@ margin-left: 4%;
   #map-container{
     width: 300px;
   }
+
+  #leaflet-map {
+    width: 200px; /* Imposta la larghezza del contenitore della mappa */
+    height: 200px; /* Imposta l'altezza del contenitore della mappa */
+    }
+}
+
+@media screen and (max-width: 350px) {
+  
+  .input-icons{
+    width: 0%;
+  }
+  
 }
