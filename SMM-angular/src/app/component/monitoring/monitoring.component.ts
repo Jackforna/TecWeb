@@ -139,6 +139,7 @@ export class MonitoringComponent implements OnInit{
           .slice(0, 3);
   
         console.log('Squeals dell\'utente:', userSqueals);
+        console.log('Squeals dell\'utente con risposte:', this.squealsWithAnswers);
         console.log('Most Reacted User Squeals:', this.mostReactedSqueals);
         console.log('Less Reacted User Squeals:', this.lessReactedSqueals);
         console.log('Controversial User Squeals:', this.controversialSqueals);
@@ -158,10 +159,11 @@ export class MonitoringComponent implements OnInit{
     return isNaN(date.getTime()) ? null : date;
   }
 
-  openAnswerModal(squeal: any) {
-    this.selectedSquealAnswers = squeal.answers;
+  openAnswerModal(squealIndex: number) {
+    this.selectedSquealAnswers = this.squealsWithAnswers[squealIndex].answers;
     this.isModalOpen = true;
   }
+  
 
   // Funzione per chiudere il modale
   closeAnswerModal() {

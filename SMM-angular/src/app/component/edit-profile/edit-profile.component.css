@@ -3,7 +3,7 @@ body{
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100vh;
+  min-width: 50vh;
 }
 /*Utente modifica VIP o modifica foto*/
 .userLoggedActionInline-container{
@@ -150,3 +150,54 @@ input{
     margin: 20px; /* Aggiungi qui il margine desiderato */
   }
   
+  @media screen and (max-width: 768px) {
+    body{
+      width: fit-content !important;
+      overflow-x: hidden;
+    }
+
+    #amount-container{
+      display: none;
+    }
+
+    .userLoggedActionInline-container{
+      padding-left: 150px;
+      padding-right: 150px;
+    }
+
+  }
+
+  @media screen and (max-width: 576px) {
+    .userLoggedActionInline-container{
+      padding-left: 100px;
+      padding-right: 100px;
+    }
+
+    #radioGroup-vip{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #pagamento-dialog{
+      width: 300px !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+
+  }
+
+  @media screen and (max-width: 350px) {
+    body{
+      width: 400px !important;
+    }
+
+    #pagamento-dialog{
+      width: 200px !important;
+    }
+    
+  }

@@ -28,6 +28,8 @@ export class GraphicsComponent {
   datiUtente = this.userDati ? JSON.parse(this.userDati) : null;
   userId = this.datiUtente ? this.datiUtente._id : null;
   userNickname = this.datiUtente ? this.datiUtente.nickname : null;
+  squealsWithAnswers: any;
+  answers: any[] = [];
 
 
   constructor(private databaseService: DatabaseService) {}
@@ -36,16 +38,20 @@ export class GraphicsComponent {
     console.clear();
     // Chiama this.databaseService.getAllSquealsByUser() per ottenere tutti i squeal dell'utente
     this.getAllUserSqueals();
+    this.processAnswersOverTime();
   }
 
   getAllUserSqueals() {
     this.databaseService.getAllSquealsByUser().subscribe(
       (squeals) => {
         this.userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname); // Archivia tutti i squeal dell'utente
+        this.answers = this.userSqueals.flatMap(squeal => squeal.answers || []);
         console.log('Squeal dell\'utente:', this.userSqueals);
+        console.log('Risposte dell\'utente:', this.answers);
         // Ora puoi elaborare questi dati per ottenere le reazioni nel tempo
         this.processUserReactionsOverTime();
         this.processUserPostsOverTime();
+        this.processAnswersOverTime();
       },
       (error) => {
         console.error('Errore durante il recupero dei squeal dell\'utente:', error);
@@ -210,7 +216,6 @@ export class GraphicsComponent {
       });
     }
   }
-
   
   processUserPostsOverTime() {
     const countsByDate: { [date: string]: number } = {};
@@ -310,5 +315,66 @@ export class GraphicsComponent {
       });
     }
   }
+
   
+  processAnswersOverTime() {
+    const countsByDate: { [date: string]: number } = {};
+  
+    // Assuming you have the answers array with 'date' properties
+    this.answers.forEach((answer: { date: string | Date; }) => {
+      const answerDate = typeof answer.date === 'string' ? new Date(answer.date) : answer.date;
+      const formattedDate = this.formatDate(answerDate);
+      if (formattedDate) {
+        countsByDate[formattedDate] = (countsByDate[formattedDate] || 0) + 1;
+      }
+    });
+  
+    const answersData = Object.entries(countsByDate).map(([date, count]) => ({ date, count }));
+    answersData.sort((a, b) => moment(a.date).diff(moment(b.date)));
+  
+    // Create the chart with the answersData
+    this.createAnswersChart(answersData);
+    console.log('answersData:', answersData);
+  }
+
+  createAnswersChart(answersData: any[]) {
+    const ctx = document.getElementById('answersChart') as HTMLCanvasElement;
+    console.log('ctx:', ctx); // Add this line
+  
+    if (ctx && answersData && answersData.length > 0) {
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: answersData.map((data: { date: any; }) => data.date),
+          datasets: [{
+            label: 'Number of Answers per Day',
+            data: answersData.map((data: { count: any; }) => data.count),
+            borderColor: 'purple',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            },
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+                tooltipFormat: 'LL',
+                displayFormats: {
+                  day: 'YYYY-MM-DD'
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  formatDate(date: Date): string {
+    return date ? moment(date).format('YYYY-MM-DD') : '';
+  }
 }

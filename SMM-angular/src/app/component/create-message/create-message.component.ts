@@ -1068,14 +1068,18 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   
   /*Aggiornamento squeal SOLO TEST*/
   updateSquealPositive() {
-    const squealId = '65b24034e51664bf7e5b37d8'; // Sostituisci con l'ID effettivo dello Squeal
+    const squealId = '65acec75253112144f1557d8'; // Sostituisci con l'ID effettivo dello Squeal
     const updateData = {
-      pos_reactions: 20,
-      neg_reactions: 5,
-      impressions: 10,
-      category: "Popular"
-    };
+      answers:
+      [
+        {sender: "UserProva2@gmail.com", body: {text:"Messaggio 1"}, date: "07/05/2023",hour: "22",seconds:"12"},
+        {sender: "UserProva3@gmail.com",body: {text:"Messaggio 2"}, date: "07/05/2023",hour: "12",seconds:"12"},
+        {sender: "UserProva2@gmail.com",body: {text:"Messaggio 3"}, date: "07/07/2023",hour: "21",seconds:"12"},
+        {sender: "UserProva3@gmail.com",body: {text:"Messaggio 4"}, date: "07/07/2023",hour: "23",seconds:"12"}
+      ]
+      // answers:[{sender,body:{text:'',photo:'',video:'',link:'',position:[]},photoprofile:'',photoprofileX,photoprofileY,date,hour,seconds}], category, receivers:[], channel, impressions
 
+    };
     this.databaseService.updateSqueal(squealId, updateData).subscribe({
       next: (response) => {
         console.log('Squeal aggiornato con successo:', response);
@@ -1087,18 +1091,15 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   updateSquealNegative() {
-    const squealId = '65acec75253112144f1557d8'; // Sostituisci con l'ID effettivo dello Squeal
+    const squealId = '65ac2cbdd4b368afff663bd0'; // Sostituisci con l'ID effettivo dello Squeal
     const updateData = {
-      pos_reactions: 2,
-      neg_reactions: 6,
-      impressions: 10,
-      answers:[
-        {sender:"UserProva2@gmail.com",body:{text:'Gattino',photo:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',video:'',link:'https://www.google.com/search?q=june+the++cat&sca_esv=601534305&sxsrf=ACQVn09zpoG0RzI5HnYRtEBk6T65oUB6hw%3A1706219487362&ei=39eyZdbRFYWei-gP0YmL0Ac&ved=0ahUKEwiWvc_zwvmDAxUFzwIHHdHEAnoQ4dUDCBA&uact=5&oq=june+the++cat&gs_lp=Egxnd3Mtd2l6LXNlcnAiDWp1bmUgdGhlICBjYXQyBRAAGIAEMgYQABgFGB4yBhAAGAUYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeSJQWUNIRWM4UcAJ4AZABAJgBsQGgAfsCqgEDMC4zuAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAggQABgIGAcYHsICCxAAGIAEGIoFGIYD4gMEGAAgQYgGAZAGCA&sclient=gws-wiz-serp#vhid=7VL_JGYORZcw7M&vssid=l',position:[]},photoprofile:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',date: "",hour: "10",seconds: "01"},
-        {sender:"UserProva2@gmail.com",body:{text:'Gattone',photo:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',video:'',link:'https://www.google.com/search?q=june+the++cat&sca_esv=601534305&sxsrf=ACQVn09zpoG0RzI5HnYRtEBk6T65oUB6hw%3A1706219487362&ei=39eyZdbRFYWei-gP0YmL0Ac&ved=0ahUKEwiWvc_zwvmDAxUFzwIHHdHEAnoQ4dUDCBA&uact=5&oq=june+the++cat&gs_lp=Egxnd3Mtd2l6LXNlcnAiDWp1bmUgdGhlICBjYXQyBRAAGIAEMgYQABgFGB4yBhAAGAUYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeSJQWUNIRWM4UcAJ4AZABAJgBsQGgAfsCqgEDMC4zuAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAggQABgIGAcYHsICCxAAGIAEGIoFGIYD4gMEGAAgQYgGAZAGCA&sclient=gws-wiz-serp#vhid=7VL_JGYORZcw7M&vssid=l',position:[]},photoprofile:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',date: "",hour: "12",seconds: "02"},
-        {sender:"UserProva2@gmail.com",body:{text:'Gattaccio',photo:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',video:'',link:'https://www.google.com/search?q=june+the++cat&sca_esv=601534305&sxsrf=ACQVn09zpoG0RzI5HnYRtEBk6T65oUB6hw%3A1706219487362&ei=39eyZdbRFYWei-gP0YmL0Ac&ved=0ahUKEwiWvc_zwvmDAxUFzwIHHdHEAnoQ4dUDCBA&uact=5&oq=june+the++cat&gs_lp=Egxnd3Mtd2l6LXNlcnAiDWp1bmUgdGhlICBjYXQyBRAAGIAEMgYQABgFGB4yBhAAGAUYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeSJQWUNIRWM4UcAJ4AZABAJgBsQGgAfsCqgEDMC4zuAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAggQABgIGAcYHsICCxAAGIAEGIoFGIYD4gMEGAAgQYgGAZAGCA&sclient=gws-wiz-serp#vhid=7VL_JGYORZcw7M&vssid=l',position:[]},photoprofile:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',date: "",hour: "13",seconds: "03"},
-        {sender:"UserProva2@gmail.com",body:{text:'Gattaro',photo:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',video:'',link:'https://www.google.com/search?q=june+the++cat&sca_esv=601534305&sxsrf=ACQVn09zpoG0RzI5HnYRtEBk6T65oUB6hw%3A1706219487362&ei=39eyZdbRFYWei-gP0YmL0Ac&ved=0ahUKEwiWvc_zwvmDAxUFzwIHHdHEAnoQ4dUDCBA&uact=5&oq=june+the++cat&gs_lp=Egxnd3Mtd2l6LXNlcnAiDWp1bmUgdGhlICBjYXQyBRAAGIAEMgYQABgFGB4yBhAAGAUYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeMgYQABgIGB4yBhAAGAgYHjIGEAAYCBgeSJQWUNIRWM4UcAJ4AZABAJgBsQGgAfsCqgEDMC4zuAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAggQABgIGAcYHsICCxAAGIAEGIoFGIYD4gMEGAAgQYgGAZAGCA&sclient=gws-wiz-serp#vhid=7VL_JGYORZcw7M&vssid=l',position:[]},photoprofile:'https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg',date: "",hour: "20",seconds: "04"},
-      ]
-      // category: "Controversial"
+      answers:
+        [
+          {sender: "UserProva2@gmail.com", body: {text:"Messaggio 5"}, date: "07/05/2023",hour: "22",seconds:"12"},
+          {sender: "UserProva3@gmail.com",body: {text:"Messaggio 6"}, date: "07/05/2023",hour: "12",seconds:"12"},
+          {sender: "UserProva2@gmail.com",body: {text:"Messaggio 7"}, date: "07/10/2023",hour: "21",seconds:"12"},
+          {sender: "UserProva3@gmail.com",body: {text:"Messaggio 8"}, date: "07/10/2023",hour: "23",seconds:"12"}
+        ]
     };
 
     this.databaseService.updateSqueal(squealId, updateData).subscribe({

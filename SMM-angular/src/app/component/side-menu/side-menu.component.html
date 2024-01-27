@@ -40,20 +40,20 @@
                         <span>Graphics</span>
                     </div>
                 </mat-list-item>
-                <mat-list-item role="listitem" [routerLink]="['/settings']" [routerLinkActive]="'active'">
+                <mat-list-item role="listitem" class = "settings-container" [routerLink]="['/settings']" [routerLinkActive]="'active'">
                     <div class = "singleListItem-container">
                         <mat-icon>settings</mat-icon>
                         <span>Settings</span>
                     </div>
                 </mat-list-item>
-            </div>
-            <div class = "space-impaginator"></div>
-            <div class = "logOut-container">
-                <mat-list-item role="button">
-                    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon" (click)="onLogout()">
-                        <mat-icon>logout</mat-icon>
-                    </button>
-                </mat-list-item>
+                <div class = "space-impaginator"></div>
+                <div class = "logOut-container">
+                    <mat-list-item role="button" id = "logOut-listItem">
+                        <button mat-icon-button class="example-icon" id = "bottone-logout" aria-label="Example icon-button with share icon" (click)="onLogout()">
+                            <mat-icon>logout</mat-icon>
+                        </button>
+                    </mat-list-item>
+                </div>
             </div>
         </mat-list>          
     </mat-sidenav>

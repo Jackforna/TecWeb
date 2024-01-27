@@ -95,7 +95,7 @@ h3{
   position: relative;
   width: 300px; /* Larghezza fissa del contenitore dell'immagine */
   height: 300px; /* Altezza fissa del contenitore dell'immagine */
-  margin-left: 4%;
+  /* margin-left: 4%; */
   margin-top: 1%;
   overflow: hidden; /* Nasconde le parti dell'immagine che eccedono il contenitore */
 }
@@ -139,3 +139,57 @@ h3{
   font-size: 1.5rem;
 }
 
+.modal-content {
+  max-width: 40vw; /* larghezza massima del contenuto del modale */
+  max-height: 80vh; /* altezza massima del contenuto del modale */
+  overflow-y: auto; /* permette la scorribilità se il contenuto è troppo lungo */
+  margin-left: 20%;
+}
+
+.modal-content img, .modal-content video {
+  max-width: 100%; /* le immagini e i video non saranno più larghi del loro contenitore */
+  height: auto; /* mantiene le proporzioni dell'immagine */
+}
+
+.modal-content p {
+  font-size: 1rem; /* dimensione del testo */
+}
+
+.close-button {
+  font-size: 1.5rem; /* dimensione del bottone di chiusura */
+}
+
+hr{
+  width: 100%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+  border: 0;
+  border-top: 1px solid grey;
+}
+
+
+@media screen and (max-width: 900px) {
+  body{
+    width: 70vh;
+  }
+
+  .modal-content {
+    margin-left: 0%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .modal-content{
+    max-width: none;
+  }
+
+  .loader {
+    margin-left: 0%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  body{
+    width: 50vh;
+  }
+}

@@ -32,8 +32,8 @@
             <button mat-button>Likes ({{ currentAnswerSqueal.pos_reactions }})</button>
             <button mat-button>Dislikes ({{ currentAnswerSqueal.neg_reactions }})</button>
           </mat-card-actions>
+          <button mat-button (click)="openAnswerModal(currentAnswerSquealIndex)">Mostra Risposte</button>
         </mat-card>
-        <button mat-button (click)="openAnswerModal(currentAnswerSquealIndex)">Mostra Risposte</button>
       </div>
     
       <button *ngIf="currentAnswerSquealIndex < squealsWithAnswers.length - 1" (click)="showNextAnswerSqueal()" class="nav-button right">▶</button>
@@ -43,12 +43,23 @@
       <div class="modal-content">
         <span class="close-button" (click)="closeAnswerModal()">&times;</span>
         <h2>Risposte</h2>
-        <div class = "answer" *ngFor="let answer of selectedSquealAnswers">
+        <div class="answer" *ngFor="let answer of selectedSquealAnswers">
+          <hr>
+          <p>{{ answer.date | date }} at {{ answer.hour }}:{{ answer.seconds }}</p>
+          <p>Answer by: {{ answer.sender }}</p>
           <p>{{ answer.body.text }}</p>
-          <!-- Aggiungi qui altri dettagli della risposta -->
+          <img *ngIf="answer.body.photo" [src]="answer.body.photo" alt="Photo">
+          <a *ngIf="answer.body.link" [href]="answer.body.link" target="_blank">{{ answer.body.link }}</a>
+          <div *ngIf="answer.body.video" class="video-container">
+            <video controls>
+              <source [src]="answer.body.video" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
         </div>
       </div>
     </div>
+    
 
     <h3>Most Reacted Squeals</h3>
     <div class="carousel-container">

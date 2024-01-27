@@ -11,20 +11,55 @@ h2{
 }
 
 .chart-canvas {
-    width: 100%; /* o la larghezza fissa che preferisci */
-    height: auto; /* mantiene il rapporto di aspetto */
     margin: 0 auto; /* centra il canvas */
     display: block; /* elimina l'alignement inline di default */
+    width: 400px;
+    height: 200px;
   }
   
 .canvas-container {
     margin-bottom: 7%; /* o quanto preferisci */
 }
-  
+
+
 hr{
     width: 100%;
     margin-top: 2%;
     margin-bottom: 2%;
     border: 0;
     border-top: 1px solid grey;
+  }
+
+  .row{
+    text-align: center;
+  }
+
+  @media screen and (max-width: 820px) {
+    body{
+      width: 72vh;
+    }
+  }
+
+  @media screen and (max-width: 576px) {
+    body{
+      width: 50vh;
+    }
+
+    .chart-canvas {
+      width: 350px !important;
+      height: 200px !important;
+    }
+    
+  }
+
+  @media screen and (max-width: 350px) {
+    body{
+      width: 40vh;
+    }
+
+    .chart-canvas {
+      width: 280px !important;
+      height: 200px !important;
+    }
+    
   }
