@@ -16,6 +16,22 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, uploadVideo, getVideo} from './serverRequests.js';
 
+const useWindowSize = () => {
+    const [windowSize, setWindowSize] = useState(window.innerWidth);
+  
+    useEffect(() => {
+      const handleResize = () => {
+        setWindowSize(window.innerWidth);
+      };
+  
+      window.addEventListener('resize', handleResize);
+  
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+  
+    return windowSize;
+  };
+
 function Profile() {
     const [actualuser, setactualuser] = useState({nickname: "", photoprofile: "", fullname: "", email: "", cell: "", password: "", version: "", blocked: false, popularity: 0, char_d: 0, char_w: 0, char_m: 0, bio: "", photoprofileX: 0, photoprofileY: 0, notifications: [false,false,false,false,false]})
     const [allUsers, setAllUsers] = useState([]);
@@ -111,6 +127,7 @@ function Profile() {
     const [allAnswersprint, setAllAnswersprint] = useState([]);
     const [userRequest, setUserRequest] = useState('');
     const [numSeconds, setNumSeconds] = useState('');
+    const windowSize = useWindowSize();
 
     useEffect(() => {
         if (location.pathname.endsWith('/profile')) {
@@ -1372,7 +1389,7 @@ const loadImage = (event) => {
 
     return (
         <>
-        <Container style={{ width: '80%', left:'20%', height: '100vh', position:'absolute', alignItems: 'center', overflow:'hidden'}} className="d-flex flex-column">
+        <Container style={{ width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height: windowSize>=600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflow:'hidden'}} className="d-flex flex-column">
             <header className='d-flex flex-column text-center' style={{width:'100%', alignItems:'center'}}>
                 { actualuser.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
                 <Image src={actualuser.photoprofile} style={{height:'100%', position:'relative', marginTop: actualuser.photoprofileY, marginLeft: actualuser.photoprofileX}}></Image>
@@ -2007,7 +2024,7 @@ const loadImage = (event) => {
                     </Container>
                 </Col>
               </Container>
-    </Container>
+        </Container>
         
         <Modal show={showCameraModal} style={{position:'absolute', top:'0', width:'80%', left:'20%', height:'100%'}} onHide={() => setShowCameraModal(false)}>
             <Modal.Header closeButton>

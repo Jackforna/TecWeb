@@ -18,6 +18,22 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, uploadVideo} from './serverRequests.js';
 
+const useWindowSize = () => {
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowSize;
+};
+
 function Home(){
   const location = useLocation();
   const [showIcon, setShowIcon] = useState(true);
@@ -65,6 +81,7 @@ function Home(){
   const [positionMap, setPositionMap] = useState(null);
   const [displayedLink, setDisplayedLink] = useState(''); 
   const [idAnswer, setIdAnswer] = useState(-1);
+  const windowSize = useWindowSize();
 
   useEffect( () => {
     if(location.pathname.endsWith('/home')){
@@ -830,7 +847,7 @@ const sendAnswer = async () => {
   let link = linkAnswer;
   let img = photoAnswer;
   let video = "";
-  if(videoAnswer!=window.location.href){
+  if(videoAnswer!=window.location.href && videoAnswer!=""){
     let blob = await fetchVideoAsBlob(videoAnswer);
     video = await uploadVideo(blob);
   }             
@@ -922,20 +939,20 @@ const loadImage = (event) => {
     return(
         <Container
                 style={{
-                  width: '80%',
-                  left:'20%',
-                  height: '100vh',
+                  width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%',
+                  left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0',
+                  height: windowSize>=600 ? '100vh' : '90%',
                   position:'absolute',
                   alignItems: 'center',
                   overflow:'hidden'
                 }}
                 className="mx-auto d-flex flex-column"
               >
-              <div style={{position:'relative', marginTop:'13%', height:'100%', overflowY:'scroll', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+              <div style={{position:'relative', marginTop:'130px', height:'100%', overflowY:'scroll', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                   {allSquealsprint.length!=0 && allSquealsprint.map((squeal,index) => (
-                    <Card key={index} data-id={squeal._id} className='message' style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', marginBottom:'5%'}}>
+                    <Card key={index} data-id={squeal._id} className='message' style={{backgroundColor:'black', color:'white', borderColor:'white', width:windowSize>=600 ? '500px' : '280px', marginBottom:'5%'}}>
                     <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
-                      <CardGroup>
+                      <CardGroup style={{width:windowSize<600 ? '100%' : 'auto', display:'flex'}}>
                         {squeal.typesender=='Users' ?
                           ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
@@ -957,7 +974,7 @@ const loadImage = (event) => {
                       }
                         
                       </CardGroup>
-                      <Card.Text>{squeal.date+" "+squeal.hour}</Card.Text>
+                      {windowSize>=600 && (<Card.Text>{squeal.date+" "+squeal.hour}</Card.Text>)}
                     </Card.Header>
                     <Card.Body>
                     <Card.Text style={{textAlign:'left'}}>
@@ -974,7 +991,7 @@ const loadImage = (event) => {
                                 </div>
                                 )}
                             {squeal.body.position.length!=0 &&(
-                                <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
+                                <Card style={{ width: windowSize >= 600 ? '70%' : '200px', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                     <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
                                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'/>
                                             <Marker position={squeal.body.position} icon={markerIcon}>
@@ -992,16 +1009,17 @@ const loadImage = (event) => {
                                 </div>
                             )}
                     </Card.Body>
-                    <Card.Footer className='d-flex' style={{justifyContent:'space-between'}}>
+                    <Card.Footer className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                       <Button className="text-white" style={{backgroundColor:'transparent',border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
-                      <div className='d-flex'>
+                      {windowSize<600 && (<Card.Text style={{margin:'0', display:'flex', alignItems:'center'}}>{squeal.date+" "+squeal.hour}</Card.Text>)}
+                      <div className='d-flex justify-content-center' style={{width:windowSize<600 ? '100%' : 'auto', marginTop:windowSize<600 ? '0.25rem' : '0'}}>
                         <Card.Text className='me-1'>
                           {squeal.pos_reactions}
                         </Card.Text>
                         <Image src={'/squealer-app'+pos_reaction1} style={{cursor:'pointer',marginRight:'1px'}} width='25' height='25' onClick={() => reactionSqueal(index,1)}></Image>
                         <Image src={'/squealer-app'+pos_reaction2} style={{cursor:'pointer',marginRight:'1px'}} width='25' height='25' onClick={() => reactionSqueal(index,2)}></Image>
                         <Image src={'/squealer-app'+pos_reaction3} style={{cursor:'pointer',marginRight:'1px'}} width='25' height='25' onClick={() => reactionSqueal(index,3)}></Image>
-                        <Card.Text style={{marginLeft:'17px'}} className='me-1'>
+                        <Card.Text style={{marginLeft:'10px'}} className='me-1'>
                           {squeal.neg_reactions}
                         </Card.Text>
                         <Image src={'/squealer-app'+neg_reaction1} style={{cursor:'pointer',marginRight:'1px'}} width='25' height='25' onClick={() => reactionSqueal(index,4)}></Image>
@@ -1020,7 +1038,7 @@ const loadImage = (event) => {
               </button>
 
               <Form className="d-flex flex-column" style={{position:'absolute', top:'5%'}}>
-                <InputGroup style={{ width: '500px', zIndex:'1002'}} className="d-flex flex-column">
+                <InputGroup style={{ width: windowSize>= 600 ? '500px' : '300px', zIndex:'1002'}} className="d-flex flex-column">
                     <FormControl
                       type="text"
                       placeholder={inputSearch}
@@ -1050,11 +1068,11 @@ const loadImage = (event) => {
                         style={{
                           boxShadow: 'none',
                           borderRadius: '14px',
-                          width: '150px',
+                          width: windowSize>=600 ? '150px' : '100px',
                           backgroundColor: 'blueviolet',
                           color: 'white',
                           position: 'absolute',
-                          left: '351px',
+                          left: windowSize>=600 ? '351px' : '201px',
                           cursor:'pointer',
                         }}
                         onClick={toggleDropdown}
@@ -1062,9 +1080,9 @@ const loadImage = (event) => {
                       <CaretDownFill size='12' style={{marginLeft:'10px'}}></CaretDownFill>
                       </Button>
                     
-                      <div className='d-flex' width='500px'>
+                      <div className='d-flex' width={windowSize>=600 ? '500px' : '300px'}>
                         {suggestedProfiles.length > 0 && isSuggestionsVisible == true && (
-                        <div className="suggested-profiles-container" style={{borderRadius:'14px',marginRight:'-350px'}}>
+                        <div className="suggested-profiles-container" style={{borderRadius:'14px',marginRight:windowSize>=600 ? '-350px' : '-201px'}}>
                           <ul style={{paddingLeft:'0'}}>
                             {suggestedProfiles.map((profile, index) => (
                               <li key={index} onClick={() => handleItemSelect(profile)} style={{listStyle:'none',textAlign:'center',cursor:'pointer'}}>
@@ -1078,9 +1096,9 @@ const loadImage = (event) => {
                           style={{
                             boxShadow: 'none',
                             borderRadius: '14px',
-                            width: '150px',
+                            width: windowSize>=600 ? '150px' : '100px',
                             height: '130px',
-                            marginLeft:'350px',
+                            marginLeft:windowSize>600 ? '350px' : '201px',
                             backgroundColor: 'blueviolet',
                             color: 'white',
                             position:'relative',
@@ -1123,27 +1141,27 @@ const loadImage = (event) => {
                 </InputGroup>
               </Form> 
               <Container style={{width: '100%', height: '100vh', position:'absolute', alignItems: 'center', overflowY:'scroll', overflowX:'hidden', alignItems:'center', zIndex:'1003', backgroundColor:'black'}} className={`${viewAnswers ? 'd-flex flex-column' : 'd-none'}`}>
-                <Form id="writenewsqueal" className="container-fluid position-relative flex-column align-items-center" style={{display: 'flex', width: '100%', top: '0', left: '0', backgroundColor:'black', marginBottom:'5%'}}>
+                <Form id="writenewsqueal" className="container-fluid position-relative flex-column align-items-center" style={{display: 'flex', width: '100%', top: '0', left: '0', backgroundColor:'black', marginBottom:'13%'}}>
                   <button type="button" className="btn-close" aria-label="Close" id="closewritenewsqueal" style={{position: 'absolute', top: '3%', right: '2%', fontSize: '30px', filter: 'invert(1)', zIndex: 2}} onClick={handleClose}></button>
                   <h3 className="text-light text-center mt-5 mb-4">Write new Answer</h3>
-                  <div className="card bg-black border-success text-light mt-3 d-flex flex-row" style={{width: '400px', minHeight: '200px', alignItems:'center'}}>
+                  <div className="card bg-black border-success text-light mt-3 d-flex flex-row" style={{width: windowSize >= 600 ? '400px' : '280px', minHeight: '200px', alignItems:'center'}}>
                       <section  style={{width: '80%', height: '100%'}}>
                           <div className="card-body text-center d-flex align-items-center flex-column" style={{width: '100%', minHeight: '150px'}}>
                               <textarea className="text-light bg-transparent border-0" id="textnewsqueal" style={{width: '100%', resize: 'none', outline:'none'}} placeholder="What're you thinking about?" value={textAnswer} onChange={handleTextAnswer}></textarea>
                               {photoAnswer!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
-                              <div style={{ position: 'relative', width: '300px', maxHeight: '300px', overflow: 'hidden' }}>
+                              <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                 <img src={photoAnswer} alt="Taken" width="100%" />
                                 <button onClick={() => {setPhotoAnswer('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '10px' }}>X</button>
                               </div>
                             )} 
                             {videoAnswer!="" && (
-                              <div style={{ position: 'relative', width: '300px', maxHeight: '300px', overflow: 'hidden' }}>
+                              <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                 <video src={videoAnswer} alt="Taken" width="100%" controls/>
                                 <button onClick={() => {setVideoAnswer('')}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '10px' }}>X</button>
                               </div>
                             )} 
                             {isMapVisible &&(
-                                <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
+                                <Card style={{ width: windowSize>=600 ? '70%' : '200px', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                     <MapContainer center={positionMap} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
                                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'/>
                                             <Marker position={positionMap} icon={markerIcon}>
@@ -1179,7 +1197,7 @@ const loadImage = (event) => {
                 </Form>
                 <div style={{position:'relative', height:'100%', overflowY:'scroll', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                   {allAnswersprint.length!=0 && allAnswersprint.map((squeal,index) => (
-                    <Card key={index} data-id={squeal._id} className='message' style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', marginBottom:'5%'}}>
+                    <Card key={index} data-id={squeal._id} className='message' style={{backgroundColor:'black', color:'white', borderColor:'white', width: windowSize>=600 ? '400px' : '280px', marginBottom: (allAnswersprint.length-1) ===index ? '100px': '5%'}}>
                     <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                       <CardGroup>
                           {squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
@@ -1206,7 +1224,7 @@ const loadImage = (event) => {
                                 </div>
                                 )}
                             {squeal.body.position.length!=0 &&(
-                                <Card style={{ width: '70%', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
+                                <Card style={{ width: windowSize>=600 ? '70%' : '200px', height: '200px', position: 'relative', marginTop:'20px', marginBottom:'20px' }}>
                                     <MapContainer center={squeal.body.position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
                                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'/>
                                             <Marker position={squeal.body.position} icon={markerIcon}>
