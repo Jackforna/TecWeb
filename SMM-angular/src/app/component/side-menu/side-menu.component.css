@@ -131,3 +131,151 @@ mat-sidenav-content {
     flex-direction: column;
     align-items: center;
 }
+
+@media screen and (max-width: 1090px){
+    .pageSelector-container span{
+        display: none;
+    }
+
+    .active {   /*Quando è selezionato mette il colore verde*/
+        background-color: transparent;
+    }
+
+    mat-icon {
+        padding: 3px;
+        margin-left: 0%;
+        margin-bottom: 5%;
+    }
+
+    .singleListItem-container{
+        justify-content: center;
+    }
+
+    mat-list-item[role="listitem"] mat-icon {
+        margin-left: 0%;
+    }
+
+    mat-list-item[role="listitem"] {
+        margin-bottom: 10%;
+    }
+
+    .space-impaginator{
+        margin-top: 15%;
+    }
+
+    /* .logOut-container{
+        margin-left: 28%;
+        text-align: justify;
+    } */
+
+    .logoSquealer-container{
+        width: 100%;
+    }
+
+    .user-avatar {
+        width: 70px;
+        height: 70px;
+    }  
+
+    .userLogged-container{
+        margin-bottom: 20%;
+    }
+
+    #bottone-logout{
+        padding: 0%;
+    }
+
+    #logOut-listItem{
+        padding: 0%;
+    }
+
+    mat-sidenav-content {
+        overflow-x: hidden;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .mat-sidenav-container .mat-sidenav {
+        position: fixed;
+        bottom: 0; /* Posiziona in basso */
+        left: 0;
+        right: 0;
+        top: 92%;
+        height: 8%; /* O l'altezza che desideri per il sidenav */
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+        background: purple; /* Scegli un colore di sfondo che preferisci */
+        z-index: 1000;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden; /* Previene lo scroll orizzontale */
+        overflow-y: hidden;
+    }
+
+    .example-container {
+        overflow: hidden;
+      }
+
+    /* mat-list {
+        margin-top: 50%;
+    } */
+
+    .logoSquealer-container, .userLogged-container, .settings-container, .space-impaginator {
+        display: none;
+    }
+
+    .pageSelector-container{
+        display: flex;
+        flex-direction: row;
+        position: fixed; /* o potrebbe essere anche 'absolute' se è all'interno di un contenitore posizionato */
+        top: 93%; /* Regola in base alla tua header bar se ne hai una */
+        left: 15%;
+        z-index: 100; /* Assicurati che sia più alto degli altri z-index */
+        width: 70%;
+    }
+
+    .pageSelector-container span{
+        display: none;
+    }
+
+    .active {   /*Quando è selezionato mette il colore verde*/
+        background-color: transparent;
+    }
+
+    mat-sidenav-content{
+        margin-left: 0px !important;
+        overflow-x: hidden;
+        min-height: 70vh !important;
+        height: 80% !important;
+    }
+
+    #bottone-logout{
+        padding: 0%;
+    }
+
+    #logOut-listItem{
+        padding: 0%;
+    }
+}
+
+  
+@media screen and (max-width: 480px) {
+    mat-list-item[role="listitem"] {
+        padding: 0%;
+    }
+
+    mat-list-item[role="button"] mat-icon {
+        padding: 0%;
+    }
+
+    #bottone-logout{
+        padding: 0%;
+    }
+
+    #logOut-listItem{
+        padding: 0%;
+    }
+}
+

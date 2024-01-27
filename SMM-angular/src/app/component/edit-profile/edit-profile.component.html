@@ -28,7 +28,7 @@
                 <h1 mat-dialog-title>Scegli un VIP da gestire</h1>
                 <div mat-dialog-content>
                 <!-- Lista di opzioni VIP (da sostituire con i dati reali) -->
-                <mat-radio-group [(ngModel)]="selectedVIP">
+                <mat-radio-group [(ngModel)]="selectedVIP" id = "radioGroup-vip">
                     <mat-radio-button *ngFor="let vip of vipList" [value]="vip">{{ vip.nickname }}</mat-radio-button>
                 </mat-radio-group>
                 </div>
@@ -75,8 +75,8 @@
                 <mat-radio-button class="example-margin" value="25">25</mat-radio-button>
                 <mat-radio-button class="example-margin" value="50">50</mat-radio-button>
                 <mat-radio-button class="example-margin" value="100">100</mat-radio-button>
-                <mat-radio-button class="example-margin" value="other" style = "width: 30%;">
-                    <input matInput [(ngModel)]="otherAmount" type="text" placeholder="Select amount" style = "width: 85%; font-size:16px;">   
+                <mat-radio-button class="example-margin" id = "amount-container" value="other" style = "width: 30%;">
+                    <input matInput [(ngModel)]="otherAmount" type="text" placeholder="Select amount" style = "width: 100%; font-size:16px;">   
                 </mat-radio-button>
                 <button mat-raised-button (click)="openConfirmationModal()" style = "border-radius: 10px; background-color: aquamarine;">Buy</button>
             </mat-radio-group>
@@ -95,18 +95,20 @@
         -->
         
         <ng-template #confirmationDialog>
-            <h2 mat-dialog-title>Conferma</h2>
-            <h3>Metodo di pagamento</h3>
-            <mat-radio-group [(ngModel)]="selectedPaymentMethod">
-                <mat-radio-button class="example-margin" value="PayPal">PayPal</mat-radio-button>
-                <mat-radio-button class="example-margin" value="CreditCard">Carta di credito</mat-radio-button>
-                <mat-radio-button class="example-margin" value="GooglePay">GooglePay</mat-radio-button>
-            </mat-radio-group>
-            <mat-dialog-content>Sei sicuro?</mat-dialog-content>
-            <mat-dialog-actions>
-              <button mat-button (click)="confirmSelection()">Sì</button>
-              <button mat-button mat-dialog-close>No</button>
-            </mat-dialog-actions>
+            <div id = "pagamento-dialog">
+                <h2 mat-dialog-title>Conferma</h2>
+                <h3>Metodo di pagamento</h3>
+                <mat-radio-group [(ngModel)]="selectedPaymentMethod" id = "radioGroup-vip">
+                    <mat-radio-button class="example-margin" value="PayPal">PayPal</mat-radio-button>
+                    <mat-radio-button class="example-margin" value="CreditCard">Carta di credito</mat-radio-button>
+                    <mat-radio-button class="example-margin" value="GooglePay">GooglePay</mat-radio-button>
+                </mat-radio-group>
+                <mat-dialog-content>Sei sicuro?</mat-dialog-content>
+                <mat-dialog-actions>
+                <button mat-button (click)="confirmSelection()">Sì</button>
+                <button mat-button mat-dialog-close>No</button>
+                </mat-dialog-actions>
+            </div>
         </ng-template>
         
     </div>

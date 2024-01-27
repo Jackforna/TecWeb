@@ -28,3 +28,15 @@ hr{
     border: 0;
     border-top: 1px solid grey;
   }
+
+  @media screen and (max-width: 820px) {
+    body{
+      width: 70vh;
+    }
+  }
+
+  @media screen and (max-width: 576px) {
+    body{
+      width: 50vh;
+    }
+  }

@@ -95,7 +95,7 @@ h3{
   position: relative;
   width: 300px; /* Larghezza fissa del contenitore dell'immagine */
   height: 300px; /* Altezza fissa del contenitore dell'immagine */
-  margin-left: 4%;
+  /* margin-left: 4%; */
   margin-top: 1%;
   overflow: hidden; /* Nasconde le parti dell'immagine che eccedono il contenitore */
 }
@@ -167,3 +167,29 @@ hr{
   border-top: 1px solid grey;
 }
 
+
+@media screen and (max-width: 900px) {
+  body{
+    width: 70vh;
+  }
+
+  .modal-content {
+    margin-left: 0%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .modal-content{
+    max-width: none;
+  }
+
+  .loader {
+    margin-left: 0%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  body{
+    width: 50vh;
+  }
+}
