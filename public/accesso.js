@@ -279,14 +279,19 @@ document.getElementById("passwordsign3").addEventListener("input", (e) => {
 
 function login(x){
     let nickname = document.getElementById("nicknamesign"+x).value;
-    let email = document.getElementById("emailsign"+x).value;
     let password = document.getElementById("passwordsign"+x).value;
-    let fullname = document.getElementById("fullnamesign"+x).value;
-    let type = document.getElementById("type_user"+x).value;
+    let email;
+    let fullname;
+    let type;
+    if(x==3 | x==1){
+        email = document.getElementById("emailsign"+x).value;
+        fullname = document.getElementById("fullnamesign"+x).value;
+        type = document.getElementById("type_user"+x).value;
+    }
     let valid = false;
     if(sign){
         for(i=0;i<users.length;i++){
-            if((nickname==users[i].nickname)&(password==users[i].password)){
+            if((nickname==users[i].nickname)&&(password==users[i].password)){
                 valid = true;
                 actualuser = users[i];
                 localStorage.setItem("actualUserId", JSON.stringify(actualuser._id));
