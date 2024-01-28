@@ -42,7 +42,6 @@ export class SideMenuComponent implements OnInit {
   // Da mettere a posto
   onLogout(): void {
     localStorage.clear();
-    //this.authService.logOut()
     window.location.href = 'http://localhost:8080/';
   } 
 
