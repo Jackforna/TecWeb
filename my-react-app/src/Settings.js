@@ -1,11 +1,28 @@
 import React, { useState, useEffect} from 'react';
-import { Container, Nav, InputGroup, FormControl, Button, Card, Row} from 'react-bootstrap';
+import { Container, Nav, InputGroup, FormControl, Button, Card, Row, Image} from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import './App.css';
 import search_logo from '../src/img/search.png'
-import {XCircle, List, PersonFillUp, Bag, Bell, PatchCheckFill } from 'react-bootstrap-icons';
+import logo from './img/logo.png'
+import {XCircle, List, PersonFillUp, Bag, Bell, PatchCheckFill, Clipboard2Pulse, Clipboard2Data } from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+
+const useWindowSize = () => {
+    const [windowSize, setWindowSize] = useState(window.innerWidth);
+  
+    useEffect(() => {
+      const handleResize = () => {
+        setWindowSize(window.innerWidth);
+      };
+  
+      window.addEventListener('resize', handleResize);
+  
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+  
+    return windowSize;
+  };
 
 function Settings() {
     const [actualuser, setactualuser] = useState({nickname:"", bio:'', photoprofile:'', photoprofileX:0, photoprofileY:0, fullname:'', email:'', password:'', version:"normal", clients:[], smm:'', blocked:false, char_d:400, char_w:2500, char_m: 9000, notifications:[false, false, false, false]})
@@ -23,6 +40,7 @@ function Settings() {
     const [confirmBuyProfessional, setConfirmBuyProfessional] = useState(false);
     const [confirmBuyCharacters, setConfirmBuyCharacters] = useState(false);
     const [optionCharacters, setOptionCharacters] = useState(0);
+    const windowSize = useWindowSize();
 
     useEffect(() => {
         if (location.pathname.endsWith('/settings')) {
@@ -264,50 +282,67 @@ function Settings() {
 
     return (
         <>
-            <Container style={{ width: '20%', left:'0', height: '100vh', position:'absolute', alignItems: 'center', overflowY:'scroll'}} className={`${openBar ? "mx-auto d-flex flex-column bg-dark" : "d-none"}`}>
-                <Nav className="flex-column bg-dark text-white p-4" style={{height: '100vh', justifyContent:'center'}}>
-                    <Nav.Item className="mb-2 d-flex" style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
-                        <Bell alt="house-door" color='white' size="30" className='ms-4 mt-1'/>
-                        <p onClick={openNotifications} className='nav-link text-white' style={{width:'80%', marginBottom:'0'}}>Notifications</p>
-                    </Nav.Item>
-                    <Nav.Item className={`${actualuser.version=='moderator' ? "d-none" : "mb-2 d-flex"}`} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
-                        <PersonFillUp alt="search" color='white' size="30" className='ms-4 mt-1'/>
-                        <p onClick={openAccount} className='nav-link text-white' style={{width:'80%', marginBottom:'0'}}>Account</p>
-                    </Nav.Item>
-                    <Nav.Item className="mb-2 d-flex" style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
-                        <Bag alt="person-circle" color='white' size="30" className='ms-4 mt-1'/>
-                        <p onClick={openCharacters} className='nav-link text-white' style={{width:'80%', marginBottom:'0'}}>Characters</p>
-                    </Nav.Item>
+            <div style={{backgroundColor: 'black', height: '100vh', display: 'flex', flexDirection: 'column'}} className={openBar ? '' : 'd-none'}>
+                <Nav className="d-flex flex-column bg-dark text-white" style={{width: windowSize >= 1024 ? '20%' : windowSize >= 600 ? '10%' : '100%',position:'absolute', top:windowSize >= 600 ? '0' : '90%', height: windowSize >= 600 ? '100vh' : '10%', overflow:'hidden', zIndex:'1006', alignItems:'center'}}>
+                    <div style={{ flex: '0.5' }}></div>
+
+                    {windowSize >= 1024 && (<div className="text-center mb-3">
+                    <Image src={'/squealer-app'+logo} alt="Logo" roundedCircle width="80%" />
+                    </div>)}
+
+                    <div className={windowSize >= 600 ? 'd-flex flex-column' : 'd-flex flex-row'} style={{alignItems:'center', justifyContent:'space-around', flex: windowSize >= 1024 ? '0' : '1', width:'100%'}}>
+                        <Nav.Item className='mb-2 d-flex' style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                            <Button onClick={openNotifications} style={{backgroundColor:'transparent', border:'0'}}><Bell alt="bell" size="25" className='mt-2 text-white'/></Button>
+                            {windowSize >= 1024 && (<Button onClick={openNotifications} style={{backgroundColor:'transparent', border:'0'}} className='nav-link text-white'>Notifications</Button>)}
+                        </Nav.Item>
+                        <Nav.Item className={`${actualuser.version=='moderator' ? "d-none" : "mb-2 d-flex"}`} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                            <Button onClick={openAccount} style={{backgroundColor:'transparent', border:'0'}}><PersonFillUp alt="bell" size="25" className='mt-2 text-white'/></Button>
+                            {windowSize >= 1024 && (<Button onClick={openAccount} style={{backgroundColor:'transparent', border:'0'}} className='nav-link text-white'>Account</Button>)}
+                        </Nav.Item>
+                        <Nav.Item className='mb-2 d-flex' style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                            <Button onClick={openCharacters} style={{backgroundColor:'transparent', border:'0'}}><Bag alt="bell" size="25" className='mt-2 text-white'/></Button>
+                            {windowSize >= 1024 && (<Button onClick={openCharacters} style={{backgroundColor:'transparent', border:'0'}} className='nav-link text-white'>Characters</Button>)}
+                        </Nav.Item>
+                        {windowSize < 1024 && (actualuser.version==='moderator' || actualuser.version==='SMM') && (<Button onClick={gotoDashboard} style={{ display: 'flex', justifyContent: 'center', width:'80%', backgroundColor:'transparent', border:'0'}}>
+                        {actualuser.version=='SMM' ? <Clipboard2Data alt="clipboard1" size="25" className='mt-2 text-white'></Clipboard2Data> : <Clipboard2Pulse alt="clipboard2" size="25" className='mt-2 text-white'></Clipboard2Pulse>}
+                        </Button>)}
+                    </div>
+                    
                     <div style={{ flex: '0.2' }}></div>
-                    <Button onClick={gotoDashboard} className={`${actualuser.version=='normal' | actualuser.version=='professional' ? "d-none" : ""}`}>{actualuser.version=='SMM' ? 'SMM Dashboard' : 'Moderator Dashboard'}</Button>
+
+                    {windowSize >= 1024 && (actualuser.version==='moderator' || actualuser.version==='SMM') && (<Button onClick={gotoDashboard} style={{ display: 'flex', justifyContent: 'center', width:'80%'}}>
+                    <Button>{actualuser.version=='SMM' ? 'SMM Dashboard' : 'Moderator Dashboard'}</Button>
+                    </Button>)}
+                    <div style={{ flex: '0.5' }}></div>
+
                 </Nav>
-            </Container>
-            <Container style={{ width: '80%', left:'20%', height: '100vh', position:'absolute', alignItems: 'center', overflowY:'scroll'}}>
+            </div>
+            <Container style={{ width: windowSize >=1024 ? '80%' : windowSize>=600 ? '90%' : '100%', left: windowSize >= 1024 ? '20%' : windowSize>=600 ? '10%' : '0', height: windowSize>= 600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflowY:'scroll'}}>
                 <XCircle style={{position:'absolute', left:'10px', top:'10px', width:'30px', height:'30px', cursor:'pointer'}} color='white' className={`${openBar ? "" : "d-none"}`} onClick={() => {setOpenBar(!openBar)}}></XCircle>
                 <List style={{position:'absolute', left:'10px', top:'10px', width:'30px', height:'30px', cursor:'pointer'}} color='white' className={`${openBar ? "d-none" : ""}`} onClick={() => {setOpenBar(!openBar)}}></List>
 
                 <Container className={isNotifications ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center'}}>
-                    <h3 style={{color:'white'}} className='m-3'>Decide when and how receiving notifications</h3>
+                    <h3 style={{color:'white', textAlign:'center'}} className='m-3'>Decide when and how receiving notifications</h3>
                     <p style={{color:'white'}} className='m-3 mb-5'>Select the push notifications that you want receive</p>
-                    <label className="switch d-flex flex-row mb-3" style={{width:'50%', padding:'0.5em'}}>
+                    <label className="switch d-flex flex-row mb-3" style={{width:'300px', padding:'0.5em'}}>
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[0]} onChange={() => changenotification(0)}/>
                         <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'50%', marginLeft:'70px'}}>My channels squeals</p>
+                        <p style={{color:'white', width:'80%', marginLeft:'70px'}}>My channels squeals</p>
                     </label>
-                    <label className="switch d-flex flex-row mb-3" style={{width:'50%', padding:'0.5em'}}>
+                    <label className="switch d-flex flex-row mb-3" style={{width:'300px', padding:'0.5em'}}>
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[1]} onChange={() => changenotification(1)}/>
                         <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'50%', marginLeft:'70px'}}>My CHANNELS squeal</p>
+                        <p style={{color:'white', width:'80%', marginLeft:'70px'}}>My CHANNELS squeal</p>
                     </label>
-                    <label className="switch d-flex flex-row mb-3" style={{width:'50%', padding:'0.5em'}}>
+                    <label className="switch d-flex flex-row mb-3" style={{width:'300px', padding:'0.5em'}}>
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[2]} onChange={() => changenotification(2)}/>
                         <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'50%', marginLeft:'70px'}}>For you squeals</p>
+                        <p style={{color:'white', width:'80%', marginLeft:'70px'}}>For you squeals</p>
                     </label>
-                    <label className="switch d-flex flex-row mb-3" style={{width:'50%', padding:'0.5em'}}>
+                    <label className="switch d-flex flex-row mb-3" style={{width:'300px', padding:'0.5em'}}>
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[3]} onChange={() => changenotification(3)}/>
                         <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'50%', marginLeft:'70px'}}>Personal squeals</p>
+                        <p style={{color:'white', width:'80%', marginLeft:'70px'}}>Personal squeals</p>
                     </label>
                 </Container>
                 <Container className={isAccount ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center', overflowY:'scroll', height:'100%'}}>
@@ -363,8 +398,8 @@ function Settings() {
                     </div>
 
                 </Container>
-                <Container className={isCharacters ? 'd-flex flex-row' : 'd-none'} style={{width:'100%', height:'100%', alignItems:'center', justifyContent:'center'}}>
-                    <Card style={{position: 'relative', width: '30%', margin: '4%', height:'50%', background: 'linear-gradient(40deg,#539bdb,#8983f7 70%)', textAlign: 'center', justifyContent: 'center', alignItems: 'center', display:'flex', flexDirection: 'column', borderRadius: '12px'}}>
+                <Container className={isCharacters ? windowSize>= 1000 ? 'd-flex flex-row' : 'd-flex flex-column' : 'd-none'} style={{width:'100%', height:'100%', alignItems:'center', justifyContent:'center', marginTop:'30px'}}>
+                    <Card style={{position: 'relative', width: '30%', minWidth:'260px', margin: '4%', height:'50%', background: 'linear-gradient(40deg,#539bdb,#8983f7 70%)', textAlign: 'center', justifyContent: 'center', alignItems: 'center', display:'flex', flexDirection: 'column', borderRadius: '12px'}}>
                         <Card.Body style={{flex:'0 1 auto'}}>
                             <h3 className='mb-4' style={{cursor:'default'}}>First option</h3>
                             <p style={{cursor:'default'}}>300 more characters for day</p>
@@ -374,7 +409,7 @@ function Settings() {
                             <Button className='mt-3' onClick={() => morecharacter(1)}>Go to payment</Button>
                         </Card.Body>
                     </Card>
-                    <Card style={{position: 'relative', width: '30%', margin: '4%', height: '50%', background: 'linear-gradient(40deg,#539bdb,#8983f7 70%)', textAlign: 'center',justifyContent: 'center', alignItems: 'center', display:'flex', flexDirection: 'column', borderRadius: '12px', flex:'0 1 auto'}}>
+                    <Card style={{position: 'relative', width: '30%', minWidth:'260px', margin: '4%', height: '50%', background: 'linear-gradient(40deg,#539bdb,#8983f7 70%)', textAlign: 'center',justifyContent: 'center', alignItems: 'center', display:'flex', flexDirection: 'column', borderRadius: '12px', flex:'0 1 auto'}}>
                         <Card.Body style={{flex:'0 1 auto'}}>
                             <h3 className='mb-4' style={{cursor:'default'}}>Second option</h3>
                             <p style={{cursor:'default'}}>700 more characters for day</p>

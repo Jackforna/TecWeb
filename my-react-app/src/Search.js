@@ -16,6 +16,22 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, getVideo} from './serverRequests.js';
 
+const useWindowSize = () => {
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowSize;
+};
+
 function Search() {
     const [actualuser, setactualuser] = useState()
     const [selectedItems, setSelectedItems] = useState([]);
@@ -65,6 +81,7 @@ function Search() {
       iconAnchor: [12, 41]
     });
     const [silenceChannel, setSilenceChannel] = useState(false);
+    const windowSize = useWindowSize();
 
   useEffect(() => {
         if (location.pathname.endsWith('/search')) {
@@ -545,7 +562,7 @@ const toggleSilenceChannel = () => {
 
     return (
       <>
-            <Container style={{ width: '80%', left:'20%', height: '100vh', position:'absolute', alignItems: 'center', overflowY:'scroll'}} className={`${viewsearch ? "mx-auto d-flex flex-column" : "d-none"}`}>
+            <Container style={{ width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height: windowSize>=600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflowY:'scroll'}} className={`${viewsearch ? "mx-auto d-flex flex-column" : "d-none"}`}>
             <Form className="d-flex flex-column" style={{position:'absolute', top:'5%'}}>
                 <InputGroup style={{ width: '500px'}} className="d-flex flex-column">
                     <FormControl type="text" placeholder={inputSearch} value={clientinputSearch} variant="outline-success" className="formcontroll-inputSearch"
@@ -607,7 +624,7 @@ const toggleSilenceChannel = () => {
                         </div>
                         )} 
               </Container>
-              <Container style={{ width: '80%', left:'20%', height: '100vh', position:'absolute', alignItems: 'center', overflow:'hidden'}} className={`${viewprofile ? '"d-flex flex-column"' : 'd-none'}`}>
+              <Container style={{ width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height: windowSize>=600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflow:'hidden'}} className={`${viewprofile ? '"d-flex flex-column"' : 'd-none'}`}>
                 <header className='d-flex flex-column text-center' style={{width:'100%', alignItems:'center'}}>
                   <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeviewprofile}>Back</Button>
                     { actualprofile.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
@@ -711,7 +728,7 @@ const toggleSilenceChannel = () => {
                 </Container>
               </Container>
 
-              <Container className={viewchannel ? '' : 'd-none'} style={{position:'absolute',width:'80%', left:'20%', height:'100vh', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
+              <Container className={viewchannel ? '' : 'd-none'} style={{position:'absolute',width:windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height:windowSize>=600 ? '100vh' : '90%', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
                 <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeviewchannel}>Back</Button>
                 <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribechannel}>{inChannel ? "Unsubscribe" : "Subscribe"}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
@@ -875,7 +892,7 @@ const toggleSilenceChannel = () => {
                 </Col>
               </Container>
 
-              <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:'80%', left:'20%', height:'100vh', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
+              <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height:windowSize>=600 ? '100vh' : '90%', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
                 <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeViewKeyword}>Back</Button>
                 <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribekeyword}>{inKeyword ? "Unsubscribe" : "Subscribe"}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>

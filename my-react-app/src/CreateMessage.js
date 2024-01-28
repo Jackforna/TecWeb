@@ -11,6 +11,22 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
+const useWindowSize = () => {
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowSize;
+};
+
 function CreateMessage(props) {
   const [showIcon, setShowIcon] = useState(true);
   const [suggestedProfiles, setSuggestedProfiles] = useState([]);
@@ -59,6 +75,7 @@ function CreateMessage(props) {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [inputLIink, setinputLIink] = useState('');
   const [displayedLink, setDisplayedLink] = useState(''); 
+  const windowSize = useWindowSize();
 
   /*Crea canale*/
   const [searchTerm2, setSearchTerm2] = useState('');

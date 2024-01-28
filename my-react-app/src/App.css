@@ -27,6 +27,12 @@
   overflow-y:scroll;
 }
 
+@media screen and (max-width:600px){
+  .suggested-profiles-container{
+    width:200px;
+  }
+}
+
 #create-messagge-card {
   border-color: aquamarine;
   background-color: transparent;
@@ -41,8 +47,10 @@
   overflow: hidden;
 }
 
-.nav-item:hover{
-  background-color: #696969;
+@media screen and (min-width:1025px) {
+  .nav-item:hover{
+    background-color: #696969;
+  }
 }
 
 .icon-menu:hover{
@@ -139,14 +147,3 @@ input:checked + .slider:before{
   left: calc(100% - (var(--size-of-icon,1.4em) + var(--slider-offset,0.3em)));
   background: #00ff00a0;
 }
-
-/*<!doctype html><html lang="en">
-    <head><meta charset="utf-8"/>
-        <link rel="icon" href="/squealer-app/favicon.ico"/>
-        <meta name="viewport" content="width=device-width,initial-scale=1"/>
-        <meta name="theme-color" content="#000000"/>
-        <meta name="description" content="Web site created using create-react-app"/>
-        <link rel="apple-touch-icon" href="/squealer-app/logo192.png"/>
-        <link rel="manifest" href="/squealer-app/manifest.json"/>
-        <title>React App</title><script defer="defer" src="/squealer-app/static/js/main.725bc411.js"></script>
-        <link href="/squealer-app/static/css/main.5f26a27a.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>*/

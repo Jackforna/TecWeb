@@ -4,7 +4,7 @@ import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Image, D
 import { BrowserRouter as Router, Route, Link, Routes, useNavigate, useLocation} from 'react-router-dom';
 import './App.css';
 import logo from './img/logo.png'
-import { Camera, Globe, Link as LinkLogo, PersonCircle, Gear, NodeMinus, Send, CaretDownFill, HouseDoor, Search as SearchLogo, PatchCheckFill} from 'react-bootstrap-icons';
+import { Camera, Globe, Link as LinkLogo, PersonCircle, Gear, NodeMinus, Send, CaretDownFill, HouseDoor, Search as SearchLogo, PatchCheckFill, PlusCircle, PersonPlus} from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import Home from './Home';
 import CreateMessage from './CreateMessage';
@@ -18,8 +18,25 @@ import Settings from './Settings'
 //ogni gruppo è composto da creator, photoprofile, photoprofileX, photoprofileY, name, type, list_mess, silenceable, list_users, usersSilenced[], list_posts, blocked(booleano, solo se è di tipo channel), description, popularity
 //ogni list_mess è composto da un messaggio(con tutte le componenti),type, request, repetition, remind:{every, dayMonth, dayWeek, hour}
 
+const useWindowSize = () => {
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowSize;
+};
+
 function App() {
   const [entered, setEntered] = useState(false);
+  const windowSize = useWindowSize();
 
   useEffect(()=>{
     if (JSON.parse(localStorage.getItem('actualUserId'))!=1) {
@@ -34,55 +51,7 @@ function App() {
   return (
   <Router>
     <Redirector />
-    <div style={{backgroundColor: 'black', height: '100vh', display: 'flex', flexDirection: 'column',}}>
-      <div className="d-flex">
-
-        <div style={{width:'20%',position:'absolute', overflow:'hidden'}}>
-          {/*Side menu */}
-          <Nav className="flex-column bg-dark text-white p-4" style={{height: '100vh',alignItems:'center'}}>
-            {/* Spazio vuoto */}
-            <div style={{ flex: '0.5' }}></div>
-
-            {/* Logo */}
-            <div className="text-center mb-3">
-              <Image src={'/squealer-app'+logo} alt="Logo" roundedCircle width="80%" />
-            </div>
-
-            {/* Spazio vuoto */}
-            <div style={{ flex: '0.2' }}></div>
-
-            {/* Sezione Navigazione */}
-            <div style={{minHeight:'240px', width:'80%'}}>
-              <Nav.Item className="mb-2 d-flex" style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
-                <HouseDoor alt="house-door" size="30" className='ms-5 mt-1'/>
-                <Link to="/squealer-app/home" className='nav-link text-white' style={{width:'80%'}}>Home</Link>
-              </Nav.Item>
-              <Nav.Item className={entered ? 'mb-2 d-flex' : 'd-none'} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
-                <SearchLogo alt="search" size="30" className='ms-5 mt-1'/>
-                <Link to="/squealer-app/search" className='nav-link text-white' style={{width:'80%'}}>Search</Link>
-              </Nav.Item>
-              <Nav.Item className={entered ? 'mb-2 d-flex' : 'd-none'} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
-                <PersonCircle alt="person-circle" size="30" className='ms-5 mt-1'/>
-                <Link to="/squealer-app/profile" className='nav-link text-white' style={{width:'80%'}}>Profile</Link>
-              </Nav.Item>
-              <Nav.Item className={entered ? 'mb-2 d-flex' : 'd-none'} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s'}}>
-                <Gear alt="settings" size="30" className='ms-5 mt-1'/>
-                <Link to="/squealer-app/settings" className="nav-link text-white" style={{width:'80%'}}>Settings</Link>
-              </Nav.Item>
-            </div>
-
-            <div style={{ flex: '0.2' }}></div>
-
-            <Link to="/squealer-app/create-message" className={entered ? '' : 'd-none'} style={{ display: 'flex', justifyContent: 'center'}}>
-              <Button>Create Message</Button>
-            </Link>
-
-            <Button onClick={goToAccess} className={entered ? 'd-none' : ''} style={{ display: 'flex', justifyContent: 'center'}}>Create Account</Button>
-            
-            <div style={{ flex: '0.5' }}></div>
-
-          </Nav>
-        </div>
+    <div style={{backgroundColor: 'black', height: '100vh', display: 'flex', flexDirection: 'column'}}>
 
           <Routes>  
             <Route path="/squealer-app/home" element={<Home />} />
@@ -95,7 +64,57 @@ function App() {
 
             <Route path="/squealer-app/settings" element={<Settings />} />
           </Routes>
-          </div>
+
+          <Nav className="d-flex flex-column bg-dark text-white" style={{width: windowSize >= 1024 ? '20%' : windowSize >= 600 ? '10%' : '100%',position:'absolute', top:windowSize >= 600 ? '0' : '90%', height: windowSize >= 600 ? '100vh' : '10%', overflow:'hidden', zIndex:'1005', alignItems:'center'}}>
+            <div style={{ flex: '0.5' }}></div>
+
+            {windowSize >= 1024 && (<div className="text-center mb-3">
+              <Image src={'/squealer-app'+logo} alt="Logo" roundedCircle width="80%" />
+            </div>)}
+
+            {entered && (<div className={windowSize >= 600 ? 'd-flex flex-column' : 'd-flex flex-row'} style={{alignItems:'center', justifyContent:'space-around', flex: windowSize >= 1024 ? '0' : '1', width:'100%'}}>
+              <Nav.Item className={entered ? 'mb-2 d-flex' : 'd-none'} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                <Link to="/squealer-app/home"><HouseDoor alt="house-door" size="25" className='mt-2 text-white'/></Link>
+                {windowSize >= 1024 && (<Link to="/squealer-app/home" className='nav-link text-white'>Home</Link>)}
+              </Nav.Item>
+              <Nav.Item className={entered ? 'mb-2 d-flex' : 'd-none'} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                <Link to="/squealer-app/search"><SearchLogo alt="search" size="25" className='mt-2 text-white'/></Link>
+                {windowSize >= 1024 && (<Link to="/squealer-app/search" className='nav-link text-white'>Search</Link>)}
+              </Nav.Item>
+              {windowSize < 1024 && (<Nav.Item className={entered ? 'mb-2 d-flex' : 'd-none'} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                <Link to="/squealer-app/create-message"><PlusCircle alt="message" size="25" className='mt-2 text-white'/></Link>
+              </Nav.Item>)}
+              <Nav.Item className={entered ? 'mb-2 d-flex' : 'd-none'} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                <Link to="/squealer-app/profile"><PersonCircle alt="person-circle" size="25" className='mt-2 text-white'/></Link>
+                {windowSize >= 1024 && (<Link to="/squealer-app/profile" className='nav-link text-white'>Profile</Link>)}
+              </Nav.Item>
+              <Nav.Item className={entered ? 'mb-2 d-flex' : 'd-none'} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                <Link to="/squealer-app/settings"><Gear alt="settings" size="25" className='mt-2 text-white'/></Link>
+                {windowSize >= 1024 && (<Link to="/squealer-app/settings" className="nav-link text-white">Settings</Link>)}
+              </Nav.Item>
+            </div>)}
+            {!entered && (<div className={windowSize >= 600 ? 'd-flex flex-column' : 'd-flex flex-row'} style={{alignItems:'center', justifyContent:'space-around', flex: windowSize >= 1024 ? '0' : '1', width:'100%'}}>
+              <Nav.Item className="mb-2 d-flex" style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                <Link to="/squealer-app/home"><HouseDoor alt="house-door" size="25" className='mt-2 text-white'/></Link>
+                {windowSize >= 1024 && (<Link to="/squealer-app/home" className='nav-link text-white'>Home</Link>)}
+              </Nav.Item>
+              {windowSize < 1024 && (<Nav.Item className='mb-2 d-flex' style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
+                <Button onClick={goToAccess} style={{ display: 'flex', justifyContent: 'center', backgroundColor:'transparent', border:'0'}}><PersonPlus alt="access" size="25" className='mt-1 text-white'/></Button>
+              </Nav.Item>)}
+            </div>)}
+
+            <div style={{ flex: '0.2' }}></div>
+
+            {windowSize >= 1024 && (<Link to="/squealer-app/create-message" className={entered ? '' : 'd-none'} style={{ display: 'flex', justifyContent: 'center'}}>
+              <Button>Create Message</Button>
+            </Link>)}
+
+            {windowSize >= 1024 && (<Button onClick={goToAccess} className={entered ? 'd-none' : ''} style={{ display: 'flex', justifyContent: 'center'}}>Create Account</Button>)}
+            
+            <div style={{ flex: '0.5' }}></div>
+
+          </Nav>
+
       </div>
   </Router>
   );
