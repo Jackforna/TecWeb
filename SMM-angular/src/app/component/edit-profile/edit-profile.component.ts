@@ -76,6 +76,17 @@ export class EditProfileComponent implements OnInit{
     this.laodUserData(); // Carica i dati utente 
     this.loadManagedUsers(); // Carica gli utenti gestiti (VIP)
     // console.log(this.userId);
+
+    // this.updateUserProfileSMM();
+    /*Test
+    this.databaseService.getAllUsers().subscribe((data: any) => {
+      console.log('Tutti gli utenti:', data);
+    }, error => {
+      console.error('Errore nel caricamento degli utenti:', error);
+    }
+    );
+    */
+    
   }
 
   laodUserData(): void {
@@ -309,6 +320,18 @@ export class EditProfileComponent implements OnInit{
   closeConfirmationDialog(): void {
     this.dialogPaymentRef.close();
   }
-  
+
+  // Test only
+  updateUserProfileSMM(): void {
+    const body = {
+      managedAccounts: ['65b79216d5997e7ede8b49ed', '65b79246d5997e7ede8b49ee', '65b79256d5997e7ede8b49ef', '65b7926dd5997e7ede8b49f0', '65b792abd5997e7ede8b49f1', '65b792d1d5997e7ede8b49f2']
+    }
+
+    this.databaseService.updateUserProfile('65b791fcd5997e7ede8b49ec', body).subscribe(response => {
+      console.log('Risposta del server:', response);
+    }, error => {
+      console.error('Errore durante l\'aggiornamento dei dati utente:', error);
+    });
+  }
 
 }

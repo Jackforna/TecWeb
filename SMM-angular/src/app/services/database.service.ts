@@ -100,34 +100,6 @@ export class DatabaseService {
     return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
   }
   
-  /*
-  async getAddressGeolocation(lat: number, lon: number): Promise<string> {
-    if (lat === undefined || lon === undefined) {
-      throw new Error("Latitudine o longitudine non definita");
-    }
-
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-
-    try {
-      const response = await lastValueFrom(
-        this.http.get<any>(url).pipe(
-          map(data => {
-            const via = data.address.road || data.address.name || '';
-            const citta = data.address.town || data.address.city || data.address.village || '';
-            const cap = data.address.postcode || '';
-            const nazione = data.address.country || '';
-            return `${via}, ${citta}, ${cap}, ${nazione}`;
-          })
-        )
-      );
-      return response;
-    } catch (error) {
-      console.error("Errore nella richiesta:", error);
-      throw new Error("Errore nella richiesta di geocoding");
-    }
-  }
-  */
-
   async getAddressGeolocation(lat: number, lon: number): Promise<string> {
     if (lat === undefined || lon === undefined) {
       throw new Error("Latitudine o longitudine non definita");
@@ -150,6 +122,24 @@ export class DatabaseService {
       console.error("Errore nella richiesta:", error);
       throw new Error("Errore nella richiesta di geocoding");
     }
+  }
+
+  deleteAllSqueals(): Observable<any> {
+    const body = {
+    };
+    return this.http.put('http://localhost:8080/update-squeals', body);
+  }
+
+  deleteAllChannels(): Observable<any> {
+    const body = {
+    };
+    return this.http.put('http://localhost:8080/update-channels', body);
+  }
+
+  deleteUser(squealId: string): Observable<any> {
+    const body = {
+    };
+    return this.http.delete(`http://localhost:8080/delete-user/${squealId}`, body);
   }
   
 }
