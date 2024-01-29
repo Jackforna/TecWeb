@@ -38,7 +38,7 @@ export class EditProfileComponent implements OnInit{
   
 
   /*Dati per il cambio vip*/
-  selectedVIP: any; // Sostituisci con il tipo appropriato
+  selectedVIP: any; 
   vipList: any[] = []; // Lista per tenere traccia degli utenti (VIP) gestiti
 
 
@@ -54,7 +54,6 @@ export class EditProfileComponent implements OnInit{
   selectedPaymentMethod: string = '';
 
 
-  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
   /*Dati utente loggato */
   user = localStorage.getItem('Dati manager');
   datiUtente = this.user ? JSON.parse(this.user) : null;
@@ -73,10 +72,10 @@ export class EditProfileComponent implements OnInit{
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit() { 
-    console.clear();
+    // console.clear();
     this.laodUserData(); // Carica i dati utente 
     this.loadManagedUsers(); // Carica gli utenti gestiti (VIP)
-    console.log(this.userId);
+    // console.log(this.userId);
   }
 
   laodUserData(): void {
@@ -91,10 +90,11 @@ export class EditProfileComponent implements OnInit{
     this.profileDescription = this.userId ? this.userId.bio : '';
   }
 
-  /*Test gestione cambio immagini*/
+  /*Gestione cambio immagini*/
   openDialog(): void {
     this.dialogRef = this.dialog.open(this.selectPhotoDialogRef);
   }
+
   closeDialog(): void {
     this.dialogRef.close();
   }
@@ -106,19 +106,18 @@ export class EditProfileComponent implements OnInit{
     this.databaseService.updateUserProfile(this.userId._id, updateData)
       .subscribe(
         response => {
-          console.log('Foto profilo aggiornata con successo');
-          // window.location.reload();
+          // console.log('Foto profilo aggiornata con successo');
           // Aggiorna i dati dell'utente nel localStorage
           this.databaseService.getUserData(this.userId._id).subscribe((data: any) => {
             localStorage.removeItem('Dati utente amministrato');  
-            localStorage.setItem('Dati utente amministrato', JSON.stringify(data)); 
+            // const userDataToSave = {...data, password: undefined};
+            localStorage.setItem('Dati utente amministrato', JSON.stringify(data));
           }, error => {
             console.error('Errore nel caricamento dei dati dell\'utente:', error);
           });
           this.laodUserData(); // Ricarica i dati dell'utente
           window.location.reload();
           this.closeDialog();
-          // Non è necessario ricaricare la foto perché è già aggiornata nell'interfaccia utente
         },
         error => console.error('Errore nell\'aggiornamento della foto del profilo', error)
       );
@@ -131,7 +130,7 @@ export class EditProfileComponent implements OnInit{
       const reader = new FileReader();
       reader.onload = (e: any) => {
         const dataUrl = e.target.result;
-        console.log(dataUrl); 
+        // console.log(dataUrl); 
         this.tempPhotoProfile = dataUrl;
       }
       reader.readAsDataURL(file);
@@ -141,7 +140,7 @@ export class EditProfileComponent implements OnInit{
 
   /*Gestione cambio vip funzionante*/
   loadManagedUsers(): void {
-    const managerData = JSON.parse(localStorage.getItem('Dati manager') || '{}');  //CONTROLLARE I NOMINATIVI DEI CAMPI ITEM
+    const managerData = JSON.parse(localStorage.getItem('Dati manager') || '{}');  
     const managedAccounts = managerData.managedAccounts || [];
 
     managedAccounts.forEach((uid: string) => {
@@ -163,16 +162,15 @@ export class EditProfileComponent implements OnInit{
 
   selectVIP(): void {
     if (this.selectedVIP) {
-      console.log('VIP selezionato:', this.selectedVIP);
+      // console.log('VIP selezionato:', this.selectedVIP);
   
       const selectedVIPIndex = this.vipList.findIndex(vip => vip.nickname === this.selectedVIP.nickname);
   
       if (selectedVIPIndex !== -1) {
-        console.log('Indice dell\'utente selezionato:', selectedVIPIndex);
+        // console.log('Indice dell\'utente selezionato:', selectedVIPIndex);
         this.userId = this.user ? JSON.parse(this.user).managedAccounts[selectedVIPIndex] : null;
         localStorage.removeItem('ActuallyUserId');  
         localStorage.setItem('actualUserId', JSON.stringify(this.userId));  
-        
         this.databaseService.getUserData(this.userId).subscribe((data: any) => {
           localStorage.removeItem('Dati utente amministrato');  
           localStorage.setItem('Dati utente amministrato', JSON.stringify(data)); 
@@ -212,10 +210,10 @@ export class EditProfileComponent implements OnInit{
     const userId = userData._id;
   
     if (userId) {
-      console.log('Aggiornamento descrizione per ID:', userId);
+      // console.log('Aggiornamento descrizione per ID:', userId);
       this.databaseService.updateUserProfile(userId, { bio: newDescription })
         .subscribe(response => {
-          console.log('Risposta del server:', response);
+          // console.log('Risposta del server:', response);
           // Aggiornamento dei dati dell'utente nel localStorage
           userData.bio = newDescription;
           localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
@@ -243,7 +241,7 @@ export class EditProfileComponent implements OnInit{
     if (this.selectedAmount) {
       this.dialogPaymentRef = this.dialog.open(this.confirmationDialog);
     } else {
-      console.log('Seleziona entrambe le opzioni prima di procedere');
+      // console.log('Seleziona entrambe le opzioni prima di procedere');
       // Qui puoi mostrare un messaggio di errore all'utente
     }
   }
@@ -253,12 +251,12 @@ export class EditProfileComponent implements OnInit{
     let amountValue = this.selectedAmount === 'other' ? this.otherAmount : this.selectedAmount;
     let amountNumber = typeof amountValue === 'string' ? parseInt(amountValue, 10) : amountValue || 0;
   
-    console.log('Importo selezionato:', amountNumber, 'Metodo di pagamento:', this.selectedPaymentMethod);
+    // console.log('Importo selezionato:', amountNumber, 'Metodo di pagamento:', this.selectedPaymentMethod);
 
     const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
     const userId = userData._id;
 
-    console.log('Aggiornamento caratteri per ID:', userId);
+    // console.log('Aggiornamento caratteri per ID:', userId);
   
     // Assicurati che this.userId sia una stringa che rappresenta l'ID dell'utente
     if (typeof userId === 'string' && userId) {

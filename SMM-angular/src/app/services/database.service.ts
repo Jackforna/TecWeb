@@ -15,7 +15,13 @@ export class DatabaseService {
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   getUserData(userId: string) {
-    return this.http.get(`http://localhost:8080/get-user/${userId}`);
+    return this.http.get(`http://localhost:8080/get-user/${userId}`).pipe(
+      map((data: any) => {
+        // Rimuovi la password dai dati dell'utente
+        delete data.password;
+        return data;
+      })
+    );
   }
 
   getAllUsers() {
