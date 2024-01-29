@@ -24,7 +24,7 @@ export class SideMenuComponent implements OnInit {
   constructor(private authService: AuthService, private databaseService: DatabaseService, private http: HttpClient, private router: Router) { }
 
   ngOnInit(): void {
-    console.clear();
+    // console.clear();
     this.getManagerDetails();
     this.setAccountData();
     /* Chiamata per ottenere tutti gli utenti
@@ -41,8 +41,8 @@ export class SideMenuComponent implements OnInit {
 
   // Da mettere a posto
   onLogout(): void {
-    localStorage.clear();
-    //this.authService.logOut()
+    // localStorage.clear();
+    // localStorage.setItem('actualUserId', "1");
     window.location.href = 'http://localhost:8080/';
   } 
 
@@ -54,10 +54,12 @@ export class SideMenuComponent implements OnInit {
 
         // Se l'utente è un manager e ha almeno un account gestito
         if (managerData.version === 'social media manager' && managerData.managedAccounts.length > 0) {
+          // const managerDataToSave = {...managerData, password: undefined};
           localStorage.setItem('Dati manager', JSON.stringify(managerData));
           this.databaseService.getUserData(managerData.managedAccounts[0]).subscribe((userData: any) => {  
+            // const userDataToSave = {...userData, password: undefined};
             localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
-            console.log("Dati user: ", userData);
+            // console.log("Dati user: ", userDataToSave);
           }, error => {
             console.error('Errore nella richiesta:', error);
           });

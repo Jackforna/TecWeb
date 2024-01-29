@@ -206,7 +206,7 @@ mat-sidenav-content {
         width: 100%;
         justify-content: space-around;
         align-items: center;
-        background: purple; /* Scegli un colore di sfondo che preferisci */
+        background: #eee; /* Scegli un colore di sfondo che preferisci */
         z-index: 1000;
         margin: 0;
         padding: 0;

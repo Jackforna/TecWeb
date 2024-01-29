@@ -93,8 +93,8 @@ h3{
 
 .video-container{
   position: relative;
-  width: 300px; /* Larghezza fissa del contenitore dell'immagine */
-  height: 300px; /* Altezza fissa del contenitore dell'immagine */
+  width: 200px; /* Larghezza fissa del contenitore dell'immagine */
+  height: 200px; /* Altezza fissa del contenitore dell'immagine */
   /* margin-left: 4%; */
   margin-top: 1%;
   overflow: hidden; /* Nasconde le parti dell'immagine che eccedono il contenitore */

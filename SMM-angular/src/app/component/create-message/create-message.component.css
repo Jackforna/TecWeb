@@ -602,8 +602,18 @@ margin-left: 4%;
 
   #leaflet-map {
     width: 200px; /* Imposta la larghezza del contenitore della mappa */
-    height: 200px; /* Imposta l'altezza del contenitore della mappa */
+    height: 200px !important; /* Imposta l'altezza del contenitore della mappa */
     }
+
+  #leaflet-map-container {
+    width: 200px !important; /* Imposta la larghezza del contenitore della mappa */
+    height: 200px !important; /* Imposta l'altezza del contenitore della mappa */
+    }
+
+  .sent-image-container{
+    width: 200px;
+    height: 200px;
+  }
 }
 
 @media screen and (max-width: 350px) {

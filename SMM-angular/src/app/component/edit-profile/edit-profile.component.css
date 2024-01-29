@@ -149,6 +149,13 @@ input{
   .custom-dialog-margin {
     margin: 20px; /* Aggiungi qui il margine desiderato */
   }
+
+  #radioGroup-vip{
+    display: flex;
+    flex-direction: column !important;
+    justify-content: center;
+    align-items: center;
+  }
   
   @media screen and (max-width: 768px) {
     body{
