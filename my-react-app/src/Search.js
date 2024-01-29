@@ -564,7 +564,7 @@ const toggleSilenceChannel = () => {
       <>
             <Container style={{ width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height: windowSize>=600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflowY:'scroll'}} className={`${viewsearch ? "mx-auto d-flex flex-column" : "d-none"}`}>
             <Form className="d-flex flex-column" style={{position:'absolute', top:'5%'}}>
-                <InputGroup style={{ width: '500px'}} className="d-flex flex-column">
+                <InputGroup style={{ width:windowSize>= 600 ? '500px' : '300px'}} className="d-flex flex-column">
                     <FormControl type="text" placeholder={inputSearch} value={clientinputSearch} variant="outline-success" className="formcontroll-inputSearch"
                       style={{
                         boxShadow: 'none',
@@ -584,9 +584,9 @@ const toggleSilenceChannel = () => {
                       onBlur={handleBlur}
                       onChange={writeinputSearch}
                     />
-                      <Button id="dropdown-button-dark-example1" variant="secondary" style={{ boxShadow: 'none', borderRadius: '14px', width: '150px', backgroundColor: 'blueviolet', color: 'white', position: 'absolute', left: '351px', cursor:'pointer'}} onClick={toggleDropdown}>Filter<CaretDownFill size='12' style={{marginLeft:'10px'}}></CaretDownFill></Button>
+                      <Button id="dropdown-button-dark-example1" variant="secondary" style={{ boxShadow: 'none', borderRadius: '14px', width: windowSize>=600 ? '150px' : '100px', backgroundColor: 'blueviolet', color: 'white', position: 'absolute', left:windowSize>=600 ? '351px' : '201px', cursor:'pointer'}} onClick={toggleDropdown}>Filter<CaretDownFill size='12' style={{marginLeft:'10px'}}></CaretDownFill></Button>
                       <div className='d-flex' width='500px'>
-                        <ul style={{ boxShadow: 'none', borderRadius: '14px', width: '150px', height: '130px', marginLeft:'350px', backgroundColor: 'blueviolet', color: 'white', position:'relative', padding:'0', paddingTop:'12px', textAlign:'center'}} className={`${isDropdownOpen ? '' : 'd-none'}`}>
+                        <ul style={{ boxShadow: 'none', borderRadius: '14px', width: windowSize>=600 ? '150px' : '100px', height: '130px', marginLeft:windowSize>600 ? '350px' : '201px', backgroundColor: 'blueviolet', color: 'white', position:'relative', padding:'0', paddingTop:'12px', textAlign:'center'}} className={`${isDropdownOpen ? '' : 'd-none'}`}>
                           {/* Contenuto della tendina */}
                           <li
                               onClick={() => handleItemClick('Users')}
@@ -614,7 +614,7 @@ const toggleSilenceChannel = () => {
               </Form>
               {allprint.length > 0 && (
                         <div className="suggested-print-container">
-                          <ul style={{paddingLeft:'0'}}>
+                          <ul style={{paddingLeft:'0', marginTop:'60px'}}>
                             {allprint.map((profile, index) => (
                               <li key={index} className='mb-3' onClick={() => handleItemSelect(profile)} style={{listStyle:'none',textAlign:'center',cursor:'pointer', width:'300px', borderRadius:'12px', paddingTop:'0.6em', paddingBottom:'0.6em'}}>
                                 {profile}
@@ -633,25 +633,25 @@ const toggleSilenceChannel = () => {
                     : <PersonCircle size='70' color='white' className='mt-4'></PersonCircle>
                     }
                     <h4 className="text-white mt-3">{actualprofile.nickname}</h4>
-                    <Row className='mt-3' style={{width:'60%', justifyContent:'space-between'}}>
+                    <Row className='mt-3' style={{width:'100%', justifyContent:'space-between'}}>
                         <p className='text-white' style={{width:'50%', padding:'0'}}>{allSquealsprint.length} post published</p>
                         <p className='text-white' style={{width:'50%', padding:'0'}}>{allChannelsprint.length} channels of which {n_channeladmin} admin</p>
                     </Row>
                     <textarea spellCheck='false' readOnly className='textareaprofile' value={actualprofile.bio} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                 </header>
                 <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}></hr>
-                <Row  style={{width:'40%', marginLeft:'30%', justifyContent:'center'}}>
-                    <Button className={`${mypostsactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilepostsactive}>Posts</Button>
-                    <Button className={`${mychannelsactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilechannelsactive}>Channels</Button>
+                <Row  style={{width:'100%', justifyContent:'center'}}>
+                    <Button className={`${mypostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilepostsactive}>Posts</Button>
+                    <Button className={`${mychannelsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilechannelsactive}>Channels</Button>
                 </Row>
                 <Container className="text-center text-white mt-5" style={{overflowY:'scroll', height:'400px'}}>
-                    <Row className={`${mypostsactive ? 'row-cols-2' : 'd-none row-cols-2'}`} >
+                    <Row className={`${mypostsactive ? windowSize>=800 ? 'row-cols-2' : 'column' : 'd-none'}`} >
                     {allSquealsprint.map((squeal,index) => (
-                    <Col key={index} className='m-5 mt-3' style={{width:'40%'}}>
-                        <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
-                            <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
-                                <CardGroup>
-                                { actualprofile.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                    <Col key={index} className='mt-3'>
+                        <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom: index===(allSquealsprint.length-1) ? '100px' : '5%'}}>
+                            <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
+                                <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
+                                { actualprofile.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                 <Image src={actualprofile.photoprofile} style={{height:'100%', position:'relative', marginTop: actualprofile.photoprofileY/2.5, marginLeft: actualprofile.photoprofileX/2.5}}></Image>
                                 </div>)
                                 : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
@@ -713,9 +713,9 @@ const toggleSilenceChannel = () => {
                       </Col>
                       ))}
                     </Row>
-                    <Row style={{width:'70%', marginLeft:'20%'}} className={`${mychannelsactive ? 'row-cols-2' : 'd-none row-cols-2'}`} >
+                    <Row className={`${mychannelsactive ? windowSize>800 ? 'row-cols-2' : 'col' : 'd-none'}`} >
                     {allChannelsprint.map((channel,index) => (
-                        <Row key={index} className='m-5 d-flex' style={{width:'35%',justifyContent:'center',alignItems:'center',cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
+                        <Row key={index} className='d-flex' style={{justifyContent:'center',alignItems:'center',cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
                             <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
                             { channel.photoprofile!='' ? 
                             (<Image src={channel.photoprofile} style={{height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX}}></Image>)
@@ -753,19 +753,19 @@ const toggleSilenceChannel = () => {
                         <textarea spellCheck='false' readOnly className='textareaprofile' value={newbiochannel} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
                     <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}/>
-                    <Row  style={{width:'50%', justifyContent:'space-between'}}>
-                        <Button className={`${channelpostsactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelpostsactive}>Posts</Button>
-                        <Button className={`${channelusersactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelusersactive}>Users</Button>
-                        <Button className={`${channelmessagesactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelmessagesactive}>Messages</Button>
+                    <Row  style={{width:'100%', justifyContent:'center'}}>
+                        <Button className={`${channelpostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelpostsactive}>Posts</Button>
+                        <Button className={`${channelusersactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelusersactive}>Users</Button>
+                        <Button className={`${channelmessagesactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelmessagesactive}>Messages</Button>
                     </Row>
                     <Container className="text-center text-white mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
-                        <Row className={`${channelpostsactive ? 'row-cols-2' : 'd-none row-cols-2'}`}>
+                        <Row className={`${channelpostsactive ? windowSize>= 800 ? 'row-cols-2' : 'col' : 'd-none'}`}>
                         {newchannelposts.map((squeal,index) => (
-                        <Col key={index} className='m-5' style={{width:'40%'}}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
-                                <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
-                                    <CardGroup>
-                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                        <Col key={index}>
+                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelposts.length-1) ? '100px' : '5%'}}>
+                                <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
+                                    <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
+                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px', minWidth:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                     <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
                                     : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
@@ -827,12 +827,12 @@ const toggleSilenceChannel = () => {
                         </Col>
                                 ))}
                         </Row>
-                        <Row className={`${channelmessagesactive ? 'row-cols-2 d-flex' : 'd-none'}`}>
+                        <Row className={`${channelmessagesactive ? windowSize>= 800 ? 'row-cols-2 d-flex' : 'col' : 'd-none'}`}>
                         {newchannelmessages.map((squeal,index) => (
-                        <Col key={index} className='m-5' style={{width:'40%'}}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
-                                <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
-                                    <CardGroup>
+                        <Col key={index}>
+                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelmessages.length-1) ? '100px' : '5%'}}>
+                                <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
+                                    <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                                     {squeal.type} {squeal.remind.every!="" && squeal.remind.every!=undefined && (" "+squeal.remind.every)} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
                                     </CardGroup>
                                     <Card.Text>{squeal.hour}</Card.Text>
@@ -874,17 +874,17 @@ const toggleSilenceChannel = () => {
                         </Col>
                         ))}
                         </Row>
-                        <Col style={{width:'80%',marginLeft:'10%'}} className={`${channelusersactive ? 'row-cols-2' : 'd-none row-cols-2'}`} >
+                        <Col style={{width:'80%',marginLeft:'10%'}} className={`${channelusersactive ? 'row-cols-2' : 'd-none'}`} >
                         {newchannelusers.map((channeluser,index2) => (
                             <Row key={index2} className='mt-3 d-flex' style={{width:'70%',justifyContent:'center',alignItems:'center', borderRadius:'12px', padding:'5px', marginLeft:'15%'}}>
                                 { channeluser.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden', padding:'0'}}>
                                     <Image src={channeluser.photoprofile} style={{height:'100%', position:'relative', marginTop:channeluser.photoprofileY/2.5, marginLeft:channeluser.photoprofileX/2.5}}></Image>
                                     </div>)
-                                    : <PersonCircle size='30' color='white' className=' mt-0' style={{maxWidth:'10%'}}></PersonCircle>
+                                    : <PersonCircle color='white' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
                                     }
                                 <p style={{color:'white',width:'40%',textAlign:'left', paddingTop:'15px'}}>{channeluser.nickname}</p>
-                                <Button style={{width:'20%', marginRight:'3%', cursor:'default'}}>{channeluser.type}</Button>
-                                <Button style={{width:'20%', cursor:'default'}}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
+                                <Button style={{width:'120px', marginRight: '3%', cursor:'default'}}>{channeluser.type}</Button>
+                                <Button style={{width:'120px', cursor:'default', marginTop: windowSize<508 ? '0.25rem' : ''}}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
                             </Row>
                         ))}
                         </Col>
@@ -910,17 +910,17 @@ const toggleSilenceChannel = () => {
                         <textarea spellCheck='false' readOnly className='textareaprofile' value={newBioKeyword} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
                     <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}/>
-                    <Row  style={{width:'50%', justifyContent:'center'}}>
+                    <Row  style={{width:'100%', justifyContent:'center'}}>
                         <Button className='active' style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}}>Posts</Button>
                     </Row>
                     <Container className="text-center text-white mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
                         <Row className='row-cols-2'>
                         {newKeywordPosts.map((squeal,index) => (
-                        <Col key={index} className='m-5' style={{width:'40%'}}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
-                                <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
+                        <Col key={index} style={{width:'40%'}}>
+                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
+                                <Card.Header className='d-flex' style={{justifyContent:'space-between', fleWrap:'wrap'}}>
                                     <CardGroup>
-                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                     <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
                                     : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>

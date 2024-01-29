@@ -115,7 +115,10 @@ window.onload = function() {
             }
         }
         for(i=0;i<arrsqueals.length;i++){
-            let videoURL = await getVideo(arrsqueals[i].body.video);
+            let videoURL = "";
+            if(arrsqueals[i].body.video!=""){
+                videoURL = await getVideo(arrsqueals[i].body.video);
+            }
             let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1])
             if(arrsqueals[i].channel==""){
                 document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
@@ -550,7 +553,10 @@ async function squealbtnclick(){
         }
     }
     for(i=0;i<squeals.length;i++){
-        let videoURL = await getVideo(squeals[i].body.video);
+        let videoURL = "";
+            if(squeals[i].body.video!=""){
+                videoURL = await getVideo(squeals[i].body.video);
+            }
         let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
         if(squeals[i].channel=="")
             document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -586,7 +592,10 @@ document.getElementById("filtersqueal").addEventListener("change",async ()=>{
                 }
             }
             for(i=0;i<squeals.length;i++){
-                let videoURL = await getVideo(squeals[i].body.video);
+                let videoURL = "";
+            if(squeals[i].body.video!=""){
+                videoURL = await getVideo(squeals[i].body.video);
+            }
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -616,7 +625,10 @@ document.getElementById("filtersqueal").addEventListener("change",async ()=>{
                 }
             }
             for(i=0;i<squeals.length;i++){
-                let videoURL = await getVideo(squeals[i].body.video);
+                let videoURL = "";
+            if(squeals[i].body.video!=""){
+                videoURL = await getVideo(squeals[i].body.video);
+            }
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -658,7 +670,10 @@ document.getElementById("datesqueal").addEventListener("change",async ()=>{
             if(datesqueal==squeals[i].date){
                 arrsquealsdate.push(squeals[i]);
                 j += 1;
-                let videoURL = await getVideo(squeals[i].body.video);
+                let videoURL = "";
+                if(squeals[i].body.video!=""){
+                    videoURL = await getVideo(squeals[i].body.video);
+                }
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -693,7 +708,10 @@ document.getElementById("datesqueal").addEventListener("change",async ()=>{
                 if(datesqueal==arrsqueals[i].date){
                 arrsquealsdate.push(arrsqueals[i]);
                 j += 1;
-                let videoURL = await getVideo(arrsqueals[i].body.video);
+                let videoURL = "";
+                if(arrsqueals[i].body.video!=""){
+                    videoURL = await getVideo(arrsqueals[i].body.video);
+                }
                 let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1]);
                 if(arrsqueals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
@@ -761,7 +779,10 @@ document.getElementById("searchsqueal").addEventListener("input",async ()=>{
                 }
             } 
             for(i=0;i<arrsqueals.length;i++){
-                let videoURL = await getVideo(arrsqueals[i].body.video);
+                let videoURL = "";
+                if(arrsqueals[i].body.video!=""){
+                    videoURL = await getVideo(arrsqueals[i].body.video);
+                }
                 let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1])
                 if(arrsqueals[i].channel=="")
                     document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
@@ -793,7 +814,10 @@ document.getElementById("searchsqueal").addEventListener("input",async ()=>{
             }
         }
         for(i=0;i<arrsqueals.length;i++){
-            let videoURL = await getVideo(arrsqueals[i].body.video);
+            let videoURL = "";
+            if(arrsqueals[i].body.video!=""){
+                videoURL = await getVideo(arrsqueals[i].body.video);
+            }
             let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1]);
             if(arrsqueals[i].channel=="")
                 document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+arrsqueals[i].photoprofile+'" alt=""><h5>'+arrsqueals[i].sender+'</h5><p class="card-text mb-0 me-3">'+arrsqueals[i].date+'</p><p class="card-text">'+arrsqueals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+arrsqueals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+arrsqueals[i].body.link+'">'+arrsqueals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+arrsqueals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+arrsqueals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+arrsqueals[i].neg_reactions+'</span></div></div></div>';
@@ -882,7 +906,10 @@ document.getElementById("closeeditsqueal").addEventListener("click",async ()=>{
         }
     }
     for(i=0;i<squeals.length;i++){
-        let videoURL = await getVideo(squeals[i].body.video);
+        let videoURL = "";
+            if(squeals[i].body.video!=""){
+                videoURL = await getVideo(squeals[i].body.video);
+            }
         let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
         if(squeals[i].channel=="")
             document.getElementById("listsqueals_find").innerHTML += '<div class="card border-light mb-4 mexcard"><div class="card-header" ><img id="imgprofilesquealer" src="'+squeals[i].photoprofile+'" alt=""><h5>'+squeals[i].sender+'</h5><p class="card-text mb-0 me-3">'+squeals[i].date+'</p><p class="card-text">'+squeals[i].hour+'</p></div><div class="card-body"><p class="card-text">'+squeals[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+squeals[i].body.link+'">'+squeals[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+squeals[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height:150px"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary editmexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="editmex('+i+')">Edit</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+squeals[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+squeals[i].neg_reactions+'</span></div></div></div>';
@@ -1599,7 +1626,10 @@ async function editCHAN(x){
     document.getElementById("sectioneditCHANNELname").innerText = editCHANNEL.name;
     document.getElementById("sectioneditCHANNELdescription").value = editCHANNEL.description;
     for(i=0;i<editCHANNEL.list_posts.length;i++){
-        let videoURL = await getVideo(editCHANNEL.list_posts[i].body.video);
+        let videoURL = "";
+            if(editCHANNEL.list_posts[i].body.video!=""){
+                videoURL = await getVideo(editCHANNEL.list_posts[i].body.video);
+            }
         if(editCHANNEL.list_posts[i].body.photo=="")
             editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         let Address = await getAddressGeolocation(editCHANNEL.list_posts[i].body.position[0], editCHANNEL.list_posts[i].body.position[1])
@@ -1641,7 +1671,10 @@ async function deletesquealCHANNEL(x){
     savechangesCHANNEL();
     document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div class="d-flex flex-row mb-3"><h3 class="me-3 text-light">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
     for(i=0;i<editCHANNEL.list_posts.length;i++){
-        let videoURL = await getVideo(editCHANNEL.list_posts[i].body.video);
+        let videoURL = "";
+            if(editCHANNEL.list_posts[i].body.video!=""){
+                videoURL = await getVideo(editCHANNEL.list_posts[i].body.video);
+            }
         if(editCHANNEL.list_posts[i].body.photo=="")
             editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         let Address = await getAddressGeolocation(editCHANNEL.list_posts[i].body.position[0], editCHANNEL.list_posts[i].body.position[1])
@@ -1722,7 +1755,10 @@ document.getElementById("viewCHANNELmessages").addEventListener("click",async ()
         document.getElementById("viewCHANNELmessageslist").innerHTML += '<h5 style="color:white">No Results</h5><p style="color:white">There were no messages already added</p>';
     }
     for(i=0;i<arrcreateCHANNELmessages.length;i++){
-        let videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+        let videoURL = "";
+            if(arrcreateCHANNELmessages[i].body.video!=""){
+                videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+            }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
         switch(arrcreateCHANNELmessages[i].type){
             case 'Welcome':
@@ -2078,7 +2114,10 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
     if(!document.getElementById("viewCHANNELmessageslist").classList.contains('d-none')){
     document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
         for(i=0;i<arrcreateCHANNELmessages.length;i++){
-            let videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+            let videoURL = "";
+            if(arrcreateCHANNELmessages[i].body.video!=""){
+                videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+            }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
             switch(arrcreateCHANNELmessages[i].type){
                 case 'Welcome':
@@ -2143,7 +2182,10 @@ async function deletenewmessageCHANNEL(x){
     arrcreateCHANNELmessages.splice(x,1);
     document.getElementById("viewCHANNELmessageslist").innerHTML = '<h3>List messages CHANNEL</h3>';
         for(i=0;i<arrcreateCHANNELmessages.length;i++){
-            let videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+            let videoURL = "";
+            if(arrcreateCHANNELmessages[i].body.video!=""){
+                videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+            }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
             switch(arrcreateCHANNELmessages[i].type){
                 case 'Welcome':
@@ -2322,7 +2364,10 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
         for(i=0;i<editCHANNEL.list_posts.length;i++){
             if(editCHANNEL.list_posts[i].body.photo=="")
                 editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-            let videoURL = await getVideo(arrsqueals[i].body.video);
+                let videoURL = "";
+                if(arrsqueals[i].body.video!=""){
+                    videoURL = await getVideo(arrsqueals[i].body.video);
+                }
             let Address = await getAddressGeolocation(editCHANNEL.list_posts[i].body.position[0], editCHANNEL.list_posts[i].body.position[1]);
             document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column mexcard"><div class="card-header" style="width:100%; height:70px"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height: 150px;"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary deletemexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
             document.getElementById("imgsquealer").removeAttribute("id");

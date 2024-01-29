@@ -147,3 +147,15 @@ input:checked + .slider:before{
   left: calc(100% - (var(--size-of-icon,1.4em) + var(--slider-offset,0.3em)));
   background: #00ff00a0;
 }
+
+@media (min-width: 768px){
+.container, .container-md, .container-sm {
+    max-width: none !important;
+}
+}
+
+@media (min-width: 576px){
+.container, .container-sm {
+    max-width: none !important;
+}
+}
