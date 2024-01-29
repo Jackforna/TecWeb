@@ -874,7 +874,7 @@ function Profile() {
                     case "Welcome":
                         if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
                             let video = "";
-                            if(newmessage.body.video!=window.location.href){
+                            if(newmessage.body.video!=window.location.href && newmessage.body.video!=""){
                                 let blob = await fetchVideoAsBlob(newmessage.body.video);
                                 video = await uploadVideo(blob);
                             } 
@@ -899,7 +899,7 @@ function Profile() {
                         if((newmessage.request!="/")&&(newmessage.request.startsWith("/"))&&(newmessage.request!="")){
                             if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
                                 let video = "";
-                                if(newmessage.body.video!=window.location.href){
+                                if(newmessage.body.video!=window.location.href && newmessage.body.video!=""){
                                     let blob = await fetchVideoAsBlob(newmessage.body.video);
                                     video = await uploadVideo(blob);
                                 } 
@@ -928,7 +928,7 @@ function Profile() {
                         if(reminder!="Select reminder frequency"){
                             if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
                                 let video = "";
-                                if(newmessage.body.video!=window.location.href){
+                                if(newmessage.body.video!=window.location.href && newmessage.body.video!=""){
                                     let blob = await fetchVideoAsBlob(newmessage.body.video);
                                     video = await uploadVideo(blob);
                                 } 
@@ -1406,19 +1406,19 @@ const loadImage = (event) => {
                 <Button onClick={() => exitprofile()} style={{position:'absolute', left:'20px', top:'20px'}}>Exit</Button>
             </header>
             <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}></hr>
-            <Row  style={{width:'40%', justifyContent:'space-between'}}>
-                <Button className={`${mypostsactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilepostsactive}>My posts</Button>
-                <Button className={`${mychannelsactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilechannelsactive}>My channels</Button>
-                <Button className={`${mycharacteractive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilecharacteractive}>My characters</Button>
+            <Row>
+                <Button className={`${mypostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilepostsactive}>Posts</Button>
+                <Button className={`${mychannelsactive ? 'active' : ''}`} style={{width:'100px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilechannelsactive}>Channels</Button>
+                <Button className={`${mycharacteractive ? 'active' : ''}`} style={{width:'110px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilecharacteractive}>Characters</Button>
             </Row>
-            <Container className="text-center text-white mt-5" style={{overflowY:'scroll'}}>
-                <Row className={`${mypostsactive ? 'row-cols-2' : 'd-none row-cols-2'}`} >
+            <Container className="text-center text-white mt-5" style={{overflowY:'scroll', height:'400px'}}>
+                <Row className={`${mypostsactive ? windowSize>800 ? 'row-cols-2' : 'column' : 'd-none'}`} >
                 {allSquealsprint.map((squeal,index) => (
-                <Col key={index} className='m-5 mt-3' style={{width:'40%'}}>
-                    <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
-                        <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
-                            <CardGroup>
-                            { actualuser.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                <Col key={index} className='mt-3'>
+                    <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(allSquealsprint.length-1) ? '100px' : '5%'}}>
+                        <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
+                            <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
+                            { actualuser.photoprofile!='' ? (<div className='me-3' style={{width:'30px', minWidth:'30px', height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={actualuser.photoprofile} style={{height:'100%', position:'relative', marginTop: actualuser.photoprofileY/2.5, marginLeft: actualuser.photoprofileX/2.5}}></Image>
                             </div>)
                             : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
@@ -1460,7 +1460,7 @@ const loadImage = (event) => {
                                 </div>
                             )}
                         </Card.Body>
-                        <Card.Footer className='d-flex' style={{justifyContent:'space-between'}}>
+                        <Card.Footer className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                         <Button className='mb-1' onClick={() => opendeletesqueal(index)}>Delete</Button>
                         <Button className="text-white" style={{backgroundColor:'transparent',border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
                         <div className='d-flex'>
@@ -1486,8 +1486,8 @@ const loadImage = (event) => {
                     <div className='d-flex flex-row'><button type="button" className="btn-close" aria-label="Close" style={{position: 'relative', marginLeft: '2%', marginRight:'30px', fontSize: '30px', filter: 'invert(1)'}} onClick={()=>{setViewAnswers(false); setmypostsactive(true)}}></button>
                     <h5 className="text-light text-center mt-4 mb-4">All Answers</h5></div>
                 {allAnswersprint.map((squeal,index) => (
-                <Col key={index} className='m-5 mt-3' style={{width:'40%'}}>
-                    <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
+                <Col key={index} className='mt-3'>
+                    <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
                         <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                             <CardGroup>
                             { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
@@ -1536,9 +1536,9 @@ const loadImage = (event) => {
                   </Col>
                   ))}
                 </Container>
-                <Row style={{width:'70%', marginLeft:'20%'}} className={`${mychannelsactive ? 'row-cols-2' : 'd-none row-cols-2'}`} >
+                <Row className={`${mychannelsactive ? windowSize>800 ? 'row-cols-2' : 'col' : 'd-none'}`} >
                 {allChannelsprint.map((channel,index) => (
-                    <Row key={index} onClick={() => editchannel(index)} className='m-5 d-flex rowchannel_profile' style={{width:'35%',justifyContent:'center',alignItems:'center',cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
+                    <Row key={index} onClick={() => editchannel(index)} className='d-flex rowchannel_profile' style={{justifyContent:'center',alignItems:'center',cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
                         <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
                         { channel.photoprofile!='' ? 
                         (<Image src={channel.photoprofile} style={{height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX}}></Image>)
@@ -1591,20 +1591,20 @@ const loadImage = (event) => {
                     </Container>
                 </Col>
                 <Container className={opensectionchangephoto ? '' : 'd-none'} style={{position:'absolute', width:'100%', height:'100%', backgroundColor: 'rgba(0, 0, 0, 0.8)', top:'0', left:'0'}}>
-                    <Col style={{position:'absolute',width:'100%', bottom:'0', left:'0', backgroundColor:'#232323', padding:'2em'}}>
-                        <Button onClick={takecurrentphoto} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', paddingLeft:'29%'}}><Camera style={{marginTop:'-5px', marginRight:'1em'}}></Camera>Take new picture</Button>
+                    <Col style={{position:'absolute',width:'100%', bottom: windowSize>=600 ? '0' : '10%', left:'0', backgroundColor:'#232323', padding:'2em'}}>
+                        <Button onClick={takecurrentphoto} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Camera style={{marginRight:'1em'}}></Camera>Take new picture</Button>
                         <input type='file' id='selectpicture' onChange={selectcurrentphoto} className='d-none'></input>
-                        <label htmlFor='selectpicture' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', paddingLeft:'29%', color:'white', paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer'}}><CardImage style={{marginTop:'-5px', marginRight:'1em'}}></CardImage>Select new picture</label>
-                        <Button onClick={deletecurrentphoto} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', textAlign:'left', paddingLeft:'29%'}}><Trash3 style={{marginTop:'-5px', marginRight:'1em'}}></Trash3>Delete picture</Button>
+                        <label htmlFor='selectpicture' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', color:'white', paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer', display:'flex', justifyContent:'center', alignItems:'center'}}><CardImage style={{marginRight:'1em'}}></CardImage>Select new picture</label>
+                        <Button onClick={deletecurrentphoto} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Trash3 style={{marginRight:'1em'}}></Trash3>Delete picture</Button>
                         <XCircle onClick={() => closechangephoto()} style={{position:'absolute', top:'10px', right:'10px', color:'white', cursor:'pointer'}} size='25'></XCircle>
                     </Col>
                 </Container>
             </Container>
 
             <Container className={editchannelvisible ? '' : 'd-none'} style={{position:'absolute',width:'100%',height:'100vh', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
-                <Button onClick={() => closeeditchannel(false)} className='me-3'><BoxArrowLeft className='me-2' style={{marginTop:'-2px'}}></BoxArrowLeft>Back</Button>
-                <Button onClick={() => closeeditchannel(true)} className='me-3'><BoxArrowInDown className='me-2' style={{marginTop:'-4px'}}></BoxArrowInDown>Save</Button>
-                <Button onClick={isCreator ? opendeletechannel : openleavechannel}>{isCreator ? 'Delete Channel' : 'Leave Channel'}</Button>
+                <Button onClick={() => closeeditchannel(false)} className='me-1'><BoxArrowLeft className='me-2' style={{marginTop:'-2px'}}></BoxArrowLeft>Back</Button>
+                <Button onClick={() => closeeditchannel(true)} className='me-1'><BoxArrowInDown className='me-2' style={{marginTop:'-4px'}}></BoxArrowInDown>Save</Button>
+                <Button onClick={isCreator ? opendeletechannel : openleavechannel} style={{padding:'0.5em', fontSize:'14px'}}>{isCreator ? 'Delete Channel' : 'Leave Channel'}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                     <h3 className='text-white'>Edit Channel</h3>
@@ -1619,7 +1619,7 @@ const loadImage = (event) => {
                         <Row className='d-flex flex-row' style={{width:'100%', justifyContent:'center'}}>
                             <input type='text' className='texteditprofile mb-3' onChange={changevaluenamechannel} value={newnamechannel} placeholder='Name' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}></input>
                             <label className="switch" style={{width:'30%', padding:'0.5em'}}>
-                                <p style={{color:'white', width:'50%'}}>Silenceable</p>
+                                <p style={{color:'white', width:'50%'}} className={windowSize>800 ? 'd-inline' : 'd-none'}>Silenceable</p>
                                 <input type="checkbox" onChange={changesilenceablechannel} style={{cursor:'pointer'}}/>
                                 <span className="slider"></span>
                             </label>
@@ -1627,19 +1627,19 @@ const loadImage = (event) => {
                         <textarea spellCheck='false' className='texteditprofile' onChange={changevaluebiochannel} value={newbiochannel} placeholder='Bio' style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
                     <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}/>
-                    <Row  style={{width:'50%', justifyContent:'space-between'}}>
-                        <Button className={`${channelpostsactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelpostsactive}>Posts</Button>
-                        <Button className={`${channelusersactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelusersactive}>Users</Button>
-                        <Button className={`${channelmessagesactive ? 'active' : ''}`} style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelmessagesactive}>Messages</Button>
+                    <Row>
+                        <Button className={`${channelpostsactive ? 'active' : ''}`} style={{width:'90px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelpostsactive}>Posts</Button>
+                        <Button className={`${channelusersactive ? 'active' : ''}`} style={{width:'100px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelusersactive}>Users</Button>
+                        <Button className={`${channelmessagesactive ? 'active' : ''}`} style={{width:'100px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelmessagesactive}>Messages</Button>
                     </Row>
                     <Container className="text-center text-white mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
-                        <Row className={`${channelpostsactive ? 'row-cols-2' : 'd-none row-cols-2'}`}>
+                        <Row className={`${channelpostsactive ? windowSize>800 ? 'row-cols-2' : 'col' : 'd-none'}`}>
                         {newchannelposts.map((squeal,index) => (
-                        <Col key={index} className='m-5' style={{width:'40%'}}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
-                                <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
-                                    <CardGroup>
-                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                        <Col key={index}>
+                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelposts.length-1) ? '150px' : '5%'}}>
+                                <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
+                                    <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
+                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', minWidth:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                     <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
                                     : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
@@ -1681,7 +1681,7 @@ const loadImage = (event) => {
                                     </div>
                                 )}
                                 </Card.Body>
-                                <Card.Footer className='d-flex' style={{justifyContent:'space-between'}}>
+                                <Card.Footer className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                 <Button className='mb-1' onClick={() => opendeletepostchannel(index)}>Delete</Button>
                                 <div className='d-flex'>
                                     <Card.Text className='me-1' style={{cursor:'default'}}>
@@ -1702,12 +1702,12 @@ const loadImage = (event) => {
                         </Col>
                                 ))}
                         </Row>
-                        <Row className={`${channelmessagesactive ? 'row-cols-2 d-flex' : 'd-none'}`}>
+                        <Row className={`${channelmessagesactive ? windowSize>= 800 ? 'row-cols-2 d-flex' : 'col' : 'd-none'}`}>
                         {newchannelmessages.map((squeal,index) => (
-                        <Col key={index} className='m-5' style={{width:'40%'}}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
-                                <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
-                                    <CardGroup>
+                        <Col key={index}>
+                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom: '5%'}}>
+                                <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
+                                    <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                                     {squeal.type} {squeal.remind.every!="" && squeal.remind.every!=undefined && (" "+squeal.remind.every)} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
                                     </CardGroup>
                                     <Card.Text>{squeal.hour}</Card.Text>
@@ -1755,17 +1755,17 @@ const loadImage = (event) => {
                             <Button onClick={addmessagechannel} style={{width:'150px', height:'50px'}}>Add Message</Button>
                         </Container>
                         </Row>
-                        <Col style={{width:'80%',marginLeft:'10%'}} className={`${channelusersactive ? 'row-cols-2' : 'd-none row-cols-2'}`} >
+                        <Col style={{width:'80%',marginLeft:'10%', overflowY:'scroll', height:'100%'}} className={`${channelusersactive ? 'row-cols-2' : 'd-none'}`} >
                         {newchannelusers.map((channeluser,index2) => (
                             <Row key={index2} className='mt-3 d-flex' style={{width:'70%',justifyContent:'center',alignItems:'center', borderRadius:'12px', padding:'5px', marginLeft:'15%'}}>
                                 { channeluser.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden', padding:'0'}}>
                                     <Image src={channeluser.photoprofile} style={{height:'100%', position:'relative', marginTop:channeluser.photoprofileY/2.5, marginLeft:channeluser.photoprofileX/2.5}}></Image>
                                     </div>)
-                                    : <PersonCircle size='30' color='white' className=' mt-0' style={{maxWidth:'10%'}}></PersonCircle>
+                                    : <PersonCircle color='white' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
                                     }
                                 <p style={{color:'white',width:'40%',textAlign:'left', paddingTop:'15px'}}>{channeluser.nickname}</p>
-                                <Button style={{width:'20%', marginRight:'3%'}} onClick={() => changetypeuserchannel(index2)}>{channeluser.type}</Button>
-                                <Button style={{width:'20%'}} onClick={() => changeblockuserchannel(index2)}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
+                                <Button style={{width:'120px', marginRight:'3%'}} onClick={() => changetypeuserchannel(index2)}>{channeluser.type}</Button>
+                                <Button style={{width:'120px',  marginTop: windowSize<508 ? '0.25rem' : ''}} onClick={() => changeblockuserchannel(index2)}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
                             </Row>
                         ))}
                         </Col>
@@ -1773,11 +1773,11 @@ const loadImage = (event) => {
                 </Col>
                 
                 <Container className={opensectionchangephotochannel ? '' : 'd-none'} style={{position:'absolute', width:'100%', height:'100%', top:'0', left:'0', backgroundColor: 'rgba(0, 0, 0, 0.8)', zIndex:'1001'}}>
-                    <Col style={{position:'absolute',width:'100%', bottom:'0', left:'0', backgroundColor:'#232323', padding:'2em'}}>
-                        <Button onClick={takecurrentphotochannel} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', paddingLeft:'29%'}}><Camera style={{marginTop:'-5px', marginRight:'1em'}}></Camera>Take new picture</Button>
+                    <Col style={{position:'absolute',width:'100%', bottom:windowSize>=600 ? '0' : '10%', left:'0', backgroundColor:'#232323', padding:'2em'}}>
+                        <Button onClick={takecurrentphotochannel} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Camera style={{marginTop:'-5px', marginRight:'1em'}}></Camera>Take new picture</Button>
                         <input type='file' accept="image/*" id='selectpicturechannel' onChange={selectcurrentphotochannel} className='d-none'></input>
-                        <label htmlFor='selectpicturechannel' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', paddingLeft:'29%', color:'white', paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer'}}><CardImage style={{marginTop:'-5px', marginRight:'1em'}}></CardImage>Select new picture</label>
-                        <Button onClick={deletecurrentphotochannel} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', textAlign:'left', paddingLeft:'29%'}}><Trash3 style={{marginTop:'-5px', marginRight:'1em'}}></Trash3>Delete picture</Button>
+                        <label htmlFor='selectpicturechannel' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center', color:'white', paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer'}}><CardImage style={{marginTop:'-5px', marginRight:'1em'}}></CardImage>Select new picture</label>
+                        <Button onClick={deletecurrentphotochannel} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Trash3 style={{marginTop:'-5px', marginRight:'1em'}}></Trash3>Delete picture</Button>
                         <XCircle onClick={() => closechangephotochannel()} style={{position:'absolute', top:'10px', right:'10px', color:'white', cursor:'pointer'}} size='25'></XCircle>
                     </Col>
                 </Container>
@@ -1824,8 +1824,8 @@ const loadImage = (event) => {
                 </Col> 
                 <Col className={confirmaddmessagechannel ? 'text-white text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'3%',backgroundColor:'black', overflowY:'scroll'}}>
                     <h4 className='mb-3'>Add message</h4>
-                    <Container className="container mt-3 d-flex flex-row" style={{justifyContent:'center'}}>
-                        <Dropdown onSelect={(eventKey) => setSelection(eventKey)}>
+                    <Container className="container mt-3 d-flex flex-row" style={{justifyContent:'center', flexWrap:'wrap'}}>
+                        <Dropdown onSelect={(eventKey) => setSelection(eventKey)} className='mb-1'>
                             <Dropdown.Toggle variant="info">
                             {selection || "Select an option"}
                             </Dropdown.Toggle>
@@ -1844,7 +1844,7 @@ const loadImage = (event) => {
 
                         {selection === "Reminder" && (
                             <div className="ms-3">
-                            <Dropdown onSelect={(eventKey) => setReminder(eventKey)}>
+                            <Dropdown onSelect={(eventKey) => setReminder(eventKey)} className='mb-1'>
                                 <Dropdown.Toggle variant="info">
                                 {reminder || "Select reminder frequency"}
                                 </Dropdown.Toggle>
@@ -1864,14 +1864,14 @@ const loadImage = (event) => {
                             <textarea placeholder='Message text' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none'}} value={newmessagetext} onChange={changenewmessagetext}></textarea>
                             {capturedImage && (
                               <div style={{ position: 'relative', width: '300px', maxHeight: '300px', overflow: 'hidden' }}>
-                                <img src={capturedImage} alt="Taken" width="100%" />
-                                <button onClick={() => {setCapturedImage(null); newmessage.body.photo='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '10px' }}>X</button>
+                                <img src={capturedImage} alt="Taken" width="200px" />
+                                <button onClick={() => {setCapturedImage(null); newmessage.body.photo='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '60px' }}>X</button>
                               </div>
                             )} 
                             {capturedVideo && (
                               <div style={{ position: 'relative', width: '300px', maxHeight: '300px', overflow: 'hidden' }}>
-                                <video src={capturedVideo} alt="Taken" width="100%" controls/>
-                                <button onClick={() => {setCapturedVideo(null); newmessage.body.video=''}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '10px' }}>X</button>
+                                <video src={capturedVideo} alt="Taken" width="200px" controls/>
+                                <button onClick={() => {setCapturedVideo(null); newmessage.body.video=''}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '60px' }}>X</button>
                               </div>
                             )} 
                             {isMapVisible &&(
