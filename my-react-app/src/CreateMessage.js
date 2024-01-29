@@ -19,6 +19,7 @@ const useWindowSize = () => {
       setWindowSize(window.innerWidth);
     };
 
+
     window.addEventListener('resize', handleResize);
 
     return () => window.removeEventListener('resize', handleResize);
@@ -42,7 +43,8 @@ function CreateMessage(props) {
   const [text, setText] = useState('#');
   const [charCount, setCharCount] = useState(1);
   const [squealChatTextareaValue, setSquealChatSecondTextareaValue] = useState('');
-  const maxChar = 150;
+  const [actualUser, setActualUser] = useState(null);
+  const [maxChar, setMaxChar] = useState(); // Initial value, will be updated
   const [isDropdownActive, setIsDropdownActive] = useState(false);
 
   /*Private Messagge*/
@@ -76,6 +78,10 @@ function CreateMessage(props) {
   const [inputLIink, setinputLIink] = useState('');
   const [displayedLink, setDisplayedLink] = useState(''); 
   const windowSize = useWindowSize();
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [capturedVideo, setCapturedVideo] = useState(null);
+
+
 
   /*Crea canale*/
   const [searchTerm2, setSearchTerm2] = useState('');
@@ -119,6 +125,21 @@ function CreateMessage(props) {
     };
 
   useEffect(() => {
+    async function fetchUserData() {
+      try {
+        const userData = await getActualUser(); // Assuming this function returns the logged-in user data
+        setActualUser(userData);
+        setMaxChar(userData.char_d); // Adjust 'char_d' to the actual property name for max characters
+        const initialWordsRemaining = userData.char_d - squealChatTextareaValue.length;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    }
+
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
       const remaining = calculateCharCount();
       setWordsRemaining(remaining);
       setPrivateWordsRemaining(calculatePrivateCharCount());
@@ -128,7 +149,7 @@ function CreateMessage(props) {
       } else {
           setSuggestedUsers([]); // Rimuove i suggerimenti se l'input è vuoto
       }
-    }, [squealChatTextareaValue, capturedImage, displayedLink, position, searchInput]);
+    }, [maxChar, squealChatTextareaValue, capturedImage, displayedLink, position, searchInput, capturedVideo]);
   
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
   const [intervalId, setIntervalId] = useState(null);
@@ -149,7 +170,7 @@ function CreateMessage(props) {
       setIntervalId(id);
   };
   
-    // Aggiungi una funzione per fermare l'intervallo se necessario
+  // Aggiungi una funzione per fermare l'intervallo se necessario
   const stopInterval = () => {
     if (intervalId) {
       clearInterval(intervalId);
@@ -280,6 +301,7 @@ function CreateMessage(props) {
     resetAttachments();
   };
   
+  /*
   const handleSquealChatTextareaChange = (e) => {
     const inputValue = e.target.value;
     const remaining = calculateCharCount();
@@ -294,6 +316,47 @@ function CreateMessage(props) {
       }
     } else {
       alert(`Hai superato il limite di ${maxChar} caratteri.`);
+    }
+  };
+  */
+
+  const handleSquealChatTextareaChange = (e) => {
+    const inputValue = e.target.value;
+    const attachmentsLength = (capturedImage ? 125 : 0) + (displayedLink ? 125 : 0) + (position ? 125 : 0); // Calcola la lunghezza totale degli allegati
+
+    // Calcola la lunghezza totale disponibile per il testo tenendo conto degli allegati
+    const availableTextLength = maxChar - attachmentsLength;
+
+    if (inputValue.length <= availableTextLength) {
+        setSquealChatSecondTextareaValue(inputValue);
+        const remaining = calculateCharCount();
+        setWordsRemaining(remaining);
+        if (remaining <= 10) {
+            setCounterColor('red');
+        } else {
+            setCounterColor('purple');
+        }
+    } else {
+        // Ripristina il valore della textarea all'ultimo valore valido
+        setSquealChatSecondTextareaValue(squealChatTextareaValue);
+
+        // Opzionalmente mostra un avviso o riproduce un suono
+        console.log(`Non puoi inserire più di ${availableTextLength} caratteri.`);
+        e.preventDefault();
+    }
+  };
+
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Qui puoi implementare la logica per gestire il file video.
+      // Per esempio, potresti voler salvare l'URL del video nello stato.
+      const videoUrl = URL.createObjectURL(file);
+      setCapturedVideo(videoUrl);
+      setShowVideoModal(false);
+      const remaining = calculateCharCount();
+      setWordsRemaining(remaining);
+      setPrivateWordsRemaining(calculatePrivateCharCount());
     }
   };
 
@@ -401,6 +464,7 @@ function CreateMessage(props) {
     let count = maxChar - squealChatTextareaValue.length;
   
     if (capturedImage) count -= 125;
+    if (capturedVideo) count -= 125;
     if (displayedLink) count -= 125;
     if (position) count -= 125; // Assumendo che vuoi anche ridurre il conteggio quando inserisci una posizione
   
@@ -413,9 +477,46 @@ function CreateMessage(props) {
     if (displayedLink) totalLength += 100;
     if (position) totalLength += 100; 
     if (capturedImage) totalLength += 100; 
+    if (capturedVideo) totalLength += 100;
     
     return 200 - totalLength;
   };
+
+  const handleSendSqueal = async () => {
+    const squealData = {
+      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      typesender: 'keyword', // Modifica come necessario
+      body: {
+        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+        link: displayedLink, // Aggiungi questo campo solo se è stato inserito un link
+        photo: capturedImage, // Aggiungi questo campo solo se è stata scattata una foto
+        video: capturedVideo, // Aggiungi questo campo solo se è stato caricato un video
+        position: position, // Aggiungi questo campo solo se è stata inserita una posizione
+      },
+      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
+      date: new Date().toISOString(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      usersViewed: [],
+      category: '', // Aggiungi logica per determinare la categoria se necessario
+      receivers: [], // Aggiungi logica se ci sono destinatari specifici
+      channel: text, // Aggiungi logica se il squeal è associato a un canale
+      impressions: 0,
+    };
+  
+    try {
+      const result = await addSqueal(squealData);
+      console.log('Squeal inviato con successo:', result);
+      // ...gestione post-invio (es. pulizia dei campi, aggiornamento UI)...
+    } catch (error) {
+      console.error('Errore nell\'invio del Squeal:', error);
+      // ...gestione dell'errore...
+    }
+  };
+  
 
   /*Selezione tipo messaggio*/
   const handleDropdownOpen = () => {
@@ -599,6 +700,26 @@ function CreateMessage(props) {
                     </InputGroup>
                 </Modal.Body>
             </Modal>
+
+            <Modal show={showVideoModal} onHide={() => setShowVideoModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Carica un video</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="mt-2">
+                  <label className="btn btn-primary">
+                    Carica video
+                    <input 
+                      type="file" 
+                      hidden 
+                      onChange={handleVideoChange}
+                      accept="video/*"
+                    />
+                  </label>
+                </div>
+              </Modal.Body>
+            </Modal>
+
           </>
     
           {/*Card per creazione messaggio*/}
@@ -709,6 +830,7 @@ function CreateMessage(props) {
                         <Col xs={12} md={10}>
                           <textarea
                             placeholder='A cosa stai pensando????'
+                            value={squealChatTextareaValue}
                             onChange={(e) => {
                               handleSquealChatTextareaChange(e);
                               setIsTextModified(true);
@@ -771,7 +893,7 @@ function CreateMessage(props) {
                         <Row>
                           <Col xs={12} md={10}>
                             {position && isMapVisible &&(
-                              <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
+                              <Card style={{  width: '200px', height: '100px', position: 'relative' }}>
                                 <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
                                   <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -801,8 +923,8 @@ function CreateMessage(props) {
                               </Card>
                             )}
                             {capturedImage && (
-                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
-                              <img src={capturedImage} alt="Scattata" width="100%" />
+                              <div style={{ position: 'relative',  width: '200px', height: '100px', overflow: 'hidden' }}>
+                              <img src={capturedImage} alt="Scattata"  />
                               <button 
                                 onClick={() => {
                                   setCapturedImage(null)
@@ -816,11 +938,47 @@ function CreateMessage(props) {
                               </button>
                             </div>
                             )}
-                            {displayedLink && (
-                                <div style={{ marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
-                                    <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
+                            {capturedVideo && (
+                                <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
+                                  <video width="200px" height="100px" controls>
+                                    <source src={capturedVideo} type="video/mp4" />
+                                    Il tuo browser non supporta il tag video.
+                                  </video>
+                                  <button 
+                                    onClick={() => {
+                                      setCapturedVideo(null);
+                                      // Aggiorna il conteggio dei caratteri qui
+                                      const remaining = calculateCharCount();
+                                      setWordsRemaining(remaining);
+                                      setPrivateWordsRemaining(calculatePrivateCharCount());
+                                    }} 
+                                    className="btn btn-sm btn-danger" 
+                                    style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il video
+                                  >
+                                    X
+                                  </button>
                                 </div>
                             )}
+                            {displayedLink && (
+                                <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                    <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
+                                    <button 
+                                        onClick={() => {
+                                            setDisplayedLink('');
+                                            setinputLIink('');
+                                            // Aggiorna il conteggio dei caratteri qui
+                                            const remaining = calculateCharCount();
+                                            setWordsRemaining(remaining);
+                                            setPrivateWordsRemaining(calculatePrivateCharCount());
+                                        }} 
+                                        className="btn btn-sm btn-danger" 
+                                        style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            )}
+
                           </Col>
                         </Row>
                     </Row>
@@ -838,6 +996,18 @@ function CreateMessage(props) {
                           >
                               <Camera color="white" size={25} />
                           </div>
+                      </Col>
+
+                      {/* Icona per il caricamento del video */}
+                      <Col className='col-1'>
+                        <div 
+                          id="videoLogo" 
+                          onClick={() => setShowVideoModal(true)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          {/* Sostituisci con l'icona appropriata per il video */}
+                          <Camera color="white" size={25} />
+                        </div>
                       </Col>
 
                       {/*URL*/}
@@ -874,6 +1044,10 @@ function CreateMessage(props) {
                         >
                           <Globe size={25} color="white" />
                         </button>
+                      </Col>
+
+                      <Col className="col-1">
+                        <Button onClick={handleSendSqueal}>Invia</Button>
                       </Col>
 
                       
@@ -1280,6 +1454,24 @@ function CreateMessage(props) {
                                   X
                                 </button>
                               </div>
+                              )}
+                              {capturedVideo && (
+                                <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
+                                  <video width="100%" controls>
+                                    <source src={capturedVideo} type="video/mp4" />
+                                    Il tuo browser non supporta il tag video.
+                                  </video>
+                                  <button 
+                                    onClick={() => {
+                                      setCapturedVideo(null);
+                                      // Aggiungi qui qualsiasi altra logica necessaria quando il video viene rimosso
+                                    }} 
+                                    className="btn btn-sm btn-danger" 
+                                    style={{ position: 'absolute', top: '10px', right: '10px' }}
+                                  >
+                                    X
+                                  </button>
+                                </div>
                               )}
                               {displayedLink && (
                                   <div style={{ marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
