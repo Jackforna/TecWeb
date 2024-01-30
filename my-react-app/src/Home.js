@@ -16,7 +16,7 @@ import { Camera, Globe, Link as LinkLogo, PersonCircle, Gear, NodeMinus, Send, C
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, uploadVideo} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -765,55 +765,6 @@ const capturePhoto = () => {
   setShowCameraModal(false);
   }
 
-const captureVideo = () => {
-  setVideoAnswer(videoRef.current.src);
-  console.log(videoRef.current.src);
-  setShowCameraVideoModal(false);
-  setStopRecording(false);
-}
-
-const handleStartRecording = async () => {
-  try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio:true });
-      videoRef.current.src = null;
-      videoRef.current.srcObject = mediaStream;
-      videoRef.current.controls = false;
-      videoRef.current.play();
-      setStream(mediaStream);
-
-      const recorder = new MediaRecorder(mediaStream);
-      recorder.start(300);
-      setMediaRecorder(recorder);
-      setRecordedChunks([]);
-      recorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-              setRecordedChunks(prev => [...prev, event.data]);
-          }
-        };
-      setStopRecording(false);
-      setIsRecording(true);
-    } catch (error) {
-      console.error("Error accessing the webcam", error);
-    }
-};
-
-const handleStopRecording = () => {
-  if (mediaRecorder) {
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { 'type' : 'video/mp4' });
-        const videoURL = URL.createObjectURL(blob);
-        setRecordedChunks([]);
-        videoRef.current.srcObject = null;
-        videoRef.current.src = videoURL;
-        videoRef.current.controls = true;
-        stream.getTracks().forEach(track => track.stop());
-      };
-      mediaRecorder.stop();
-      setStopRecording(true);
-      setIsRecording(false);
-    }
-};
-
 const getPosition = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -829,28 +780,11 @@ const getPosition = () => {
   }
 };
 
-async function fetchVideoAsBlob(videoUrl) {
-  try {
-    const response = await fetch(videoUrl);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const videoBlob = await response.blob();
-    return videoBlob;
-  } catch (error) {
-    console.error("Could not fetch the video:", error);
-  }
-}
-
 const sendAnswer = async () => {
   let text = textAnswer;
   let link = linkAnswer;
   let img = photoAnswer;
-  let video = "";
-  if(videoAnswer!=window.location.href && videoAnswer!=""){
-    let blob = await fetchVideoAsBlob(videoAnswer);
-    video = await uploadVideo(blob);
-  }             
+  let video = videoAnswer;          
   let position = [];
   if(positionAnswer.length!=0){
     position[0] = positionAnswer[0];
@@ -936,6 +870,18 @@ const loadImage = (event) => {
   }
 };
 
+const handleVideoChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setVideoAnswer(e.target.result);
+        setShowCameraModal(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
     return(
         <Container
                 style={{
@@ -987,7 +933,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                             {squeal.body.position.length!=0 &&(
@@ -1220,7 +1166,7 @@ const loadImage = (event) => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                             {squeal.body.position.length!=0 &&(
@@ -1273,30 +1219,24 @@ const loadImage = (event) => {
                   <label htmlFor="selectpicturewebcam" class="btn btn-primary mt-2 ms-2">Select picture</label>
                   </Modal.Body>
               </Modal>
-              <Modal show={showCameraVideoModal} style={{position:'absolute', top:'0', left:'20%', width:'80%', height:'100%'}} onHide={() => {setShowCameraVideoModal(false); setStopRecording(false);}}>
-                  <Modal.Header closeButton>
-                      <Modal.Title>Record Video</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                      <div className="video-preview">
-                          <video ref={videoRef} width="100%" height="auto" autoplay/>
-                      </div>
-                      {isRecording ? (
-                      <Button variant="danger" onClick={handleStopRecording}>
-                          Stop Recording
-                      </Button>
-                      ) : (
-                      <Button variant="primary" onClick={handleStartRecording}>
-                          Start Recording
-                      </Button>
-                      )}
-                  </Modal.Body>
-                  <Modal.Footer className={stopRecording ? '': 'd-none'}>
-                      <Button variant="success" onClick={captureVideo} >
-                      Use Video
-                      </Button>
-                  </Modal.Footer>
-              </Modal>
+              <Modal show={showCameraVideoModal} onHide={() => setShowCameraVideoModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Carica un video</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="mt-2">
+                  <label className="btn btn-primary">
+                    Carica video
+                    <input 
+                      type="file" 
+                      hidden 
+                      onChange={handleVideoChange}
+                      accept="video/*"
+                    />
+                  </label>
+                </div>
+              </Modal.Body>
+            </Modal>
             </Container>
     )
 }

@@ -90,10 +90,6 @@ Button.active{
   border-top:2px solid white !important;
 }
 
-.rowchannel_profile:hover{
-  background-color: #696969;
-}
-
 .texteditprofile:hover,:focus{
   border-color:white !important;
 }

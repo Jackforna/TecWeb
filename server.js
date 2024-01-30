@@ -10,6 +10,7 @@ const client = new MongoClient(dbUrl);
 const dbName = 'my-mongo-container';
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // i file vengono salvati nella cartella 'uploads'
+const schedule = require('node-schedule');
 
 
 app.use(bodyParser.json({ limit: '100mb' }));
@@ -149,7 +150,6 @@ app.delete('/delete-user/:id', async (req, res) => {
   }
 });
 
-/*Temporanea per aggiunta di campi specifici user*/
 app.put('/update-user/:id', async (req, res) => {
   try {
       const id = req.params.id;
@@ -368,6 +368,81 @@ async function initializeCollections() {
       console.error(err);
   }
 }
+
+schedule.scheduleJob('0 0 * * *', async () => {
+  const usersArray = await UsersCollection.find({}).toArray();
+  for (let i=0; i<usersArray.length; i++){
+    switch(usersArray[i].version){
+      case 'moderator':
+        usersArray[i].char_d = 1000;
+      break;
+      case 'normal':
+        usersArray[i].char_d = 300;
+      break;
+      case 'verified':
+        usersArray[i].char_d = 600;
+      break;
+      case 'professional':
+        usersArray[i].char_d = 1000;
+      break;
+      case 'SMM':
+        usersArray[i].char_d = 0;
+      break;
+    }
+  }
+  UsersCollection.deleteMany({});
+  await UsersCollection.insertMany(usersArray);
+});
+
+schedule.scheduleJob('0 0 * * 1', async () => {
+  const usersArray = await UsersCollection.find({}).toArray();
+  for (let i=0; i<usersArray.length; i++){
+    switch(usersArray[i].version){
+      case 'moderator':
+        usersArray[i].char_w = 6500;
+      break;
+      case 'normal':
+        usersArray[i].char_w = 2000;
+      break;
+      case 'verified':
+        usersArray[i].char_w = 4000;
+      break;
+      case 'professional':
+        usersArray[i].char_w = 6500;
+      break;
+      case 'SMM':
+        usersArray[i].char_w = 0;
+      break;
+    }
+  }
+  UsersCollection.deleteMany({});
+  await UsersCollection.insertMany(usersArray);
+});
+
+schedule.scheduleJob('0 0 1 * *', async () => {
+  const usersArray = await UsersCollection.find({}).toArray();
+  for (let i=0; i<usersArray.length; i++){
+    switch(usersArray[i].version){
+      case 'moderator':
+        usersArray[i].char_m = 23000;
+      break;
+      case 'normal':
+        usersArray[i].char_m = 7000;
+      break;
+      case 'verified':
+        usersArray[i].char_m = 14000;
+      break;
+      case 'professional':
+        usersArray[i].char_m = 23000;
+      break;
+      case 'SMM':
+        usersArray[i].char_m = 0;
+      break;
+    }
+  }
+  UsersCollection.deleteMany({});
+  await UsersCollection.insertMany(usersArray);
+});
 
 app.listen(port, () => {
   console.log(`Server in esecuzione su http://localhost:${port}`);
