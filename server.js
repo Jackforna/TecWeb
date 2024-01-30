@@ -9,7 +9,6 @@ const dbUrl = 'mongodb://root:example@localhost:27017';
 const client = new MongoClient(dbUrl);
 const dbName = 'my-mongo-container';
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // i file vengono salvati nella cartella 'uploads'
 const schedule = require('node-schedule');
 
 
@@ -68,7 +67,6 @@ initializeCollections();
   const UsersCollection = db.collection('Users');
   const ListChannelsCollection = db.collection('ListChannels');
   const ListSquealsCollection = db.collection('ListSqueals');
-  const videoCollection = db.collection('ListVideos');
 
 app.get('/get-users', async (req, res) => {
   try {
@@ -268,40 +266,6 @@ app.put('/update-channels', async (req, res) => {
   }
 });
 
-app.post('/upload-video', upload.single('file'), async (req, res) => {
-  try {
-    const videoDetails = {
-      fileName: req.file.filename, // o usa un nome personalizzato se necessario
-      filePath: '/uploads',
-      mimeType: req.file.mimetype,
-      size: req.file.size,
-      uploadedAt: new Date(),
-  };
-    const result = await videoCollection.insertOne(videoDetails);
-    res.status(201).json(req.file.filename);
-  } catch (error) {
-      console.error(error);
-      res.status(500).send('Errore durante l\'aggiunta del nuovo video');
-  }
-});
-
-app.get('/get-video/:fileName', async (req, res) => {
-    const fileName = req.params.fileName;
-    const filePath = path.join(__dirname, 'uploads', fileName);
-
-    // Verifica se il file esiste e invialo, altrimenti restituisci un errore 404
-    res.sendFile(filePath, function (err) {
-        if (err) {
-            if (err.code === 'ENOENT') {
-                // File non trovato
-                return res.status(404).send('Video non trovato');
-            }
-            // Errore sconosciuto durante l'invio del file
-            return res.status(500).send('Errore durante il recupero del video');
-        }
-    });
-});
-
 async function initializeCollections() {
   try {
     await client.connect();
@@ -322,14 +286,6 @@ async function initializeCollections() {
       console.log("Collezione 'ListSqueals' creata");
     } else {
       console.log("La collezione 'ListSqueals' esiste già");
-    }
-
-    const collections4 = await db.listCollections({ name: 'ListVideos' }).toArray();
-    if (collections4.length === 0) {
-      const ListVideos = await db.createCollection('ListVideos');
-      console.log("Collezione 'ListVideos' creata");
-    } else {
-      console.log("La collezione 'ListVideos' esiste già");
     }
 
     const collections3 = await db.listCollections({ name: 'Users' }).toArray();
