@@ -9,7 +9,7 @@ import Webcam from 'react-webcam';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -26,6 +26,17 @@ const useWindowSize = () => {
   }, []);
 
   return windowSize;
+};
+
+// Funzione per debouncare le chiamate (evita chiamate troppo frequenti)
+const debounce = (func, delay) => {
+  let inDebounce;
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(inDebounce);
+    inDebounce = setTimeout(() => func.apply(context, args), delay);
+  };
 };
 
 function CreateMessage(props) {
@@ -55,6 +66,7 @@ function CreateMessage(props) {
   const [searchInput, setSearchInput] = useState(''); // Stato per l'input di ricerca
   const [suggestedUsers, setSuggestedUsers] = useState([]); // Stato per gli utenti suggeriti
   const [selectedUsers, setSelectedUsers] = useState([]); // Stato per gli utenti selezionati
+  const [sortedSuggestedUsers, setSortedSuggestedUsers] = useState([]);
 
   /*Scrivi canale*/
   const [channelSearch, setChannelSearch] = useState(''); // Per tenere traccia dell'input di ricerca
@@ -123,6 +135,9 @@ function CreateMessage(props) {
     const playBeep = () => {
       beep(520, 200, 1, 'sine'); // Gioca un beep di 520Hz per 200ms
     };
+
+
+  
 
   useEffect(() => {
     async function fetchUserData() {
@@ -363,9 +378,12 @@ function CreateMessage(props) {
   const handlePrivateSquealChatTextareaChange = (e) => {
     const inputValue = e.target.value;
     setPrivateSquealChatTextareaValue(inputValue);
-    const remaining = 200 - inputValue.length;
+  
+    // Aggiorna il conteggio dei caratteri qui
+    const remaining = 200 - inputValue.length - (capturedImage ? 125 : 0) - (displayedLink ? 125 : 0) - (position ? 125 : 0); // Assicurati di aggiungere o rimuovere la lunghezza degli allegati
     setPrivateWordsRemaining(remaining);
   };
+  
 
   const handleSendMessage = () => {
     if (squealChatTextareaValue.trim() !== '') {
@@ -482,16 +500,39 @@ function CreateMessage(props) {
     return 200 - totalLength;
   };
 
+  const handleUpdateUser = async (charToDeacrement) => {
+    const userId = actualUser._id; // Recupera l'ID dell'utente da aggiornare
+    const userUpdates = {
+        // Definisci qui le proprietà dell'utente da aggiornare
+        char_d: actualUser.char_d - charToDeacrement,
+        char_w: actualUser.char_w - charToDeacrement,
+        char_m: actualUser.char_m - charToDeacrement,
+        // ... altre proprietà se necessario ...
+    };
+
+    try {
+        const result = await updateUser(userId, userUpdates);
+        console.log(result.message); // 'Utente aggiornato con successo' o qualsiasi altra risposta dal server
+        
+        // Aggiorna lo stato dell'app, mostra una notifica, ecc.
+        // ... 
+    } catch (error) {
+        console.error(error);
+        // Gestisci l'errore visualizzando un messaggio all'utente, ecc.
+        // ...
+    }
+};
+
   const handleSendSqueal = async () => {
     const squealData = {
       sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: 'keyword', // Modifica come necessario
+      typesender: 'keywords', // Modifica come necessario
       body: {
         text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-        link: displayedLink, // Aggiungi questo campo solo se è stato inserito un link
-        photo: capturedImage, // Aggiungi questo campo solo se è stata scattata una foto
-        video: capturedVideo, // Aggiungi questo campo solo se è stato caricato un video
-        position: position, // Aggiungi questo campo solo se è stata inserita una posizione
+        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
       date: new Date().toISOString(),
@@ -500,6 +541,7 @@ function CreateMessage(props) {
       pos_reactions: 0,
       neg_reactions: 0,
       usersReactions: [],
+      answers: [],
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
       receivers: [], // Aggiungi logica se ci sono destinatari specifici
@@ -510,12 +552,67 @@ function CreateMessage(props) {
     try {
       const result = await addSqueal(squealData);
       console.log('Squeal inviato con successo:', result);
-      // ...gestione post-invio (es. pulizia dei campi, aggiornamento UI)...
+      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+      let imageChars = 0;
+      let videoChars = 0;
+      let linkChars = 0;
+      let positionChars = 0;
+      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+      } else {
+        imageChars = 0;
+      }
+      if (squealData.body.video !== '') {
+        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+      } else {
+        videoChars = 0;
+      }
+      if (squealData.body.link !== '') {
+        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+      } else {
+        linkChars = 0;
+      }
+      if (squealData.body.position !== '') {
+        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+      } else {
+        positionChars = 0;
+      }
+      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+
+      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+
     } catch (error) {
       console.error('Errore nell\'invio del Squeal:', error);
       // ...gestione dell'errore...
     }
   };
+
+  const searchUsers = async (searchTerm) => {
+    try {
+      const users = await getUsers(searchTerm); // Assumi che getUsers accetti un termine di ricerca
+      // console.log(users);
+      for ( let i = 0; i < users.length; i++ ) {
+        let user = ((users[i].nickname).slice(0, searchTerm.length)).toLowerCase();
+        if (user === searchInput.toLocaleLowerCase()) {
+          setSuggestedUsers(prevAll=> [...prevAll, users[i]]);
+        }
+      }
+    } catch (error) {
+      console.error('Errore durante la ricerca degli utenti:', error);
+    }
+  };
+
+  // Debounced version of searchUsers
+  const debouncedSearchUsers = debounce(searchUsers, 300);
+
+  // Effetto per gestire il debounce della ricerca
+  useEffect(() => {
+    if (searchInput) {
+      debouncedSearchUsers(searchInput);
+    } else {
+      setSuggestedUsers([]); // Pulisci i suggerimenti se l'input è vuoto
+    }
+  }, [searchInput]);
   
 
   /*Selezione tipo messaggio*/
@@ -1087,15 +1184,15 @@ function CreateMessage(props) {
                             />
 
                             {/* Lista a tendina dei suggerimenti utenti*/}
-                            {suggestedUsers.length > 0 && (
-                                <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto'}}>
+                            {searchInput && suggestedUsers.length > 0 && (
+                                <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto', color: 'white'}}>
                                     {suggestedUsers.map(user => (
                                         <li 
-                                        key={user} 
-                                        style={{padding: '10px', cursor: 'pointer'}}
-                                        onClick={() => handleUserSelection(user)}
+                                        key={user._id} 
+                                        style={{padding: '10px', cursor: 'pointer', color: 'white'}}
+                                        onClick={() => handleUserSelection(user.nickname)}
                                         >
-                                            {user}
+                                          {user.nickname}
                                         </li>
                                     ))}
                                 </ul>
@@ -1104,7 +1201,7 @@ function CreateMessage(props) {
                             {/* Risultati della ricerca utenti*/}
                             {searchResults.map(user => (
                                 <div key={user.id}>
-                                    {user.name}
+                                    {user.nickname}
                                 </div>
                             ))}
 
@@ -1222,6 +1319,27 @@ function CreateMessage(props) {
                               </button>
                             </div>
                             )}
+                            {capturedVideo && (
+                                <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
+                                  <video width="200px" height="100px" controls>
+                                    <source src={capturedVideo} type="video/mp4" />
+                                    Il tuo browser non supporta il tag video.
+                                  </video>
+                                  <button 
+                                    onClick={() => {
+                                      setCapturedVideo(null);
+                                      // Aggiorna il conteggio dei caratteri qui
+                                      const remaining = calculateCharCount();
+                                      setWordsRemaining(remaining);
+                                      setPrivateWordsRemaining(calculatePrivateCharCount());
+                                    }} 
+                                    className="btn btn-sm btn-danger" 
+                                    style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il video
+                                  >
+                                    X
+                                  </button>
+                                </div>
+                            )}
                             {displayedLink && (
                                 <div style={{ marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
                                     <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
@@ -1245,6 +1363,18 @@ function CreateMessage(props) {
                             >
                                 <Camera color="white" size={25} />
                             </div>
+                        </Col>
+
+                        {/*Icona video*/}
+                        <Col className='col-1'>
+                          <div 
+                            id="videoLogo" 
+                            onClick={() => setShowVideoModal(true)}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            {/* Sostituisci con l'icona appropriata per il video */}
+                            <Camera color="white" size={25} />
+                          </div>
                         </Col>
 
                         {/*Icona url*/}

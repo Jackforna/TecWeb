@@ -172,7 +172,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     /*Test only*/
     // this.updateSquealPositive();
     // this.updateSquealNegative();
-    // this.deleteAllSqueals();
+    this.deleteAllSqueals();
     // this.deleteAllChannels();
     // this.deleteUser('6586c8e5b2ca7d845782751f')
     // this.deleteUser('6586c9c3733a4e33a55d91b7')
@@ -263,62 +263,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   openVideoDialog(): void {
     this.showVideoModal = true;
   }
-
-  /*
-  onFileSelected(event: Event): void {
-    const fileInput = event.target as HTMLInputElement;
-    if (fileInput.files && fileInput.files[0]) {
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-  
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        const imgSrc = (e.target as FileReader).result as string;
-  
-        // Salva l'URL dell'immagine per l'utilizzo successivo
-        this.imageDataUrl = imgSrc;
-  
-        const image = new Image();
-        image.onload = () => {
-          // Ottieni il riferimento al canvas e al suo contesto
-          const canvasElement = this.canvasElement.nativeElement;
-          const context = canvasElement.getContext('2d');
-          const maxWidth = 300; // Larghezza massima del canvas
-          const maxHeight = 300; // Altezza massima del canvas
-          
-          // Calcola le nuove dimensioni mantenendo le proporzioni
-          let width = image.width;
-          let height = image.height;
-  
-          if (width > height) {
-            // Per immagini orizzontali
-            if (width > maxWidth) {
-              height *= maxWidth / width;
-              width = maxWidth;
-            }
-          } else {
-            // Per immagini verticali
-            if (height > maxHeight) {
-              width *= maxHeight / height;
-              height = maxHeight;
-            }
-          }
-  
-          // Imposta le dimensioni del canvas
-          if (context) {
-            context.drawImage(image, 0, 0, width, height);
-  
-            // Mostra il canvas e nascondi il video
-            canvasElement.style.display = 'block';
-            this.videoElement.nativeElement.style.display = 'none';
-          }
-        };
-        image.src = imgSrc;
-      };
-  
-      reader.readAsDataURL(file);
-    }
-  }
-  */
 
   onFileSelected(event: Event): void {
     const fileInput = event.target as HTMLInputElement;
@@ -955,7 +899,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   createPublicSqueal(): void {
     // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
     const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
-    const typeSender = 'keyword'; // O altro valore a seconda della logica
+    const typeSender = 'keywords'; // O altro valore a seconda della logica
     const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
     const currentDate = new Date();
     const date = currentDate.toLocaleDateString();
@@ -970,7 +914,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       body: {
         text: this.userText,
         link: this.sentLink || '',
-        photo: this.sentImageUrl || '',
+        photo: this.sentImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
         position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
         video: this.sentVideoUrl || '',
       },
@@ -981,6 +925,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       pos_reactions: 0,
       neg_reactions: 0,
       usersReactions: [],
+      answers: [],
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
       receivers: [], // Aggiungi logica se ci sono destinatari specifici
@@ -1121,7 +1066,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
     this.isSubmitting = true;
     const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
-    const typeSender = 'keyword'; // O altro valore a seconda della logica
+    const typeSender = 'channels'; // O altro valore a seconda della logica
     const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
     const currentDate = new Date();
     const date = currentDate.toLocaleDateString();
@@ -1137,7 +1082,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       body: {
         text: this.userText,
         link: this.sentLink || '',
-        photo: this.sentImageUrl || '',
+        photo: this.sentImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
         position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
         video: this.sentVideoUrl || '', 
       },
@@ -1148,6 +1093,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       pos_reactions: 0,
       neg_reactions: 0,
       usersReactions: [],
+      answers: [],
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
       receivers: [], // Aggiungi logica se ci sono destinatari specifici

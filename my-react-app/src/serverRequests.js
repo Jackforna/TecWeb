@@ -121,6 +121,32 @@ export async function updateUsers(updatedUsers) {
     }
 }
 
+export async function updateUser(id, updates) {
+    try {
+        const response = await fetch(`http://localhost:8080/update-user/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updates)
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('Utente non trovato o nessun aggiornamento necessario');
+            }
+            throw new Error('Errore di rete. Impossibile completare la richiesta.');
+        }
+
+        const data = await response.json();
+        return data;  // Potrebbe contenere un messaggio di successo o altro a seconda della risposta del server
+    } catch (error) {
+        console.error('Errore durante l\'aggiornamento dell\'utente:', error);
+        throw error;
+    }
+}
+
+
 export async function deleteUsers(updatedUsers) {
     try {
         const response = await fetch(`http://localhost:8080/delete-user/${updatedUsers}`, {

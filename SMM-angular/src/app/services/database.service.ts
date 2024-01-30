@@ -141,5 +141,9 @@ export class DatabaseService {
     };
     return this.http.delete(`http://localhost:8080/delete-user/${squealId}`, body);
   }
+
+  uploadVideo(video: any): Observable<any> {
+    return this.http.post(`http://localhost:8080/upload-video`, video);
+  }
   
 }
