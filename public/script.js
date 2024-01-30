@@ -33,35 +33,7 @@ let longitude = '';
 var inputLink = '';
 var map = null;
 var map2 = null;
-var arrVideo = [];
 
-async function uploadVideo(blob) {
-    const formData = new FormData();
-    const file = new File([blob], { type: 'video/mp4' });
-    formData.append('file', file);
-
-    try {
-      const response = await fetch('http://localhost:8080/upload-video', {
-        method: 'POST',
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Errore di upload: ${response.statusText}`);
-      }
-  
-      const result = await response.json();
-      return(result); 
-    } catch (error) {
-      console.error('Errore durante l\'upload del video:', error);
-    }
-}
-
-async function getVideo(fileName) {
-    if(fileName!=""){
-        return(`http://localhost:8080/get-video/${fileName}`);
-    }
-}
 
 function getActualUser(){
     let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
@@ -117,7 +89,7 @@ window.onload = function() {
         for(i=0;i<arrsqueals.length;i++){
             let videoURL = "";
             if(arrsqueals[i].body.video!=""){
-                videoURL = await getVideo(arrsqueals[i].body.video);
+                videoURL = arrsqueals[i].body.video;
             }
             let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1])
             if(arrsqueals[i].channel==""){
@@ -555,7 +527,7 @@ async function squealbtnclick(){
     for(i=0;i<squeals.length;i++){
         let videoURL = "";
             if(squeals[i].body.video!=""){
-                videoURL = await getVideo(squeals[i].body.video);
+                videoURL = squeals[i].body.video;
             }
         let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
         if(squeals[i].channel=="")
@@ -594,7 +566,7 @@ document.getElementById("filtersqueal").addEventListener("change",async ()=>{
             for(i=0;i<squeals.length;i++){
                 let videoURL = "";
             if(squeals[i].body.video!=""){
-                videoURL = await getVideo(squeals[i].body.video);
+                videoURL = squeals[i].body.video;
             }
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
@@ -627,7 +599,7 @@ document.getElementById("filtersqueal").addEventListener("change",async ()=>{
             for(i=0;i<squeals.length;i++){
                 let videoURL = "";
             if(squeals[i].body.video!=""){
-                videoURL = await getVideo(squeals[i].body.video);
+                videoURL = squeals[i].body.video;
             }
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
@@ -672,7 +644,7 @@ document.getElementById("datesqueal").addEventListener("change",async ()=>{
                 j += 1;
                 let videoURL = "";
                 if(squeals[i].body.video!=""){
-                    videoURL = await getVideo(squeals[i].body.video);
+                    videoURL = squeals[i].body.video;
                 }
                 let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
                 if(squeals[i].channel=="")
@@ -710,7 +682,7 @@ document.getElementById("datesqueal").addEventListener("change",async ()=>{
                 j += 1;
                 let videoURL = "";
                 if(arrsqueals[i].body.video!=""){
-                    videoURL = await getVideo(arrsqueals[i].body.video);
+                    videoURL = arrsqueals[i].body.video;
                 }
                 let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1]);
                 if(arrsqueals[i].channel=="")
@@ -781,7 +753,7 @@ document.getElementById("searchsqueal").addEventListener("input",async ()=>{
             for(i=0;i<arrsqueals.length;i++){
                 let videoURL = "";
                 if(arrsqueals[i].body.video!=""){
-                    videoURL = await getVideo(arrsqueals[i].body.video);
+                    videoURL = arrsqueals[i].body.video;
                 }
                 let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1])
                 if(arrsqueals[i].channel=="")
@@ -816,7 +788,7 @@ document.getElementById("searchsqueal").addEventListener("input",async ()=>{
         for(i=0;i<arrsqueals.length;i++){
             let videoURL = "";
             if(arrsqueals[i].body.video!=""){
-                videoURL = await getVideo(arrsqueals[i].body.video);
+                videoURL = arrsqueals[i].body.video;
             }
             let Address = await getAddressGeolocation(arrsqueals[i].body.position[0], arrsqueals[i].body.position[1]);
             if(arrsqueals[i].channel=="")
@@ -908,7 +880,7 @@ document.getElementById("closeeditsqueal").addEventListener("click",async ()=>{
     for(i=0;i<squeals.length;i++){
         let videoURL = "";
             if(squeals[i].body.video!=""){
-                videoURL = await getVideo(squeals[i].body.video);
+                videoURL = squeals[i].body.video;
             }
         let Address = await getAddressGeolocation(squeals[i].body.position[0], squeals[i].body.position[1]);
         if(squeals[i].channel=="")
@@ -1628,7 +1600,7 @@ async function editCHAN(x){
     for(i=0;i<editCHANNEL.list_posts.length;i++){
         let videoURL = "";
             if(editCHANNEL.list_posts[i].body.video!=""){
-                videoURL = await getVideo(editCHANNEL.list_posts[i].body.video);
+                videoURL = editCHANNEL.list_posts[i].body.video;
             }
         if(editCHANNEL.list_posts[i].body.photo=="")
             editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -1673,7 +1645,7 @@ async function deletesquealCHANNEL(x){
     for(i=0;i<editCHANNEL.list_posts.length;i++){
         let videoURL = "";
             if(editCHANNEL.list_posts[i].body.video!=""){
-                videoURL = await getVideo(editCHANNEL.list_posts[i].body.video);
+                videoURL = editCHANNEL.list_posts[i].body.video;
             }
         if(editCHANNEL.list_posts[i].body.photo=="")
             editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -1757,7 +1729,7 @@ document.getElementById("viewCHANNELmessages").addEventListener("click",async ()
     for(i=0;i<arrcreateCHANNELmessages.length;i++){
         let videoURL = "";
             if(arrcreateCHANNELmessages[i].body.video!=""){
-                videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+                videoURL = arrcreateCHANNELmessages[i].body.video;
             }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
         switch(arrcreateCHANNELmessages[i].type){
@@ -2026,8 +1998,7 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
     }
     let video = "";
     if(document.getElementById("videonewmessageCHANNEL").src!=window.location.href){
-        videoBlob = await fetchBlobFromUrl(document.getElementById("videonewmessageCHANNEL").src);
-        video = await uploadVideo(videoBlob);
+        video = document.getElementById("videonewmessageCHANNEL").src;
     }
     document.getElementById("map").classList.add("d-none");
     document.getElementById("linknewmessageCHANNEL").innerHTML = '';
@@ -2116,7 +2087,7 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
         for(i=0;i<arrcreateCHANNELmessages.length;i++){
             let videoURL = "";
             if(arrcreateCHANNELmessages[i].body.video!=""){
-                videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+                videoURL = arrcreateCHANNELmessages[i].body.video;
             }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
             switch(arrcreateCHANNELmessages[i].type){
@@ -2184,7 +2155,7 @@ async function deletenewmessageCHANNEL(x){
         for(i=0;i<arrcreateCHANNELmessages.length;i++){
             let videoURL = "";
             if(arrcreateCHANNELmessages[i].body.video!=""){
-                videoURL = await getVideo(arrcreateCHANNELmessages[i].body.video);
+                videoURL = arrcreateCHANNELmessages[i].body.video;
             }
             let Address = await getAddressGeolocation(arrcreateCHANNELmessages[i].body.position[0], arrcreateCHANNELmessages[i].body.position[1]);
             switch(arrcreateCHANNELmessages[i].type){
@@ -2308,8 +2279,7 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
     let img = document.getElementById("imgnewsqueal").src;
     let video = "";
     if(document.getElementById("videonewsquealCHANNEL").src!=window.location.href){
-        videoBlob = await fetchBlobFromUrl(document.getElementById("videonewsquealCHANNEL").src);
-        video = await uploadVideo(videoBlob);
+        video = document.getElementById("videonewsquealCHANNEL").src;
     }                     
     let position = [];
     if(latitude!=""){
@@ -2366,7 +2336,7 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
                 editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
                 let videoURL = "";
                 if(arrsqueals[i].body.video!=""){
-                    videoURL = await getVideo(arrsqueals[i].body.video);
+                    videoURL = arrsqueals[i].body.video;
                 }
             let Address = await getAddressGeolocation(editCHANNEL.list_posts[i].body.position[0], editCHANNEL.list_posts[i].body.position[1]);
             document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column mexcard"><div class="card-header" style="width:100%; height:70px"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height: 150px;"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary deletemexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:white">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
@@ -2610,43 +2580,33 @@ async function getAddressGeolocation(lat, lon) {
 
 /*--------------------------------------------accesso videocamera--------------------------------------------*/
 
-let preview = document.getElementById('preview');
-let startButtonVideo = document.getElementById('startRecording');
-let stopButtonVideo = document.getElementById('stopRecording');
 let recordedVideo = document.getElementById('recordedVideo');
-
-let mediaRecorder;
-let chunks = [];
-let stream;
-let blob;
 
 function accessvideo(x){
     num_message = x;
     document.getElementById("access-video").classList.remove("d-none");
     document.getElementById("access-video").classList.add("d-flex");
-    if(preview.classList.contains("d-none")){
-        stopButtonVideo.classList.add("d-none");
-        preview.classList.remove("d-none");
-        startButtonVideo.classList.remove("d-none");
-        document.getElementById("usevideo").classList.add("d-none");
-        recordedVideo.classList.add("d-none");
-        recordedVideo.src = "";
-    }
 }
 
-document.getElementById("closetakevideo").addEventListener("click", () =>{
+document.getElementById("videoInput").addEventListener("change",(event)=>{
+      var reader = new FileReader();
+      reader.onload = (e) => {
+        recordedVideo.src = e.target.result;
+        console.log(recordedVideo.src);
+        if(num_message==1){
+            document.getElementById("videonewmessageCHANNEL").src = recordedVideo.src;
+            document.getElementById("videonewmessage").innerHTML = '<video src="'+recordedVideo.src+'" class="rounded" alt="..." style="width:100%; height:100%" controls></video><button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletevideo(1)"><i class="bi-x" style="font-size:20px"></i></button>';
+        } else if(num_message==3){
+            document.getElementById("videonewsqueal").innerHTML += '<video src="'+recordedVideo.src+'" class="rounded" alt="..." style="width:100%; height:100%" controls></video><button style="position: absolute; top: 10px; right: 10px; color:white; background-color: red; border-radius:8px; border:0" onclick="deletevideo(3)"><i class="bi-x" style="font-size:20px"></i></button>';
+            document.getElementById("videonewsquealCHANNEL").src = recordedVideo.src;
+        }
+      }
+      reader.readAsDataURL(event.target.files[0]);
     document.getElementById("access-video").classList.add("d-none");
     document.getElementById("access-video").classList.remove("d-flex");
 })
 
-document.getElementById("usevideo").addEventListener("click", () =>{
-    if(num_message==1){
-        document.getElementById("videonewmessageCHANNEL").src = recordedVideo.src;
-        document.getElementById("videonewmessage").innerHTML = '<video src="'+recordedVideo.src+'" class="rounded" alt="..." style="width:100%; height:100%" controls></video><button style="position: absolute; top: 10px; right: 10px; z-index: 1000; color:white; background-color: red; border-radius:8px; border:0" onclick="deletevideo(1)"><i class="bi-x" style="font-size:20px"></i></button>';
-    } else if(num_message==3){
-        document.getElementById("videonewsqueal").innerHTML += '<video src="'+recordedVideo.src+'" class="rounded" alt="..." style="width:100%; height:100%" controls></video><button style="position: absolute; top: 10px; right: 10px; color:white; background-color: red; border-radius:8px; border:0" onclick="deletevideo(3)"><i class="bi-x" style="font-size:20px"></i></button>';
-        document.getElementById("videonewsquealCHANNEL").src = recordedVideo.src;
-    }
+document.getElementById("closetakevideo").addEventListener("click", () =>{
     document.getElementById("access-video").classList.add("d-none");
     document.getElementById("access-video").classList.remove("d-flex");
 })
@@ -2658,60 +2618,5 @@ function deletevideo(x){
     } else if(x==3){
         document.getElementById("videonewsquealCHANNEL").src = "";
         document.getElementById("videonewsqueal").innerHTML = "";
-    }
-}
-
-
-startButtonVideo.onclick = async function() {
-    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio:true });
-    mediaRecorder = new MediaRecorder(stream);
-    preview.srcObject = stream;
-    chunks = [];
-    recordedVideo.src = "";
-
-    mediaRecorder.ondataavailable = function(e) {
-        if (e.data.size > 0)
-            chunks.push(e.data);
-    };
-
-    if (mediaRecorder && mediaRecorder.state !== 'recording') {
-        mediaRecorder.start(300);
-        if(preview.classList.contains("d-none")){
-            preview.classList.remove("d-none");
-            document.getElementById("usevideo").classList.add("d-none");
-            document.getElementById("recordedVideo").classList.add("d-none");
-        }
-        startButtonVideo.classList.add("d-none");
-        stopButtonVideo.classList.remove("d-none");
-    }
-};
-
-stopButtonVideo.onclick = function() {
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-        stopButtonVideo.classList.add("d-none");
-        preview.classList.add("d-none");
-        startButtonVideo.classList.remove("d-none");
-        document.getElementById("usevideo").classList.remove("d-none");
-        document.getElementById("recordedVideo").classList.remove("d-none");
-        blob = new Blob(chunks, { 'type' : mediaRecorder.mimeType || 'video/mp4' });
-        chunks = [];
-        let videoURL = URL.createObjectURL(blob);
-        recordedVideo.src = videoURL;
-        recordedVideo.load();
-        stream.getTracks().forEach(track => track.stop());
-    }
-};
-
-async function fetchBlobFromUrl(blobUrl) {
-    try {
-        const response = await fetch(blobUrl);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const blob = await response.blob();
-        return blob;
-    } catch (error) {
-        console.error('Error fetching Blob from URL:', error);
     }
 }

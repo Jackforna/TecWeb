@@ -342,12 +342,11 @@
     </section>
     <section id="access-video" class="container-fluid position-absolute d-none flex-column bg-black overflow-y-scroll align-items-center" style="width:100%; height:100%; top:0; left:0; z-index:1003">
         <button type="button" class="btn-close" aria-label="Close" id="closetakevideo" style="position:absolute;top:3%;right:2%;font-size:30px;filter:invert(1);z-index:2"></button>
-        <h1 class="text-light mt-3">Capture video from webcam</h1>
-        <video id="preview" style="max-height:300px" autoplay></video>
+        <h1 class="text-light mt-3">Load a Video</h1>
         <video id="recordedVideo" controls class="d-none" style="max-width:300px"></video>
-        <button id="startRecording" class="btn btn-outline-primary m-3">Start Video</button>
-        <button id="stopRecording" class="btn btn-outline-primary m-3 d-none">Stop Video</button>
-        <button id="usevideo" class="btn btn-outline-primary m-3 d-none">Use video</button>
+        <label class="btn btn-primary">
+            Load video
+            <input type="file" hidden id="videoInput" accept="video/*"/>
     </section>
     <script type="text/javascript" src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>

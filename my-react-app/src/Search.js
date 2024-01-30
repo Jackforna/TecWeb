@@ -14,7 +14,7 @@ import {CaretDownFill, PersonCircle} from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, getVideo} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -529,7 +529,6 @@ const toggleSilenceChannel = () => {
       }
     }
   } else {
-    console.log("Entrato");
     for(let i=0; i<allchannels.length; i++){
       if(allchannels[i].name==newnamechannel){
         let newArr = [...allchannels[i].usersSilenced];
@@ -671,7 +670,7 @@ const toggleSilenceChannel = () => {
                                     )} 
                                     {squeal.body.video!='' && (
                                     <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                        <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
+                                        <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
                                     </div>
                                     )}
                                 {squeal.body.position.length!=0 &&(
@@ -785,7 +784,7 @@ const toggleSilenceChannel = () => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                                 {squeal.body.position.length!=0 &&(
@@ -848,7 +847,7 @@ const toggleSilenceChannel = () => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                                 {squeal.body.position.length!=0 &&(
@@ -940,7 +939,7 @@ const toggleSilenceChannel = () => {
                                 )} 
                                 {squeal.body.video!='' && (
                                 <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                    <video src={`http://localhost:8080/get-video/${squeal.body.video}`} alt="Squeal video" width="100%" controls/>
+                                    <video src={squeal.body.video} alt="Squeal video" width="100%" controls/>
                                 </div>
                                 )}
                                 {squeal.body.position.length!=0 &&(
