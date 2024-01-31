@@ -67,6 +67,7 @@ function CreateMessage(props) {
   const [suggestedUsers, setSuggestedUsers] = useState([]); // Stato per gli utenti suggeriti
   const [selectedUsers, setSelectedUsers] = useState([]); // Stato per gli utenti selezionati
   const [sortedSuggestedUsers, setSortedSuggestedUsers] = useState([]);
+  const maxCharsPrivate = 200;
 
   /*Scrivi canale*/
   const [channelSearch, setChannelSearch] = useState(''); // Per tenere traccia dell'input di ricerca
@@ -92,6 +93,7 @@ function CreateMessage(props) {
   const windowSize = useWindowSize();
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [capturedVideo, setCapturedVideo] = useState(null);
+  const photoProfile = "";
 
 
 
@@ -134,10 +136,7 @@ function CreateMessage(props) {
     /*funzione per il beep*/
     const playBeep = () => {
       beep(520, 200, 1, 'sine'); // Gioca un beep di 520Hz per 200ms
-    };
-
-
-  
+    };  
 
   useEffect(() => {
     async function fetchUserData() {
@@ -146,6 +145,7 @@ function CreateMessage(props) {
         setActualUser(userData);
         setMaxChar(userData.char_d); // Adjust 'char_d' to the actual property name for max characters
         const initialWordsRemaining = userData.char_d - squealChatTextareaValue.length;
+
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -156,16 +156,19 @@ function CreateMessage(props) {
 
   useEffect(() => {
       const remaining = calculateCharCount();
+      const remainingPrivate = calculatePrivateCharCount();
       setWordsRemaining(remaining);
-      setPrivateWordsRemaining(calculatePrivateCharCount());
-      if (searchInput) {
-        const results = allUsers.filter(user => user.toLowerCase().includes(searchInput.toLowerCase()));
-        setSuggestedUsers(results);
-      } else {
-          setSuggestedUsers([]); // Rimuove i suggerimenti se l'input è vuoto
-      }
-    }, [maxChar, squealChatTextareaValue, capturedImage, displayedLink, position, searchInput, capturedVideo]);
+      setPrivateWordsRemaining(remainingPrivate);
+    }, [maxCharsPrivate, maxChar, squealChatTextareaValue, capturedImage, displayedLink, position, searchInput, capturedVideo]);
   
+    useEffect(() => {
+      // Initialize the privateWordsRemaining based on the initial text and attachments
+      const initialPrivateWordsRemaining = calculatePrivateCharCount();
+      setPrivateWordsRemaining(initialPrivateWordsRemaining);
+    }, [maxCharsPrivate, privateSquealChatTextareaValue, capturedImage, displayedLink, position, capturedVideo]);
+  
+
+  /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
   const [intervalId, setIntervalId] = useState(null);
 
@@ -252,6 +255,8 @@ function CreateMessage(props) {
     setShowIcon(true);
   };
 
+
+  /*--------------------------------------------------------------------Comuni--------------------------------------------------------------------------------------*/
   const resetAttachments = () => {
     setPosition(null);
     setCapturedImage(null);
@@ -284,17 +289,6 @@ function CreateMessage(props) {
     setIsSuggestionsVisible(false);
   };
 
-  const handleInputChangeHashtag = (e) => {
-    const inputValue = e.target.value;
-    const sanitizedValue = inputValue.replace(/\s+/g, '_');
-    const prefix = (messageType === 'Squeal' && squealOrChannelOption === 'Privato') ? '@' : '#';
-
-    if (sanitizedValue.length <= 50 || inputValue === prefix) {
-      setText(sanitizedValue.startsWith(prefix) ? sanitizedValue : prefix + sanitizedValue);
-      setCharCount(sanitizedValue.startsWith(prefix) ? sanitizedValue.length : sanitizedValue.length + 1);
-    }
-  };
-
   const handleMessageTypeChange = (e) => {
     const selectedType = e.target.value;
     setMessageType(selectedType);
@@ -309,32 +303,160 @@ function CreateMessage(props) {
       setSquealOrChannelOption('Pubblico');
     }
   };
-  
+
   const handleSquealOrChannelOptionChange = (e) => {
     setSquealOrChannelOption(e.target.value);
     // Resetta gli allegati
     resetAttachments();
   };
-  
-  /*
-  const handleSquealChatTextareaChange = (e) => {
-    const inputValue = e.target.value;
-    const remaining = calculateCharCount();
 
-    if (inputValue.length < squealChatTextareaValue.length || remaining > 0) {
-      setSquealChatSecondTextareaValue(inputValue);
+
+
+  /*--------------------------------------------------------------------Allegati e gestione------------------------------------------------------------------------------*/
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Qui puoi implementare la logica per gestire il file video.
+      // Per esempio, potresti voler salvare l'URL del video nello stato.
+      const videoUrl = URL.createObjectURL(file);
+      setCapturedVideo(videoUrl);
+      setShowVideoModal(false);
+      const remaining = calculateCharCount();
+      const remainingPrivate = calculatePrivateCharCount();
       setWordsRemaining(remaining);
-      if (remaining <= 10) {
-        setCounterColor('red');
-      } else {
-        setCounterColor('purple');
-      }
-    } else {
-      alert(`Hai superato il limite di ${maxChar} caratteri.`);
+      setPrivateWordsRemaining(remainingPrivate);
     }
   };
-  */
 
+  const handleLogoClick = () => {
+    setShowFileSelectionModal(true);
+    setShowCameraModal(true);
+  };
+  
+  const handleLocationButtonClick = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setPosition([latitude, longitude]);
+        const remaining = calculateCharCount();
+        const remainingPrivate = calculatePrivateCharCount();
+        setWordsRemaining(remaining);
+        setPrivateWordsRemaining(remainingPrivate);
+      }, (error) => {
+        console.error(error);
+      });
+    } else {
+      alert('La geolocalizzazione non è supportata dal tuo browser.');
+    }
+  };
+
+  const markerIcon = new L.Icon({
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+    iconAnchor: [12, 41]
+  });
+
+  const handleFileChange = (e) => {
+    if (wordsRemaining >= 125) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setCapturedImage(event.target.result);
+          updateCharacterCounts();
+        };
+        reader.readAsDataURL(file);
+      }
+      setShowFileSelectionModal(false);
+      setShowCameraModal(false);
+    } else {
+      alert("Non hai abbastanza caratteri disponibili per caricare una foto.");
+    }
+  };
+
+  const capture = () => {
+    if (wordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setCapturedImage(imageSrc);
+      setShowCameraModal(false);
+      const remaining = calculateCharCount();
+      setWordsRemaining(remaining);
+    } else if (privateWordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setCapturedImage(imageSrc);
+      setShowCameraModal(false);
+      const remainingPrivate = calculatePrivateCharCount();
+      setPrivateWordsRemaining(remainingPrivate);
+    } else {
+      alert("Non hai abbastanza caratteri disponibili per aggiungere una foto.");
+    }
+  };
+  
+  const handleInputChange = (e) => {
+    setinputLIink(e.target.value);
+  };
+
+  const handleSubmitLink = () => {
+    if (wordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') {
+      if (isLink(inputLIink)) {
+        setDisplayedLink(inputLIink);
+        setShowLinkModal(false);
+        const remaining = calculateCharCount();
+        setWordsRemaining(remaining);
+      } else {
+        alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
+      }
+    } else if (privateWordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
+      if (isLink(inputLIink)) {
+        setDisplayedLink(inputLIink);
+        setShowLinkModal(false);
+        const remainingPrivate = calculatePrivateCharCount();
+        setPrivateWordsRemaining(remainingPrivate);
+      } else {
+        alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
+      }
+    } else {
+      alert("Non hai abbastanza caratteri disponibili per aggiungere un link.");
+    }
+  };     
+
+  const updateCharacterCounts = () => {
+    const remaining = calculateCharCount();
+    const remainingPrivate = calculatePrivateCharCount();
+    setWordsRemaining(remaining);
+    setPrivateWordsRemaining(remainingPrivate);
+  };
+  
+  const isLink = (string) => {
+    const regex = /^(http:\/\/|https:\/\/)/;
+    return regex.test(string);
+  }
+
+  const handleDropdownOpen = () => {
+    setIsDropdownActive(true);
+    // il resto della logica per aprire il dropdown
+  };
+
+  const handleDropdownClose = () => {
+    setIsDropdownActive(false);
+    // il resto della logica per chiudere il dropdown
+  };
+
+
+  /*--------------------------------------------------------------------Squeal Public------------------------------------------------------------------------------*/
+
+  const handleInputChangeHashtag = (e) => {
+    const inputValue = e.target.value;
+    const sanitizedValue = inputValue.replace(/\s+/g, '_');
+    const prefix = (messageType === 'Squeal' && squealOrChannelOption === 'Privato') ? '@' : '#';
+
+    if (sanitizedValue.length <= 50 || inputValue === prefix) {
+      setText(sanitizedValue.startsWith(prefix) ? sanitizedValue : prefix + sanitizedValue);
+      setCharCount(sanitizedValue.startsWith(prefix) ? sanitizedValue.length : sanitizedValue.length + 1);
+    }
+  };
+  
   const handleSquealChatTextareaChange = (e) => {
     const inputValue = e.target.value;
     const attachmentsLength = (capturedImage ? 125 : 0) + (displayedLink ? 125 : 0) + (position ? 125 : 0); // Calcola la lunghezza totale degli allegati
@@ -361,122 +483,12 @@ function CreateMessage(props) {
     }
   };
 
-  const handleVideoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Qui puoi implementare la logica per gestire il file video.
-      // Per esempio, potresti voler salvare l'URL del video nello stato.
-      const videoUrl = URL.createObjectURL(file);
-      setCapturedVideo(videoUrl);
-      setShowVideoModal(false);
-      const remaining = calculateCharCount();
-      setWordsRemaining(remaining);
-      setPrivateWordsRemaining(calculatePrivateCharCount());
-    }
-  };
-
-  const handlePrivateSquealChatTextareaChange = (e) => {
-    const inputValue = e.target.value;
-    setPrivateSquealChatTextareaValue(inputValue);
-  
-    // Aggiorna il conteggio dei caratteri qui
-    const remaining = 200 - inputValue.length - (capturedImage ? 125 : 0) - (displayedLink ? 125 : 0) - (position ? 125 : 0); // Assicurati di aggiungere o rimuovere la lunghezza degli allegati
-    setPrivateWordsRemaining(remaining);
-  };
-  
-
   const handleSendMessage = () => {
     if (squealChatTextareaValue.trim() !== '') {
       setSquealChatSecondTextareaValue('');
       setIsTextModified(false);
     }
   };
-
-  const handleLogoClick = () => {
-    setShowFileSelectionModal(true);
-    setShowCameraModal(true);
-  };
-  
-  const handleLocationButtonClick = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        setPosition([latitude, longitude]);
-        const remaining = calculateCharCount();
-        setWordsRemaining(remaining);
-        setPrivateWordsRemaining(calculatePrivateCharCount());
-      }, (error) => {
-        console.error(error);
-      });
-    } else {
-      alert('La geolocalizzazione non è supportata dal tuo browser.');
-    }
-  };
-
-  const markerIcon = new L.Icon({
-    iconUrl: require('leaflet/dist/images/marker-icon.png'),
-    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-    shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-    iconAnchor: [12, 41]
-  });
-
-  const handleFileChange = (e) => {
-    if (wordsRemaining >= 125) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          setCapturedImage(event.target.result);
-          const remaining = calculateCharCount();
-          setWordsRemaining(remaining);
-          setPrivateWordsRemaining(calculatePrivateCharCount());
-        };
-        reader.readAsDataURL(file);
-      }
-      setShowFileSelectionModal(false);
-      setShowCameraModal(false);
-    } else {
-      alert("Non hai abbastanza caratteri disponibili per caricare una foto.");
-    }
-  };
-
-  const capture = () => {
-    if (wordsRemaining >= 125) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      setCapturedImage(imageSrc);
-      setShowCameraModal(false);
-      const remaining = calculateCharCount();
-      setWordsRemaining(remaining);
-      setPrivateWordsRemaining(calculatePrivateCharCount());
-    } else {
-      alert("Non hai abbastanza caratteri disponibili per aggiungere una foto.");
-    }
-  };
-  
-  const handleInputChange = (e) => {
-    setinputLIink(e.target.value);
-  };
-
-  const handleSubmitLink = () => {
-    if (wordsRemaining >= 125) {
-      if (isLink(inputLIink)) {
-        setDisplayedLink(inputLIink);
-        setShowLinkModal(false);
-        const remaining = calculateCharCount();
-        setWordsRemaining(remaining);
-        setPrivateWordsRemaining(calculatePrivateCharCount());
-      } else {
-        alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
-      }
-    } else {
-      alert("Non hai abbastanza caratteri disponibili per aggiungere un link.");
-    }
-  };     
-  
-  const isLink = (string) => {
-    const regex = /^(http:\/\/|https:\/\/)/;
-    return regex.test(string);
-  }
 
   const calculateCharCount = () => {
     let count = maxChar - squealChatTextareaValue.length;
@@ -487,17 +499,6 @@ function CreateMessage(props) {
     if (position) count -= 125; // Assumendo che vuoi anche ridurre il conteggio quando inserisci una posizione
   
     return count;
-  };
-  
-  const calculatePrivateCharCount = () => {
-    let totalLength = squealChatTextareaValue.length;
-    
-    if (displayedLink) totalLength += 100;
-    if (position) totalLength += 100; 
-    if (capturedImage) totalLength += 100; 
-    if (capturedVideo) totalLength += 100;
-    
-    return 200 - totalLength;
   };
 
   const handleUpdateUser = async (charToDeacrement) => {
@@ -521,7 +522,7 @@ function CreateMessage(props) {
         // Gestisci l'errore visualizzando un messaggio all'utente, ecc.
         // ...
     }
-};
+  };
 
   const handleSendSqueal = async () => {
     const squealData = {
@@ -587,45 +588,8 @@ function CreateMessage(props) {
     }
   };
 
-  const searchUsers = async (searchTerm) => {
-    try {
-      const users = await getUsers(searchTerm); // Assumi che getUsers accetti un termine di ricerca
-      // console.log(users);
-      for ( let i = 0; i < users.length; i++ ) {
-        let user = ((users[i].nickname).slice(0, searchTerm.length)).toLowerCase();
-        if (user === searchInput.toLocaleLowerCase()) {
-          setSuggestedUsers(prevAll=> [...prevAll, users[i]]);
-        }
-      }
-    } catch (error) {
-      console.error('Errore durante la ricerca degli utenti:', error);
-    }
-  };
 
-  // Debounced version of searchUsers
-  const debouncedSearchUsers = debounce(searchUsers, 300);
-
-  // Effetto per gestire il debounce della ricerca
-  useEffect(() => {
-    if (searchInput) {
-      debouncedSearchUsers(searchInput);
-    } else {
-      setSuggestedUsers([]); // Pulisci i suggerimenti se l'input è vuoto
-    }
-  }, [searchInput]);
-  
-
-  /*Selezione tipo messaggio*/
-  const handleDropdownOpen = () => {
-    setIsDropdownActive(true);
-    // il resto della logica per aprire il dropdown
-  };
-  const handleDropdownClose = () => {
-    setIsDropdownActive(false);
-    // il resto della logica per chiudere il dropdown
-  };
-
-  /*Squeal privato*/
+  /*--------------------------------------------------------------------Squeal Private------------------------------------------------------------------------------*/
   const handleUserSelection = (user) => {
     if (selectedUsers.includes(user)) {
         // Se l'utente è già selezionato, rimuovilo dalla lista
@@ -641,16 +605,127 @@ function CreateMessage(props) {
     setSearchInput(''); // Pulisci l'input di ricerca dopo la selezione
     setSuggestedUsers([]); // Nascondi i suggerimenti dopo la selezione
   }
-  const allUsers = [
-    "Mario",
-    "Marco",
-    "Maria",
-    "Marta",
-    "Martina"
-  ]; // Lista fittizia di utenti (in una situazione reale, questi dati potrebbero provenire da un database o da un'API)
+
+  const searchUsers = async (searchTerm) => {
+    try {
+      const users = await getUsers(searchTerm); // Assumi che getUsers accetti un termine di ricerca
+      // console.log(users);
+      for ( let i = 0; i < users.length; i++ ) {
+        let user = ((users[i].nickname).slice(0, searchTerm.length)).toLowerCase();
+        if (user === searchInput.toLocaleLowerCase()) {
+          setSuggestedUsers(prevAll=> [...prevAll, users[i]]);
+        }
+      }
+    } catch (error) {
+      console.error('Errore durante la ricerca degli utenti:', error);
+    }
+  };
+
+  const debouncedSearchUsers = debounce(searchUsers, 300);
+
+  useEffect(() => {
+    if (searchInput) {
+      debouncedSearchUsers(searchInput);
+    } else {
+      setSuggestedUsers([]); // Pulisci i suggerimenti se l'input è vuoto
+    }
+  }, [searchInput]);
+
+  const handlePrivateSquealChatTextareaChange = (e) => {
+    const inputValue = e.target.value;
+
+      // Calculate the total available length for text considering the attachments
+      const availableTextLength = maxCharsPrivate - (capturedImage ? 125 : 0) - (displayedLink ? 125 : 0) - (position ? 125 : 0) - (capturedVideo ? 125 : 0);
+    
+      // Update the character count remaining considering the length of attachments
+      if (inputValue.length <= availableTextLength) {
+        setPrivateSquealChatTextareaValue(inputValue);
+        const remainingPrivate = calculatePrivateCharCount();
+        setPrivateWordsRemaining(remainingPrivate);
+      } else {
+        // If you exceed the limit, you might want to show a message to the user or prevent further input.
+        console.log(`You cannot enter more than ${availableTextLength} characters.`);
+        // Optionally, you might want to restore the textarea's value to the last valid value
+        e.preventDefault();
+      }
+  };
+
+  const calculatePrivateCharCount = () => {
+   
+    const attachmentsLength = (capturedImage ? 125 : 0) + (displayedLink ? 125 : 0) + (position ? 125 : 0) + (capturedVideo ? 125 : 0);
+    const totalLength = maxCharsPrivate - privateSquealChatTextareaValue.length - attachmentsLength;
+    
+    return totalLength;
+  };
+
+  const handleSendPrivateSqueal = async () => {
+    const squealData = {
+      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      typesender: 'Users', // Modifica come necessario
+      body: {
+        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+      },
+      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
+      date: new Date().toISOString(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      answers: [],
+      usersViewed: [],
+      category: '', 
+      receivers: [...selectedUsers], 
+      channel: text, 
+      impressions: 0,
+    };
+  
+    try {
+      const result = await addSqueal(squealData);
+      console.log('Squeal inviato con successo:', result);
+      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+      let imageChars = 0;
+      let videoChars = 0;
+      let linkChars = 0;
+      let positionChars = 0;
+      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+      } else {
+        imageChars = 0;
+      }
+      if (squealData.body.video !== '') {
+        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+      } else {
+        videoChars = 0;
+      }
+      if (squealData.body.link !== '') {
+        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+      } else {
+        linkChars = 0;
+      }
+      if (squealData.body.position !== '') {
+        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+      } else {
+        positionChars = 0;
+      }
+      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+
+      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+
+    } catch (error) {
+      console.error('Errore nell\'invio del Squeal:', error);
+      // ...gestione dell'errore...
+    }
+  }; /*Da modificare*/
+  
+  
 
 
-  /*Scrivi canale*/
+  /*--------------------------------------------------------------------Scrivi canale------------------------------------------------------------------------------*/
   const fakeChannels = ['Canale1', 'Canale2', 'Canale3', 'Canale4', 'Canale5']; // Elenco finto di canali
   const handleChannelSearchChange = (e) => {
       const searchValue = e.target.value;
@@ -665,8 +740,8 @@ function CreateMessage(props) {
       setSuggestedChannels([]); // Svuota i canali suggeriti
   };
 
-  /*Crea canale*/
 
+  /*--------------------------------------------------------------------Crea canale------------------------------------------------------------------------------*/
   const handleSelectUser = user => {
     // Controlla se l'utente esiste già in base alla proprietà "name"
     const userExists = selectedUsers2.some(u => u.name === user);
@@ -692,32 +767,31 @@ function CreateMessage(props) {
     });
   };
 
-    /*Crea canale - Reminder*/
-    // Funzione per gestire il cambiamento del testo nel textarea del reminder
-    const handleReminderTextareaChange = (e) => {
-      setReminderTextareaValue(e.target.value);
-    };
+  // Funzione per gestire il cambiamento del testo nel textarea del reminder
+  const handleReminderTextareaChange = (e) => {
+    setReminderTextareaValue(e.target.value);
+  };
 
-    // Funzione per gestire l'invio del reminder
-    const handleSendReminder = () => {
-      // Qui puoi aggiungere la logica per inviare il reminder.
-      console.log("Reminder inviato:", reminderTextareaValue);
-    };
+  // Funzione per gestire l'invio del reminder
+  const handleSendReminder = () => {
+    // Qui puoi aggiungere la logica per inviare il reminder.
+    console.log("Reminder inviato:", reminderTextareaValue);
+  };
 
-    // Funzione per gestire il click sull'icona della fotocamera del reminder
-    const handleReminderLogoClick = () => {
-      // Qui puoi aggiungere la logica per aprire la fotocamera e catturare un'immagine
-      // per il momento, ho aggiunto una console log come placeholder
-      console.log("Icona della fotocamera del reminder cliccata");
-    };
+  // Funzione per gestire il click sull'icona della fotocamera del reminder
+  const handleReminderLogoClick = () => {
+    // Qui puoi aggiungere la logica per aprire la fotocamera e catturare un'immagine
+    // per il momento, ho aggiunto una console log come placeholder
+    console.log("Icona della fotocamera del reminder cliccata");
+  };
 
-    // Funzione per gestire il click sull'icona dell'URL del reminder
-    const handleShowReminderLinkModal = () => {
-      setShowReminderLinkModal(true);
-    };
+  // Funzione per gestire il click sull'icona dell'URL del reminder
+  const handleShowReminderLinkModal = () => {
+    setShowReminderLinkModal(true);
+  };
 
-    // Funzione per gestire il click sull'icona della posizione del reminder
-    const handleReminderLocationButtonClick = () => {
+  // Funzione per gestire il click sull'icona della posizione del reminder
+  const handleReminderLocationButtonClick = () => {
       // Qui puoi aggiungere la logica per ottenere e mostrare la posizione corrente
       // per il momento, ho aggiunto una console log come placeholder
       console.log("Icona della posizione del reminder cliccata");
@@ -828,7 +902,10 @@ function CreateMessage(props) {
                 <Row>
                   {/*Icona profilo utente che scrive*/}
                   <Col className="col-1">
-                  <PersonCircle alt="Person-circle" size="30"/>
+                    {/* <div class = "userProfilePicture">
+                      <img src={actualUser.photoprofile} alt="Profile" style={{width: '40px', height: '40px', borderRadius: '50%'}}/>
+                    </div> */}
+                    <PersonCircle alt="Person-circle" size="30"/>
                   </Col>
 
                   {/*Selezione tipo messaggio*/}
@@ -1143,6 +1220,7 @@ function CreateMessage(props) {
                         </button>
                       </Col>
 
+                      {/*Invio*/}
                       <Col className="col-1">
                         <Button onClick={handleSendSqueal}>Invia</Button>
                       </Col>
@@ -1260,7 +1338,7 @@ function CreateMessage(props) {
                             <div
                               style={{
                                 textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                                color: privateWordsRemaining <= 20 ? 'red' : 'white',
+                                color: privateWordsRemaining <= 10 ? 'red' : 'white',
                                 marginTop: '90%',
                               }}
                             >
@@ -1341,8 +1419,22 @@ function CreateMessage(props) {
                                 </div>
                             )}
                             {displayedLink && (
-                                <div style={{ marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
                                     <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
+                                    <button 
+                                        onClick={() => {
+                                            setDisplayedLink('');
+                                            setinputLIink('');
+                                            // Aggiorna il conteggio dei caratteri qui
+                                            const remaining = calculateCharCount();
+                                            setWordsRemaining(remaining);
+                                            setPrivateWordsRemaining(calculatePrivateCharCount());
+                                        }} 
+                                        className="btn btn-sm btn-danger" 
+                                        style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                    >
+                                        X
+                                    </button>
                                 </div>
                             )}
                           </Col>
@@ -1413,9 +1505,9 @@ function CreateMessage(props) {
                           </button>
                         </Col>
 
-                        {/*Colonna vuota*/}
+                        {/*Invio*/}
                         <Col className="col-1">
-
+                          <Button onClick={handleSendPrivateSqueal}>Invia</Button>
                         </Col>
 
                         {/* Nome dell'utente selezionato accanto alle icone */}
