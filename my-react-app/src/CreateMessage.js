@@ -693,13 +693,14 @@ function CreateMessage(props) {
       console.error('Errore nell\'invio del Squeal:', error);
       // ...gestione dell'errore...
     }
-  }; /*Da modificare*/
+  }; 
   
   
 
 
   /*--------------------------------------------------------------------Scrivi canale------------------------------------------------------------------------------*/
   const fakeChannels = ['Canale1', 'Canale2', 'Canale3', 'Canale4', 'Canale5']; // Elenco finto di canali
+
   const handleChannelSearchChange = async (e) => {
     const searchValue = e.target.value;
     setChannelSearch(searchValue);
@@ -724,7 +725,72 @@ function CreateMessage(props) {
   const handleChannelSelection = (channel) => {
     setChannelSearch(channel.name); // Imposta l'input di ricerca sul canale selezionato
     setSuggestedChannels([]); // Svuota i canali suggeriti
-};
+  };
+
+  const handleSendChannelSqueal = async () => {
+    const squealData = {
+      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      typesender: 'channels', // Modifica come necessario
+      body: {
+        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+      },
+      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
+      date: new Date().toISOString(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      answers: [],
+      usersViewed: [],
+      category: '', // Aggiungi logica per determinare la categoria se necessario
+      receivers: [], // Aggiungi logica se ci sono destinatari specifici
+      channel: channelSearch, // Aggiungi logica se il squeal è associato a un canale
+      impressions: 0,
+    };
+  
+    try {
+      const result = await addSqueal(squealData);
+      console.log('Squeal inviato con successo:', result);
+      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+      let imageChars = 0;
+      let videoChars = 0;
+      let linkChars = 0;
+      let positionChars = 0;
+      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+      } else {
+        imageChars = 0;
+      }
+      if (squealData.body.video !== '') {
+        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+      } else {
+        videoChars = 0;
+      }
+      if (squealData.body.link !== '') {
+        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+      } else {
+        linkChars = 0;
+      }
+      if (squealData.body.position !== '') {
+        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+      } else {
+        positionChars = 0;
+      }
+      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+
+      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+      // window.location.href = "http://localhost:8080/squealer-app/profile";
+
+    } catch (error) {
+      console.error('Errore nell\'invio del Squeal:', error);
+      // ...gestione dell'errore...
+    }
+  };
 
 
   /*--------------------------------------------------------------------Crea canale------------------------------------------------------------------------------*/
@@ -1138,7 +1204,6 @@ function CreateMessage(props) {
                                     </button>
                                 </div>
                             )}
-
                           </Col>
                         </Row>
                     </Row>
@@ -1682,9 +1747,23 @@ function CreateMessage(props) {
                                 </div>
                               )}
                               {displayedLink && (
-                                  <div style={{ marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
-                                      <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
-                                  </div>
+                                <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                    <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
+                                    <button 
+                                        onClick={() => {
+                                            setDisplayedLink('');
+                                            setinputLIink('');
+                                            // Aggiorna il conteggio dei caratteri qui
+                                            const remaining = calculateCharCount();
+                                            setWordsRemaining(remaining);
+                                            setPrivateWordsRemaining(calculatePrivateCharCount());
+                                        }} 
+                                        className="btn btn-sm btn-danger" 
+                                        style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                    >
+                                        X
+                                    </button>
+                                </div>
                               )}
                             </Col>
                           </Row>
@@ -1750,7 +1829,12 @@ function CreateMessage(props) {
                             >
                               <Globe size={25} color="white" />
                             </button>
-                          </Col>           
+                          </Col>  
+
+                          {/*Invio*/}
+                          <Col className="col-1">
+                            <Button onClick={handleSendChannelSqueal}>Invia</Button>
+                          </Col>         
                         </Row>
                     </>
                 )}

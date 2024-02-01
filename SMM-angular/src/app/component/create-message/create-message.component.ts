@@ -178,6 +178,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // this.deleteUser('6586c9c3733a4e33a55d91b7')
     // this.deleteUser('6596f39d4414dae1dd472cb0')
     // this.addChannel();
+    // this.addChannel2();
+    // this.getAllChannels();
   }
   
 
@@ -1233,6 +1235,44 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       },
       error: (error) => {
         console.error('Error adding channel', error);
+      }
+    });
+  }
+
+  addChannel2(){
+    const channel = {
+      creator: 'UserProva2@gmail.com', 
+      photoprofile: "", 
+      photoprofileX: 0, 
+      photoprofileY: 0, 
+      name: "Canale1", 
+      type: "public", 
+      list_mess: [], 
+      silenceable: false, 
+      list_users: ["UserProva1@gmail.com", "UserProva3@gmail.com", "UserProva4SS@gmail.com"], 
+      usersSilenced: [], 
+      list_posts: [], 
+      // blocked(booleano, solo se è di tipo channel), 
+      description: "Canale di prova",
+      popularity: "",
+    };
+    this.databaseService.addChannel(channel).subscribe({
+      next: (response) => {
+        console.log('Channel added successfully', response);
+      },
+      error: (error) => {
+        console.error('Error adding channel', error);
+      }
+    });
+  }
+
+  getAllChannels(){
+    this.databaseService.getAllChannels().subscribe({
+      next: (response) => {
+        console.log('Channels retrieved successfully', response);
+      },
+      error: (error) => {
+        console.error('Error retrieving channels', error);
       }
     });
   }
