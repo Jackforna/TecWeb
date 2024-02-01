@@ -376,7 +376,7 @@ function CreateMessage(props) {
   };
 
   const capture = () => {
-    if (wordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') {
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
       const imageSrc = webcamRef.current.getScreenshot();
       setCapturedImage(imageSrc);
       setShowCameraModal(false);
@@ -398,7 +398,7 @@ function CreateMessage(props) {
   };
 
   const handleSubmitLink = () => {
-    if (wordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') {
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
       if (isLink(inputLIink)) {
         setDisplayedLink(inputLIink);
         setShowLinkModal(false);
@@ -700,18 +700,31 @@ function CreateMessage(props) {
 
   /*--------------------------------------------------------------------Scrivi canale------------------------------------------------------------------------------*/
   const fakeChannels = ['Canale1', 'Canale2', 'Canale3', 'Canale4', 'Canale5']; // Elenco finto di canali
-  const handleChannelSearchChange = (e) => {
-      const searchValue = e.target.value;
-      setChannelSearch(searchValue);
-
-      // Filtra i canali fittizi in base all'input di ricerca e aggiorna i canali suggeriti
-      const filteredChannels = fakeChannels.filter(channel => channel.toLowerCase().includes(searchValue.toLowerCase()));
+  const handleChannelSearchChange = async (e) => {
+    const searchValue = e.target.value;
+    setChannelSearch(searchValue);
+  
+    if (!searchValue) {
+      setSuggestedChannels([]);
+      return;
+    }
+  
+    try {
+      const channels = await getListChannels();
+      const filteredChannels = channels.filter(channel => {
+        // Accedi al campo 'name' dell'oggetto 'channel', e assicurati che sia una stringa prima di chiamare 'toLowerCase'
+        return typeof channel.name === 'string' && channel.name.toLowerCase().includes(searchValue.toLowerCase());
+      });
       setSuggestedChannels(filteredChannels);
-  };    
-  const handleChannelSelection = (channel) => {
-      setChannelSearch(channel); // Imposta l'input di ricerca sul canale selezionato
-      setSuggestedChannels([]); // Svuota i canali suggeriti
+    } catch (error) {
+      console.error('Error fetching channel list:', error);
+    }
   };
+  
+  const handleChannelSelection = (channel) => {
+    setChannelSearch(channel.name); // Imposta l'input di ricerca sul canale selezionato
+    setSuggestedChannels([]); // Svuota i canali suggeriti
+};
 
 
   /*--------------------------------------------------------------------Crea canale------------------------------------------------------------------------------*/
@@ -1526,11 +1539,11 @@ function CreateMessage(props) {
                                 <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto'}}>
                                     {suggestedChannels.map(channel => (
                                         <li 
-                                            key={channel} 
+                                            key={channel._id} 
                                             style={{padding: '10px', cursor: 'pointer'}}
                                             onClick={() => handleChannelSelection(channel)}
                                         >
-                                            {channel}
+                                            {channel.name}
                                         </li>
                                     ))}
                                 </ul>
@@ -1689,6 +1702,18 @@ function CreateMessage(props) {
                               >
                                   <Camera color="white" size={25} />
                               </div>
+                          </Col>
+
+                          {/*Icona video*/}
+                          <Col className='col-1'>
+                            <div 
+                              id="videoLogo" 
+                              onClick={() => setShowVideoModal(true)}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              {/* Sostituisci con l'icona appropriata per il video */}
+                              <Camera color="white" size={25} />
+                            </div>
                           </Col>
 
                           {/*URL*/}

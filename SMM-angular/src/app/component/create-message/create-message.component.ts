@@ -172,11 +172,12 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     /*Test only*/
     // this.updateSquealPositive();
     // this.updateSquealNegative();
-    this.deleteAllSqueals();
+    // this.deleteAllSqueals();
     // this.deleteAllChannels();
     // this.deleteUser('6586c8e5b2ca7d845782751f')
     // this.deleteUser('6586c9c3733a4e33a55d91b7')
     // this.deleteUser('6596f39d4414dae1dd472cb0')
+    // this.addChannel();
   }
   
 
@@ -1205,6 +1206,33 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       },
       error: (error) => {
         console.error('Error deleting user', error);
+      }
+    });
+  }
+
+  addChannel(){
+    const channel = {
+      creator: 'UserProva2@gmail.com', 
+      photoprofile: "", 
+      photoprofileX: 0, 
+      photoprofileY: 0, 
+      name: "Canale2", 
+      type: "public", 
+      list_mess: [], 
+      silenceable: false, 
+      list_users: ["UserProva1@gmail.com", "UserProva3@gmail.com", "UserProva4SS@gmail.com"], 
+      usersSilenced: [], 
+      list_posts: [], 
+      // blocked(booleano, solo se è di tipo channel), 
+      description: "Canale di prova",
+      popularity: "",
+    };
+    this.databaseService.addChannel(channel).subscribe({
+      next: (response) => {
+        console.log('Channel added successfully', response);
+      },
+      error: (error) => {
+        console.error('Error adding channel', error);
       }
     });
   }
