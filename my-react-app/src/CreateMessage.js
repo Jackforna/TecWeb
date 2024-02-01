@@ -581,6 +581,7 @@ function CreateMessage(props) {
       const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
 
       handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+      window.location.href = "http://localhost:8080/squealer-app/profile";
 
     } catch (error) {
       console.error('Errore nell\'invio del Squeal:', error);
@@ -679,43 +680,15 @@ function CreateMessage(props) {
       answers: [],
       usersViewed: [],
       category: '', 
-      receivers: [...selectedUsers], 
-      channel: text, 
+      receivers: selectedUsers.map(user => `@${user}`), 
+      channel: '', 
       impressions: 0,
     };
   
     try {
       const result = await addSqueal(squealData);
       console.log('Squeal inviato con successo:', result);
-      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
-      let imageChars = 0;
-      let videoChars = 0;
-      let linkChars = 0;
-      let positionChars = 0;
-      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
-      } else {
-        imageChars = 0;
-      }
-      if (squealData.body.video !== '') {
-        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
-      } else {
-        videoChars = 0;
-      }
-      if (squealData.body.link !== '') {
-        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
-      } else {
-        linkChars = 0;
-      }
-      if (squealData.body.position !== '') {
-        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
-      } else {
-        positionChars = 0;
-      }
-      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
-
-      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-
+      window.location.href = "http://localhost:8080/squealer-app/profile";
     } catch (error) {
       console.error('Errore nell\'invio del Squeal:', error);
       // ...gestione dell'errore...
