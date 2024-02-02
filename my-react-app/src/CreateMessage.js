@@ -388,6 +388,10 @@ function CreateMessage(props) {
       setShowCameraModal(false);
       const remainingPrivate = calculatePrivateCharCount();
       setPrivateWordsRemaining(remainingPrivate);
+    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea'){
+      const imageSrc = webcamRef.current.getScreenshot();
+      setCapturedImage(imageSrc);
+      setShowCameraModal(false);
     } else {
       alert("Non hai abbastanza caratteri disponibili per aggiungere una foto.");
     }
@@ -416,10 +420,17 @@ function CreateMessage(props) {
       } else {
         alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
       }
+    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
+      if (isLink(inputLIink)) {
+        setDisplayedLink(inputLIink);
+        setShowLinkModal(false);
+      } else {
+        alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
+      }
     } else {
       alert("Non hai abbastanza caratteri disponibili per aggiungere un link.");
     }
-  };     
+  };  
 
   const updateCharacterCounts = () => {
     const remaining = calculateCharCount();
@@ -877,29 +888,29 @@ function CreateMessage(props) {
           {/*Modali per fotocamera e URL*/}
           <>
             <Modal show={showCameraModal} onHide={() => setShowCameraModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Scatta una foto</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                width="100%"
-              />
-              <Button className="mt-2" onClick={capture}>Scatta</Button>
-              <div className="mt-2">
-            <label className="btn btn-primary">
-                Carica immagine
-                <input 
-                    type="file" 
-                    hidden 
-                    onChange={handleFileChange}
-                    accept="image/*"
+              <Modal.Header closeButton>
+                <Modal.Title>Scatta una foto</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  width="100%"
                 />
-            </label>
-        </div>
-            </Modal.Body>
+                <Button className="mt-2" onClick={capture}>Scatta</Button>
+                <div className="mt-2">
+                    <label className="btn btn-primary">
+                        Carica immagine
+                        <input 
+                            type="file" 
+                            hidden 
+                            onChange={handleFileChange}
+                            accept="image/*"
+                        />
+                    </label>
+                </div>
+              </Modal.Body>
             </Modal>
 
             <Modal show={showLinkModal} onHide={() => setShowLinkModal(false)}>
@@ -1926,6 +1937,7 @@ function CreateMessage(props) {
                           )}
                         </Row>
 
+                        {/*Dafault message*/}
                         <Row style = {{marginTop:'4%'}}>
                           <div 
                             style={{ cursor: 'pointer', padding: '10px', border: '1px solid #ccc', backgroundColor: 'transparent', color: 'white', width: '60%', borderRadius: '18px'}} 
@@ -1937,177 +1949,236 @@ function CreateMessage(props) {
                             <>
                               {/*Messaggio Welcome*/}
                               <Row style = {{marginTop:'4%'}}>
-                              <div 
-                                style={{ cursor: 'pointer', padding: '10px', border: '1px solid #ccc', backgroundColor: 'white', width: '80%'}} 
-                                onClick={() => setShowTextarea(!showTextarea)}
-                              >
-                                Welcome message
-                              </div>
-                              {showTextarea && (
-                                <>
-                                <div className="d-flex align-items-start" style = {{padding: '0px', marginTop: '2%'}}>
-                                  <Card className={isDropdownActive ? 'blurred' : ''} id="create-messagge-card" style = {{width: '80%'}}>
-                                    <Card.Body>
-                                      <Row className="mt-2">
-                                        {/*Testo messaggio*/}
-                                        <textarea
-                                          placeholder='A cosa stai pensando????'
-                                          onChange={(e) => {
-                                            handlePrivateSquealChatTextareaChange(e); // Se questa funzione non ha più nulla a che fare con il conteggio dei caratteri, puoi mantenerla. Altrimenti, considera di rimuoverla.
-                                            setIsTextModified(true);
-                                          }}
-                                          value={privateSquealChatTextareaValue}
-                                          onBlur={() => {
-                                            if (squealChatTextareaValue.trim() === '') {
-                                              setIsTextModified(false);
-                                            }
-                                          }}
-                                          style={{
-                                            width: '100%',
-                                            resize: 'none',
-                                            height: '100px',
-                                            overflowX: 'hidden',
-                                            border: 'none',
-                                            scrollbarWidth: 'none',
-                                            backgroundColor: 'transparent',
-                                            color: 'white',
-                                            fontSize: '16px',
-                                            outline: 'none',
-                                          }}
-                                          rows={1}
-                                          onKeyDown={(e) => {
-                                            // Questa è la logica per inviare il messaggio quando si preme "Enter".
-                                            // Ho rimosso le condizioni relative al conteggio dei caratteri.
-                                            if (e.key === 'Enter') {
-                                              if (squealChatTextareaValue.trim() === '') {
-                                                setIsTextModified(false);
-                                              } else {
-                                                handleSendMessage();
-                                              }
-                                            }
-                                          }}
-                                          onFocus={() => {
-                                            if (!isTextModified) {
-                                              setIsTextModified(true);
-                                            }
-                                          }}
-                                        />
-                                        
-                                        {/*Allegati visibili*/}
-                                        <Row>
-                                          <Col xs={12} md={10}>
-                                            {position && isMapVisible &&(
-                                              <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
-                                                <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
-                                                  <TileLayer
-                                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                                  />
-                                                  <Marker position={position} icon={markerIcon}>
-                                                    <Popup>Sei qui!</Popup>
-                                                  </Marker>
-                                                </MapContainer>
-                                                <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
-                                                <Button variant="danger" 
-                                                  onClick={() => {
-                                                    setIsMapVisible(false)
-                                                    setPosition(null);
-                                                  }}
-                                                  >X
-                                                </Button>
-                                                </div>
-                                                <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
-                                                <Button variant="light" onClick={() => {
-                                                  const url = `https://www.google.com/maps/search/?api=1&query=${position[0]},${position[1]}`;
-                                                  window.open(url, '_blank');
-                                                }}>Open Map</Button>
-                                                </div>
-                                              </Card>
-                                            )}
-                                            {capturedImage && (
-                                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
-                                              <img src={capturedImage} alt="Scattata" width="100%" />
-                                              <button 
-                                                onClick={() => {
-                                                  setCapturedImage(null)
-                                                }} 
-                                                className="btn btn-sm btn-danger" 
-                                                style={{ position: 'absolute', top: '10px', right: '10px' }}
-                                              >
-                                                X
-                                              </button>
+                                <div 
+                                  style={{ cursor: 'pointer', padding: '10px', border: '1px solid #ccc', backgroundColor: 'white', width: '80%'}} 
+                                  onClick={() => setShowTextarea(!showTextarea)}
+                                >
+                                  Welcome message
+                                </div>
+                                {showTextarea && (
+                                  <>
+                                  <div className="d-flex align-items-start" style = {{padding: '0px', marginTop: '2%'}}>
+                                    <Card className={isDropdownActive ? 'blurred' : ''} id="create-messagge-card" style = {{width: '80%'}}>
+                                      <Card.Body>
+                                        {/*Textarea + logica allegati*/}
+                                        <Row className="mt-2" style = {{marginLeft: '6%'}}>
+                                          {/*Textarea*/}
+                                          <Col>
+                                            <Row>
+                                            <Col xs={12} md={10}>
+                                              <textarea
+                                                placeholder='A cosa stai pensando????'
+                                                value={squealChatTextareaValue}
+                                                onChange={(e) => {
+                                                  handleSquealChatTextareaChange(e);
+                                                  setIsTextModified(true);
+                                                }}
+                                                onBlur={() => {
+                                                  if (squealChatTextareaValue.trim() === '') {
+                                                    setIsTextModified(false);
+                                                  }
+                                                }}
+                                                style={{
+                                                  width: '100%',
+                                                  resize: 'none', // Impedisce il ridimensionamento verticale
+                                                  height: '100px', // Imposta l'altezza fissa a una riga di testo
+                                                  overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
+                                                  border: 'none', // Rimuove il bordo
+                                                  scrollbarWidth: 'none', // Nasconde le frecce verticali
+                                                  backgroundColor: 'transparent',
+                                                  color: 'white',
+                                                  fontSize: '16px',
+                                                  outline: 'none',
+                                                }}
+                                                rows={1} // Imposta il numero di righe iniziali a 1
+                                                onKeyDown={(e) => {
+                                                  if (wordsRemaining > 0 && e.key === 'Enter') {
+                                                      e.preventDefault();
+                                                  } else if (wordsRemaining <= 0 && e.key !== 'Backspace' && e.key !== 'Delete' && e.key === 'ArrowLeft' && e.key === 'ArrowRight' && e.key === 'ArrowDown' && e.key === 'ArrowUp') {
+                                                      e.preventDefault();
+                                                  } 
+                                                  if (e.key === 'Enter') {
+                                                      if (squealChatTextareaValue.trim() === '') {
+                                                          setIsTextModified(false);
+                                                      } else {
+                                                          handleSendMessage();
+                                                      }
+                                                  }
+                                                }}
+                                                onFocus={() => {
+                                                  if (!isTextModified) {
+                                                    setIsTextModified(true);
+                                                  }
+                                                }}
+                                              />
+                                              </Col>
+                                              <Col>
+                                              <div
+                                              style={{
+                                                textAlign: 'left', // Allinea il testo a destra all'interno del contatore
+                                                color: counterColor,
+                                                marginTop: '90%',
+                                              }}
+                                            >
                                             </div>
-                                            )}
-                                            {displayedLink && (
-                                                <div style={{ marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
-                                                    <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
+                                            </Col>
+                                            </Row>
+                                          </Col>
+
+                                            {/*Logica allegati*/}
+                                            <Row>
+                                              <Col xs={12} md={10}>
+                                                {position && isMapVisible &&(
+                                                  <Card style={{  width: '200px', height: '100px', position: 'relative' }}>
+                                                    <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+                                                      <TileLayer
+                                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                                      />
+                                                      <Marker position={position} icon={markerIcon}>
+                                                        <Popup>Sei qui!</Popup>
+                                                      </Marker>
+                                                    </MapContainer>
+                                                    <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
+                                                    <Button variant="danger" 
+                                                      onClick={() => {
+                                                        setIsMapVisible(false)
+                                                        setPosition(null); 
+                                                      }}
+                                                      >X
+                                                    </Button>
+                                                    </div>
+                                                    <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
+                                                    <Button variant="light" onClick={() => {
+                                                      const url = `https://www.google.com/maps/search/?api=1&query=${position[0]},${position[1]}`;
+                                                      window.open(url, '_blank');
+                                                    }}>Open Map</Button>
+                                                    </div>
+                                                  </Card>
+                                                )}
+                                                {capturedImage && (
+                                                  <div style={{ position: 'relative',  width: '200px', height: '100px', overflow: 'hidden' }}>
+                                                  <img src={capturedImage} alt="Scattata"  />
+                                                  <button 
+                                                    onClick={() => {
+                                                      setCapturedImage(null)
+                                                    }} 
+                                                    className="btn btn-sm btn-danger" 
+                                                    style={{ position: 'absolute', top: '10px', right: '10px' }}
+                                                  >
+                                                    X
+                                                  </button>
                                                 </div>
-                                            )}
+                                                )}
+                                                {capturedVideo && (
+                                                    <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
+                                                      <video width="200px" height="100px" controls>
+                                                        <source src={capturedVideo} type="video/mp4" />
+                                                        Il tuo browser non supporta il tag video.
+                                                      </video>
+                                                      <button 
+                                                        onClick={() => {
+                                                          setCapturedVideo(null);
+                                                        }} 
+                                                        className="btn btn-sm btn-danger" 
+                                                        style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il video
+                                                      >
+                                                        X
+                                                      </button>
+                                                    </div>
+                                                )}
+                                                {displayedLink && (
+                                                    <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                                        <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
+                                                        <button 
+                                                            onClick={() => {
+                                                                setDisplayedLink('');
+                                                                setinputLIink('');
+                                                            }} 
+                                                            className="btn btn-sm btn-danger" 
+                                                            style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                                        >
+                                                            X
+                                                        </button>
+                                                    </div>
+                                                )}
+                                              </Col>
+                                            </Row>
+                                        </Row>
+
+                                        {/*Allegati*/}
+                                        <Row className="mt-2" style = {{marginLeft: '6%'}}> 
+
+                                          {/*Fotocamera*/}
+                                          <Col className='col-1'>
+                                              {/* Icona della fotocamera cliccabile */}
+                                              <div 
+                                                  id="cameraLogo" 
+                                                  onClick={handleLogoClick}
+                                                  style={{ cursor: 'pointer' }}
+                                              >
+                                                  <Camera color="white" size={25} />
+                                              </div>
+                                          </Col>
+
+                                          {/* Icona per il caricamento del video */}
+                                          <Col className='col-1'>
+                                            <div 
+                                              id="videoLogo" 
+                                              onClick={() => setShowVideoModal(true)}
+                                              style={{ cursor: 'pointer' }}
+                                            >
+                                              {/* Sostituisci con l'icona appropriata per il video */}
+                                              <Camera color="white" size={25} />
+                                            </div>
+                                          </Col>
+
+                                          {/*URL*/}
+                                          <Col className="col-1">
+                                            <button
+                                                onClick={() => setShowLinkModal(true)}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    border: 'none',
+                                                    cursor: 'pointer',
+                                                    color: 'white'
+                                                }}
+                                            >
+                                            <LinkLogo size={25} color="white" />
+                                            </button>
+                                          </Col>
+                                          
+                                          {/*Posizione*/}
+                                          <Col className="col-1">
+                                            {/* Pulsante per inviare la posizione */}
+                                            <button
+                                              onClick={() => {
+                                                if (!isMapVisible) {
+                                                  setIsMapVisible(true);
+                                                } else {
+                                                  handleLocationButtonClick();
+                                                }
+                                              }}
+                                              style={{
+                                                backgroundColor: 'transparent',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                              }}
+                                            >
+                                              <Globe size={25} color="white" />
+                                            </button>
+                                          </Col>
+
+                                          {/*Invio*/}
+                                          <Col className="col-1">
+                                            <Button>Invia</Button>
                                           </Col>
                                         </Row>
-                                      </Row>
-                                      {/*Loghi allegati*/}
-                                      <Row className="mt-2"> 
-
-                                        {/*Icona fotocamera*/}
-                                        <Col className='col-1'>
-                                            {/* Icona della fotocamera cliccabile */}
-                                            <div 
-                                                id="cameraLogo" 
-                                                onClick={handleLogoClick}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <Camera color="white" size={25} />
-                                            </div>
-                                        </Col>
-
-                                        {/*Icona url*/}
-                                        <Col className="col-1">
-                                          <button
-                                              onClick={() => setShowLinkModal(true)}
-                                              style={{
-                                                  backgroundColor: 'transparent',
-                                                  border: 'none',
-                                                  cursor: 'pointer',
-                                                  color: 'white'
-                                              }}
-                                          >
-                                          <LinkLogo size={25} color="white" />
-                                          </button>
-                                        </Col>
-
-                                        {/*Icona posizione*/}
-                                        <Col className="col-1">
-                                          {/* Pulsante per inviare la posizione */}
-                                          <button
-                                            onClick={() => {
-                                              if (!isMapVisible) {
-                                                setIsMapVisible(true);
-                                              } else {
-                                                handleLocationButtonClick();
-                                              }
-                                            }}
-                                            style={{
-                                              backgroundColor: 'transparent',
-                                              border: 'none',
-                                              cursor: 'pointer',
-                                            }}
-                                          >
-                                            <Globe size={25} color="white" />
-                                          </button>
-                                        </Col>
-
-                                        {/*Colonna vuota*/}
-                                        <Col className="col-1">
-
-                                        </Col>
-                                      </Row>
-                                    </Card.Body>
-                                  </Card>
-                                </div>
-
-                                </>
-                              )}
+                                      </Card.Body>
+                                    </Card>
+                                  </div>
+                                  </>
+                                )}
                               </Row>
 
                               {/*Messaggio Answer*/}
