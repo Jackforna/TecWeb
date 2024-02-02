@@ -597,10 +597,14 @@ function CreateMessage(props) {
         setSelectedUsers(prevUsers => prevUsers.filter(u => u !== user));
     } else {
         // Altrimenti, aggiungilo alla lista se non si sono già raggiunti i 3 utenti
-        if (selectedUsers.length < 3) {
-            setSelectedUsers(prevUsers => [...prevUsers, user]);
-        } else {
-            alert('Puoi selezionare al massimo 3 utenti.');
+        if (messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
+          if (selectedUsers.length < 3) {
+              setSelectedUsers(prevUsers => [...prevUsers, user]);
+          } else {
+              alert('Puoi selezionare al massimo 3 utenti.');
+          }
+        } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea')  {
+          setSelectedUsers(prevUsers => [...prevUsers, user]);
         }
     }
     setSearchInput(''); // Pulisci l'input di ricerca dopo la selezione
@@ -847,7 +851,13 @@ function CreateMessage(props) {
       // Qui puoi aggiungere la logica per ottenere e mostrare la posizione corrente
       // per il momento, ho aggiunto una console log come placeholder
       console.log("Icona della posizione del reminder cliccata");
-    };
+  };
+
+  const handleRemoveUser = (userToRemove) => {
+    // Aggiorna lo stato rimuovendo l'utente
+    setSelectedUsers(prevUsers => prevUsers.filter(user => user !== userToRemove));
+  };
+  
 
     return (
       <>
@@ -1860,8 +1870,8 @@ function CreateMessage(props) {
                           <input
                             type="text"
                             placeholder="Cerca Persone"
-                            value={searchTerm2}
-                            onChange={e => setSearchTerm2(e.target.value)}
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
                             onFocus={() => setShowDropdown(true)}
                             style={{ width: '60%', border: '0px', margin: '0px'}}
                           />
@@ -1869,25 +1879,20 @@ function CreateMessage(props) {
                             <>
                               <div style={{ marginTop: '4%' }}>
                                 <strong>Utenti già inseriti</strong>
-                                {selectedUsers2.slice(0, 3).map(userObj => (
-                                  <Row key={userObj.name} style={{ marginTop: '2%' }}>
-                                    <Col>{userObj.name}</Col>
-                                    <Col>
-                                      <Form.Check 
-                                        type="checkbox" 
-                                        label="Amministratore" 
-                                        checked={userObj.isAdmin}
-                                        onChange={() => toggleAdminStatus(userObj.name)}
-                                      />
-                                    </Col>
-                                    <Col><Button variant="primary" onClick={() => handleRemoveSelectedUser(userObj.name)}>Remove</Button></Col>
-                                </Row>
+                                {selectedUsers.map(user => (
+                                    <div key={user} style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                        <a>{user}</a>
+                                        <button 
+                                          onClick={() => {
+                                            handleRemoveUser(user);
+                                          }} 
+                                          className="btn btn-sm btn-danger" 
+                                          style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                        >
+                                          X
+                                        </button>
+                                    </div>
                                 ))}
-                                {selectedUsers2.length > 3 && (
-                                  <div style={{ cursor: 'pointer', color: 'blue' }} onClick={() => setShowModal(true)}>
-                                    Vedi tutti gli utenti
-                                  </div>
-                                )}
                               </div>
                               {/* Aggiunta del modale per mostrare tutti gli utenti */}
                               <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -1895,19 +1900,10 @@ function CreateMessage(props) {
                                   <Modal.Title>Tutti gli utenti inseriti</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
-                                  {selectedUsers2.map(userObj => (
-                                    <Row key={userObj.name} style={{ marginTop: '2%' }}>
-                                      <Col>{userObj.name}</Col>
-                                      <Col>
-                                        <Form.Check 
-                                          type="checkbox" 
-                                          label="Amministratore"
-                                          checked={userObj.isAdmin}
-                                          onChange={() => toggleAdminStatus(userObj.name)}
-                                        />
-                                      </Col>
-                                      <Col><Button variant="primary" onClick={() => handleRemoveSelectedUser(userObj.name)}>Remove</Button></Col>
-                                    </Row>
+                                  {selectedUsers.map(user => (
+                                      <Row key={user} style={{color: 'white', padding: '0px'}}>
+                                          {user}
+                                      </Row>
                                   ))}
                                 </Modal.Body>
                                 <Modal.Footer>
@@ -1918,9 +1914,10 @@ function CreateMessage(props) {
                               </Modal>
                               <div style={{ marginTop: '4%' }}>
                                 <strong>Utenti</strong>
-                                {filteredUsers2.map(user => (
-                                  <div key={user} style={{marginTop: '2%' }}>
-                                    <span onClick={() => handleSelectUser(user)} style={{ cursor: 'pointer' }}>{user}</span>
+                                {suggestedUsers.map(user => (
+                                  <div key={user._id} style={{marginTop: '2%', cursor: 'pointer', color: 'white'}}
+                                      onClick={() => handleUserSelection(user.nickname)}>
+                                    {user.nickname}
                                   </div>
                                 ))}
                               </div>
