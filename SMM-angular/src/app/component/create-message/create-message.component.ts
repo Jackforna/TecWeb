@@ -173,11 +173,11 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // this.updateSquealPositive();
     // this.updateSquealNegative();
     // this.deleteAllSqueals();
-    // this.deleteAllChannels();
+    this.deleteAllChannels();
     // this.deleteUser('6586c8e5b2ca7d845782751f')
     // this.deleteUser('6586c9c3733a4e33a55d91b7')
     // this.deleteUser('6596f39d4414dae1dd472cb0')
-    // this.addChannel();
+    this.addChannel();
     // this.addChannel2();
     // this.getAllChannels();
   }
@@ -1222,7 +1222,25 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       type: "public", 
       list_mess: [], 
       silenceable: false, 
-      list_users: ["UserProva1@gmail.com", "UserProva3@gmail.com", "UserProva4SS@gmail.com"], 
+      list_users: [{
+        blocked: false,
+        cell: "",
+        char_d: 300,
+        char_m: 7000,
+        char_w: 2000,
+        email: "UserProva1@gmail.com",
+        fullname: "UserProva1@gmail.com",
+        nickname: "UserProva1@gmail.com",
+        notification:[true, true, true, true, true],
+        password: "UserProva1@gmail.com",
+        photoprofile: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+        photoprofileX: 0,
+        photoprofileY: 0,
+        popularity: 0,
+        type: "User",
+        version: "user",
+        _id: "65b79216d5997e7ede8b49ed"
+      }], 
       usersSilenced: [], 
       list_posts: [], 
       // blocked(booleano, solo se è di tipo channel), 

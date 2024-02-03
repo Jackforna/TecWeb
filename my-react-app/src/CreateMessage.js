@@ -314,17 +314,39 @@ function CreateMessage(props) {
 
   /*--------------------------------------------------------------------Allegati e gestione------------------------------------------------------------------------------*/
   const handleVideoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Qui puoi implementare la logica per gestire il file video.
-      // Per esempio, potresti voler salvare l'URL del video nello stato.
-      const videoUrl = URL.createObjectURL(file);
-      setCapturedVideo(videoUrl);
-      setShowVideoModal(false);
-      const remaining = calculateCharCount();
-      const remainingPrivate = calculatePrivateCharCount();
-      setWordsRemaining(remaining);
-      setPrivateWordsRemaining(remainingPrivate);
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
+      const file = e.target.files[0];
+      if (file) {
+        // Qui puoi implementare la logica per gestire il file video.
+        // Per esempio, potresti voler salvare l'URL del video nello stato.
+        const videoUrl = URL.createObjectURL(file);
+        setCapturedVideo(videoUrl);
+        setShowVideoModal(false);
+        const remaining = calculateCharCount();
+        setWordsRemaining(remaining);
+      }
+    } else if (privateWordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
+      const file = e.target.files[0];
+      if (file) {
+        // Qui puoi implementare la logica per gestire il file video.
+        // Per esempio, potresti voler salvare l'URL del video nello stato.
+        const videoUrl = URL.createObjectURL(file);
+        setCapturedVideo(videoUrl);
+        setShowVideoModal(false);
+        const remainingPrivate = calculatePrivateCharCount();
+        setPrivateWordsRemaining(remainingPrivate);
+      }
+    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
+      const file = e.target.files[0];
+      if (file) {
+        // Qui puoi implementare la logica per gestire il file video.
+        // Per esempio, potresti voler salvare l'URL del video nello stato.
+        const videoUrl = URL.createObjectURL(file);
+        setCapturedVideo(videoUrl);
+        setShowVideoModal(false);
+      }
+    } else {
+      alert("Non hai abbastanza caratteri disponibili per caricare un video.");
     }
   };
 
@@ -334,19 +356,45 @@ function CreateMessage(props) {
   };
   
   const handleLocationButtonClick = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        setPosition([latitude, longitude]);
-        const remaining = calculateCharCount();
-        const remainingPrivate = calculatePrivateCharCount();
-        setWordsRemaining(remaining);
-        setPrivateWordsRemaining(remainingPrivate);
-      }, (error) => {
-        console.error(error);
-      });
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          setPosition([latitude, longitude]);
+          const remaining = calculateCharCount();
+          setWordsRemaining(remaining);
+        }, (error) => {
+          console.error(error);
+        });
+      } else {
+        alert('La geolocalizzazione non è supportata dal tuo browser.');
+      }
+    } else if  (privateWordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          setPosition([latitude, longitude]);
+          const remainingPrivate = calculatePrivateCharCount();
+          setPrivateWordsRemaining(remainingPrivate);
+        }, (error) => {
+          console.error(error);
+        });
+      } else {
+        alert('La geolocalizzazione non è supportata dal tuo browser.');
+      }
+    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          setPosition([latitude, longitude]);
+        }, (error) => {
+          console.error(error);
+        });
+      } else {
+        alert('La geolocalizzazione non è supportata dal tuo browser.');
+      }
     } else {
-      alert('La geolocalizzazione non è supportata dal tuo browser.');
+      alert("Non hai abbastanza caratteri disponibili per aggiungere una posizione.");
     }
   };
 
@@ -358,7 +406,7 @@ function CreateMessage(props) {
   });
 
   const handleFileChange = (e) => {
-    if (wordsRemaining >= 125) {
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -370,6 +418,33 @@ function CreateMessage(props) {
       }
       setShowFileSelectionModal(false);
       setShowCameraModal(false);
+    } else if (privateWordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setCapturedImage(event.target.result);
+          updateCharacterCounts();   
+          const remainingPrivate = calculatePrivateCharCount();
+          setPrivateWordsRemaining(remainingPrivate);
+        };
+        reader.readAsDataURL(file);
+      }
+      setShowFileSelectionModal(false);
+      setShowCameraModal(false);
+    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setCapturedImage(event.target.result);
+          updateCharacterCounts();
+        };
+        reader.readAsDataURL(file);
+      }
+      setShowFileSelectionModal(false);
+      setShowCameraModal(false);
+    
     } else {
       alert("Non hai abbastanza caratteri disponibili per caricare una foto.");
     }
@@ -493,6 +568,7 @@ function CreateMessage(props) {
         e.preventDefault();
     }
   };
+
 
   const handleSendMessage = () => {
     if (squealChatTextareaValue.trim() !== '') {
