@@ -384,9 +384,12 @@ function CreateMessage(props) {
       }
     } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
       if (navigator.geolocation) {
+        console.log("Ci sono 1");
         navigator.geolocation.getCurrentPosition((position) => {
+          console.log("Ci sono 2");
           const { latitude, longitude } = position.coords;
           setPosition([latitude, longitude]);
+          console.log("Latitude: " + latitude + " Longitude: " + longitude);
         }, (error) => {
           console.error(error);
         });
@@ -568,7 +571,6 @@ function CreateMessage(props) {
         e.preventDefault();
     }
   };
-
 
   const handleSendMessage = () => {
     if (squealChatTextareaValue.trim() !== '') {
