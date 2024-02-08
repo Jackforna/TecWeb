@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import { set } from 'mongoose';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -108,6 +109,16 @@ function CreateMessage(props) {
   const [showModal, setShowModal] = useState(false); // Stato per controllare la visualizzazione del modale
   const [showTextarea, setShowTextarea] = useState(false);
   const [showDeafaultMessagge, setShowDeafaultMessagge] = useState(false);
+  const [channelName, setChannelName] = useState('');
+  const [isSilenceable, setIsSilenceable] = useState(false);
+  const [channelDescription, setChannelDescription] = useState('');
+  const [channelUsers, setChannelUsers] = useState([]); 
+  const [selectedUserIds, setSelectedUserIds] = useState([]);
+  const [userDetails, setUserDetails] = useState([]);
+  const [creatorDetails, setCreatorDetails] = useState(null);
+  const actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
+  const [showAreYouSure, setShowAreYouSure] = useState(false);
+
     /*Crea canale - Reminder*/
     const [showReminderTextarea, setShowReminderTextarea] = useState(false);
     const [isReminderTextModified, setIsReminderTextModified] = useState(false);
@@ -161,12 +172,49 @@ function CreateMessage(props) {
       setPrivateWordsRemaining(remainingPrivate);
     }, [maxCharsPrivate, maxChar, squealChatTextareaValue, capturedImage, displayedLink, position, searchInput, capturedVideo]);
   
-    useEffect(() => {
-      // Initialize the privateWordsRemaining based on the initial text and attachments
-      const initialPrivateWordsRemaining = calculatePrivateCharCount();
-      setPrivateWordsRemaining(initialPrivateWordsRemaining);
-    }, [maxCharsPrivate, privateSquealChatTextareaValue, capturedImage, displayedLink, position, capturedVideo]);
+  useEffect(() => {
+    // Initialize the privateWordsRemaining based on the initial text and attachments
+    const initialPrivateWordsRemaining = calculatePrivateCharCount();
+    setPrivateWordsRemaining(initialPrivateWordsRemaining);
+  }, [maxCharsPrivate, privateSquealChatTextareaValue, capturedImage, displayedLink, position, capturedVideo]);
+
+  /*
+  useEffect(() => {
+    fetchUserDetails();
+  }, [selectedUserIds]);
+  */
   
+  useEffect(() => {
+    const fetchCreatorDetails = async () => {
+      try {
+        const userData = await getUserById(actualUserId);
+        const creatorDetails = {
+          blocked: false, // Valore predefinito per il campo blocked
+          cell: userData.cell || "",
+          char_d: userData.char_d || 300,
+          char_m: userData.char_m || 7000,
+          char_w: userData.char_w || 2000,
+          email: userData.email,
+          fullname: userData.fullname,
+          nickname: userData.nickname,
+          notification: userData.notification || [true, true, true, true, true],
+          password: userData.password,
+          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofileX: userData.photoprofileX || 0,
+          photoprofileY: userData.photoprofileY || 0,
+          popularity: userData.popularity || 0,
+          type: "Creator", // Sovrascrivi il tipo con "Creator"
+          version: userData.version || "user",
+          _id: userData._id,
+        };
+        setCreatorDetails(creatorDetails);
+      } catch (error) {
+        console.error('Errore durante il recupero dei dettagli del creatore:', error);
+      }
+    };
+  
+    fetchCreatorDetails();
+  }, [actualUserId]);
 
   /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
@@ -680,10 +728,11 @@ function CreateMessage(props) {
 
 
   /*--------------------------------------------------------------------Squeal Private------------------------------------------------------------------------------*/
-  const handleUserSelection = (user) => {
+  const handleUserSelection = (user, user_id) => {
     if (selectedUsers.includes(user)) {
         // Se l'utente è già selezionato, rimuovilo dalla lista
         setSelectedUsers(prevUsers => prevUsers.filter(u => u !== user));
+        setSelectedUserIds(prevIds => prevIds.filter(id => id !== user_id));
     } else {
         // Altrimenti, aggiungilo alla lista se non si sono già raggiunti i 3 utenti
         if (messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
@@ -694,6 +743,7 @@ function CreateMessage(props) {
           }
         } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea')  {
           setSelectedUsers(prevUsers => [...prevUsers, user]);
+          setSelectedUserIds(prevIds => [...prevIds, user_id]);
         }
     }
     setSearchInput(''); // Pulisci l'input di ricerca dopo la selezione
@@ -946,6 +996,137 @@ function CreateMessage(props) {
     // Aggiorna lo stato rimuovendo l'utente
     setSelectedUsers(prevUsers => prevUsers.filter(user => user !== userToRemove));
   };
+
+  const fetchUserDetails = async () => {
+    try {
+      // Resetta i dettagli degli utenti prima di caricarne di nuovi
+      setUserDetails([]);
+  
+      // Ottieni i dettagli per ogni ID utente selezionato
+      for (const userId of selectedUserIds) {
+        const userData = await getUserById(userId);
+        const userDetails = {
+          blocked: false, // Puoi impostare i valori predefiniti o usarli da userData se disponibili
+          cell: userData.cell || "",
+          char_d: userData.char_d || 300,
+          char_m: userData.char_m || 7000,
+          char_w: userData.char_w || 2000,
+          email: userData.email,
+          fullname: userData.fullname,
+          nickname: userData.nickname,
+          notification: userData.notification || [true, true, true, true, true],
+          password: userData.password,
+          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofileX: userData.photoprofileX || 0,
+          photoprofileY: userData.photoprofileY || 0,
+          popularity: userData.popularity || 0,
+          type: userData.type || "User",
+          version: userData.version || "user",
+          _id: userData._id,
+        };
+        setUserDetails(prevDetails => [...prevDetails, userDetails]);
+        console.log('Dettagli dell\'utente:', userDetails);
+      }
+    } catch (error) {
+      console.error('Errore durante il recupero dei dettagli dell\'utente:', error);
+    }
+  };
+  
+  const handleUserSelection2 = (nickname, userId) => {
+    const newUser = { nickname, _id: userId };
+    // Aggiungi questo oggetto all'array degli utenti selezionati
+    setSelectedUsers(prevUsers => {
+        // Verifica se l'utente è già presente nell'array per evitare duplicati
+        const isUserAlreadySelected = prevUsers.some(user => user._id === userId);
+        if (!isUserAlreadySelected) {
+            return [...prevUsers, newUser];
+        }
+        return prevUsers;
+    });
+};
+
+
+  const processSelectedUsers = async () => {
+    // Assicurati che userDetails sia vuoto o resettato prima di aggiungere nuovi dettagli degli utenti
+    setUserDetails([]);
+  
+    // Recupera i dettagli di tutti gli utenti selezionati basandoti sugli ID in selectedUsers
+    for (const user of selectedUsers){
+      try {
+        const userData = await getUserById(user._id);
+        const userDetails = {
+          blocked: false,
+          cell: userData.cell || "",
+          char_d: userData.char_d || 300,
+          char_m: userData.char_m || 7000,
+          char_w: userData.char_w || 2000,
+          email: userData.email,
+          fullname: userData.fullname,
+          nickname: userData.nickname,
+          notification: userData.notification || [true, true, true, true, true],
+          password: userData.password,
+          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofileX: userData.photoprofileX || 0,
+          photoprofileY: userData.photoprofileY || 0,
+          popularity: userData.popularity || 0,
+          type: userData.type || "User",
+          version: userData.version || "user",
+          _id: userData._id,
+        };
+  
+        // Aggiungi i dettagli dell'utente recuperato allo stato userDetails
+        setUserDetails(prevDetails => [...prevDetails, userDetails]);
+        console.log('Dettagli dell\'utente:', userDetails);
+      } catch (error) {
+        console.error('Errore durante il recupero dei dettagli dell\'utente:', error);
+      }
+    }
+  
+    // A questo punto userDetails contiene i dettagli di tutti gli utenti selezionati
+    // Qui puoi procedere con ulteriori operazioni, come la creazione del canale con gli utenti selezionati
+  };
+  
+
+  const handleRemoveUser2 = (userIdToRemove) => {
+    setSelectedUsers(prevUsers => prevUsers.filter(user => user._id !== userIdToRemove));
+};
+
+
+
+  const handleCreateChannel = async () => {
+    const channelData = {
+      creator: actualUser.nickname, 
+      photoprofilex: 0,
+      photoprofiley: 0,
+      name: channelName,
+      type: '&', 
+      list_mess: [],
+      isSilenceable: isSilenceable,
+      list_users: [creatorDetails, ...userDetails],
+      list_posts: [],
+      userSilenced: [],
+      description: channelDescription,
+      popularity: "",
+    };
+    
+    try {
+      const result = await addChannel(channelData);
+      console.log('Canale creato con successo:', result);
+  
+      // Resetta lo stato o esegui altre azioni dopo la creazione del canale
+      setChannelName('');
+      setChannelDescription('');
+      setChannelUsers([]);
+      setUserDetails([]);
+      setSelectedUserIds([]);
+      setCreatorDetails({});
+      setIsSilenceable(false);
+      // ... altre azioni se necessario ...
+    } catch (error) {
+      console.error('Errore nella creazione del canale:', error);
+    }
+  };
+  
   
 
     return (
@@ -1418,7 +1599,7 @@ function CreateMessage(props) {
                                         <li 
                                         key={user._id} 
                                         style={{padding: '10px', cursor: 'pointer', color: 'white'}}
-                                        onClick={() => handleUserSelection(user.nickname)}
+                                        onClick={() => handleUserSelection(user.nickname, user._id)}
                                         >
                                           {user.nickname}
                                         </li>
@@ -1945,13 +2126,20 @@ function CreateMessage(props) {
                       <Col>
                         {/*Nome canale + silenziabile*/}
                         <Row>
-                          <Form.Control type="name" placeholder="Nome canale" style = {{width: '50%'}}/>
+                          <Form.Control type="name" placeholder="Nome canale" value={channelName} onChange={e => setChannelName(e.target.value)}style = {{width: '50%'}}/>
                           <Form.Check
                             type="switch"
                             id="custom-switch"
                             label="Silenziabile"
                             style = {{width: 'fit-content', marginLeft: '4%'}}
+                            checked={isSilenceable}
+                            onChange={e => setIsSilenceable(e.target.checked)}  
                           />
+                        </Row>
+
+                        {/*Descrizione*/}
+                        <Row style = {{marginTop:'4%'}}>
+                          <Form.Control type="description" placeholder="Descrizione" value={channelDescription} onChange={e => setChannelDescription(e.target.value)} style = {{width: '80%'}}/>
                         </Row>
 
                         {/*Aggiungi persone*/}
@@ -1969,11 +2157,11 @@ function CreateMessage(props) {
                               <div style={{ marginTop: '4%' }}>
                                 <strong>Utenti già inseriti</strong>
                                 {selectedUsers.map(user => (
-                                    <div key={user} style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
-                                        <a>{user}</a>
+                                    <div key={user._id} style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                        <a>{user.nickname}</a>
                                         <button 
                                           onClick={() => {
-                                            handleRemoveUser(user);
+                                            handleRemoveUser2(user._id);
                                           }} 
                                           className="btn btn-sm btn-danger" 
                                           style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
@@ -1990,8 +2178,8 @@ function CreateMessage(props) {
                                 </Modal.Header>
                                 <Modal.Body>
                                   {selectedUsers.map(user => (
-                                      <Row key={user} style={{color: 'white', padding: '0px'}}>
-                                          {user}
+                                      <Row key={user._id} style={{color: 'white', padding: '0px'}}>
+                                          {user.nickname}
                                       </Row>
                                   ))}
                                 </Modal.Body>
@@ -2005,7 +2193,9 @@ function CreateMessage(props) {
                                 <strong>Utenti</strong>
                                 {suggestedUsers.map(user => (
                                   <div key={user._id} style={{marginTop: '2%', cursor: 'pointer', color: 'white'}}
-                                      onClick={() => handleUserSelection(user.nickname)}>
+                                      onClick={() => {
+                                        handleUserSelection2(user.nickname, user._id);
+                                      }}>
                                     {user.nickname}
                                   </div>
                                 ))}
@@ -2014,427 +2204,24 @@ function CreateMessage(props) {
                             </>
                           )}
                         </Row>
-
-                        {/*Dafault message*/}
+                        
+                        {/*Invio*/}
                         <Row style = {{marginTop:'4%'}}>
-                          <div 
-                            style={{ cursor: 'pointer', padding: '10px', border: '1px solid #ccc', backgroundColor: 'transparent', color: 'white', width: '60%', borderRadius: '18px'}} 
-                            onClick={() => setShowDeafaultMessagge(!showDeafaultMessagge)}
-                          >
-                            Deafult messagge
-                          </div>
-                          {showDeafaultMessagge && (
-                            <>
-                              {/*Messaggio Welcome*/}
-                              <Row style = {{marginTop:'4%'}}>
-                                <div 
-                                  style={{ cursor: 'pointer', padding: '10px', border: '1px solid #ccc', backgroundColor: 'white', width: '80%'}} 
-                                  onClick={() => setShowTextarea(!showTextarea)}
-                                >
-                                  Welcome message
-                                </div>
-                                {showTextarea && (
-                                  <>
-                                  <div className="d-flex align-items-start" style = {{padding: '0px', marginTop: '2%'}}>
-                                    <Card className={isDropdownActive ? 'blurred' : ''} id="create-messagge-card" style = {{width: '80%'}}>
-                                      <Card.Body>
-                                        {/*Textarea + logica allegati*/}
-                                        <Row className="mt-2" style = {{marginLeft: '6%'}}>
-                                          {/*Textarea*/}
-                                          <Col>
-                                            <Row>
-                                            <Col xs={12} md={10}>
-                                              <textarea
-                                                placeholder='A cosa stai pensando????'
-                                                value={squealChatTextareaValue}
-                                                onChange={(e) => {
-                                                  handleSquealChatTextareaChange(e);
-                                                  setIsTextModified(true);
-                                                }}
-                                                onBlur={() => {
-                                                  if (squealChatTextareaValue.trim() === '') {
-                                                    setIsTextModified(false);
-                                                  }
-                                                }}
-                                                style={{
-                                                  width: '100%',
-                                                  resize: 'none', // Impedisce il ridimensionamento verticale
-                                                  height: '100px', // Imposta l'altezza fissa a una riga di testo
-                                                  overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
-                                                  border: 'none', // Rimuove il bordo
-                                                  scrollbarWidth: 'none', // Nasconde le frecce verticali
-                                                  backgroundColor: 'transparent',
-                                                  color: 'white',
-                                                  fontSize: '16px',
-                                                  outline: 'none',
-                                                }}
-                                                rows={1} // Imposta il numero di righe iniziali a 1
-                                                onKeyDown={(e) => {
-                                                  if (wordsRemaining > 0 && e.key === 'Enter') {
-                                                      e.preventDefault();
-                                                  } else if (wordsRemaining <= 0 && e.key !== 'Backspace' && e.key !== 'Delete' && e.key === 'ArrowLeft' && e.key === 'ArrowRight' && e.key === 'ArrowDown' && e.key === 'ArrowUp') {
-                                                      e.preventDefault();
-                                                  } 
-                                                  if (e.key === 'Enter') {
-                                                      if (squealChatTextareaValue.trim() === '') {
-                                                          setIsTextModified(false);
-                                                      } else {
-                                                          handleSendMessage();
-                                                      }
-                                                  }
-                                                }}
-                                                onFocus={() => {
-                                                  if (!isTextModified) {
-                                                    setIsTextModified(true);
-                                                  }
-                                                }}
-                                              />
-                                              </Col>
-                                              <Col>
-                                              <div
-                                              style={{
-                                                textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                                                color: counterColor,
-                                                marginTop: '90%',
-                                              }}
-                                            >
-                                            </div>
-                                            </Col>
-                                            </Row>
-                                          </Col>
+                          <Button onClick={() =>{
+                            processSelectedUsers();
+                            setShowAreYouSure(true);
+                          }
+                          }>Crea</Button>
+                        </Row>
 
-                                            {/*Logica allegati*/}
-                                            <Row>
-                                              <Col xs={12} md={10}>
-                                                {position && isMapVisible &&(
-                                                  <Card style={{  width: '200px', height: '100px', position: 'relative' }}>
-                                                    <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
-                                                      <TileLayer
-                                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                                      />
-                                                      <Marker position={position} icon={markerIcon}>
-                                                        <Popup>Sei qui!</Popup>
-                                                      </Marker>
-                                                    </MapContainer>
-                                                    <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
-                                                    <Button variant="danger" 
-                                                      onClick={() => {
-                                                        setIsMapVisible(false)
-                                                        setPosition(null); 
-                                                      }}
-                                                      >X
-                                                    </Button>
-                                                    </div>
-                                                    <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
-                                                    <Button variant="light" onClick={() => {
-                                                      const url = `https://www.google.com/maps/search/?api=1&query=${position[0]},${position[1]}`;
-                                                      window.open(url, '_blank');
-                                                    }}>Open Map</Button>
-                                                    </div>
-                                                  </Card>
-                                                )}
-                                                {capturedImage && (
-                                                  <div style={{ position: 'relative',  width: '200px', height: '100px', overflow: 'hidden' }}>
-                                                  <img src={capturedImage} alt="Scattata"  />
-                                                  <button 
-                                                    onClick={() => {
-                                                      setCapturedImage(null)
-                                                    }} 
-                                                    className="btn btn-sm btn-danger" 
-                                                    style={{ position: 'absolute', top: '10px', right: '10px' }}
-                                                  >
-                                                    X
-                                                  </button>
-                                                </div>
-                                                )}
-                                                {capturedVideo && (
-                                                    <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
-                                                      <video width="200px" height="100px" controls>
-                                                        <source src={capturedVideo} type="video/mp4" />
-                                                        Il tuo browser non supporta il tag video.
-                                                      </video>
-                                                      <button 
-                                                        onClick={() => {
-                                                          setCapturedVideo(null);
-                                                        }} 
-                                                        className="btn btn-sm btn-danger" 
-                                                        style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il video
-                                                      >
-                                                        X
-                                                      </button>
-                                                    </div>
-                                                )}
-                                                {displayedLink && (
-                                                    <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
-                                                        <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
-                                                        <button 
-                                                            onClick={() => {
-                                                                setDisplayedLink('');
-                                                                setinputLIink('');
-                                                            }} 
-                                                            className="btn btn-sm btn-danger" 
-                                                            style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
-                                                        >
-                                                            X
-                                                        </button>
-                                                    </div>
-                                                )}
-                                              </Col>
-                                            </Row>
-                                        </Row>
-
-                                        {/*Allegati*/}
-                                        <Row className="mt-2" style = {{marginLeft: '6%'}}> 
-
-                                          {/*Fotocamera*/}
-                                          <Col className='col-1'>
-                                              {/* Icona della fotocamera cliccabile */}
-                                              <div 
-                                                  id="cameraLogo" 
-                                                  onClick={handleLogoClick}
-                                                  style={{ cursor: 'pointer' }}
-                                              >
-                                                  <Camera color="white" size={25} />
-                                              </div>
-                                          </Col>
-
-                                          {/* Icona per il caricamento del video */}
-                                          <Col className='col-1'>
-                                            <div 
-                                              id="videoLogo" 
-                                              onClick={() => setShowVideoModal(true)}
-                                              style={{ cursor: 'pointer' }}
-                                            >
-                                              {/* Sostituisci con l'icona appropriata per il video */}
-                                              <Camera color="white" size={25} />
-                                            </div>
-                                          </Col>
-
-                                          {/*URL*/}
-                                          <Col className="col-1">
-                                            <button
-                                                onClick={() => setShowLinkModal(true)}
-                                                style={{
-                                                    backgroundColor: 'transparent',
-                                                    border: 'none',
-                                                    cursor: 'pointer',
-                                                    color: 'white'
-                                                }}
-                                            >
-                                            <LinkLogo size={25} color="white" />
-                                            </button>
-                                          </Col>
-                                          
-                                          {/*Posizione*/}
-                                          <Col className="col-1">
-                                            {/* Pulsante per inviare la posizione */}
-                                            <button
-                                              onClick={() => {
-                                                if (!isMapVisible) {
-                                                  setIsMapVisible(true);
-                                                } else {
-                                                  handleLocationButtonClick();
-                                                }
-                                              }}
-                                              style={{
-                                                backgroundColor: 'transparent',
-                                                border: 'none',
-                                                cursor: 'pointer',
-                                              }}
-                                            >
-                                              <Globe size={25} color="white" />
-                                            </button>
-                                          </Col>
-
-                                          {/*Invio*/}
-                                          <Col className="col-1">
-                                            <Button>Invia</Button>
-                                          </Col>
-                                        </Row>
-                                      </Card.Body>
-                                    </Card>
-                                  </div>
-                                  </>
-                                )}
-                              </Row>
-
-                              {/*Messaggio Answer*/}
-
-                              {/*Messaggio Reminder*/}
-                              <Row style = {{marginTop:'4%'}}>
-                                <div 
-                                  style={{ cursor: 'pointer', padding: '10px', border: '1px solid #ccc', backgroundColor: 'white', width: '80%'}} 
-                                  onClick={() => setShowReminderTextarea(!showReminderTextarea)}
-                                >
-                                  Reminder message
-                                </div>
-                                {showReminderTextarea && (
-                                  <>
-                                  <Form.Select aria-label="Default select example" style = {{width: '60%', marginTop: '2%'}}>
-                                    <option>Ogni quanto lo vuoi mettere</option>
-                                    <option value="1">Ogni giorno</option>
-                                    <option value="2">Ogni settimana</option>
-                                    <option value="3">Ogni mese</option>
-                                  </Form.Select>
-                                  <div className="d-flex align-items-start" style = {{padding: '0px', marginTop: '2%'}}>
-                                    <Card id="create-reminder-card" style = {{width: '80%', backgroundColor: 'transparent'}}>
-                                      <Card.Body>
-                                        <Row className="mt-2">
-                                          {/*Testo messaggio*/}
-                                          <textarea
-                                            placeholder='Cosa desideri ricordare?'
-                                            onChange={(e) => {
-                                              handleReminderTextareaChange(e);
-                                              setIsReminderTextModified(true);
-                                            }}
-                                            value={reminderTextareaValue}
-                                            onBlur={() => {
-                                              if (reminderTextareaValue.trim() === '') {
-                                                setIsReminderTextModified(false);
-                                              }
-                                            }}
-                                            style={{
-                                              width: '100%',
-                                              resize: 'none',
-                                              height: '100px',
-                                              overflowX: 'hidden',
-                                              border: 'none',
-                                              scrollbarWidth: 'none',
-                                              backgroundColor: 'transparent',
-                                              color: 'white',
-                                              fontSize: '16px',
-                                              outline: 'none',
-                                            }}
-                                            rows={1}
-                                            onKeyDown={(e) => {
-                                              if (e.key === 'Enter') {
-                                                if (reminderTextareaValue.trim() === '') {
-                                                  setIsReminderTextModified(false);
-                                                } else {
-                                                  handleSendReminder();
-                                                }
-                                              }
-                                            }}
-                                            onFocus={() => {
-                                              if (!isReminderTextModified) {
-                                                setIsReminderTextModified(true);
-                                              }
-                                            }}
-                                          />
-                                          
-                                          {/*Allegati visibili*/}
-                                          <Row>
-                                            <Col xs={12} md={10}>
-                                              {reminderPosition && isReminderMapVisible &&(
-                                                <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
-                                                  <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
-                                                    <TileLayer
-                                                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                                    />
-                                                    <Marker position={position} icon={markerIcon}>
-                                                      <Popup>Sei qui!</Popup>
-                                                    </Marker>
-                                                  </MapContainer>
-                                                  <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
-                                                  <Button variant="danger" 
-                                                    onClick={() => {
-                                                      setIsMapVisible(false)
-                                                      setPosition(null);
-                                                    }}
-                                                    >X
-                                                  </Button>
-                                                  </div>
-                                                  <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
-                                                  <Button variant="light" onClick={() => {
-                                                    const url = `https://www.google.com/maps/search/?api=1&query=${position[0]},${position[1]}`;
-                                                    window.open(url, '_blank');
-                                                  }}>Open Map</Button>
-                                                  </div>
-                                                </Card>
-                                              )}
-                                              {reminderImage && (
-                                                <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
-                                                  <img src={capturedImage} alt="Scattata" width="100%" />
-                                                  <button 
-                                                    onClick={() => {
-                                                      setCapturedImage(null)
-                                                    }} 
-                                                    className="btn btn-sm btn-danger" 
-                                                    style={{ position: 'absolute', top: '10px', right: '10px' }}
-                                                  >
-                                                    X
-                                                  </button>
-                                                </div>
-                                              )}
-                                              {reminderLink && (
-                                                <div style={{ marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
-                                                  <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
-                                                </div>
-                                              )}
-                                            </Col>
-                                          </Row>
-                                        </Row>
-                                        {/*Loghi allegati*/}
-                                        <Row className="mt-2"> 
-                                          {/*Icona fotocamera*/}
-                                          <Col className='col-1'>
-                                              <div 
-                                                  id="reminderCameraLogo" 
-                                                  onClick={handleReminderLogoClick}
-                                                  style={{ cursor: 'pointer' }}
-                                              >
-                                                  <Camera color="white" size={25} />
-                                              </div>
-                                          </Col>
-
-                                          {/*Icona url*/}
-                                          <Col className="col-1">
-                                            <button
-                                                onClick={() => setShowReminderLinkModal(true)}
-                                                style={{
-                                                    backgroundColor: 'transparent',
-                                                    border: 'none',
-                                                    cursor: 'pointer',
-                                                    color: 'white'
-                                                }}
-                                            >
-                                            <LinkLogo size={25} color="white" />
-                                            </button>
-                                          </Col>
-
-                                          {/*Icona posizione*/}
-                                          <Col className="col-1">
-                                            <button
-                                              onClick={() => {
-                                                if (!isReminderMapVisible) {
-                                                  setIsReminderMapVisible(true);
-                                                } else {
-                                                  handleReminderLocationButtonClick();
-                                                }
-                                              }}
-                                              style={{
-                                                backgroundColor: 'transparent',
-                                                border: 'none',
-                                                cursor: 'pointer',
-                                              }}
-                                            >
-                                              <Globe size={25} color="white" />
-                                            </button>
-                                          </Col>
-
-                                          {/*Colonna vuota*/}
-                                          <Col className="col-1">
-                                          </Col>
-                                        </Row>
-                                      </Card.Body>
-                                    </Card>
-                                  </div>
-                                  </>
-                                )}
-                              </Row>
-                            </>
+                        {/*Are you sure*/}
+                        <Row style = {{marginTop:'4%'}}>
+                          {showAreYouSure && (
+                            <div style={{ color: 'white' }}>
+                              <p>Sei sicuro di voler creare il canale?</p>
+                              <Button onClick={handleCreateChannel}>Sì</Button>
+                              <Button onClick={() => setShowAreYouSure(false)}>No</Button>
+                            </div>
                           )}
                         </Row>
                       </Col>
