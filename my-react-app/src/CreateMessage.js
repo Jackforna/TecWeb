@@ -11,6 +11,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 import { set } from 'mongoose';
+import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -95,6 +97,7 @@ function CreateMessage(props) {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [capturedVideo, setCapturedVideo] = useState(null);
   const photoProfile = "";
+  const navigate = useNavigate();
 
 
 
@@ -118,6 +121,7 @@ function CreateMessage(props) {
   const [creatorDetails, setCreatorDetails] = useState(null);
   const actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
   const [showAreYouSure, setShowAreYouSure] = useState(false);
+  const [showChannelModal, setShowChannelModal] = useState(false);
 
     /*Crea canale - Reminder*/
     const [showReminderTextarea, setShowReminderTextarea] = useState(false);
@@ -773,7 +777,6 @@ function CreateMessage(props) {
     }
   };
   
-
   const debouncedSearchUsers = debounce(searchUsers, 300);
 
   useEffect(() => {
@@ -1052,8 +1055,7 @@ function CreateMessage(props) {
         }
         return prevUsers;
     });
-};
-
+  };
 
   const processSelectedUsers = async () => {
     // Assicurati che userDetails sia vuoto o resettato prima di aggiungere nuovi dettagli degli utenti
@@ -1095,12 +1097,9 @@ function CreateMessage(props) {
     // Qui puoi procedere con ulteriori operazioni, come la creazione del canale con gli utenti selezionati
   };
   
-
   const handleRemoveUser2 = (userIdToRemove) => {
     setSelectedUsers(prevUsers => prevUsers.filter(user => user._id !== userIdToRemove));
-};
-
-
+  };
 
   const handleCreateChannel = async () => {
     const channelData = {
@@ -1130,11 +1129,21 @@ function CreateMessage(props) {
       setSelectedUserIds([]);
       setCreatorDetails({});
       setIsSilenceable(false);
+      setShowChannelModal(true);
       // ... altre azioni se necessario ...
     } catch (error) {
       console.error('Errore nella creazione del canale:', error);
     }
   };
+
+  const handleChannelModalClose = () => {
+    setShowChannelModal(false);
+  };
+
+  const goToProfile = () => {
+    navigate('/squealer-app/profile');
+  };
+
   
   
 
@@ -1236,7 +1245,7 @@ function CreateMessage(props) {
     
           {/*Card per creazione messaggio*/}
           <div className="d-flex align-items-start">
-            <Card className={isDropdownActive ? 'blurred mx-auto' : 'mx-auto'} id="create-messagge-card">
+            <Card className={isDropdownActive ? 'blurred mx-auto' : 'mx-auto'} id="create-messagge-card" style = {{overflowY: "scroll", maxHeight: "90vh", WebkitOverflowScrolling: "touch"}}>
               <Card.Body>
                 
                 {/*Parte comune*/}
@@ -2242,6 +2251,24 @@ function CreateMessage(props) {
               </Card.Body>
             </Card>
           </div>
+
+          {/*Modale per la creazione canale*/}
+          <Modal show={showChannelModal} onHide={handleChannelModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Channel Created successfully</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              The channel was created correctly, but to improve the experience we recommend adding default messages and adding a profile photo for the channel.
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleChannelModalClose}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={goToProfile}>
+                Go to edit channel
+              </Button>
+            </Modal.Footer>
+          </Modal>
         
         </Container>
       </>
