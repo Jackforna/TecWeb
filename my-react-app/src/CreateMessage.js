@@ -178,6 +178,15 @@ function CreateMessage(props) {
     setPrivateWordsRemaining(initialPrivateWordsRemaining);
   }, [maxCharsPrivate, privateSquealChatTextareaValue, capturedImage, displayedLink, position, capturedVideo]);
 
+  useEffect(() => {
+    if (searchInput) {
+      debouncedSearchUsers(searchInput);
+    } else {
+      setSuggestedUsers([]); // Pulisci i suggerimenti se l'input è vuoto
+    }
+  }, [searchInput]);
+
+  
   /*
   useEffect(() => {
     fetchUserDetails();
@@ -751,19 +760,19 @@ function CreateMessage(props) {
   }
 
   const searchUsers = async (searchTerm) => {
+    if (!searchTerm.trim()) {
+      setSuggestedUsers([]); // Resetta i suggerimenti se il termine di ricerca è vuoto
+      return;
+    }
+  
     try {
       const users = await getUsers(searchTerm); // Assumi che getUsers accetti un termine di ricerca
-      // console.log(users);
-      for ( let i = 0; i < users.length; i++ ) {
-        let user = ((users[i].nickname).slice(0, searchTerm.length)).toLowerCase();
-        if (user === searchInput.toLocaleLowerCase()) {
-          setSuggestedUsers(prevAll=> [...prevAll, users[i]]);
-        }
-      }
+      setSuggestedUsers(users.filter(user => user.nickname.toLowerCase().includes(searchTerm.toLowerCase())));
     } catch (error) {
       console.error('Errore durante la ricerca degli utenti:', error);
     }
   };
+  
 
   const debouncedSearchUsers = debounce(searchUsers, 300);
 
