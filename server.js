@@ -52,7 +52,7 @@ app.get('/api/getTweet', async (req, res) => {
     try {
         const response = await needle('get', url, {
             headers: {
-                "Authorization": `Bearer ${token}`
+                "Authorization": `Bearer ${token}`//aggiungere token
             }
         });
         res.status(200).json(response.body);
