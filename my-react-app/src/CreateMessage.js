@@ -233,7 +233,7 @@ function CreateMessage(props) {
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
   const [intervalId, setIntervalId] = useState(null);
 
-  const startInterval = () => {
+  const startInterval = (n) => {
       // Assicurati che non ci siano intervalli già in esecuzione
       if (intervalId) {
         clearInterval(intervalId);
@@ -243,7 +243,7 @@ function CreateMessage(props) {
       const id = setInterval(() => {
         console.log('Questo messaggio appare ogni n secondi');
         // Aggiungi qui il tuo codice che vuoi eseguire ad ogni intervallo
-      }, 5000); // Sostituisci 5000 con il numero di millisecondi che desideri
+      }, n*1000); // Sostituisci 5000 con il numero di millisecondi che desideri
   
       // Salva l'ID dell'intervallo nello stato
       setIntervalId(id);
@@ -291,7 +291,7 @@ function CreateMessage(props) {
   /*funzione per ottenere un'informazione casuale da wikipedia*/
   const [articleUrl, setArticleUrl] = useState('');
 
-  const fetchRandomWikiArticle = async () => {
+  const fetchRandomWikiArticle = async () => {//aggiungi in body.text "Lo sapevi che..."
     const url = "https://en.wikipedia.org/w/api.php?action=query&format=json&list=random&rnlimit=1&origin=*";
     
     try {
