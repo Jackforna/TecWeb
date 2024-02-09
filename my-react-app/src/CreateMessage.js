@@ -966,12 +966,7 @@ function CreateMessage(props) {
     }
   
     try {
-      const channels = await getListChannels();
-      const filteredChannels = channels.filter(channel => {
-        // Accedi al campo 'name' dell'oggetto 'channel', e assicurati che sia una stringa prima di chiamare 'toLowerCase'
-        return typeof channel.name === 'string' && channel.name.toLowerCase().includes(searchValue.toLowerCase());
-      });
-      setSuggestedChannels(filteredChannels);
+      setSuggestedChannels(allChannelsprint.filter(channel => channel.name.toLowerCase().includes(searchValue.toLowerCase())));
     } catch (error) {
       console.error('Error fetching channel list:', error);
     }
