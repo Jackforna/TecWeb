@@ -10,7 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
-import { set } from 'mongoose';
+import { get, set } from 'mongoose';
 import { useHistory } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -82,6 +82,7 @@ function CreateMessage(props) {
   const [suggestedChannels, setSuggestedChannels] = useState([]); // Canali suggeriti in base alla ricerca
   const [showAreYouSureWrite, setShowAreYouSureWrite] = useState(false);
   const [channelSelected, setChannelSelected] = useState(null);
+  const [typeChannel, setTypeChannel] = useState('');
 
   /*Creazione messaggi funzioni comuni*/
   const [wordsRemaining, setWordsRemaining] = useState(maxChar);
@@ -274,7 +275,7 @@ function CreateMessage(props) {
   
     for (let i = 0; i < allCHANNELS.length; i++) {
       for (let j = 0; j < allCHANNELS[i].list_users.length; j++) {
-        if (allCHANNELS[i].list_users[j].nickname === actualUser.nickname) {
+        if ((allCHANNELS[i].list_users[j].nickname === actualUser.nickname) && ((allCHANNELS[i].list_users[j].type === 'Modifier')|(allCHANNELS[i].list_users[j].type === 'Creator'))) {
           setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allCHANNELS[i]]);
           console.log("allCHANNELS[i]",allCHANNELS[i]);
         }
@@ -292,10 +293,16 @@ function CreateMessage(props) {
   
   }, [actualUser, allchannels, allCHANNELS, allkeywords]); 
   
+  /*Test only 
   useEffect(() => {
-    //console.log("allChannelsprint has updated", allChannelsprint);
-  }, [allChannelsprint]); // Stampa in console tutti i channel a cui l'utente è iscritto
+    console.log("allChannelsprint has updated", allChannelsprint);
+  }, [allChannelsprint]); 
   
+  useEffect(() => {
+    console.log("Tutti gli squeal ", getListSqueals());
+  }, []); 
+  */
+
 
   /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
@@ -956,7 +963,7 @@ function CreateMessage(props) {
 
 
   /*--------------------------------------------------------------------Scrivi canale------------------------------------------------------------------------------*/
-  const fakeChannels = ['Canale1', 'Canale2', 'Canale3', 'Canale4', 'Canale5']; // Elenco finto di canali
+  const fakeChannels = ['Canale1', 'Canale2', 'Canale3', 'Canale4', 'Canale5']; // Elenco finto di canali per test 
 
   const handleChannelSearchChange = async (e) => {
     const searchValue = e.target.value;
@@ -982,7 +989,7 @@ function CreateMessage(props) {
   const handleSendChannelSqueal = async () => {
     const squealData = {
       sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: 'channels', // Modifica come necessario
+      typesender: channelSearch.typesender, // Modifica come necessario
       body: {
         text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
         link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
@@ -1071,7 +1078,7 @@ function CreateMessage(props) {
         const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
 
         handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-        // window.location.href = "http://localhost:8080/squealer-app/profile";
+        goToProfile();
 
       } catch (error) {
         console.error('Errore nell\'aggiornamento del canale:', error);
