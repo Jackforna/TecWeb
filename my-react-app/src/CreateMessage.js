@@ -60,6 +60,11 @@ function CreateMessage(props) {
   const [actualUser, setActualUser] = useState(null);
   const [maxChar, setMaxChar] = useState(); // Initial value, will be updated
   const [isDropdownActive, setIsDropdownActive] = useState(false);
+  const [allchannels, setallchannels] = useState([]);
+  const [allCHANNELS, setallCHANNELS] = useState([]);
+  const [allkeywords, setallkeywords] = useState([]);
+  const [allChannelsprint, setallChannelsprint] = useState([]);
+  const [allKeywordssprint, setallkeywordsprint] = useState([]);
 
   /*Private Messagge*/
   const [privateSquealChatTextareaValue, setPrivateSquealChatTextareaValue] = useState('');
@@ -189,13 +194,6 @@ function CreateMessage(props) {
       setSuggestedUsers([]); // Pulisci i suggerimenti se l'input è vuoto
     }
   }, [searchInput]);
-
-  
-  /*
-  useEffect(() => {
-    fetchUserDetails();
-  }, [selectedUserIds]);
-  */
   
   useEffect(() => {
     const fetchCreatorDetails = async () => {
@@ -228,6 +226,74 @@ function CreateMessage(props) {
   
     fetchCreatorDetails();
   }, [actualUserId]);
+
+  useEffect(() => {
+    const getAll4 = async () => {
+      try {
+        const Channels = await getListChannels();
+        Channels.forEach(channel => {
+          switch(channel.type) {
+            case '&':
+              setallchannels(allchannelsprev => [...allchannelsprev, channel]);
+              break;
+            case '$':
+              setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
+              break;
+            case '#':
+              setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
+              break;
+            default:
+              // gestire eventuali altri casi o errori
+              break;
+          }
+        });
+      } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        // Gestire eventuali azioni di errore qui
+      }
+    }; //Mi da tutti i channel
+
+    getAll4();
+  }, []); // L'array vuoto come seconda argomentazione significa che questo effetto verrà eseguito solo una volta, quando il componente viene montato
+
+
+  useEffect(() => {
+    setallChannelsprint([]);
+    setallkeywordsprint([]);
+  
+    for (let i = 0; i < allchannels.length; i++) {
+      for (let j = 0; j < allchannels[i].list_users.length; j++) {
+        if (allchannels[i].list_users[j].nickname === actualUser.nickname) {
+          setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allchannels[i]]);
+          console.log("allchannels[i]",allchannels[i]);
+        }
+      }
+    }
+  
+    for (let i = 0; i < allCHANNELS.length; i++) {
+      for (let j = 0; j < allCHANNELS[i].list_users.length; j++) {
+        if (allCHANNELS[i].list_users[j].nickname === actualUser.nickname) {
+          setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allCHANNELS[i]]);
+          console.log("allCHANNELS[i]",allCHANNELS[i]);
+        }
+      }
+    }
+  
+    for (let i = 0; i < allkeywords.length; i++) {
+      for (let j = 0; j < allkeywords[i].list_users.length; j++) {
+        if (allkeywords[i].list_users[j].nickname === actualUser.nickname) {
+          setallkeywordsprint(prevallchannelsprint => [...prevallchannelsprint, allkeywords[i]]);
+        }
+      }
+    }
+    
+  
+  }, [actualUser, allchannels, allCHANNELS, allkeywords]); 
+  
+  useEffect(() => {
+    console.log("allChannelsprint has updated", allChannelsprint);
+  }, [allChannelsprint]); // Stampa in console tutti i channel a cui l'utente è iscritto
+  
 
   /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
@@ -593,6 +659,32 @@ function CreateMessage(props) {
     // il resto della logica per chiudere il dropdown
   };
 
+  const getAllChannelType = async () => {
+    try {
+      const Channels = await getListChannels();
+      Channels.forEach(channel => {
+        switch(channel.type) {
+          case '&':
+            setallchannels(allchannelsprev => [...allchannelsprev, channel]);
+            break;
+          case '$':
+            setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
+            break;
+          case '#':
+            setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
+            break;
+          default:
+            console.log("Errore nel caricamento dei type in channels");
+            break;
+        }
+      });
+    } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+      // Gestire eventuali azioni di errore qui, ad esempio mostrare un messaggio all'utente
+    }
+  };
+
+
 
   /*--------------------------------------------------------------------Squeal Public------------------------------------------------------------------------------*/
 
@@ -672,6 +764,14 @@ function CreateMessage(props) {
         // Gestisci l'errore visualizzando un messaggio all'utente, ecc.
         // ...
     }
+  };
+
+  const controlChannel = () => {
+    //Controlla se esiste un canale con type: "#"
+      //Se non esiste lo creo
+        //Se esiste metto in list_users solo l'actual user e aggiungo il messaggio alla lista di post del canale
+     //Se esiste
+      //Ottengo list_users e metto receiver = list_users e aggiungo il messaggio alla lista di post del canale
   };
 
   const handleSendSqueal = async () => {
@@ -903,7 +1003,7 @@ function CreateMessage(props) {
       answers: [],
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: [], // Aggiungi logica se ci sono destinatari specifici
+      receivers: [], // Aggiungi logica che ottiene gli utenti associati al canale
       channel: channelSearch, // Aggiungi logica se il squeal è associato a un canale
       impressions: 0,
     };
@@ -1104,6 +1204,7 @@ function CreateMessage(props) {
   const handleCreateChannel = async () => {
     const channelData = {
       creator: actualUser.nickname, 
+      photoProfile: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
       photoprofilex: 0,
       photoprofiley: 0,
       name: channelName,
