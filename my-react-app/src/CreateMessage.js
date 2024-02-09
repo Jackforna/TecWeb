@@ -9,7 +9,7 @@ import Webcam from 'react-webcam';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
 import { set } from 'mongoose';
 import { useHistory } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -80,6 +80,8 @@ function CreateMessage(props) {
   /*Scrivi canale*/
   const [channelSearch, setChannelSearch] = useState(''); // Per tenere traccia dell'input di ricerca
   const [suggestedChannels, setSuggestedChannels] = useState([]); // Canali suggeriti in base alla ricerca
+  const [showAreYouSureWrite, setShowAreYouSureWrite] = useState(false);
+  const [channelSelected, setChannelSelected] = useState(null);
 
   /*Creazione messaggi funzioni comuni*/
   const [wordsRemaining, setWordsRemaining] = useState(maxChar);
@@ -291,7 +293,7 @@ function CreateMessage(props) {
   }, [actualUser, allchannels, allCHANNELS, allkeywords]); 
   
   useEffect(() => {
-    console.log("allChannelsprint has updated", allChannelsprint);
+    //console.log("allChannelsprint has updated", allChannelsprint);
   }, [allChannelsprint]); // Stampa in console tutti i channel a cui l'utente è iscritto
   
 
@@ -998,49 +1000,89 @@ function CreateMessage(props) {
       answers: [],
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: [], // Aggiungi logica che ottiene gli utenti associati al canale
+      receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
       channel: channelSearch, // Aggiungi logica se il squeal è associato a un canale
       impressions: 0,
     };
   
     try {
-      const result = await addSqueal(squealData);
-      console.log('Squeal inviato con successo:', result);
-      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
-      let imageChars = 0;
-      let videoChars = 0;
-      let linkChars = 0;
-      let positionChars = 0;
-      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
-      } else {
-        imageChars = 0;
-      }
-      if (squealData.body.video !== '') {
-        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
-      } else {
-        videoChars = 0;
-      }
-      if (squealData.body.link !== '') {
-        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
-      } else {
-        linkChars = 0;
-      }
-      if (squealData.body.position !== '') {
-        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
-      } else {
-        positionChars = 0;
-      }
-      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+      const resultAddSqueal = await addSqueal(squealData);
 
-      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-      // window.location.href = "http://localhost:8080/squealer-app/profile";
+      const channelDataUpdatePost = {
+        answers: [],
+        body: {
+          text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+          link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+          photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+          video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+          position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        },
+        category: null,
+        date: new Date().toISOString(),
+        hour: new Date().getHours(),
+        impressions: 0,
+        neg_reactions: 0,
+        photoprofile: actualUser.photoProfile,
+        pos_reactions: 0,
+        receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
+        seconds: new Date().getSeconds(),
+        sender: actualUser.nickname,
+        typesender: 'channels',
+        usersReactions: [],
+        usersViewed: [],
+      }
 
+      const channelDataUpdate = {
+        list_posts: [...channelSelected.list_posts, channelDataUpdatePost],
+      }
+
+
+
+      try {
+        console.log('Canale selezionato id:', channelSelected._id);
+        const resultChannel = await updateChannel(channelSelected._id, channelDataUpdatePost);
+        console.log('Canale aggiornato con successo:', resultChannel);
+        console.log('Squeal inviato con successo:', resultAddSqueal);
+        const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+        let imageChars = 0;
+        let videoChars = 0;
+        let linkChars = 0;
+        let positionChars = 0;
+        if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+          imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+        } else {
+          imageChars = 0;
+        }
+        if (squealData.body.video !== '') {
+          videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+        } else {
+          videoChars = 0;
+        }
+        if (squealData.body.link !== '') {
+          linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+        } else {
+          linkChars = 0;
+        }
+        if (squealData.body.position !== '') {
+          positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+        } else {
+          positionChars = 0;
+        }
+        const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+
+        handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+        // window.location.href = "http://localhost:8080/squealer-app/profile";
+
+      } catch (error) {
+        console.error('Errore nell\'aggiornamento del canale:', error);
+      }
     } catch (error) {
       console.error('Errore nell\'invio del Squeal:', error);
       // ...gestione dell'errore...
     }
   };
+
+  
 
 
   /*--------------------------------------------------------------------Crea canale------------------------------------------------------------------------------*/
@@ -2000,7 +2042,11 @@ function CreateMessage(props) {
                                         <li 
                                             key={channel._id} 
                                             style={{padding: '10px', cursor: 'pointer'}}
-                                            onClick={() => handleChannelSelection(channel)}
+                                            onClick={() => {
+                                              handleChannelSelection(channel); 
+                                              setChannelSelected(channel)
+                                            }
+                                          }
                                         >
                                             {channel.name}
                                         </li>
@@ -2227,8 +2273,11 @@ function CreateMessage(props) {
 
                           {/*Invio*/}
                           <Col className="col-1">
-                            <Button onClick={handleSendChannelSqueal}>Invia</Button>
-                          </Col>         
+                            <Button onClick={() =>{
+                              {handleSendChannelSqueal()};
+                            }
+                            }>Crea</Button>
+                          </Col> 
                         </Row>
                     </>
                 )}

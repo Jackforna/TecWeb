@@ -209,6 +209,31 @@ export async function updateChannels(updatedChannels) {
     }
 }
 
+export async function updateChannel(id, updates) {
+    try {
+        const response = await fetch(`http://localhost:8080/update-channel/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ postToAdd: updates })
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('Canale non trovato o nessun aggiornamento necessario');
+            }
+            throw new Error('Errore di rete. Impossibile completare la richiesta.');
+        }
+
+        const data = await response.json();
+        return data;  // Potrebbe contenere un messaggio di successo o altro a seconda della risposta del server
+    } catch (error) {
+        console.error('Errore durante l\'aggiornamento del canale:', error);
+        throw error;
+    }
+}
+
 export async function addSqueal(squealData) {
     try {
         const response = await fetch('http://localhost:8080/add-squeal', {

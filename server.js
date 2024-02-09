@@ -266,6 +266,27 @@ app.put('/update-channels', async (req, res) => {
   }
 });
 
+app.put('/update-channel/:id', async (req, res) => {
+  try {
+      const id = req.params.id;
+      const updates = req.body;
+
+      const result = await ListChannelsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $push: { list_posts: updates.postToAdd } } // Esempio: { postToAdd: { ...dati del post... } }
+    );
+
+      if (result.modifiedCount === 0) {
+          return res.status(404).send('Canale non trovato o nessun aggiornamento necessario');
+      }
+
+      res.status(200).json({ message: 'Canale aggiornato con successo' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante l\'aggiornamento del canale' });
+  }
+});
+
 async function initializeCollections() {
   try {
     await client.connect();
