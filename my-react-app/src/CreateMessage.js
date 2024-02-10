@@ -65,6 +65,8 @@ function CreateMessage(props) {
   const [allkeywords, setallkeywords] = useState([]);
   const [allChannelsprint, setallChannelsprint] = useState([]);
   const [allKeywordssprint, setallkeywordsprint] = useState([]);
+  const [listOfUsers, setListOfUsers] = useState([]);
+  const [existedChannel, setExistedChannel] = useState(false);
 
   /*Private Messagge*/
   const [privateSquealChatTextareaValue, setPrivateSquealChatTextareaValue] = useState('');
@@ -286,6 +288,7 @@ function CreateMessage(props) {
       for (let j = 0; j < allkeywords[i].list_users.length; j++) {
         if (allkeywords[i].list_users[j].nickname === actualUser.nickname) {
           setallkeywordsprint(prevallchannelsprint => [...prevallchannelsprint, allkeywords[i]]);
+          console.log("allkeywords[i]",allkeywords[i]);
         }
       }
     }
@@ -776,11 +779,81 @@ function CreateMessage(props) {
   };
 
   const controlChannel = () => {
-    //Controlla se esiste un canale con type: "#"
-      //Se non esiste lo creo
-        //Se esiste metto in list_users solo l'actual user e aggiungo il messaggio alla lista di post del canale
+    //Controlla se il campo text esiste nella lista di keywords
      //Se esiste
       //Ottengo list_users e metto receiver = list_users e aggiungo il messaggio alla lista di post del canale
+      //Se non esiste lo creo
+        //Se esiste metto in list_users solo l'actual user e aggiungo il messaggio alla lista di post del canale
+      setListOfUsers(actualUser.nickname);
+      setExistedChannel(false);
+      handleSendSqueal();
+  };
+
+  const handleCreateHashtagChannel = async () => {
+    const channelData = {
+      creator: actualUser.nickname,
+      photoProfile: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      photoprofilex: 0,
+      photoprofiley: 0,
+      name: text.replace(/#/g, ''),
+      type: '#',
+      list_mess: [],
+      list_users: [
+        {
+          blocked: false,
+          cell: actualUser.cell || "",
+          char_d: actualUser.char_d || 300,
+          char_m: actualUser.char_m || 7000,
+          char_w: actualUser.char_w || 2000,
+          email: actualUser.email,
+          fullname: actualUser.fullname,
+          nickname: actualUser.nickname,
+          notification: actualUser.notification || [true, true, true, true, true],
+          password: actualUser.password,
+          photoprofile: actualUser.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofileX: actualUser.photoprofileX || 0,
+          photoprofileY: actualUser.photoprofileY || 0,
+          popularity: actualUser.popularity || 0,
+          type: actualUser.type || "User",
+          version: actualUser.version || "user",
+          _id: actualUser._id,
+        }
+      ],
+      list_post: [
+        {
+          answers: [],
+          body: {
+            text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+            link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+            photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+            video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+            position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+          },
+          category: null,
+          date: new Date().toISOString(),
+          hour: new Date().getHours(),
+          impressions: 0,
+          neg_reactions: 0,
+          photoprofile: actualUser.photoProfile,
+          pos_reactions: 0,
+          receivers: [`@${actualUser.nickname}`],
+          seconds: new Date().getSeconds(),
+          sender: actualUser.nickname,
+          typesender: 'keywords',
+          usersReactions: [],
+          usersViewed: [],
+        }
+      ],
+      userSilenced: [],
+      description: "",
+      popularity: "",
+    };
+    try {
+      const result = await addChannel(channelData);
+      console.log('Canale creato con successo:', result);
+    } catch (error) {
+      console.error('Errore nella creazione del canale:', error);
+    }
   };
 
   const handleSendSqueal = async () => {
@@ -804,13 +877,18 @@ function CreateMessage(props) {
       answers: [],
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: [], // Aggiungi logica se ci sono destinatari specifici
+      receivers: [listOfUsers], // Aggiungi logica se ci sono destinatari specifici
       channel: text, // Aggiungi logica se il squeal è associato a un canale
       impressions: 0,
     };
   
     try {
       const result = await addSqueal(squealData);
+      if (existedChannel) {
+        console.log("Canale esistente");
+      } else {
+        handleCreateHashtagChannel();
+      }
       console.log('Squeal inviato con successo:', result);
       const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
       let imageChars = 0;
@@ -840,7 +918,6 @@ function CreateMessage(props) {
       const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
 
       handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-      window.location.href = "http://localhost:8080/squealer-app/profile";
 
     } catch (error) {
       console.error('Errore nell\'invio del Squeal:', error);
@@ -1716,7 +1793,7 @@ function CreateMessage(props) {
 
                       {/*Invio*/}
                       <Col className="col-1">
-                        <Button onClick={handleSendSqueal}>Invia</Button>
+                        <Button onClick={controlChannel}>Invia</Button>
                       </Col>
 
                       
