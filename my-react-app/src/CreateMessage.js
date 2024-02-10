@@ -67,6 +67,7 @@ function CreateMessage(props) {
   const [allKeywordssprint, setallkeywordsprint] = useState([]);
   const [listOfUsers, setListOfUsers] = useState([]);
   const [existedChannel, setExistedChannel] = useState(false);
+  let [foundChannel, setFoundChannel] = useState(null);
 
   /*Private Messagge*/
   const [privateSquealChatTextareaValue, setPrivateSquealChatTextareaValue] = useState('');
@@ -270,7 +271,7 @@ function CreateMessage(props) {
       for (let j = 0; j < allchannels[i].list_users.length; j++) {
         if (allchannels[i].list_users[j].nickname === actualUser.nickname) {
           setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allchannels[i]]);
-          console.log("allchannels[i]",allchannels[i]);
+          // console.log("allchannels[i]",allchannels[i]);
         }
       }
     }
@@ -279,7 +280,7 @@ function CreateMessage(props) {
       for (let j = 0; j < allCHANNELS[i].list_users.length; j++) {
         if ((allCHANNELS[i].list_users[j].nickname === actualUser.nickname) && ((allCHANNELS[i].list_users[j].type === 'Modifier')|(allCHANNELS[i].list_users[j].type === 'Creator'))) {
           setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allCHANNELS[i]]);
-          console.log("allCHANNELS[i]",allCHANNELS[i]);
+          // console.log("allCHANNELS[i]",allCHANNELS[i]);
         }
       }
     }
@@ -288,7 +289,7 @@ function CreateMessage(props) {
       for (let j = 0; j < allkeywords[i].list_users.length; j++) {
         if (allkeywords[i].list_users[j].nickname === actualUser.nickname) {
           setallkeywordsprint(prevallchannelsprint => [...prevallchannelsprint, allkeywords[i]]);
-          console.log("allkeywords[i]",allkeywords[i]);
+          // console.log("allkeywords[i]",allkeywords[i]);
         }
       }
     }
@@ -305,6 +306,10 @@ function CreateMessage(props) {
     console.log("Tutti gli squeal ", getListSqueals());
   }, []); 
   */
+
+  useEffect(() => {
+    console.log("All keywords print", allKeywordssprint);
+  }, [allKeywordssprint]);
 
 
   /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
@@ -779,15 +784,24 @@ function CreateMessage(props) {
   };
 
   const controlChannel = () => {
-    //Controlla se il campo text esiste nella lista di keywords
-     //Se esiste
-      //Ottengo list_users e metto receiver = list_users e aggiungo il messaggio alla lista di post del canale
-      //Se non esiste lo creo
-        //Se esiste metto in list_users solo l'actual user e aggiungo il messaggio alla lista di post del canale
-      setListOfUsers(actualUser.nickname);
+    const textWithoutHashtag = text.replace(/#/g, '');
+    const foundChannel = allKeywordssprint.find(channel => channel.name === textWithoutHashtag);
+
+    // Usa direttamente il risultato della ricerca senza aspettare che lo stato si aggiorni
+    if (foundChannel) {
+      console.log("Canale trovato", foundChannel);
+      setListOfUsers(foundChannel.list_users);
+      handleSendSqueal(foundChannel, true);
+    } else {
+      console.log("Canale non trovato");
       setExistedChannel(false);
-      handleSendSqueal();
-  };
+      console.log("Canale non trovato in control channel", existedChannel)
+      setListOfUsers([actualUser.nickname]);
+      handleSendSqueal(foundChannel, false);
+    }
+
+};
+
 
   const handleCreateHashtagChannel = async () => {
     const channelData = {
@@ -819,7 +833,7 @@ function CreateMessage(props) {
           _id: actualUser._id,
         }
       ],
-      list_post: [
+      list_posts: [
         {
           answers: [],
           body: {
@@ -856,7 +870,43 @@ function CreateMessage(props) {
     }
   };
 
-  const handleSendSqueal = async () => {
+  const handleUpdateHashTagChannel = async (channelToUpdate) => {
+    const channelDataUpdatePost = {
+      answers: [],
+      body: {
+        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+      },
+      category: null,
+      date: new Date().toISOString(),
+      hour: new Date().getHours(),
+      impressions: 0,
+      neg_reactions: 0,
+      photoprofile: actualUser.photoProfile,
+      pos_reactions: 0,
+      receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
+      seconds: new Date().getSeconds(),
+      sender: actualUser.nickname,
+      typesender: 'keywords',
+      usersReactions: [],
+      usersViewed: [],
+    }
+
+    const updatedListPosts = [...channelToUpdate.list_posts, channelDataUpdatePost];
+
+    try {
+      const result = await updateChannel(channelToUpdate._id,  channelDataUpdatePost);
+      console.log('Canale aggiornato con successo:', result);
+    } catch (error) {
+      console.error('Errore nell\'aggiornamento del canale:', error);
+    }
+  };
+
+
+  const handleSendSqueal = async (channelToUpdate, flag) => {
     const squealData = {
       sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
       typesender: 'keywords', // Modifica come necessario
@@ -878,16 +928,18 @@ function CreateMessage(props) {
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
       receivers: [listOfUsers], // Aggiungi logica se ci sono destinatari specifici
-      channel: text, // Aggiungi logica se il squeal è associato a un canale
+      channel: text.replace(/#/g, ''), // Aggiungi logica se il squeal è associato a un canale
       impressions: 0,
     };
   
     try {
       const result = await addSqueal(squealData);
-      if (existedChannel) {
-        console.log("Canale esistente");
+      if (flag === true) {
+        console.log("Aggiornamento del canale esistente");
+        await handleUpdateHashTagChannel(channelToUpdate);
       } else {
-        handleCreateHashtagChannel();
+        console.log("Creazione di un nuovo canale");
+        await handleCreateHashtagChannel();
       }
       console.log('Squeal inviato con successo:', result);
       const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
@@ -917,7 +969,7 @@ function CreateMessage(props) {
       }
       const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
 
-      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+      await handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
 
     } catch (error) {
       console.error('Errore nell\'invio del Squeal:', error);
@@ -1119,9 +1171,6 @@ function CreateMessage(props) {
       const channelDataUpdate = {
         list_posts: [...channelSelected.list_posts, channelDataUpdatePost],
       }
-
-
-
       try {
         console.log('Canale selezionato id:', channelSelected._id);
         const resultChannel = await updateChannel(channelSelected._id, channelDataUpdatePost);
