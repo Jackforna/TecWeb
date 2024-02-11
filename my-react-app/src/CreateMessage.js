@@ -86,6 +86,9 @@ function CreateMessage(props) {
   const [showAreYouSureWrite, setShowAreYouSureWrite] = useState(false);
   const [channelSelected, setChannelSelected] = useState(null);
   const [typeChannel, setTypeChannel] = useState('');
+  const [defaultMessageSearch, setDefaultMessageSearch] = useState('');
+  const [suggestedDefaultMessages, setSuggestedDefaultMessages] = useState([]);
+  const [isDefaultMessageValid, setIsDefaultMessageValid] = useState(false)
 
   /*Creazione messaggi funzioni comuni*/
   const [wordsRemaining, setWordsRemaining] = useState(maxChar);
@@ -262,7 +265,7 @@ function CreateMessage(props) {
     getAll4();
   }, []); // L'array vuoto come seconda argomentazione significa che questo effetto verrà eseguito solo una volta, quando il componente viene montato
 
-
+  
   useEffect(() => {
     setallChannelsprint([]);
     setallkeywordsprint([]);
@@ -297,20 +300,19 @@ function CreateMessage(props) {
   
   }, [actualUser, allchannels, allCHANNELS, allkeywords]); 
   
-  /*Test only 
+   
   useEffect(() => {
     console.log("allChannelsprint has updated", allChannelsprint);
   }, [allChannelsprint]); 
-  
+  /*Test only
   useEffect(() => {
     console.log("Tutti gli squeal ", getListSqueals());
   }, []); 
-  */
-
+  
   useEffect(() => {
     console.log("All keywords print", allKeywordssprint);
   }, [allKeywordssprint]);
-
+  */
 
   /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
@@ -800,8 +802,7 @@ function CreateMessage(props) {
       handleSendSqueal(foundChannel, false);
     }
 
-};
-
+  };
 
   const handleCreateHashtagChannel = async () => {
     const channelData = {
@@ -904,7 +905,6 @@ function CreateMessage(props) {
       console.error('Errore nell\'aggiornamento del canale:', error);
     }
   };
-
 
   const handleSendSqueal = async (channelToUpdate, flag) => {
     const squealData = {
@@ -1215,7 +1215,36 @@ function CreateMessage(props) {
     }
   };
 
+  useEffect(() => {
+    if (defaultMessageSearch) {
+      // Filtra i messaggi di default per quelli che includono il termine di ricerca dopo "/"
+      const searchPattern = new RegExp(`${defaultMessageSearch}`, 'i'); // Case-insensitive search
+      const filteredMessages = channelSelected?.list_mess.filter(message => 
+        message.request.split('/').pop().match(searchPattern)
+      );
+      setSuggestedDefaultMessages(filteredMessages);
+    } else {
+      setSuggestedDefaultMessages([]);
+    }
+  }, [defaultMessageSearch, channelSelected]);
+
+  const handleDefaultMessageSelection = (message) => {
+    console.log("Valido prima: ", isDefaultMessageValid);
+    // Imposta il valore di defaultMessageSearch sul campo request del messaggio selezionato
+    setDefaultMessageSearch(message.request);
+    setIsDefaultMessageValid(true);
+    console.log("Valido dopo: ", isDefaultMessageValid);
+  };
+
+  const cleanDefaultMessageSelection = () => {
+    setDefaultMessageSearch('');
+    setIsDefaultMessageValid(false);
+  };
   
+  // useEffect(() => {
+  //   const isValid = suggestedDefaultMessages.some(message => message.request === defaultMessageSearch);
+  //   setIsDefaultMessageValid(isValid);
+  // }, [defaultMessageSearch, suggestedDefaultMessages]);
 
 
   /*--------------------------------------------------------------------Crea canale------------------------------------------------------------------------------*/
@@ -2188,6 +2217,54 @@ function CreateMessage(props) {
                             )}
                           </>
 
+                          {/*Default message*/}
+                          <>
+                            {/* Selezione deafault message */}
+                            {channelSelected && (
+                              <>
+                              <div style={{display: "flex", flexDirection: "row"}}>
+                                <input
+                                  type="text"
+                                  placeholder="Cerca messaggi di default..."
+                                  value={defaultMessageSearch}
+                                  disabled={isDefaultMessageValid}
+                                  onChange={(e) => setDefaultMessageSearch(e.target.value)}
+                                  style={{
+                                    backgroundColor: 'transparent',
+                                    borderColor: 'gray',
+                                    color: 'white',
+                                    width: '80%',
+                                  }}
+                                />
+                                {isDefaultMessageValid && (
+                                  <button
+                                    onClick={() => cleanDefaultMessageSelection()}
+                                    style={{
+                                      cursor: 'pointer',
+                                      background: 'none',
+                                      border: 'none',
+                                      color: 'white',
+                                    }}
+                                  >
+                                    X
+                                  </button>
+                                )}
+                              </div>
+                              {suggestedDefaultMessages.length > 0 && (
+                                <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                  {suggestedDefaultMessages.map((message, index) => (
+                                    <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
+                                      {message.request} - {message.body.text}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                              </>
+                            )}
+
+
+                          </>
+
                           {/*Textarea*/}
                           <Col>
                             <Row>
@@ -2342,76 +2419,79 @@ function CreateMessage(props) {
                           </Row>
                         </Row>
 
+                        
                         {/*Allegati*/}
-                        <Row className="mt-2" style = {{marginLeft: '6%'}}> 
-                          {/*Fotocamera*/}
-                          <Col className='col-1'>
-                              {/* Icona della fotocamera cliccabile */}
-                              <div 
-                                  id="cameraLogo" 
-                                  onClick={handleLogoClick}
-                                  style={{ cursor: 'pointer' }}
-                              >
-                                  <Camera color="white" size={25} />
-                              </div>
-                          </Col>
-
-                          {/*Icona video*/}
-                          <Col className='col-1'>
-                            <div 
-                              id="videoLogo" 
-                              onClick={() => setShowVideoModal(true)}
-                              style={{ cursor: 'pointer' }}
-                            >
-                              {/* Sostituisci con l'icona appropriata per il video */}
-                              <Camera color="white" size={25} />
-                            </div>
-                          </Col>
-
-                          {/*URL*/}
-                          <Col className="col-1">
-                            <button
-                                onClick={() => setShowLinkModal(true)}
-                                style={{
-                                    backgroundColor: 'transparent',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    color: 'white'
-                                }}
-                            >
-                            <LinkLogo size={25} color="white" />
-                            </button>
-                          </Col>
+                       
+                    
+                          <Row className="mt-2" style = {{marginLeft: '6%'}}> 
                           
-                          {/*Posizione*/}
-                          <Col className="col-1">
-                            {/* Pulsante per inviare la posizione */}
-                            <button
-                              onClick={() => {
-                                if (!isMapVisible) {
-                                  setIsMapVisible(true);
-                                } else {
-                                  handleLocationButtonClick();
-                                }
-                              }}
-                              style={{
-                                backgroundColor: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
-                              }}
-                            >
-                              <Globe size={25} color="white" />
-                            </button>
-                          </Col>  
+                            {/*Fotocamera*/}
+                            <Col className='col-1'>
+                                <div 
+                                    id="cameraLogo" 
+                                    onClick={handleLogoClick}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <Camera color="white" size={25} />
+                                </div>
+                            </Col>
 
-                          {/*Invio*/}
-                          <Col className="col-1">
-                            <Button onClick={() =>{
-                              {handleSendChannelSqueal()};
-                            }
-                            }>Crea</Button>
-                          </Col> 
-                        </Row>
+                            {/*Icona video*/}
+                            <Col className='col-1'>
+                              <div 
+                                id="videoLogo" 
+                                onClick={() => setShowVideoModal(true)}
+                                style={{ cursor: 'pointer' }}
+                              >
+                                {/* Sostituisci con l'icona appropriata per il video */}
+                                <Camera color="white" size={25} />
+                              </div>
+                            </Col>
+
+                            {/*URL*/}
+                            <Col className="col-1">
+                              <button
+                                  onClick={() => setShowLinkModal(true)}
+                                  style={{
+                                      backgroundColor: 'transparent',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      color: 'white'
+                                  }}
+                              >
+                              <LinkLogo size={25} color="white" />
+                              </button>
+                            </Col>
+                            
+                            {/*Posizione*/}
+                            <Col className="col-1">
+                              {/* Pulsante per inviare la posizione */}
+                              <button
+                                onClick={() => {
+                                  if (!isMapVisible) {
+                                    setIsMapVisible(true);
+                                  } else {
+                                    handleLocationButtonClick();
+                                  }
+                                }}
+                                style={{
+                                  backgroundColor: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                <Globe size={25} color="white" />
+                              </button>
+                            </Col>  
+
+                            {/*Invio*/}
+                            <Col className="col-1">
+                              <Button onClick={() =>{
+                                {handleSendChannelSqueal()};
+                              }
+                              }>Crea</Button>
+                            </Col> 
+                          </Row>
                     </>
                 )}
 
