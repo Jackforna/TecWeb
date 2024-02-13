@@ -240,6 +240,7 @@ function CreateMessage(props) {
     const getAll4 = async () => {
       try {
         const Channels = await getListChannels();
+        console.log("Channels",Channels);
         Channels.forEach(channel => {
           switch(channel.type) {
             case '&':
@@ -264,7 +265,6 @@ function CreateMessage(props) {
 
     getAll4();
   }, []); // L'array vuoto come seconda argomentazione significa che questo effetto verrà eseguito solo una volta, quando il componente viene montato
-
   
   useEffect(() => {
     setallChannelsprint([]);
@@ -300,20 +300,20 @@ function CreateMessage(props) {
   
   }, [actualUser, allchannels, allCHANNELS, allkeywords]); 
   
-   
+  /*Test only
   useEffect(() => {
     console.log("allChannelsprint has updated", allChannelsprint);
   }, [allChannelsprint]); 
-  /*Test only
+  
   useEffect(() => {
     console.log("Tutti gli squeal ", getListSqueals());
   }, []); 
+ 
   
   useEffect(() => {
     console.log("All keywords print", allKeywordssprint);
   }, [allKeywordssprint]);
-  */
-
+   */
   /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
   const [intervalId, setIntervalId] = useState(null);
@@ -1115,16 +1115,175 @@ function CreateMessage(props) {
     setSuggestedChannels([]); // Svuota i canali suggeriti
   };
 
-  const handleSendChannelSqueal = async () => {
-    const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: channelSearch.typesender, // Modifica come necessario
+  const hanleUpdateChannelPosts = async (channelSelectedToUpdate) => {
+    const channelDataUpdatePost = {
+      answers: [],
       body: {
         text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
         link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
         photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
         video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+      },
+      category: null,
+      date: new Date().toISOString(),
+      hour: new Date().getHours(),
+      impressions: 0,
+      neg_reactions: 0,
+      pos_reactions: 0,
+      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
+      seconds: new Date().getSeconds(),
+      sender: actualUser.nickname,
+      typesender: 'channels',
+      usersReactions: [],
+      usersViewed: [],
+    }
+
+    if (!channelSelected || !channelSelected._id) {
+      console.error("Nessun canale selezionato o ID canale mancante.");
+      return;
+  }
+
+    const updatedListPosts = [...channelSelected.list_posts, channelDataUpdatePost];
+    try {
+      console.log("Canale selezionato id: ", channelSelected._id);
+      console.log("Cose da aggiornare: ", channelDataUpdatePost);
+      const resultChannel = await updateChannel(channelSelected._id, channelDataUpdatePost);
+      console.log('Canale aggiornato con successo:', resultChannel);
+    } catch (error) {
+      console.error('Errore nell\'aggiornamento del canale:', error);
+    }
+  };
+
+  const handleSendChannelSqueal = async () => {
+    const squealData = {
+      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      typesender: 'channels', // Modifica come necessario
+      body: {
+        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+      },
+      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
+      date: new Date().toISOString(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      answers: [],
+      usersViewed: [],
+      category: '', // Aggiungi logica per determinare la categoria se necessario
+      receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
+      channel: channelSelected.name, // Aggiungi logica se il squeal è associato a un canale
+      impressions: 0,
+    };
+  
+    console.log("Canale selezionato: ", channelSelected)
+    console.log("Squeal data: ", squealData);
+    try {
+      const resultAddSqueal = await addSqueal(squealData);
+      if (true){
+        await hanleUpdateChannelPosts(channelSelected);
+      } else {
+        console.log("Non ci entra")
+      }
+      console.log('Squeal inviato con successo:', resultAddSqueal);
+      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+      let imageChars = 0;
+      let videoChars = 0;
+      let linkChars = 0;
+      let positionChars = 0;
+      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+      } else {
+        imageChars = 0;
+      }
+      if (squealData.body.video !== '') {
+        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+      } else {
+        videoChars = 0;
+      }
+      if (squealData.body.link !== '') {
+        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+      } else {
+        linkChars = 0;
+      }
+      if (squealData.body.position !== '') {
+        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+      } else {
+        positionChars = 0;
+      }
+      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+
+      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+      // goToProfile();
+
+    } catch (error) {
+      console.error('Errore nell\'invio dello squeal nel canale:', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    if (defaultMessageSearch) {
+      // Filtra i messaggi di default per quelli che includono il termine di ricerca dopo "/"
+      const searchPattern = new RegExp(`${defaultMessageSearch}`, 'i'); // Case-insensitive search
+      const filteredMessages = channelSelected?.list_mess.filter(message => 
+        message.request.split('/').pop().match(searchPattern)
+      );
+      setSuggestedDefaultMessages(filteredMessages);
+    } else {
+      setSuggestedDefaultMessages([]);
+    }
+  }, [defaultMessageSearch, channelSelected]);
+
+  const handleDefaultMessageSelection = (message) => {
+    // Imposta il valore di defaultMessageSearch sul campo request del messaggio selezionato
+    setDefaultMessageSearch(message);
+    setIsDefaultMessageValid(true);
+    console.log("Deafault message: ", defaultMessageSearch);
+  };
+
+  const cleanDefaultMessageSelection = () => {
+    setDefaultMessageSearch('');
+    setIsDefaultMessageValid(false);
+    console.log("Deafault message cancellato: ", defaultMessageSearch);
+  };
+  
+  const processDefaultMessageType = () => {
+    console.log("Deafault message inviato: ", defaultMessageSearch);
+    switch (defaultMessageSearch.type) {
+      case 'Answer':
+        handleSendChannelDefaultSqueal(defaultMessageSearch.body);
+        break;
+      case 'Casual Image':
+        break;
+      case 'News':
+        break;
+      case 'Twitter':
+        break;
+      case 'Wiki info':
+        break;
+      case 'Repeat':
+        break;
+      default:
+    }
+  }
+
+  const handleSendChannelDefaultSqueal = async (defaultCamp) => {
+    const squealData = {
+      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      typesender: channelSearch.typesender, // Modifica come necessario
+      body: {
+        text: defaultCamp.text, // Assumi che questo sia il testo del tuo messaggio
+        link: defaultCamp.link || '', // Aggiungi questo campo solo se è stato inserito un link
+        photo: defaultCamp.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+        video: defaultCamp.video || '', // Aggiungi questo campo solo se è stato caricato un video
+        position: defaultCamp.position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
       date: new Date().toISOString(),
@@ -1141,110 +1300,79 @@ function CreateMessage(props) {
       impressions: 0,
     };
   
+    console.log("Squeal data: ", squealData);
     try {
       const resultAddSqueal = await addSqueal(squealData);
-
-      const channelDataUpdatePost = {
-        answers: [],
-        body: {
-          text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-          link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-          photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-          video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-          position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
-        },
-        category: null,
-        date: new Date().toISOString(),
-        hour: new Date().getHours(),
-        impressions: 0,
-        neg_reactions: 0,
-        photoprofile: actualUser.photoProfile,
-        pos_reactions: 0,
-        receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
-        seconds: new Date().getSeconds(),
-        sender: actualUser.nickname,
-        typesender: 'channels',
-        usersReactions: [],
-        usersViewed: [],
+      console.log ("Canale selezionato: ", channelSelected);
+      await hanleUpdateChannelDefaultMessage(channelSelected, defaultCamp);
+      console.log('Squeal inviato con successo:', resultAddSqueal);
+      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+      let imageChars = 0;
+      let videoChars = 0;
+      let linkChars = 0;
+      let positionChars = 0;
+      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+      } else {
+        imageChars = 0;
       }
-
-      const channelDataUpdate = {
-        list_posts: [...channelSelected.list_posts, channelDataUpdatePost],
+      if (squealData.body.video !== '') {
+        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+      } else {
+        videoChars = 0;
       }
-      try {
-        console.log('Canale selezionato id:', channelSelected._id);
-        const resultChannel = await updateChannel(channelSelected._id, channelDataUpdatePost);
-        console.log('Canale aggiornato con successo:', resultChannel);
-        console.log('Squeal inviato con successo:', resultAddSqueal);
-        const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
-        let imageChars = 0;
-        let videoChars = 0;
-        let linkChars = 0;
-        let positionChars = 0;
-        if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-          imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
-        } else {
-          imageChars = 0;
-        }
-        if (squealData.body.video !== '') {
-          videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
-        } else {
-          videoChars = 0;
-        }
-        if (squealData.body.link !== '') {
-          linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
-        } else {
-          linkChars = 0;
-        }
-        if (squealData.body.position !== '') {
-          positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
-        } else {
-          positionChars = 0;
-        }
-        const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
-
-        handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-        goToProfile();
-
-      } catch (error) {
-        console.error('Errore nell\'aggiornamento del canale:', error);
+      if (squealData.body.link !== '') {
+        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+      } else {
+        linkChars = 0;
       }
+      if (squealData.body.position !== '') {
+        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+      } else {
+        positionChars = 0;
+      }
+      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+
+      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+      // goToProfile();
+
     } catch (error) {
-      console.error('Errore nell\'invio del Squeal:', error);
-      // ...gestione dell'errore...
+      console.error('Errore nell\'aggiornamento del canale:', error);
     }
   };
 
-  useEffect(() => {
-    if (defaultMessageSearch) {
-      // Filtra i messaggi di default per quelli che includono il termine di ricerca dopo "/"
-      const searchPattern = new RegExp(`${defaultMessageSearch}`, 'i'); // Case-insensitive search
-      const filteredMessages = channelSelected?.list_mess.filter(message => 
-        message.request.split('/').pop().match(searchPattern)
-      );
-      setSuggestedDefaultMessages(filteredMessages);
-    } else {
-      setSuggestedDefaultMessages([]);
+  const hanleUpdateChannelDefaultMessage = async (channelToUpdate, defaultCamp) => {
+    const channelDataUpdatePost = {
+      answers: [],
+      body: {
+        text: defaultCamp.text, // Assumi che questo sia il testo del tuo messaggio
+        link: defaultCamp.link || '', // Aggiungi questo campo solo se è stato inserito un link
+        photo: defaultCamp.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+        video: defaultCamp.video || '', // Aggiungi questo campo solo se è stato caricato un video
+        position: defaultCamp.position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+      },
+      category: null,
+      date: new Date().toISOString(),
+      hour: new Date().getHours(),
+      impressions: 0,
+      neg_reactions: 0,
+      photoprofile: actualUser.photoProfile,
+      pos_reactions: 0,
+      receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
+      seconds: new Date().getSeconds(),
+      sender: actualUser.nickname,
+      typesender: 'channels',
+      usersReactions: [],
+      usersViewed: [],
     }
-  }, [defaultMessageSearch, channelSelected]);
-
-  const handleDefaultMessageSelection = (message) => {
-    console.log("Valido prima: ", isDefaultMessageValid);
-    // Imposta il valore di defaultMessageSearch sul campo request del messaggio selezionato
-    setDefaultMessageSearch(message.request);
-    setIsDefaultMessageValid(true);
-    console.log("Valido dopo: ", isDefaultMessageValid);
+    try {
+      
+      const resultChannel = await updateChannel(channelSelected._id, channelDataUpdatePost);
+      console.log('Canale aggiornato con successo:', resultChannel);
+    } catch (error) {
+      console.error('Errore nell\'aggiornamento del canale:', error);
+    }
   };
-
-  const cleanDefaultMessageSelection = () => {
-    setDefaultMessageSearch('');
-    setIsDefaultMessageValid(false);
-  };
-  
-  // useEffect(() => {
-  //   const isValid = suggestedDefaultMessages.some(message => message.request === defaultMessageSearch);
-  //   setIsDefaultMessageValid(isValid);
-  // }, [defaultMessageSearch, suggestedDefaultMessages]);
 
 
   /*--------------------------------------------------------------------Crea canale------------------------------------------------------------------------------*/
@@ -2226,7 +2354,7 @@ function CreateMessage(props) {
                                 <input
                                   type="text"
                                   placeholder="Cerca messaggi di default..."
-                                  value={defaultMessageSearch}
+                                  value={defaultMessageSearch.request}
                                   disabled={isDefaultMessageValid}
                                   onChange={(e) => setDefaultMessageSearch(e.target.value)}
                                   style={{
@@ -2266,68 +2394,70 @@ function CreateMessage(props) {
                           </>
 
                           {/*Textarea*/}
-                          <Col>
-                            <Row>
-                            <Col xs={12} md={10}>
-                              <textarea
-                                placeholder='A cosa stai pensando????'
-                                onChange={(e) => {
-                                  handleSquealChatTextareaChange(e);
-                                  setIsTextModified(true);
-                                }}
-                                onBlur={() => {
-                                  if (squealChatTextareaValue.trim() === '') {
-                                    setIsTextModified(false);
-                                  }
-                                }}
-                                maxLength={maxChar}
-                                style={{
-                                  width: '100%',
-                                  resize: 'none', // Impedisce il ridimensionamento verticale
-                                  height: '100px', // Imposta l'altezza fissa a una riga di testo
-                                  overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
-                                  border: 'none', // Rimuove il bordo
-                                  scrollbarWidth: 'none', // Nasconde le frecce verticali
-                                  backgroundColor: 'transparent',
-                                  color: 'white',
-                                  fontSize: '16px',
-                                  outline: 'none',
-                                }}
-                                rows={1} // Imposta il numero di righe iniziali a 1
-                                onKeyDown={(e) => {
-                                  if (wordsRemaining > 0 && e.key === 'Enter') {
-                                      e.preventDefault();
-                                  } else if (wordsRemaining <= 0 && e.key !== 'Backspace' && e.key !== 'Delete' && e.key === 'ArrowLeft' && e.key === 'ArrowRight' && e.key === 'ArrowDown' && e.key === 'ArrowUp') {
-                                      e.preventDefault();
-                                  } 
-                                  if (e.key === 'Enter') {
-                                      if (squealChatTextareaValue.trim() === '') {
-                                          setIsTextModified(false);
-                                      } else {
-                                          handleSendMessage();
-                                      }
-                                  }
-                                }}
-                                onFocus={() => {
-                                  if (!isTextModified) {
+                          {(!isDefaultMessageValid) &&
+                            <Col>
+                              <Row>
+                              <Col xs={12} md={10}>
+                                <textarea
+                                  placeholder='A cosa stai pensando????'
+                                  onChange={(e) => {
+                                    handleSquealChatTextareaChange(e);
                                     setIsTextModified(true);
-                                  }
+                                  }}
+                                  onBlur={() => {
+                                    if (squealChatTextareaValue.trim() === '') {
+                                      setIsTextModified(false);
+                                    }
+                                  }}
+                                  maxLength={maxChar}
+                                  style={{
+                                    width: '100%',
+                                    resize: 'none', // Impedisce il ridimensionamento verticale
+                                    height: '100px', // Imposta l'altezza fissa a una riga di testo
+                                    overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
+                                    border: 'none', // Rimuove il bordo
+                                    scrollbarWidth: 'none', // Nasconde le frecce verticali
+                                    backgroundColor: 'transparent',
+                                    color: 'white',
+                                    fontSize: '16px',
+                                    outline: 'none',
+                                  }}
+                                  rows={1} // Imposta il numero di righe iniziali a 1
+                                  onKeyDown={(e) => {
+                                    if (wordsRemaining > 0 && e.key === 'Enter') {
+                                        e.preventDefault();
+                                    } else if (wordsRemaining <= 0 && e.key !== 'Backspace' && e.key !== 'Delete' && e.key === 'ArrowLeft' && e.key === 'ArrowRight' && e.key === 'ArrowDown' && e.key === 'ArrowUp') {
+                                        e.preventDefault();
+                                    } 
+                                    if (e.key === 'Enter') {
+                                        if (squealChatTextareaValue.trim() === '') {
+                                            setIsTextModified(false);
+                                        } else {
+                                            handleSendMessage();
+                                        }
+                                    }
+                                  }}
+                                  onFocus={() => {
+                                    if (!isTextModified) {
+                                      setIsTextModified(true);
+                                    }
+                                  }}
+                                />
+                                </Col>
+                                <Col>
+                                <div
+                                style={{
+                                  textAlign: 'left', // Allinea il testo a destra all'interno del contatore
+                                  color: counterColor,
+                                  marginTop: '90%',
                                 }}
-                              />
+                              >
+                                {wordsRemaining}
+                              </div>
                               </Col>
-                              <Col>
-                              <div
-                              style={{
-                                textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                                color: counterColor,
-                                marginTop: '90%',
-                              }}
-                            >
-                              {wordsRemaining}
-                            </div>
+                              </Row>
                             </Col>
-                            </Row>
-                          </Col>
+                          }
 
                           {/*Logica allegati*/}
                           <Row>
@@ -2421,20 +2551,20 @@ function CreateMessage(props) {
 
                         
                         {/*Allegati*/}
-                       
-                    
+                        {(!isDefaultMessageValid) &&
                           <Row className="mt-2" style = {{marginLeft: '6%'}}> 
                           
                             {/*Fotocamera*/}
-                            <Col className='col-1'>
-                                <div 
-                                    id="cameraLogo" 
-                                    onClick={handleLogoClick}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <Camera color="white" size={25} />
-                                </div>
-                            </Col>
+                              <Col className='col-1'>
+                                  <div 
+                                      id="cameraLogo" 
+                                      onClick={handleLogoClick}
+                                      style={{ cursor: 'pointer' }}
+                                  >
+                                      <Camera color="white" size={25} />
+                                  </div>
+                              </Col>
+                            
 
                             {/*Icona video*/}
                             <Col className='col-1'>
@@ -2486,12 +2616,15 @@ function CreateMessage(props) {
 
                             {/*Invio*/}
                             <Col className="col-1">
-                              <Button onClick={() =>{
-                                {handleSendChannelSqueal()};
-                              }
-                              }>Crea</Button>
+                              <Button onClick={handleSendChannelSqueal}>Invia</Button>
                             </Col> 
                           </Row>
+                        }
+                        {isDefaultMessageValid &&
+                          <Col className="col-1">
+                            <Button onClick={processDefaultMessageType}>Crea</Button>
+                          </Col> 
+                        }
                     </>
                 )}
 

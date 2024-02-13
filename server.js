@@ -266,18 +266,63 @@ app.put('/update-channels', async (req, res) => {
   }
 });
 
+
 app.put('/update-channel/:id', async (req, res) => {
   try {
       const id = req.params.id;
       const updates = req.body;
 
+      const objectId = new ObjectId(id);
+
       const result = await ListChannelsCollection.updateOne(
-        { _id: new ObjectId(id) },
+        { _id: objectId },
         { $push: { list_posts: updates.postToAdd } } // Esempio: { postToAdd: { ...dati del post... } }
     );
 
+    if (result.modifiedCount === 0) {
+      console.log(`Canale non trovato con ID: ${id}`);
+      return res.status(404).send('Canale non trovato o nessun aggiornamento necessario');
+  }
+  
+  
+
+      res.status(200).json({ message: 'Canale aggiornato con successo' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante l\'aggiornamento del canale' });
+  }
+});
+
+/*
+app.put('/update-channel/:id', async (req, res) => {
+  try {
+      const id = req.params.id;
+
+      // Verifica se l'ID è valido per ObjectId
+      if (!ObjectId.isValid(id)) {
+          return res.status(400).send('ID non valido');
+      }
+
+      const updates = req.body;
+      console.log(`Tentativo di aggiornamento per il canale con ID: ${id}`, updates);
+
+      // Verifica preliminare per vedere se il canale esiste
+      const channelExists = await ListChannelsCollection.findOne({ _id: new ObjectId(id) });
+      if (!channelExists) {
+          console.log(`Canale non trovato con ID: ${id}`);
+          return res.status(404).send('Canale non trovato');
+      }
+
+      // Procedi con l'aggiornamento
+      const result = await ListChannelsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $push: { list_posts: updates.postToAdd } }
+      );
+
+      console.log(`Documenti corrispondenti: ${result.matchedCount}, Documenti aggiornati: ${result.modifiedCount}`);
+
       if (result.modifiedCount === 0) {
-          return res.status(404).send('Canale non trovato o nessun aggiornamento necessario');
+          return res.status(404).send('Nessun aggiornamento necessario o canale non trovato');
       }
 
       res.status(200).json({ message: 'Canale aggiornato con successo' });
@@ -286,6 +331,7 @@ app.put('/update-channel/:id', async (req, res) => {
       res.status(500).json({ error: 'Errore durante l\'aggiornamento del canale' });
   }
 });
+*/
 
 async function initializeCollections() {
   try {

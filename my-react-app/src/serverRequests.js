@@ -222,6 +222,10 @@ export async function updateChannel(id, updates) {
         if (!response.ok) {
             if (response.status === 404) {
                 throw new Error('Canale non trovato o nessun aggiornamento necessario');
+            } else if (response.status === 400) {
+                throw new Error('Errore di rete. Impossibile completare la richiesta.');
+            } else if (response.status === 500) {
+                throw new Error('Errore di rete. Impossibile completare la richiesta.');
             }
             throw new Error('Errore di rete. Impossibile completare la richiesta.');
         }
