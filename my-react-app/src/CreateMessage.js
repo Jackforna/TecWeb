@@ -68,6 +68,8 @@ function CreateMessage(props) {
   const [listOfUsers, setListOfUsers] = useState([]);
   const [existedChannel, setExistedChannel] = useState(false);
   let [foundChannel, setFoundChannel] = useState(null);
+  const [extraCharModal, setExtraCharModal] = useState(false);
+  const [isExtraCharUsed, setIsExtraCharUsed] = useState(false);
 
   /*Private Messagge*/
   const [privateSquealChatTextareaValue, setPrivateSquealChatTextareaValue] = useState('');
@@ -721,7 +723,7 @@ function CreateMessage(props) {
   const handleSquealChatTextareaChange = (e) => {
     const inputValue = e.target.value;
     const attachmentsLength = (capturedImage ? 125 : 0) + (displayedLink ? 125 : 0) + (position ? 125 : 0); // Calcola la lunghezza totale degli allegati
-
+  
     // Calcola la lunghezza totale disponibile per il testo tenendo conto degli allegati
     const availableTextLength = maxChar - attachmentsLength;
 
@@ -734,14 +736,23 @@ function CreateMessage(props) {
         } else {
             setCounterColor('purple');
         }
+        if ((remaining === 1) && (isExtraCharUsed === false)) {
+            setExtraCharModal(true);
+        }
     } else {
         // Ripristina il valore della textarea all'ultimo valore valido
         setSquealChatSecondTextareaValue(squealChatTextareaValue);
-
+        alert(`Attualmente sei limitato dai caratteri insufficenti, per tornare a scrivere prosegui con l'acquisto di caratteri extra.`);
         // Opzionalmente mostra un avviso o riproduce un suono
         console.log(`Non puoi inserire più di ${availableTextLength} caratteri.`);
         e.preventDefault();
     }
+  };
+
+  const handleExtraChar = () => {
+    setExtraCharModal(false);
+    setMaxChar(maxChar + 100);
+    setIsExtraCharUsed(true);
   };
 
   const handleSendMessage = () => {
@@ -1669,6 +1680,17 @@ function CreateMessage(props) {
               </Modal.Body>
             </Modal>
 
+            <Modal show={extraCharModal} onHide={() => setExtraCharModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Caratteri extra</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <p>Sei sicuro di voler usare i caratteri extra?</p>
+                <Button variant="primary" onClick={handleExtraChar}>Sì</Button>
+                <Button variant="danger" onClick={() => setExtraCharModal(false)}>No</Button>
+              </Modal.Body>
+            </Modal>
+
           </>
     
           {/*Card per creazione messaggio*/}
@@ -1829,12 +1851,12 @@ function CreateMessage(props) {
                           </Col>
                           <Col>
                           <div
-                          style={{
-                            textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                            color: counterColor,
-                            marginTop: '90%',
-                          }}
-                        >
+                            style={{
+                              textAlign: 'left', // Allinea il testo a destra all'interno del contatore
+                              color: counterColor,
+                              marginTop: '90%',
+                            }}
+                          >
                           {wordsRemaining}
                         </div>
                         </Col>
@@ -2400,6 +2422,7 @@ function CreateMessage(props) {
                               <Col xs={12} md={10}>
                                 <textarea
                                   placeholder='A cosa stai pensando????'
+                                  value={squealChatTextareaValue}
                                   onChange={(e) => {
                                     handleSquealChatTextareaChange(e);
                                     setIsTextModified(true);
