@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect} from 'react';
 import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Image, Dropdown, Card, Row, Col, Modal } from 'react-bootstrap';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import './App.css';
+import './CreateMessage.css';
 import logo from '../src/img/logo.png'
 import search_logo from '../src/img/search.png'
 import { Camera, Globe, Link as LinkLogo, Gear, NodeMinus, PersonCircle } from 'react-bootstrap-icons';
@@ -50,10 +51,11 @@ function CreateMessage(props) {
   const [selectedItems, setSelectedItems] = useState([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
+
   /*Creazione messaggio*/
   const [showMessageCreation, setShowMessageCreation] = useState(false);
   const [messageType, setMessageType] = useState('Squeal');  // This will hold either 'Squeal' or 'Canale'
-  const [squealOrChannelOption, setSquealOrChannelOption] = useState('Pubblico');  // This will hold either 'Pubblico' or 'Privato' for Squeal and 'Scrivi' or 'Crea' for Canale
+  const [squealOrChannelOption, setSquealOrChannelOption] = useState('Public');  // This will hold either 'Public' or 'Privato' for Squeal and 'Scrivi' or 'Crea' for Canale
   const [text, setText] = useState('#');
   const [charCount, setCharCount] = useState(1);
   const [squealChatTextareaValue, setSquealChatSecondTextareaValue] = useState('');
@@ -112,7 +114,7 @@ function CreateMessage(props) {
   const windowSize = useWindowSize();
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [capturedVideo, setCapturedVideo] = useState(null);
-  const photoProfile = "";
+  const [photoProfile, setPhotoProfile] = useState('');
   const navigate = useNavigate();
 
 
@@ -176,7 +178,7 @@ function CreateMessage(props) {
         setActualUser(userData);
         setMaxChar(userData.char_d); // Adjust 'char_d' to the actual property name for max characters
         const initialWordsRemaining = userData.char_d - squealChatTextareaValue.length;
-
+        setPhotoProfile(userData.photoprofile);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -302,6 +304,10 @@ function CreateMessage(props) {
   
   }, [actualUser, allchannels, allCHANNELS, allkeywords]); 
   
+  // useEffect(() => {
+  //   console.log("PhotoProfile",photoProfile);
+  // }, [photoProfile]);
+
   /*Test only
   useEffect(() => {
     console.log("allChannelsprint has updated", allChannelsprint);
@@ -445,10 +451,10 @@ function CreateMessage(props) {
 
   
     // Se si cambia a "Canale", impostare il valore predefinito per "squealOrChannelOption" su "Scrivi"
-    if (selectedType === 'Canale') {
-      setSquealOrChannelOption('Scrivi');
+    if (selectedType === 'Channel') {
+      setSquealOrChannelOption('Write');
     } else {
-      setSquealOrChannelOption('Pubblico');
+      setSquealOrChannelOption('Public');
     }
   };
 
@@ -462,7 +468,7 @@ function CreateMessage(props) {
 
   /*--------------------------------------------------------------------Allegati e gestione------------------------------------------------------------------------------*/
   const handleVideoChange = (e) => {
-    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Public') || (messageType === 'Channel' && squealOrChannelOption === 'Write'))) {
       const file = e.target.files[0];
       if (file) {
         // Qui puoi implementare la logica per gestire il file video.
@@ -484,7 +490,7 @@ function CreateMessage(props) {
         const remainingPrivate = calculatePrivateCharCount();
         setPrivateWordsRemaining(remainingPrivate);
       }
-    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
+    } else if (messageType === 'Channel' && squealOrChannelOption === 'Create') {
       const file = e.target.files[0];
       if (file) {
         // Qui puoi implementare la logica per gestire il file video.
@@ -504,7 +510,7 @@ function CreateMessage(props) {
   };
   
   const handleLocationButtonClick = () => {
-    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Public') || (messageType === 'Channel' && squealOrChannelOption === 'Write'))) {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
@@ -530,7 +536,7 @@ function CreateMessage(props) {
       } else {
         alert('La geolocalizzazione non è supportata dal tuo browser.');
       }
-    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
+    } else if (messageType === 'Channel' && squealOrChannelOption === 'Create') {
       if (navigator.geolocation) {
         console.log("Ci sono 1");
         navigator.geolocation.getCurrentPosition((position) => {
@@ -557,7 +563,7 @@ function CreateMessage(props) {
   });
 
   const handleFileChange = (e) => {
-    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Public') || (messageType === 'Channel' && squealOrChannelOption === 'Write'))) {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -583,7 +589,7 @@ function CreateMessage(props) {
       }
       setShowFileSelectionModal(false);
       setShowCameraModal(false);
-    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
+    } else if (messageType === 'Channel' && squealOrChannelOption === 'Create') {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -602,7 +608,7 @@ function CreateMessage(props) {
   };
 
   const capture = () => {
-    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Public') || (messageType === 'Channel' && squealOrChannelOption === 'Write'))) {
       const imageSrc = webcamRef.current.getScreenshot();
       setCapturedImage(imageSrc);
       setShowCameraModal(false);
@@ -614,7 +620,7 @@ function CreateMessage(props) {
       setShowCameraModal(false);
       const remainingPrivate = calculatePrivateCharCount();
       setPrivateWordsRemaining(remainingPrivate);
-    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea'){
+    } else if (messageType === 'Channel' && squealOrChannelOption === 'Create'){
       const imageSrc = webcamRef.current.getScreenshot();
       setCapturedImage(imageSrc);
       setShowCameraModal(false);
@@ -628,7 +634,7 @@ function CreateMessage(props) {
   };
 
   const handleSubmitLink = () => {
-    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') || (messageType === 'Canale' && squealOrChannelOption === 'Scrivi'))) {
+    if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Public') || (messageType === 'Channel' && squealOrChannelOption === 'Write'))) {
       if (isLink(inputLIink)) {
         setDisplayedLink(inputLIink);
         setShowLinkModal(false);
@@ -646,7 +652,7 @@ function CreateMessage(props) {
       } else {
         alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
       }
-    } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea') {
+    } else if (messageType === 'Channel' && squealOrChannelOption === 'Create') {
       if (isLink(inputLIink)) {
         setDisplayedLink(inputLIink);
         setShowLinkModal(false);
@@ -1003,7 +1009,7 @@ function CreateMessage(props) {
           } else {
               alert('Puoi selezionare al massimo 3 utenti.');
           }
-        } else if (messageType === 'Canale' && squealOrChannelOption === 'Crea')  {
+        } else if (messageType === 'Channel' && squealOrChannelOption === 'Create')  {
           setSelectedUsers(prevUsers => [...prevUsers, user]);
           setSelectedUserIds(prevIds => [...prevIds, user_id]);
         }
@@ -1599,6 +1605,7 @@ function CreateMessage(props) {
             left:'20%'
           }}
           className="mx-auto"
+          id = "card-container-create-messagge-home"
         >
 
           {/*Modali per fotocamera e URL*/}
@@ -1699,35 +1706,34 @@ function CreateMessage(props) {
               <Card.Body>
                 
                 {/*Parte comune*/}
-                <Row>
-                  {/*Icona profilo utente che scrive*/}
-                  <Col className="col-1">
-                    {/* <div class = "userProfilePicture">
-                      <img src={actualUser.photoprofile} alt="Profile" style={{width: '40px', height: '40px', borderRadius: '50%'}}/>
-                    </div> */}
-                    <PersonCircle alt="Person-circle" size="30"/>
+                <Row className="align-items-center">
+
+                  <Col xs="auto" className="d-flex justify-content-center">
+                    {photoProfile !== '' ? (
+                      <div className="profile-image-container">
+                        <img src={photoProfile} alt="Profile" className="profile-image"/>
+                      </div>
+                    ) : (
+                      <PersonCircle size='55' color='white' />
+                    )}
                   </Col>
 
-                  {/*Selezione tipo messaggio*/}
-                  <Col className='col-5'>
-                    <Row>
-
-                      {/*Squeal vs Canale*/}
-                      <Col style ={{margin: '0px', padding: '0px'}}>
+                  <Col>
+                    <Row className="gx-2 gx-lg-3 align-items-center" id = "RowSelectType">
+                      <Col xs="auto">
                         <Form.Select 
                           size="sm" 
                           className='Form-create-messagge-home' 
                           style={{ fontSize: '12px', width: '100px', backgroundColor: 'transparent', borderRadius: '18px', color: 'white', textAlign:'center'}}
                           value={messageType}
                           onChange={handleMessageTypeChange}
-                          >
-                            <option value="Squeal">Squeal</option>
-                            <option value="Canale">Canale</option>
+                        >
+                          <option value="Squeal">Squeal</option>
+                          <option value="Channel">Channel</option>
                         </Form.Select>
                       </Col>
 
-                      {/*Pubblico vs Privato / Scrivi vs Crea*/}
-                      <Col style ={{margin: '0px', padding: '0px'}}>
+                      <Col xs="auto">
                         <Form.Select size="sm" 
                           className='Form-create-messagge-home' 
                           style={{
@@ -1737,36 +1743,36 @@ function CreateMessage(props) {
                             borderRadius: '18px', 
                             color: 'white', 
                             textAlign:'center',
-                            borderColor: '#555', // Aggiunge un colore al bordo
-                            boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', // Aggiunge un'ombra sottile intorno al selettore
-                            appearance: 'none', // Rimuove l'aspetto predefinito in alcuni browser
+                            borderColor: '#555',
+                            boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
+                            appearance: 'none',
                           }}
-                          svalue={squealOrChannelOption}
+                          value={squealOrChannelOption}
                           onChange={handleSquealOrChannelOptionChange}
-                          >
-                            {messageType === 'Squeal' ? (
-                              <>
-                                <option value="Pubblico" style={{color: 'white', backgroundColor: 'transparent', appearance: 'none'}}>Pubblico</option>
-                                <option value="Privato" style={{color: 'white', backgroundColor: 'transparent', appearance: 'none'}}>Privato</option>
-                              </>
-                            ) : (
-                              <>
-                                <option value="Scrivi" style={{ backgroundColor: '#333', color: 'white' }}>Scrivi</option>
-                                <option value="Crea" style={{ backgroundColor: '#333', color: 'white' }}>Crea</option>
-                              </>
-                            )}
+                        >
+                          {messageType === 'Squeal' ? (
+                            <>
+                              <option value="Public">Public</option>
+                              <option value="Privato">Privato</option>
+                            </>
+                          ) : (
+                            <>
+                              <option value="Write">Write</option>
+                              <option value="Create">Create</option>
+                            </>
+                          )}
                         </Form.Select>
                       </Col>
-
                     </Row>
                   </Col>
                 </Row>
 
-                {/*Messaggio pubblico*/}
-                {(messageType === 'Squeal' && squealOrChannelOption === 'Pubblico') && (
+
+                {/*Messaggio Public*/}
+                {(messageType === 'Squeal' && squealOrChannelOption === 'Public') && (
                   <>
                     {/*Hashtag*/}
-                    <Row className="mt-2" style = {{marginLeft: '6%'}}>
+                    <Row className="mt-2" style = {{marginLeft: '6%'}} id = "channelContentContainer">
                       <Col xs={12} md={6}>
                         <textarea
                           value={text}
@@ -1797,11 +1803,11 @@ function CreateMessage(props) {
                     </Row>
                     
                     {/*Textarea + logica allegati*/}
-                    <Row className="mt-2" style = {{marginLeft: '6%'}}>
+                    <Row className="mt-2" style = {{marginLeft: '6%'}} id = "textAreaContentContainer">
                       {/*Textarea*/}
                       <Col>
                         <Row>
-                        <Col xs={12} md={10}>
+                          <Col xs={12} md={10}>
                           <textarea
                             placeholder='A cosa stai pensando????'
                             value={squealChatTextareaValue}
@@ -1849,17 +1855,6 @@ function CreateMessage(props) {
                             }}
                           />
                           </Col>
-                          <Col>
-                          <div
-                            style={{
-                              textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                              color: counterColor,
-                              marginTop: '90%',
-                            }}
-                          >
-                          {wordsRemaining}
-                        </div>
-                        </Col>
                         </Row>
                       </Col>
 
@@ -1897,8 +1892,16 @@ function CreateMessage(props) {
                               </Card>
                             )}
                             {capturedImage && (
-                              <div style={{ position: 'relative',  width: '200px', height: '100px', overflow: 'hidden' }}>
-                              <img src={capturedImage} alt="Scattata"  />
+                              <div style={{ position: 'relative',  width: '300px', height: '300px', overflow: 'hidden' }}>
+                              <img 
+                              src={capturedImage} 
+                              alt="Scattata"  
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover', // Aggiungi questa linea
+                              }} 
+                              />
                               <button 
                                 onClick={() => {
                                   setCapturedImage(null)
@@ -1957,70 +1960,44 @@ function CreateMessage(props) {
                     </Row>
 
                     {/*Allegati*/}
-                    <Row className="mt-2" style = {{marginLeft: '6%'}}> 
+                    <Row className="mt-2" style = {{marginLeft: '6%'}} id = "allegatiConainer"> 
 
-                      {/*Fotocamera*/}
-                      <Col className='col-1'>
-                          {/* Icona della fotocamera cliccabile */}
-                          <div 
-                              id="cameraLogo" 
-                              onClick={handleLogoClick}
-                              style={{ cursor: 'pointer' }}
-                          >
-                              <Camera color="white" size={25} />
-                          </div>
-                      </Col>
-
-                      {/* Icona per il caricamento del video */}
-                      <Col className='col-1'>
-                        <div 
-                          id="videoLogo" 
-                          onClick={() => setShowVideoModal(true)}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          {/* Sostituisci con l'icona appropriata per il video */}
+                      {/* Colonna per icone */}
+                      <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
+                        {/* Fotocamera */}
+                        <div id="cameraLogo" onClick={handleLogoClick} style={{ cursor: 'pointer', marginRight: '20px' }}>
                           <Camera color="white" size={25} />
+                        </div>
+
+                        {/* Icona per il caricamento del video */}
+                        <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px' }}>
+                          <Camera color="white" size={25} />
+                        </div>
+
+                        {/* URL */}
+                        <button onClick={() => setShowLinkModal(true)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: 'white', marginRight: '20px' }}>
+                          <LinkLogo size={25} color="white" />
+                        </button>
+                        
+                        {/* Posizione */}
+                        <button onClick={() => { if (!isMapVisible) { setIsMapVisible(true); } else { handleLocationButtonClick(); }}} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginRight: '20px' }}>
+                          <Globe size={25} color="white" />
+                        </button>
+
+                        {/* Caratteri */}
+                        <div id = "charCounterContainer"
+                            style={{
+                              textAlign: 'left', // Allinea il testo a destra all'interno del contatore
+                              color: counterColor,
+                              marginRight: '20px',
+                            }}
+                          >
+                          {wordsRemaining}
                         </div>
                       </Col>
 
-                      {/*URL*/}
-                      <Col className="col-1">
-                        <button
-                            onClick={() => setShowLinkModal(true)}
-                            style={{
-                                backgroundColor: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
-                                color: 'white'
-                            }}
-                        >
-                        <LinkLogo size={25} color="white" />
-                        </button>
-                      </Col>
-                      
-                      {/*Posizione*/}
-                      <Col className="col-1">
-                        {/* Pulsante per inviare la posizione */}
-                        <button
-                          onClick={() => {
-                            if (!isMapVisible) {
-                              setIsMapVisible(true);
-                            } else {
-                              handleLocationButtonClick();
-                            }
-                          }}
-                          style={{
-                            backgroundColor: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          <Globe size={25} color="white" />
-                        </button>
-                      </Col>
-
-                      {/*Invio*/}
-                      <Col className="col-1">
+                      {/* Colonna per il pulsante Invia, allineata a destra */}
+                      <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
                         <Button onClick={controlChannel}>Invia</Button>
                       </Col>
 
@@ -2033,7 +2010,7 @@ function CreateMessage(props) {
                 {(messageType === 'Squeal' && squealOrChannelOption === 'Privato') && (
                   <>
                     {/*Corpo messaggio*/}
-                    <Row className="mt-2" style = {{marginLeft: '6%'}}>
+                    <Row className="mt-2" style = {{marginLeft: '6%'}} id = "channelContentContainer">
 
                       {/*Barra ricerca utenti + corpo messaggio*/}
                       <Col>
@@ -2134,7 +2111,7 @@ function CreateMessage(props) {
                           {/*Logica search + corpo*/}
                           <Col>
                             {/*Logica textarea*/}
-                            <div
+                            <div id = "charCounterContainer"
                               style={{
                                 textAlign: 'left', // Allinea il testo a destra all'interno del contatore
                                 color: privateWordsRemaining <= 10 ? 'red' : 'white',
@@ -2242,7 +2219,7 @@ function CreateMessage(props) {
                     </Row>
 
                    {/*Loghi allegati / utenti selezionati*/}
-                    <Row className="mt-2" style = {{marginLeft: '6%'}}> 
+                    <Row className="mt-2" style = {{marginLeft: '6%'}} id = "textAreaContentContainer"> 
 
                         {/*Icona fotocamera*/}
                         <Col className='col-1'>
@@ -2320,11 +2297,11 @@ function CreateMessage(props) {
                   </>
                 )}
 
-                {/*Scrivi canale*/}
-                {(messageType === 'Canale' && squealOrChannelOption === 'Scrivi') && (
+                {/*Scrivi Channel*/}
+                {(messageType === 'Channel' && squealOrChannelOption === 'Write') && (
                     <>
-                        {/*Textarea + seleziona canale*/}
-                        <Row className="mt-2" style = {{marginLeft: '6%'}}>
+                        {/*Textarea + seleziona Channel*/}
+                        <Row className="mt-2" style = {{marginLeft: '6%'}} id = "channelContentContainer">
                           {/*Seleziona canale*/}
                           <>
                             <InputGroup className="mb-3">
@@ -2468,7 +2445,7 @@ function CreateMessage(props) {
                                 />
                                 </Col>
                                 <Col>
-                                <div
+                                <div id = "charCounterContainer"
                                 style={{
                                   textAlign: 'left', // Allinea il testo a destra all'interno del contatore
                                   color: counterColor,
@@ -2529,7 +2506,7 @@ function CreateMessage(props) {
                                 >
                                   X
                                 </button>
-                              </div>
+                                </div>
                               )}
                               {capturedVideo && (
                                 <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
@@ -2575,7 +2552,7 @@ function CreateMessage(props) {
                         
                         {/*Allegati*/}
                         {(!isDefaultMessageValid) &&
-                          <Row className="mt-2" style = {{marginLeft: '6%'}}> 
+                          <Row className="mt-2" style = {{marginLeft: '6%'}} id = "textAreaContentContainer"> 
                           
                             {/*Fotocamera*/}
                               <Col className='col-1'>
@@ -2645,20 +2622,20 @@ function CreateMessage(props) {
                         }
                         {isDefaultMessageValid &&
                           <Col className="col-1">
-                            <Button onClick={processDefaultMessageType}>Crea</Button>
+                            <Button onClick={processDefaultMessageType}>Create</Button>
                           </Col> 
                         }
                     </>
                 )}
 
                 {/*Crea canale*/}
-                {(messageType === 'Canale' && squealOrChannelOption === 'Crea') && (
+                {(messageType === 'Channel' && squealOrChannelOption === 'Create') && (
                   <Form style = {{marginTop:'4%', marginLeft: '8%'}}>
                     <Form.Group>
                       <Col>
                         {/*Nome canale + silenziabile*/}
                         <Row>
-                          <Form.Control type="name" placeholder="Nome canale" value={channelName} onChange={e => setChannelName(e.target.value)}style = {{width: '50%'}}/>
+                          <Form.Control type="name" placeholder="Channel name" value={channelName} onChange={e => setChannelName(e.target.value)}style = {{width: '50%'}}/>
                           <Form.Check
                             type="switch"
                             id="custom-switch"
@@ -2743,7 +2720,7 @@ function CreateMessage(props) {
                             processSelectedUsers();
                             setShowAreYouSure(true);
                           }
-                          }>Crea</Button>
+                          }>Create</Button>
                         </Row>
 
                         {/*Are you sure*/}
