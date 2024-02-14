@@ -1610,7 +1610,7 @@ function CreateMessage(props) {
 
           {/*Modali per fotocamera e URL*/}
           <>
-            <Modal show={showCameraModal} onHide={() => setShowCameraModal(false)}>
+            <Modal show={showCameraModal} onHide={() => setShowCameraModal(false)} id = "cameraModal">
               <Modal.Header closeButton>
                 <Modal.Title>Scatta una foto</Modal.Title>
               </Modal.Header>
@@ -1636,7 +1636,7 @@ function CreateMessage(props) {
               </Modal.Body>
             </Modal>
 
-            <Modal show={showLinkModal} onHide={() => setShowLinkModal(false)}>
+            <Modal show={showLinkModal} onHide={() => setShowLinkModal(false)} id = "cameraModal">
                 <Modal.Header closeButton>
                     <Modal.Title>Inserisci Link</Modal.Title>
                 </Modal.Header>
@@ -1668,7 +1668,7 @@ function CreateMessage(props) {
                 </Modal.Body>
             </Modal>
 
-            <Modal show={showVideoModal} onHide={() => setShowVideoModal(false)}>
+            <Modal show={showVideoModal} onHide={() => setShowVideoModal(false)} id = "cameraModal">
               <Modal.Header closeButton>
                 <Modal.Title>Carica un video</Modal.Title>
               </Modal.Header>
@@ -1687,7 +1687,7 @@ function CreateMessage(props) {
               </Modal.Body>
             </Modal>
 
-            <Modal show={extraCharModal} onHide={() => setExtraCharModal(false)}>
+            <Modal show={extraCharModal} onHide={() => setExtraCharModal(false)} id = "cameraModal">
               <Modal.Header closeButton>
                 <Modal.Title>Caratteri extra</Modal.Title>
               </Modal.Header>
@@ -1858,105 +1858,105 @@ function CreateMessage(props) {
                         </Row>
                       </Col>
 
-                        {/*Logica allegati*/}
-                        <Row>
-                          <Col xs={12} md={10}>
-                            {position && isMapVisible &&(
-                              <Card style={{  width: '200px', height: '100px', position: 'relative' }}>
-                                <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
-                                  <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                  />
-                                  <Marker position={position} icon={markerIcon}>
-                                    <Popup>Sei qui!</Popup>
-                                  </Marker>
-                                </MapContainer>
-                                <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
-                                <Button variant="danger" 
-                                  onClick={() => {
-                                    setIsMapVisible(false)
-                                    setPosition(null); 
-                                    const remaining = calculateCharCount();
-                                    setWordsRemaining(remaining);
-                                  }}
-                                  >X
-                                </Button>
-                                </div>
-                                <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
-                                <Button variant="light" onClick={() => {
-                                  const url = `https://www.google.com/maps/search/?api=1&query=${position[0]},${position[1]}`;
-                                  window.open(url, '_blank');
-                                }}>Open Map</Button>
-                                </div>
-                              </Card>
-                            )}
-                            {capturedImage && (
-                              <div style={{ position: 'relative',  width: '300px', height: '300px', overflow: 'hidden' }}>
-                              <img 
-                              src={capturedImage} 
-                              alt="Scattata"  
-                              style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover', // Aggiungi questa linea
-                              }} 
-                              />
-                              <button 
+                      {/*Logica allegati*/}
+                      <Row>
+                        <Col xs={12} md={10}>
+                          {position && isMapVisible &&(
+                            <Card style={{  width: '200px', height: '100px', position: 'relative' }} id = "mapAttachments">
+                              <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+                                <TileLayer
+                                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                />
+                                <Marker position={position} icon={markerIcon}>
+                                  <Popup>Sei qui!</Popup>
+                                </Marker>
+                              </MapContainer>
+                              <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
+                              <Button variant="danger" 
                                 onClick={() => {
-                                  setCapturedImage(null)
+                                  setIsMapVisible(false)
+                                  setPosition(null); 
                                   const remaining = calculateCharCount();
                                   setWordsRemaining(remaining);
-                                }} 
-                                className="btn btn-sm btn-danger" 
-                                style={{ position: 'absolute', top: '10px', right: '10px' }}
-                              >
-                                X
-                              </button>
-                            </div>
-                            )}
-                            {capturedVideo && (
-                                <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
-                                  <video width="200px" height="100px" controls>
-                                    <source src={capturedVideo} type="video/mp4" />
-                                    Il tuo browser non supporta il tag video.
-                                  </video>
+                                }}
+                                >X
+                              </Button>
+                              </div>
+                              <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
+                              <Button variant="light" onClick={() => {
+                                const url = `https://www.google.com/maps/search/?api=1&query=${position[0]},${position[1]}`;
+                                window.open(url, '_blank');
+                              }}>Open Map</Button>
+                              </div>
+                            </Card>
+                          )}
+                          {capturedImage && (
+                            <div style={{ position: 'relative',  width: '300px', height: '300px', overflow: 'hidden' }} id = "photoAttachments">
+                            <img 
+                            src={capturedImage} 
+                            alt="Scattata"  
+                            style={{ 
+                              width: '100%', 
+                              height: '100%', 
+                              objectFit: 'cover', // Aggiungi questa linea
+                            }} 
+                            />
+                            <button 
+                              onClick={() => {
+                                setCapturedImage(null)
+                                const remaining = calculateCharCount();
+                                setWordsRemaining(remaining);
+                              }} 
+                              className="btn btn-sm btn-danger" 
+                              style={{ position: 'absolute', top: '10px', right: '10px' }}
+                            >
+                              X
+                            </button>
+                          </div>
+                          )}
+                          {capturedVideo && (
+                              <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
+                                <video width="200px" height="100px" controls>
+                                  <source src={capturedVideo} type="video/mp4" />
+                                  Il tuo browser non supporta il tag video.
+                                </video>
+                                <button 
+                                  onClick={() => {
+                                    setCapturedVideo(null);
+                                    // Aggiorna il conteggio dei caratteri qui
+                                    const remaining = calculateCharCount();
+                                    setWordsRemaining(remaining);
+                                    setPrivateWordsRemaining(calculatePrivateCharCount());
+                                  }} 
+                                  className="btn btn-sm btn-danger" 
+                                  style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il video
+                                >
+                                  X
+                                </button>
+                              </div>
+                          )}
+                          {displayedLink && (
+                              <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                  <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
                                   <button 
-                                    onClick={() => {
-                                      setCapturedVideo(null);
-                                      // Aggiorna il conteggio dei caratteri qui
-                                      const remaining = calculateCharCount();
-                                      setWordsRemaining(remaining);
-                                      setPrivateWordsRemaining(calculatePrivateCharCount());
-                                    }} 
-                                    className="btn btn-sm btn-danger" 
-                                    style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il video
+                                      onClick={() => {
+                                          setDisplayedLink('');
+                                          setinputLIink('');
+                                          // Aggiorna il conteggio dei caratteri qui
+                                          const remaining = calculateCharCount();
+                                          setWordsRemaining(remaining);
+                                          setPrivateWordsRemaining(calculatePrivateCharCount());
+                                      }} 
+                                      className="btn btn-sm btn-danger" 
+                                      style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
                                   >
-                                    X
+                                      X
                                   </button>
-                                </div>
-                            )}
-                            {displayedLink && (
-                                <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
-                                    <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
-                                    <button 
-                                        onClick={() => {
-                                            setDisplayedLink('');
-                                            setinputLIink('');
-                                            // Aggiorna il conteggio dei caratteri qui
-                                            const remaining = calculateCharCount();
-                                            setWordsRemaining(remaining);
-                                            setPrivateWordsRemaining(calculatePrivateCharCount());
-                                        }} 
-                                        className="btn btn-sm btn-danger" 
-                                        style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                            )}
-                          </Col>
-                        </Row>
+                              </div>
+                          )}
+                        </Col>
+                      </Row>
                     </Row>
 
                     {/*Allegati*/}
@@ -1986,12 +1986,12 @@ function CreateMessage(props) {
 
                         {/* Caratteri */}
                         <div id = "charCounterContainer"
-                            style={{
-                              textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                              color: counterColor,
-                              marginRight: '20px',
-                            }}
-                          >
+                          style={{
+                            textAlign: 'left', // Allinea il testo a destra all'interno del contatore
+                            color: counterColor,
+                            marginRight: '20px',
+                          }}
+                        >
                           {wordsRemaining}
                         </div>
                       </Col>
@@ -2000,8 +2000,7 @@ function CreateMessage(props) {
                       <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
                         <Button onClick={controlChannel}>Invia</Button>
                       </Col>
-
-                      
+        
                     </Row>
                   </>
                 )}
@@ -2107,20 +2106,6 @@ function CreateMessage(props) {
                               }}
                             />
                           </Col>
-
-                          {/*Logica search + corpo*/}
-                          <Col>
-                            {/*Logica textarea*/}
-                            <div id = "charCounterContainer"
-                              style={{
-                                textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                                color: privateWordsRemaining <= 10 ? 'red' : 'white',
-                                marginTop: '90%',
-                              }}
-                            >
-                            {privateWordsRemaining}
-                            </div>
-                          </Col>
                         </Row>
                       </Col>
 
@@ -2158,7 +2143,7 @@ function CreateMessage(props) {
                               </Card>
                             )}
                             {capturedImage && (
-                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
+                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }} id = "photoAttachments">
                               <img src={capturedImage} alt="Scattata" width="100%" />
                               <button 
                                 onClick={() => {
@@ -2218,51 +2203,44 @@ function CreateMessage(props) {
 
                     </Row>
 
-                   {/*Loghi allegati / utenti selezionati*/}
-                    <Row className="mt-2" style = {{marginLeft: '6%'}} id = "textAreaContentContainer"> 
+                    {/*Utenti selezionati*/}
+                    <Row className="mt-2" style = {{marginLeft: '14%'}} id = "selectedUsersContainer">
+                      {selectedUsers.map(user => (
+                        <Row  key={user} style={{color: 'white', padding: '0px'}}>
+                            {user}
+                        </Row>
+                      ))}
+                    </Row>
 
-                        {/*Icona fotocamera*/}
-                        <Col className='col-1'>
-                            {/* Icona della fotocamera cliccabile */}
-                            <div 
-                                id="cameraLogo" 
-                                onClick={handleLogoClick}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <Camera color="white" size={25} />
-                            </div>
-                        </Col>
+                    {/*Allegati / utenti selezionati*/}
+                    <Row className="mt-2" style = {{marginLeft: '6%'}} id = "allegatiConainer"> 
 
-                        {/*Icona video*/}
-                        <Col className='col-1'>
-                          <div 
-                            id="videoLogo" 
-                            onClick={() => setShowVideoModal(true)}
-                            style={{ cursor: 'pointer' }}
-                          >
-                            {/* Sostituisci con l'icona appropriata per il video */}
+                      {/* Colonna per icone */}
+                      <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
+                          {/*Fotocamera*/}
+                          <div id="cameraLogo" onClick={handleLogoClick} style={{ cursor: 'pointer', marginRight: '20px' }}>
+                              <Camera color="white" size={25} />
+                          </div>
+
+                          {/*Video*/}
+                          <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px' }}>
                             <Camera color="white" size={25} />
                           </div>
-                        </Col>
 
-                        {/*Icona url*/}
-                        <Col className="col-1">
-                          <button
-                              onClick={() => setShowLinkModal(true)}
-                              style={{
-                                  backgroundColor: 'transparent',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  color: 'white'
-                              }}
+                          {/*Url*/}
+                          <button onClick={() => setShowLinkModal(true)} 
+                            style={{
+                                    backgroundColor: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    color: 'white',
+                                    marginRight: '20px'
+                            }}
                           >
-                          <LinkLogo size={25} color="white" />
+                            <LinkLogo size={25} color="white" />
                           </button>
-                        </Col>
 
-                        {/*Icona posizione*/}
-                        <Col className="col-1">
-                          {/* Pulsante per inviare la posizione */}
+                          {/*Icona posizione*/}
                           <button
                             onClick={() => {
                               if (!isMapVisible) {
@@ -2272,27 +2250,32 @@ function CreateMessage(props) {
                               }
                             }}
                             style={{
-                              backgroundColor: 'transparent',
-                              border: 'none',
-                              cursor: 'pointer',
+                                backgroundColor: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                marginRight: '20px',
                             }}
                           >
                             <Globe size={25} color="white" />
                           </button>
-                        </Col>
 
-                        {/*Invio*/}
-                        <Col className="col-1">
-                          <Button onClick={handleSendPrivateSqueal}>Invia</Button>
-                        </Col>
+                          {/*Caratteri rimanenti*/}
+                          <div id = "charCounterContainer"
+                            style={{
+                              textAlign: 'left', // Allinea il testo a destra all'interno del contatore
+                              color: privateWordsRemaining <= 10 ? 'red' : 'white',
+                              marginRight: '20px',
+                            }}
+                          >
+                            {privateWordsRemaining}
+                          </div>
+                      </Col>
 
-                        {/* Nome dell'utente selezionato accanto alle icone */}
-                        {selectedUsers.map(user => (
-                            <Col className="col-1" key={user} style={{color: 'white', padding: '0px'}}>
-                                {user}
-                            </Col>
-                        ))}
-                        
+                      {/* Colonna per il pulsante Invia, allineata a destra */}
+                      <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
+                        <Button onClick={handleSendPrivateSqueal}>Invia</Button>
+                      </Col>
+
                     </Row> 
                   </>
                 )}
@@ -2300,366 +2283,384 @@ function CreateMessage(props) {
                 {/*Scrivi Channel*/}
                 {(messageType === 'Channel' && squealOrChannelOption === 'Write') && (
                     <>
-                        {/*Textarea + seleziona Channel*/}
-                        <Row className="mt-2" style = {{marginLeft: '6%'}} id = "channelContentContainer">
-                          {/*Seleziona canale*/}
-                          <>
-                            <InputGroup className="mb-3">
-                                <FormControl
-                                    placeholder="Cerca canali..."
-                                    value={channelSearch}
-                                    onChange={handleChannelSearchChange}
-                                    style={{
-                                      backgroundColor: 'transparent',
-                                      borderColor: 'transparent',
-                                      width: '70%',
-                                      marginBottom: '2%',
-                                      marginTop: '2%',
-                                      padding: '0px',
-                                      border: 'none',
-                                      outline: 'none',
-                                      boxShadow: 'none',
-                                      color: 'white'
-                                    }}
-                                />
-                            </InputGroup>
-
-                            {/* Lista a tendina dei suggerimenti dei canali */}
-                            {suggestedChannels.length > 0 && (
-                                <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto'}}>
-                                    {suggestedChannels.map(channel => (
-                                        <li 
-                                            key={channel._id} 
-                                            style={{padding: '10px', cursor: 'pointer'}}
-                                            onClick={() => {
-                                              handleChannelSelection(channel); 
-                                              setChannelSelected(channel)
-                                            }
-                                          }
-                                        >
-                                            {channel.name}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                          </>
-
-                          {/*Default message*/}
-                          <>
-                            {/* Selezione deafault message */}
-                            {channelSelected && (
-                              <>
-                              <div style={{display: "flex", flexDirection: "row"}}>
-                                <input
-                                  type="text"
-                                  placeholder="Cerca messaggi di default..."
-                                  value={defaultMessageSearch.request}
-                                  disabled={isDefaultMessageValid}
-                                  onChange={(e) => setDefaultMessageSearch(e.target.value)}
+                      {/*Textarea + seleziona Channel*/}
+                      <Row className="mt-2" style = {{marginLeft: '6%'}} id = "channelContentContainer">
+                        {/*Seleziona canale*/}
+                        <>
+                          <InputGroup className="mb-3">
+                              <FormControl
+                                  placeholder="Cerca canali..."
+                                  value={channelSearch}
+                                  onChange={handleChannelSearchChange}
                                   style={{
                                     backgroundColor: 'transparent',
-                                    borderColor: 'gray',
-                                    color: 'white',
-                                    width: '80%',
-                                  }}
-                                />
-                                {isDefaultMessageValid && (
-                                  <button
-                                    onClick={() => cleanDefaultMessageSelection()}
-                                    style={{
-                                      cursor: 'pointer',
-                                      background: 'none',
-                                      border: 'none',
-                                      color: 'white',
-                                    }}
-                                  >
-                                    X
-                                  </button>
-                                )}
-                              </div>
-                              {suggestedDefaultMessages.length > 0 && (
-                                <ul style={{ listStyleType: 'none', padding: 0 }}>
-                                  {suggestedDefaultMessages.map((message, index) => (
-                                    <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
-                                      {message.request} - {message.body.text}
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                              </>
-                            )}
-
-
-                          </>
-
-                          {/*Textarea*/}
-                          {(!isDefaultMessageValid) &&
-                            <Col>
-                              <Row>
-                              <Col xs={12} md={10}>
-                                <textarea
-                                  placeholder='A cosa stai pensando????'
-                                  value={squealChatTextareaValue}
-                                  onChange={(e) => {
-                                    handleSquealChatTextareaChange(e);
-                                    setIsTextModified(true);
-                                  }}
-                                  onBlur={() => {
-                                    if (squealChatTextareaValue.trim() === '') {
-                                      setIsTextModified(false);
-                                    }
-                                  }}
-                                  maxLength={maxChar}
-                                  style={{
-                                    width: '100%',
-                                    resize: 'none', // Impedisce il ridimensionamento verticale
-                                    height: '100px', // Imposta l'altezza fissa a una riga di testo
-                                    overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
-                                    border: 'none', // Rimuove il bordo
-                                    scrollbarWidth: 'none', // Nasconde le frecce verticali
-                                    backgroundColor: 'transparent',
-                                    color: 'white',
-                                    fontSize: '16px',
+                                    borderColor: 'transparent',
+                                    width: '70%',
+                                    marginBottom: '2%',
+                                    marginTop: '2%',
+                                    padding: '0px',
+                                    border: 'none',
                                     outline: 'none',
+                                    boxShadow: 'none',
+                                    color: 'white'
                                   }}
-                                  rows={1} // Imposta il numero di righe iniziali a 1
-                                  onKeyDown={(e) => {
-                                    if (wordsRemaining > 0 && e.key === 'Enter') {
-                                        e.preventDefault();
-                                    } else if (wordsRemaining <= 0 && e.key !== 'Backspace' && e.key !== 'Delete' && e.key === 'ArrowLeft' && e.key === 'ArrowRight' && e.key === 'ArrowDown' && e.key === 'ArrowUp') {
-                                        e.preventDefault();
-                                    } 
-                                    if (e.key === 'Enter') {
-                                        if (squealChatTextareaValue.trim() === '') {
-                                            setIsTextModified(false);
-                                        } else {
-                                            handleSendMessage();
-                                        }
-                                    }
-                                  }}
-                                  onFocus={() => {
-                                    if (!isTextModified) {
-                                      setIsTextModified(true);
-                                    }
-                                  }}
-                                />
-                                </Col>
-                                <Col>
-                                <div id = "charCounterContainer"
-                                style={{
-                                  textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                                  color: counterColor,
-                                  marginTop: '90%',
-                                }}
-                              >
-                                {wordsRemaining}
-                              </div>
-                              </Col>
-                              </Row>
-                            </Col>
-                          }
+                              />
+                          </InputGroup>
 
-                          {/*Logica allegati*/}
-                          <Row>
-                            <Col xs={12} md={10}>
-                              {position && isMapVisible &&(
-                                <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
-                                  <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
-                                    <TileLayer
-                                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    />
-                                    <Marker position={position} icon={markerIcon}>
-                                      <Popup>Sei qui!</Popup>
-                                    </Marker>
-                                  </MapContainer>
-                                  <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
-                                  <Button variant="danger" 
-                                    onClick={() => {
-                                      setIsMapVisible(false)
-                                      setPosition(null); 
-                                      const remaining = calculateCharCount();
-                                      setWordsRemaining(remaining);
-                                    }}
-                                    >X
-                                  </Button>
-                                  </div>
-                                  <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
-                                  <Button variant="light" onClick={() => {
-                                    const url = `https://www.google.com/maps/search/?api=1&query=${position[0]},${position[1]}`;
-                                    window.open(url, '_blank');
-                                  }}>Open Map</Button>
-                                  </div>
-                                </Card>
+                          {/* Lista a tendina dei suggerimenti dei canali */}
+                          {suggestedChannels.length > 0 && (
+                              <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto'}}>
+                                  {suggestedChannels.map(channel => (
+                                      <li 
+                                          key={channel._id} 
+                                          style={{padding: '10px', cursor: 'pointer'}}
+                                          onClick={() => {
+                                            handleChannelSelection(channel); 
+                                            setChannelSelected(channel)
+                                          }
+                                        }
+                                      >
+                                          {channel.name}
+                                      </li>
+                                  ))}
+                              </ul>
+                          )}
+                        </>
+
+                        {/*Default message*/}
+                        <>
+                          {/* Selezione deafault message */}
+                          {channelSelected && (
+                            <>
+                            <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
+                              <input
+                                type="text"
+                                placeholder="Cerca messaggi di default..."
+                                value={defaultMessageSearch.request}
+                                disabled={isDefaultMessageValid}
+                                onChange={(e) => setDefaultMessageSearch(e.target.value)}
+                                style={{
+                                  backgroundColor: 'transparent',
+                                  borderColor: 'gray',
+                                  color: 'white',
+                                  width: '80%',
+                                }}
+                              />
+                              {isDefaultMessageValid && (
+                                <button
+                                  onClick={() => cleanDefaultMessageSelection()}
+                                  style={{
+                                    cursor: 'pointer',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'white',
+                                  }}
+                                >
+                                  X
+                                </button>
                               )}
-                              {capturedImage && (
-                                <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
-                                <img src={capturedImage} alt="Scattata" width="100%" />
-                                <button 
+                            </div>
+                            {suggestedDefaultMessages.length > 0 && (
+                              <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                {suggestedDefaultMessages.map((message, index) => (
+                                  <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
+                                    {message.request} - {message.body.text}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                            </>
+                          )}
+
+
+                        </>
+
+                        {/*Textarea*/}
+                        {(!isDefaultMessageValid) &&
+                          <Col>
+                            <Row>
+                            <Col xs={12} md={10}>
+                              <textarea
+                                placeholder='A cosa stai pensando????'
+                                value={squealChatTextareaValue}
+                                onChange={(e) => {
+                                  handleSquealChatTextareaChange(e);
+                                  setIsTextModified(true);
+                                }}
+                                onBlur={() => {
+                                  if (squealChatTextareaValue.trim() === '') {
+                                    setIsTextModified(false);
+                                  }
+                                }}
+                                maxLength={maxChar}
+                                style={{
+                                  width: '100%',
+                                  resize: 'none', // Impedisce il ridimensionamento verticale
+                                  height: '100px', // Imposta l'altezza fissa a una riga di testo
+                                  overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
+                                  border: 'none', // Rimuove il bordo
+                                  scrollbarWidth: 'none', // Nasconde le frecce verticali
+                                  backgroundColor: 'transparent',
+                                  color: 'white',
+                                  fontSize: '16px',
+                                  outline: 'none',
+                                }}
+                                rows={1} // Imposta il numero di righe iniziali a 1
+                                onKeyDown={(e) => {
+                                  if (wordsRemaining > 0 && e.key === 'Enter') {
+                                      e.preventDefault();
+                                  } else if (wordsRemaining <= 0 && e.key !== 'Backspace' && e.key !== 'Delete' && e.key === 'ArrowLeft' && e.key === 'ArrowRight' && e.key === 'ArrowDown' && e.key === 'ArrowUp') {
+                                      e.preventDefault();
+                                  } 
+                                  if (e.key === 'Enter') {
+                                      if (squealChatTextareaValue.trim() === '') {
+                                          setIsTextModified(false);
+                                      } else {
+                                          handleSendMessage();
+                                      }
+                                  }
+                                }}
+                                onFocus={() => {
+                                  if (!isTextModified) {
+                                    setIsTextModified(true);
+                                  }
+                                }}
+                              />
+                              </Col>
+                            </Row>
+                          </Col>
+                        }
+
+                        {/*Logica allegati*/}
+                        <Row>
+                          <Col xs={12} md={10}>
+                            {position && isMapVisible &&(
+                              <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
+                                <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+                                  <TileLayer
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                  />
+                                  <Marker position={position} icon={markerIcon}>
+                                    <Popup>Sei qui!</Popup>
+                                  </Marker>
+                                </MapContainer>
+                                <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
+                                <Button variant="danger" 
                                   onClick={() => {
-                                    setCapturedImage(null)
+                                    setIsMapVisible(false)
+                                    setPosition(null); 
                                     const remaining = calculateCharCount();
                                     setWordsRemaining(remaining);
+                                  }}
+                                  >X
+                                </Button>
+                                </div>
+                                <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
+                                <Button variant="light" onClick={() => {
+                                  const url = `https://www.google.com/maps/search/?api=1&query=${position[0]},${position[1]}`;
+                                  window.open(url, '_blank');
+                                }}>Open Map</Button>
+                                </div>
+                              </Card>
+                            )}
+                            {capturedImage && (
+                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }} id = "photoAttachments">
+                              <img src={capturedImage} alt="Scattata" width="100%" />
+                              <button 
+                                onClick={() => {
+                                  setCapturedImage(null)
+                                  const remaining = calculateCharCount();
+                                  setWordsRemaining(remaining);
+                                }} 
+                                className="btn btn-sm btn-danger" 
+                                style={{ position: 'absolute', top: '10px', right: '10px' }}
+                              >
+                                X
+                              </button>
+                              </div>
+                            )}
+                            {capturedVideo && (
+                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
+                                <video width="100%" controls>
+                                  <source src={capturedVideo} type="video/mp4" />
+                                  Il tuo browser non supporta il tag video.
+                                </video>
+                                <button 
+                                  onClick={() => {
+                                    setCapturedVideo(null);
+                                    // Aggiungi qui qualsiasi altra logica necessaria quando il video viene rimosso
                                   }} 
                                   className="btn btn-sm btn-danger" 
                                   style={{ position: 'absolute', top: '10px', right: '10px' }}
                                 >
                                   X
                                 </button>
-                                </div>
-                              )}
-                              {capturedVideo && (
-                                <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
-                                  <video width="100%" controls>
-                                    <source src={capturedVideo} type="video/mp4" />
-                                    Il tuo browser non supporta il tag video.
-                                  </video>
-                                  <button 
-                                    onClick={() => {
-                                      setCapturedVideo(null);
-                                      // Aggiungi qui qualsiasi altra logica necessaria quando il video viene rimosso
-                                    }} 
-                                    className="btn btn-sm btn-danger" 
-                                    style={{ position: 'absolute', top: '10px', right: '10px' }}
-                                  >
-                                    X
-                                  </button>
-                                </div>
-                              )}
-                              {displayedLink && (
-                                <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
-                                    <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
-                                    <button 
-                                        onClick={() => {
-                                            setDisplayedLink('');
-                                            setinputLIink('');
-                                            // Aggiorna il conteggio dei caratteri qui
-                                            const remaining = calculateCharCount();
-                                            setWordsRemaining(remaining);
-                                            setPrivateWordsRemaining(calculatePrivateCharCount());
-                                        }} 
-                                        className="btn btn-sm btn-danger" 
-                                        style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                              )}
-                            </Col>
-                          </Row>
-                        </Row>
-
-                        
-                        {/*Allegati*/}
-                        {(!isDefaultMessageValid) &&
-                          <Row className="mt-2" style = {{marginLeft: '6%'}} id = "textAreaContentContainer"> 
-                          
-                            {/*Fotocamera*/}
-                              <Col className='col-1'>
-                                  <div 
-                                      id="cameraLogo" 
-                                      onClick={handleLogoClick}
-                                      style={{ cursor: 'pointer' }}
-                                  >
-                                      <Camera color="white" size={25} />
-                                  </div>
-                              </Col>
-                            
-
-                            {/*Icona video*/}
-                            <Col className='col-1'>
-                              <div 
-                                id="videoLogo" 
-                                onClick={() => setShowVideoModal(true)}
-                                style={{ cursor: 'pointer' }}
-                              >
-                                {/* Sostituisci con l'icona appropriata per il video */}
-                                <Camera color="white" size={25} />
                               </div>
-                            </Col>
+                            )}
+                            {displayedLink && (
+                              <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                  <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
+                                  <button 
+                                      onClick={() => {
+                                          setDisplayedLink('');
+                                          setinputLIink('');
+                                          // Aggiorna il conteggio dei caratteri qui
+                                          const remaining = calculateCharCount();
+                                          setWordsRemaining(remaining);
+                                          setPrivateWordsRemaining(calculatePrivateCharCount());
+                                      }} 
+                                      className="btn btn-sm btn-danger" 
+                                      style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                  >
+                                      X
+                                  </button>
+                              </div>
+                            )}
+                          </Col>
+                        </Row>
+                      </Row>
 
-                            {/*URL*/}
-                            <Col className="col-1">
-                              <button
-                                  onClick={() => setShowLinkModal(true)}
-                                  style={{
-                                      backgroundColor: 'transparent',
-                                      border: 'none',
-                                      cursor: 'pointer',
-                                      color: 'white'
-                                  }}
-                              >
-                              <LinkLogo size={25} color="white" />
-                              </button>
-                            </Col>
-                            
-                            {/*Posizione*/}
-                            <Col className="col-1">
-                              {/* Pulsante per inviare la posizione */}
-                              <button
-                                onClick={() => {
-                                  if (!isMapVisible) {
-                                    setIsMapVisible(true);
-                                  } else {
-                                    handleLocationButtonClick();
-                                  }
-                                }}
-                                style={{
+                      
+                      {/*Allegati*/}
+                      {(!isDefaultMessageValid) &&
+                        <Row className="mt-2" style = {{marginLeft: '6%'}} id = "textAreaContentContainer"> 
+                          {/* Colonna per icone */}
+                          <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
+                            {/*Fotocamera*/}
+                            <div 
+                                id="cameraLogo" 
+                                onClick={handleLogoClick}
+                                style={{ cursor: 'pointer', marginRight: '20px'}}
+                            >
+                              <Camera color="white" size={25} />
+                            </div>
+                    
+                            {/*Video*/}
+                            <div 
+                              id="videoLogo" 
+                                onClick={() => setShowVideoModal(true)}
+                              style={{ cursor: 'pointer', marginRight: '20px'}}
+                            >
+                              <Camera color="white" size={25} />
+                            </div>
+
+                            {/*Url*/}
+                            <button
+                              onClick={() => setShowLinkModal(true)}
+                              style={{
                                   backgroundColor: 'transparent',
                                   border: 'none',
                                   cursor: 'pointer',
-                                }}
-                              >
-                                <Globe size={25} color="white" />
-                              </button>
-                            </Col>  
+                                  color: 'white',
+                                  marginRight: '20px'
+                              }}
+                            >
+                              <LinkLogo size={25} color="white" />
+                            </button>
+                            
+                            {/*Posizione*/}
+                            <button
+                              onClick={() => {
+                                if (!isMapVisible) {
+                                  setIsMapVisible(true);
+                                } else {
+                                  handleLocationButtonClick();
+                                }
+                              }}
+                              style={{
+                                backgroundColor: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                marginRight: '20px'
+                              }}
+                            >
+                              <Globe size={25} color="white" />
+                            </button>
 
-                            {/*Invio*/}
-                            <Col className="col-1">
-                              <Button onClick={handleSendChannelSqueal}>Invia</Button>
-                            </Col> 
-                          </Row>
-                        }
-                        {isDefaultMessageValid &&
-                          <Col className="col-1">
-                            <Button onClick={processDefaultMessageType}>Create</Button>
-                          </Col> 
-                        }
+                            {/*Caratteri rimanenti*/}
+                            <div id = "charCounterContainer"
+                              style={{
+                                textAlign: 'left', // Allinea il testo a destra all'interno del contatore
+                                color: counterColor,
+                                marginRight: '20px',
+                              }}
+                            >
+                              {wordsRemaining}
+                            </div>
+                          </Col>
+
+                          {/* Colonna per il pulsante Invia, allineata a destra */}
+                          <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
+                            <Button onClick={handleSendChannelSqueal}>Invia</Button>
+                          </Col>
+                        </Row>
+                      }
+                      {isDefaultMessageValid &&
+                        <Col className="col-1">
+                          <Button onClick={processDefaultMessageType}>Create</Button>
+                        </Col> 
+                      }
                     </>
                 )}
 
                 {/*Crea canale*/}
                 {(messageType === 'Channel' && squealOrChannelOption === 'Create') && (
-                  <Form style = {{marginTop:'4%', marginLeft: '8%'}}>
+                  <Form style = {{marginTop:'4%'}}>
                     <Form.Group>
                       <Col>
                         {/*Nome canale + silenziabile*/}
-                        <Row>
-                          <Form.Control type="name" placeholder="Channel name" value={channelName} onChange={e => setChannelName(e.target.value)}style = {{width: '50%'}}/>
+                        <Row style={{justifyContent: 'center'}}>
+                          <Form.Control 
+                            type="name" 
+                            placeholder="Channel name" 
+                            value={channelName} 
+                            onChange={e => setChannelName(e.target.value)}
+                            style = {{
+                              width: '60%',
+                              borderRadius: '20px',
+                              border: '1px solid #ced4da',
+                              padding: '10px 15px',
+                              fontSize: '16px',
+                              transition: 'border-color .15s ease-in-out,box-shadow .15s ease-in-out',
+                            }} className="my-formCostum-input"/>
+                        </Row>
+
+                        {/*Silenziabile*/}
+                        <Row style = {{marginTop:'4%', justifyContent: 'center'}}>
                           <Form.Check
-                            type="switch"
-                            id="custom-switch"
-                            label="Silenziabile"
-                            style = {{width: 'fit-content', marginLeft: '4%'}}
-                            checked={isSilenceable}
-                            onChange={e => setIsSilenceable(e.target.checked)}  
-                          />
+                              type="switch"
+                              id="custom-switch"
+                              label="Silenziabile"
+                              style = {{width: 'fit-content', marginLeft: '4%'}}
+                              checked={isSilenceable}
+                              onChange={e => setIsSilenceable(e.target.checked)}  
+                            />
                         </Row>
 
                         {/*Descrizione*/}
-                        <Row style = {{marginTop:'4%'}}>
-                          <Form.Control type="description" placeholder="Descrizione" value={channelDescription} onChange={e => setChannelDescription(e.target.value)} style = {{width: '80%'}}/>
+                        <Row style = {{marginTop:'4%', justifyContent: 'center'}}>
+                          <Form.Control as="textarea" placeholder="Descrizione" value={channelDescription} onChange={e => setChannelDescription(e.target.value)} rows={4} style = {{width: '90%'}}/>
                         </Row>
 
                         {/*Aggiungi persone*/}
-                        <Row style = {{marginTop:'4%'}}>
+                        <Row style = {{marginTop:'4%', justifyContent: 'center'}}>
                           <input
                             type="text"
                             placeholder="Cerca Persone"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             onFocus={() => setShowDropdown(true)}
-                            style={{ width: '60%', border: '0px', margin: '0px'}}
+                            style={{ 
+                              width: '60%',
+                              borderRadius: '20px',
+                              border: '1px solid #ced4da',
+                              padding: '10px 15px',
+                              fontSize: '16px',
+                              outline: 'none',
+                              transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
+                              marginBottom: '10px', // Aggiunto per dare spazio al dropdown
+                            }} className="my-inputCustom-input"
                           />
                           {showDropdown && (
                             <>

@@ -36,10 +36,58 @@
     padding-left: 20px !important;
     }
 
+    /*Sezione channel*/
+    .my-formCostum-input:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .my-formCostum-input {
+        border-color: #007bff;
+    }
+
+    .my-inputCustom-input:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .my-inputCustom-input:hover {
+        border-color: #007bff;
+    }
+
+    @media (max-width: 2560px) {
+        #cameraModal{
+            margin-left: 50%;
+        }
+
+        #selectedUsersContainer{
+            margin-left: 8% !important;
+        }
+    }
+
+    @media (max-width: 1440px) {
+        #cameraModal{
+            margin-left: 42%;
+        }
+
+        #selectedUsersContainer{
+            margin-left: 10% !important;
+        }
+    }
+
     @media (max-width: 1024px) {
         /* #card-container-create-messagge-home{
             left: 15% !important;
         } */
+
+        #cameraModal{
+            margin-left: 36%;
+        }
+
+        #selectedUsersContainer{
+            margin-left: 12% !important;
+        }
     }
     
     @media (max-width: 768px) {
@@ -52,6 +100,14 @@
             left: 10% !important;
             width: 90% !important;
         } 
+
+        #cameraModal{
+            margin-left: 22%;
+        }
+
+        #selectedUsersContainer{
+            margin-left: 13% !important;
+        }
     }
 
     @media (max-width: 626px) {
@@ -85,6 +141,19 @@
         #sendMessage{
             margin-top: 10% !important;
         }
+
+        #cameraModal{
+            margin: 8%;
+        }
+
+        #photoAttachments{
+            width: 200px !important;
+            height: 200px !important;
+        }
+
+        #selectedUsersContainer{
+            margin-left: 14% !important;
+        }
     }
 
     @media (max-width: 401px) {
@@ -111,6 +180,14 @@
         #textAreaContentContainer{
             margin-left: 0% !important;
         }
+
+        #selectedUsersContainer{
+            margin-left: 10% !important;
+        }
+
+        #allegatiConainer{
+            margin-left: 0% !important;
+        }
     }
 
     @media (max-width: 321px) {
@@ -120,6 +197,9 @@
 
         #allegatiConainer2{
             padding: 0% !important;
+        }
+        #selectedUsersContainer{
+            margin-left: 10% !important;
         }
     }
   
