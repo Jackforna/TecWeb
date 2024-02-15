@@ -1132,7 +1132,7 @@ function CreateMessage(props) {
     setSuggestedChannels([]); // Svuota i canali suggeriti
   };
 
-  const hanleUpdateChannelPosts = async (channelSelectedToUpdate) => {
+  const handleUpdateChannelPosts = async (channelSelectedToUpdate) => {
     const channelDataUpdatePost = {
       answers: [],
       body: {
@@ -1204,7 +1204,7 @@ function CreateMessage(props) {
     try {
       const resultAddSqueal = await addSqueal(squealData);
       if (true){
-        await hanleUpdateChannelPosts(channelSelected);
+        await handleUpdateChannelPosts(channelSelected);
       } else {
         console.log("Non ci entra")
       }

@@ -106,6 +106,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   allkeywordsprint: any[] = [];
   listOfUsers: any[] = []; // Sostituisci any con un tipo appropriato
   existedChannel: boolean = false;
+  channelSelected: any = null;
 
   //Gestione pop up caratteri
   showPurchasePopup = false;
@@ -284,7 +285,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
         remainingChars = 0;
       }
 
-      if (remainingChars < 10) {
+      if (remainingChars === 10) {
         this.showPurchasePopup = true;
       }
   
@@ -921,7 +922,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
           });
         }
         this.resetForm();
-        // window.location.reload();
+        window.location.reload();
       },
       error: (error) => {
         console.error('Error adding squeal', error);
@@ -956,7 +957,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.databaseService.updateChannel(channelToUpdate._id, channelDataUpdatePost).subscribe({
       next: (response) => {
         console.log('Canale aggiornato con successo:', response);
-        
+
       },
       error: (error) => {
         console.error('Errore durante l\'aggiornamento del canale:', error);
@@ -1076,8 +1077,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
   onChannelInput(event: any) {
     const inputValue = event.target.value;
-    this.isChannelNameValid = this.allChannels.some(channel => channel.name === inputValue);
-    this.suggestedChannels = this.allChannels
+    this.isChannelNameValid = this.allChannelsprint.some(channel => channel.name === inputValue);
+    this.suggestedChannels = this.allChannelsprint
       .filter(channel => channel.name.includes(inputValue))
       .slice(0, 3); // Prende solo i primi 3 canali corrispondenti
   }
@@ -1092,6 +1093,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
   selectSuggestedChannel(channel: Channel): void {
     this.channelControl.setValue(channel.name);
+    this.channelSelected = channel;
     this.suggestedChannels = [];
     this.validateChannelName(); // Convalida il nome del canale
     this.changeDetectorRef.markForCheck(); // Forza il rilevamento dei cambiamenti
@@ -1170,7 +1172,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     */
   }
 
-  /*Creazione squeal pubblico*/
+  /*Vecchia funzione mantenere per test
   createPublicSqueal(): void {
     // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
     const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
@@ -1260,6 +1262,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       }
     });
   }
+  */
 
   /*Reset della card*/
   resetForm() {
@@ -1337,6 +1340,40 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     });
   }
 
+  updateChannlePosts = () => {
+    const channelDataUpdatePost = {
+      answer: [],
+      body: {
+        text: this.userText,
+        link: this.sentLink || '',
+        photo: this.sentImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
+        video: this.sentVideoUrl || '', 
+      },
+      category: null,
+      date: new Date(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      impressions: 0,
+      neg_reactions: 0,
+      pos_reactions: 0,
+      photoprofile: this.datiUtente.photoprofile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      receivers: this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
+      sender: this.datiUtente.nickname,
+      typeSender: 'channels', //Modificare se CHANNELS
+      usersReactions: [],
+      usersViewed: [],
+    };
+    this.databaseService.updateChannel(this.channelSelected._id, channelDataUpdatePost).subscribe({
+      next: (response) => {
+        console.log('Canale aggiornato con successo:', response);
+      },
+      error: (error) => {
+        console.error('Errore durante l\'aggiornamento del canale:', error);
+      }
+    });
+  };
+
   createChannelSqueal(): void {
     // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
     this.isSubmitting = true;
@@ -1349,6 +1386,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     const seconds = currentDate.getSeconds();
     const hashtag = this.hashtag;
     const channel = this.channelControl.value;
+    const receivers = this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`);
   
     // Creazione dell'oggetto squeal
     const squealData = {
@@ -1371,7 +1409,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       answers: [],
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: [], // Aggiungi logica se ci sono destinatari specifici
+      receivers: receivers, // Aggiungi logica se ci sono destinatari specifici
       channel: channel, // Aggiungi logica se il squeal è associato a un canale
       impressions: 0
     };
@@ -1379,6 +1417,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // Chiamata al servizio per aggiungere il squeal
     this.databaseService.addSqueal(squealData).subscribe({
       next: (response) => {
+        this.updateChannlePosts();
         console.log('Squeal added successfully', response);
         const charsUsed = this.userText.length + this.calculateAttachmentChars();
         const userId = this.datiUtente ? this.datiUtente._id : null;
@@ -1420,7 +1459,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
           });
         }
         this.resetForm();
-        window.location.reload();
+        // window.location.reload();
         // this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
       },
       error: (error) => {
@@ -1441,7 +1480,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
 
   checkForCharacterLimit() {
-    const sogliaMinima = 10;
+    const sogliaMinima = 1;
     if (this.remainingChars < sogliaMinima) {
       this.showPurchasePopup = true;
     } else {

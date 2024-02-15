@@ -588,6 +588,10 @@ margin-left: 4%;
   .link-modal{
     left: 0px !important;
   }
+
+  .remainingChars-modal{
+    left: 0px !important;
+  }
 }
 
 
