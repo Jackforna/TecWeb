@@ -86,6 +86,7 @@ export class DatabaseService {
     return this.http.post('http://localhost:8080/add-channel', channelData);
   }
 
+
   getAllChannels(): Observable<any> {
     return this.http.get('/get-listChannels');
   }
@@ -144,6 +145,11 @@ export class DatabaseService {
 
   uploadVideo(video: any): Observable<any> {
     return this.http.post(`http://localhost:8080/upload-video`, video);
+  }
+
+  updateChannel(id: string, postToAdd: any): Observable<any> {
+    const url = `http://localhost:8080/update-channel/${id}`; // Sostituisci `tuoEndpoint` con l'URL effettivo del tuo backend
+    return this.http.put(url, { postToAdd });
   }
   
 }

@@ -99,6 +99,13 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   suggestedChannels: Channel[] = [];
   channelName: string = '';
   isChannelNameValid: boolean = false;
+  allchannels: any[] = [];
+  allCHANNELS: any[] = [];
+  allkeywords: any[] = [];
+  allChannelsprint: any[] = [];
+  allkeywordsprint: any[] = [];
+  listOfUsers: any[] = []; // Sostituisci any con un tipo appropriato
+  existedChannel: boolean = false;
 
   //Gestione pop up caratteri
   showPurchasePopup = false;
@@ -169,11 +176,13 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       map(value => value ? this._filter(value) : [])
     );
 
+    this.loadChannels();
+
     /*Test only*/
     // this.updateSquealPositive();
     // this.updateSquealNegative();
-    this.deleteAllSqueals();
-    this.deleteAllChannels();
+    // this.deleteAllSqueals();
+    // this.deleteAllChannels();
     // this.deleteUser('6586c8e5b2ca7d845782751f')
     // this.deleteUser('6586c9c3733a4e33a55d91b7')
     // this.deleteUser('6596f39d4414dae1dd472cb0')
@@ -182,9 +191,63 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // this.getAllChannels();
   }
   
-
   ngAfterViewInit() {
 
+  }
+
+/*********************************************************************************COMUNI******************************************************************************/
+  /*Ottieni canali per tipo*/
+  loadChannels(): void {
+    this.databaseService.getAllChannels().subscribe({
+      next: (channels) => {
+        channels.forEach((channel: any) => {
+          switch (channel.type) {
+            case '&':
+              this.allchannels.push(channel);
+              break;
+            case '$':
+              this.allCHANNELS.push(channel);
+              break;
+            case '#':
+              this.allkeywords.push(channel);
+              break;
+            default:
+              // gestire eventuali altri casi o errori
+              break;
+          }
+        });
+        this.updatePrintLists();
+      },
+      error: (error) => {
+        console.error('Errore durante il recupero dei canali:', error);
+      }
+    });
+  }
+
+  updatePrintLists(): void {
+    this.allChannelsprint = [];
+    this.allkeywordsprint = [];
+
+    this.allchannels.forEach(channel => {
+      if (channel.list_users.some((user: { nickname: any; }) => user.nickname === this.datiUtente.nickname)) {
+        this.allChannelsprint.push(channel);
+        console.log('Canale:', channel);
+      }
+    });
+
+    this.allCHANNELS.forEach(channel => {
+      if (channel.list_users.some((user: { nickname: any; type: string; }) => user.nickname === this.datiUtente.nickname && (user.type === 'Modifier' || user.type === 'Creator'))) {
+        this.allChannelsprint.push(channel);
+        console.log('Canale:', channel);
+      }
+    });
+
+    this.allkeywords.forEach(keyword => {
+      if (keyword.list_users.some((user: { nickname: any; }) => user.nickname === this.datiUtente.nickname)) {
+        this.allkeywordsprint.push(keyword);
+        console.log('Keyword:', keyword);
+      }
+    });
   }
 
   /*Aggiornamnto caratteri rimanenti*/
@@ -228,7 +291,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       this.remainingChars = remainingChars;
     }
   }
-  
 
   updateRemainingChars() {
     const attachmentChars = this.calculateAttachmentChars();
@@ -509,8 +571,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.showVideoModal = false;
   }
 
-  
-
 
   /*Modale link*/
   openLinkDialog(): void {
@@ -757,6 +817,218 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // Aggiorna il valore dell'input con la stringa modificata
     event.target.value = value;
   }
+
+  controlHashtagExist() {
+    const foundChannel = this.allkeywordsprint.find(channel => channel.name === this.hashtag);
+
+    if (foundChannel) {
+      console.log('Hashtag esistente:', foundChannel);
+      this.listOfUsers = foundChannel.list_users;
+      this.handleSendPublicSqueal(foundChannel, true);
+    } else {
+      console.log('Hashtag non esistente.');
+      this.listOfUsers = [this.datiUtente.nickname];
+      this.handleSendPublicSqueal(foundChannel, false);
+    }
+  }
+
+  handleSendPublicSqueal(channelToUpdate: any, flag: boolean): void {
+    // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
+    const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
+    const typeSender = 'keywords'; // O altro valore a seconda della logica
+    const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
+    const currentDate = new Date();
+    const date = currentDate.toLocaleDateString();
+    const hour = currentDate.getHours();
+    const seconds = currentDate.getSeconds();
+    const hashtag = this.hashtag;
+  
+    // Creazione dell'oggetto squeal
+    const squealData = {
+      sender: sender,
+      typeSender: typeSender,
+      body: {
+        text: this.userText,
+        link: this.sentLink || '',
+        photo: this.sentImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
+        video: this.sentVideoUrl || '',
+      },
+      photoprofile: photoProfile,
+      date: date,
+      hour: hour,
+      seconds: seconds,
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      answers: [],
+      usersViewed: [],
+      category: '', // Aggiungi logica per determinare la categoria se necessario
+      receivers: [this.listOfUsers], // Aggiungi logica se ci sono destinatari specifici
+      channel: hashtag, // Aggiungi logica se il squeal è associato a un canale
+      impressions: 0
+    };
+  
+    // Chiamata al servizio per aggiungere il squeal
+    this.databaseService.addSqueal(squealData).subscribe({
+      next: (response) => {
+        if (flag == true) {
+          console.log("Aggiornamento del canale esistente");
+          this.handleUpdateHashtagChannel(channelToUpdate);
+        } else {
+          console.log("Creazione del canale");
+          this.handleCreateHashtagChannel(channelToUpdate);
+        }
+        console.log('Squeal added successfully', response);
+        // Calcola i caratteri utilizzati (inclusi gli allegati)
+        const charsUsed = this.userText.length + this.calculateAttachmentChars();
+        const userId = this.datiUtente ? this.datiUtente._id : null;
+        console.log('Caratteri utilizzati:', charsUsed);
+        console.log('ID utente:', userId);
+
+        // Assicurati che userId sia valido
+        if (userId) {
+          const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed);
+          const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed);
+          const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed);
+
+          const updateData = {
+            char_d: newCharLeftDaily,
+            char_w: newCharLeftWeekly,
+            char_m: newCharLeftMonthly
+          };
+    
+          // Aggiorna i dati dell'utente nel backend
+          this.databaseService.updateUserProfile(userId, updateData).subscribe({
+            next: (updateResponse) => {
+              console.log('Risposta del server:', updateResponse);
+    
+              // Aggiorna i valori locali
+              this.charLeftUser = newCharLeftDaily;
+              this.charLeftUserWeekly = newCharLeftWeekly;
+              this.charLeftUserMonthly = newCharLeftMonthly;
+    
+              // Aggiorna il localStorage
+              const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
+              userData.char_d = newCharLeftDaily;
+              userData.char_w = newCharLeftWeekly;
+              userData.char_m = newCharLeftMonthly;
+              localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+            },
+            error: (updateError) => {
+              console.error("Errore durante l'aggiornamento dei dati utente:", updateError);
+            }
+          });
+        }
+        this.resetForm();
+        // window.location.reload();
+      },
+      error: (error) => {
+        console.error('Error adding squeal', error);
+      }
+    });
+  };
+
+  handleUpdateHashtagChannel(channelToUpdate: any): void {
+    const channelDataUpdatePost = {
+      answer: [],
+      body: {
+        text: this.userText,
+        link: this.sentLink || '',
+        photo: this.sentImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
+        video: this.sentVideoUrl || '',
+      },
+      category: null,
+      date: new Date(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      impressions: 0,
+      neg_reactions: 0,
+      pos_reactions: 0,
+      photoprofile: this.datiUtente.photoprofile,
+      receivers: channelToUpdate.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
+      sender: this.datiUtente.nickname,
+      typeSender: 'keywords',
+      usersReactions: [],
+      usersViewed: [],
+    };
+    this.databaseService.updateChannel(channelToUpdate._id, channelDataUpdatePost).subscribe({
+      next: (response) => {
+        console.log('Canale aggiornato con successo:', response);
+        
+      },
+      error: (error) => {
+        console.error('Errore durante l\'aggiornamento del canale:', error);
+      }
+    });
+  };
+
+  handleCreateHashtagChannel(channelToUpdate: any): void {
+    const channelDataCreatePost = {
+      creator: this.datiUtente.nickname,
+      photoprofile: this.datiUtente.photoprofile,
+      photoprofilex: 0,
+      photoprofiley: 0,
+      name: this.hashtag,
+      type: '#',
+      list_mess: [],
+      list_users: [{
+        blocked: false,
+        cell: this.datiUtente.cell,
+        char_d: this.datiUtente.char_d,
+        char_m: this.datiUtente.char_m,
+        char_w: this.datiUtente.char_w,
+        email: this.datiUtente.email,
+        fullname: this.datiUtente.fullname,
+        nickname: this.datiUtente.nickname,
+        notification: this.datiUtente.notification || [true, true, true, true, true],
+        password: this.datiUtente.password,
+        photoprofile: this.datiUtente.photoprofile,
+        photoprofileX: this.datiUtente.photoprofileX || 0,
+        photoprofileY: this.datiUtente.photoprofileX || 0,
+        popularity: this.datiUtente.popularity,
+        type: this.datiUtente.type || 'User',
+        version: this.datiUtente.version || "user",
+        _id: this.datiUtente._id
+      }],
+      list_posts: [{
+        answer: [],
+        body: {
+          text: this.userText,
+          link: this.sentLink || '',
+          photo: this.sentImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+          position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
+          video: this.sentVideoUrl || '',
+        },
+        category: null,
+        date: new Date(),
+        hour: new Date().getHours(),
+        seconds: new Date().getSeconds(),
+        impressions: 0,
+        neg_reactions: 0,
+        pos_reactions: 0,
+        photoprofile: this.datiUtente.photoprofile,
+        receivers: [`@${this.datiUtente.nickname}`],
+        sender: this.datiUtente.nickname,
+        typeSender: 'keywords',
+        usersReactions: [],
+        usersViewed: [],
+      }],
+      userSilenced: [],
+      description: "",
+      popularity: "",
+    };
+    this.databaseService.addChannel(channelDataCreatePost).subscribe({
+      next: (response) => {
+        console.log('Canale creato con successo:', response);
+      },
+      error: (error) => {
+        console.error('Errore nella creazione del canale:', error);
+      }
+    });
+  };
+
 
   disableOtherAttachments(selectedAttachment: string) {
     if (this.isPrivate) {
