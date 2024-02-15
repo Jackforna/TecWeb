@@ -157,6 +157,15 @@ function Search() {
       }
     }
 
+    async function addNewSqueal(squeal){
+      try{
+        await addSqueal(squeal);
+      } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+          throw error;
+      }
+    }
+
     const handleFocus = () => {
         setshowIcon(false);
         setinputSearch("");
@@ -463,6 +472,31 @@ const subscribechannel = () => {
           type:'User', 
           block:false
         });
+        for(let j=0; j<allchannels[i].list_mess.length; j++){
+          if(allchannels[i].list_mess[j].type=='Welcome'){
+            const data = new Date();
+            let month;
+            if((data.getMonth()+1)<10){
+                month = "0" + (data.getMonth()+1);
+            } else {
+                month = data.getMonth()+1;
+            }
+            let day;
+            if(data.getDate()<10){
+                day = "0" + data.getDate();
+            } else {
+                day = data.getDate();
+            }
+            let date = day + "/" + month + "/" + data.getFullYear();
+            let minutes = data.getMinutes();
+            let seconds = data.getSeconds();
+            if(minutes<10){
+                minutes = "0" + minutes;
+            }
+            let hour = data.getHours() + ":" + minutes;
+            addNewSqueal({sender:allchannels[i].creator, typesender:"channels", body:{text:allchannels[i].list_mess[j].body.text, link:allchannels[i].list_mess[j].body.link, photo:allchannels[i].list_mess[j].body.photo, position:allchannels[i].list_mess[j].body.position, video:allchannels[i].list_mess[j].body.video}, date:date, hour:hour, seconds:seconds, photoprofile:allchannels[i].photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:["@"+actualuser.nickname], channel:allchannels[i].name, impressions:0});
+          }
+        }
       }
     }
     for(let i=0; i<allCHANNELS.length; i++){
@@ -475,6 +509,31 @@ const subscribechannel = () => {
               type:'User', 
               block:false
             });
+            for(let j=0; j<allCHANNELS[i].list_mess.length; j++){
+              if(allCHANNELS[i].list_mess[j].type=='Welcome'){
+                const data = new Date();
+                let month;
+                if((data.getMonth()+1)<10){
+                    month = "0" + (data.getMonth()+1);
+                } else {
+                    month = data.getMonth()+1;
+                }
+                let day;
+                if(data.getDate()<10){
+                    day = "0" + data.getDate();
+                } else {
+                    day = data.getDate();
+                }
+                let date = day + "/" + month + "/" + data.getFullYear();
+                let minutes = data.getMinutes();
+                let seconds = data.getSeconds();
+                if(minutes<10){
+                    minutes = "0" + minutes;
+                }
+                let hour = data.getHours() + ":" + minutes;
+                addNewSqueal({sender:allCHANNELS[i].creator, typesender:"CHANNELS", body:{text:allCHANNELS[i].list_mess[j].body.text, link:allCHANNELS[i].list_mess[j].body.link, photo:allCHANNELS[i].list_mess[j].body.photo, position:allCHANNELS[i].list_mess[j].body.position, video:allCHANNELS[i].list_mess[j].body.video}, date:date, hour:hour, seconds:seconds, photoprofile:allCHANNELS[i].photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:["@"+actualuser.nickname], channel:allCHANNELS[i].name, impressions:0});
+              }
+            }
       }
     }
   }
@@ -832,7 +891,7 @@ const toggleSilenceChannel = () => {
                             <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelmessages.length-1) ? '100px' : '5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                     <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
-                                    {squeal.type} {squeal.remind.every!="" && squeal.remind.every!=undefined && (" "+squeal.remind.every)} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
+                                    {squeal.type} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
                                     </CardGroup>
                                     <Card.Text>{squeal.hour}</Card.Text>
                                 </Card.Header>

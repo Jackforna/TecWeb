@@ -93,7 +93,6 @@ function Profile() {
     const [confirmleavechannel, setconfirmleavechannel] = useState(false);
     const [confirmaddmessagechannel, setconfirmaddmessagechannel] = useState(false);
     const [selection, setSelection] = useState(null);
-    const [reminder, setReminder] = useState(null);
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [positionMap, setPositionMap] = useState(null);
     const markerIcon = new L.Icon({
@@ -104,7 +103,7 @@ function Profile() {
       });
     const [capturedImage, setCapturedImage] = useState(null);
     const [capturedVideo, setCapturedVideo] = useState(null);
-    const [newmessage, setNewmessage] = useState({body:{text:'', position:[], link:'', photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', video:''}, request:'', type:'', remind:{every:'',dayMonth:'',dayWeek:'',hour:''}})
+    const [newmessage, setNewmessage] = useState({body:{text:'', position:[], link:'', photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', video:''}, request:'', type:''})
     const [showLinkModal, setShowLinkModal] = useState(false);
     const [inputLink, setinputLink] = useState('');
     const [displayedLink, setDisplayedLink] = useState(''); 
@@ -400,7 +399,7 @@ function Profile() {
         setnewpassword(value);
     }
 
-    const closeeditprofile = (save) => {        //backend
+    const closeeditprofile = (save) => {
         if(save){
             const newinfo = {
                 ...actualuser,
@@ -501,7 +500,7 @@ function Profile() {
         }
     }
 
-    const closeeditchannel = (save) => {            //backend
+    const closeeditchannel = (save) => {
         if(save){
             const updatedItems = [...allChannelsprint];
             for (let i = 0; i < updatedItems.length; i++) {
@@ -812,13 +811,13 @@ function Profile() {
                     setn_channeladmin(channeladmin);
                 }
             }
-            let newlistchannel;
-            let newlistCHANNEL;
+            let newlistchannel = allchannels;
+            let newlistCHANNEL = allCHANNELS;
             for(let i=0; i<allchannels.length; i++){
                 if(allchannels[i].name==allChannelsprint[indexchanneledit].name){
                     for(let j=0;j<allchannels[i].list_users.length;j++){
                         if(allchannels[i].list_users[j].nickname==actualuser.nickname){
-                            newlistchannel = allchannels[i].list_users.splice(j,1);
+                            newlistchannel[i].list_users.splice(j,1);
                         }
                     }
                 }
@@ -827,7 +826,7 @@ function Profile() {
                 if(allCHANNELS[i].name==allChannelsprint[indexchanneledit].name){
                     for(let j=0;j<allCHANNELS[i].list_users.length;j++){
                         if(allCHANNELS[i].list_users[j].nickname==actualuser.nickname){
-                            newlistCHANNEL = allCHANNELS[i].list_users.splice(j,1);
+                            newlistCHANNEL[i].list_users.splice(j,1);
                         }
                     }
                 }
@@ -860,9 +859,8 @@ function Profile() {
         setNewmessagetext('');
         setNumSeconds('');
         setUserRequest('');
-        setNewmessage({body:{text:'', position:[], link:'', photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', video:''}, request:'', type:'', remind:{every:'',dayMonth:'',dayWeek:'',hour:''}});
+        setNewmessage({body:{text:'', position:[], link:'', photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', video:''}, request:'', type:''});
         setSelection("Select an option");
-        setReminder("Select reminder frequency");
         } else {
             alert("You don't have permissions to modify this channel");
         }
@@ -885,7 +883,6 @@ function Profile() {
                                 request: '',
                                 type: selection,
                                 repetition:'',
-                                remind: {},
                             }]));
                         } else {
                             alert("The message is empty");
@@ -906,38 +903,12 @@ function Profile() {
                                     request: "to "+newmessage.request,
                                     type: selection,
                                     repetition:'',
-                                    remind: {},
                                 }]));
                             } else {
                                 alert("The message is empty");
                             }
                         } else {
                             alert("Insert a valid request");
-                            return;
-                        }
-                    break;
-                    case "Reminder":
-                        if(reminder!="Select reminder frequency"){
-                            if(newmessage.body.text!='' | newmessage.body.position.length!=0 | newmessage.body.link!='' | newmessage.body.video!='' | newmessage.body.photo!='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'){
-                                let video = newmessage.body.video;
-                                setnewchannelmessages(prevmess => ([...prevmess, {
-                                    body: {
-                                        text: newmessage.body.text,
-                                        position: newmessage.body.position,
-                                        link: newmessage.body.link,
-                                        photo:newmessage.body.photo,
-                                        video:video,
-                                    },
-                                    request: '',
-                                    type: selection,
-                                    repetition:'',
-                                    remind: {every:reminder, dayMonth:'1', dayWeek:'0', hour:'17:00'},
-                                }]));
-                            } else {
-                                alert("The message is empty");
-                            }
-                        } else {
-                            alert("Insert a valid reminder frequency");
                             return;
                         }
                     break;
@@ -954,7 +925,6 @@ function Profile() {
                                 request: '',
                                 type: selection,
                                 repetition:"every "+numSeconds+" seconds",
-                                remind: {},
                             }]));
                         } else {
                             alert('Insert the number of seconds for repeat');
@@ -964,16 +934,15 @@ function Profile() {
                         if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
                             setnewchannelmessages(prevmess => ([...prevmess, {
                                 body: {
-                                    text: "to "+userRequest,
+                                    text: '',
                                     position: [],
                                     link: '',
                                     photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
                                     video:'',
                                 },
-                                request: '',
+                                request: "to "+userRequest,
                                 type: selection,
                                 repetition:'',
-                                remind: {},
                             }]));
                         } else {
                             alert('Insert a valid request');
@@ -983,16 +952,15 @@ function Profile() {
                         if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
                             setnewchannelmessages(prevmess => ([...prevmess, {
                                 body: {
-                                    text: "to "+userRequest,
+                                    text: '',
                                     position: [],
                                     link: '',
                                     photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
                                     video:'',
                                 },
-                                request: '',
+                                request: "to "+userRequest,
                                 type: selection,
                                 repetition:'',
-                                remind: {},
                             }]));
                         } else {
                             alert('Insert a valid request');
@@ -1002,16 +970,15 @@ function Profile() {
                         if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
                             setnewchannelmessages(prevmess => ([...prevmess, {
                                 body: {
-                                    text: "to "+userRequest,
+                                    text: '',
                                     position: [],
                                     link: '',
                                     photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
                                     video:'',
                                 },
-                                request: '',
+                                request: "to "+userRequest,
                                 type: selection,
                                 repetition:'',
-                                remind: {},
                             }]));
                         } else {
                             alert('Insert a valid request');
@@ -1021,16 +988,15 @@ function Profile() {
                         if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
                             setnewchannelmessages(prevmess => ([...prevmess, {
                                 body: {
-                                    text: "to "+userRequest,
+                                    text: '',
                                     position: [],
                                     link: '',
                                     photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
                                     video:'',
                                 },
-                                request: '',
+                                request: "to "+userRequest,
                                 type: selection,
                                 repetition:'',
-                                remind: {},
                             }]));
                         } else {
                             alert('Insert a valid request');
@@ -1648,7 +1614,7 @@ const loadImage = (event) => {
                             <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom: '5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                     <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
-                                    {squeal.type} {squeal.remind.every!="" && squeal.remind.every!=undefined && (" "+squeal.remind.every)} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
+                                    {squeal.type} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
                                     </CardGroup>
                                     <Card.Text>{squeal.hour}</Card.Text>
                                 </Card.Header>
@@ -1773,7 +1739,6 @@ const loadImage = (event) => {
                             <Dropdown.Menu>
                             <Dropdown.Item eventKey="Welcome">Welcome</Dropdown.Item>
                             <Dropdown.Item eventKey="Answer">Answer</Dropdown.Item>
-                            <Dropdown.Item eventKey="Reminder">Reminder</Dropdown.Item>
                             <Dropdown.Item eventKey="Repeat">Repeat</Dropdown.Item>
                             <Dropdown.Item eventKey="Casual Images">Casual Images</Dropdown.Item>
                             <Dropdown.Item eventKey="News">News</Dropdown.Item>
@@ -1781,24 +1746,8 @@ const loadImage = (event) => {
                             <Dropdown.Item eventKey="WikiInfo">Wiki info</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
-
-                        {selection === "Reminder" && (
-                            <div className="ms-3">
-                            <Dropdown onSelect={(eventKey) => setReminder(eventKey)} className='mb-1'>
-                                <Dropdown.Toggle variant="info">
-                                {reminder || "Select reminder frequency"}
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                <Dropdown.Item eventKey="every day">every day</Dropdown.Item>
-                                <Dropdown.Item eventKey="every week">every week</Dropdown.Item>
-                                <Dropdown.Item eventKey="every month">every month</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                            </div>
-                        )}
                     </Container>
-                    { (selection==="Welcome" || selection==="Answer" || selection==="Reminder" || selection==="Select an option" || selection===null) && (
+                    { (selection==="Welcome" || selection==="Answer" || selection==="Select an option" || selection===null) && (
                     <Card className='mt-5' style={{width:'70%', minHeight:'200px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body className='d-flex flex-column' style={{alignItems:'center'}}>
                             <textarea placeholder='Message text' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none'}} value={newmessagetext} onChange={changenewmessagetext}></textarea>

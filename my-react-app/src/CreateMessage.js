@@ -223,7 +223,7 @@ function CreateMessage(props) {
           nickname: userData.nickname,
           notification: userData.notification || [true, true, true, true, true],
           password: userData.password,
-          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofile: userData.photoprofile || "",
           photoprofileX: userData.photoprofileX || 0,
           photoprofileY: userData.photoprofileY || 0,
           popularity: userData.popularity || 0,
@@ -824,7 +824,7 @@ function CreateMessage(props) {
   const handleCreateHashtagChannel = async () => {
     const channelData = {
       creator: actualUser.nickname,
-      photoProfile: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      photoProfile: '',
       photoprofilex: 0,
       photoprofiley: 0,
       name: text.replace(/#/g, ''),
@@ -842,7 +842,7 @@ function CreateMessage(props) {
           nickname: actualUser.nickname,
           notification: actualUser.notification || [true, true, true, true, true],
           password: actualUser.password,
-          photoprofile: actualUser.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofile: actualUser.photoprofile || "",
           photoprofileX: actualUser.photoprofileX || 0,
           photoprofileY: actualUser.photoprofileY || 0,
           popularity: actualUser.popularity || 0,
@@ -1148,7 +1148,7 @@ function CreateMessage(props) {
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
-      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      photoprofile: actualUser.photoProfile || '',
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
       sender: actualUser.nickname,
@@ -1184,7 +1184,7 @@ function CreateMessage(props) {
         video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
-      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
+      photoprofile: actualUser.photoProfile || '', // Assumi che `actualUser` contenga l'URL della foto profilo
       date: new Date().toISOString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
@@ -1472,7 +1472,7 @@ function CreateMessage(props) {
           nickname: userData.nickname,
           notification: userData.notification || [true, true, true, true, true],
           password: userData.password,
-          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofile: userData.photoprofile || "",
           photoprofileX: userData.photoprofileX || 0,
           photoprofileY: userData.photoprofileY || 0,
           popularity: userData.popularity || 0,
@@ -1520,7 +1520,7 @@ function CreateMessage(props) {
           nickname: userData.nickname,
           notification: userData.notification || [true, true, true, true, true],
           password: userData.password,
-          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofile: userData.photoprofile || "",
           photoprofileX: userData.photoprofileX || 0,
           photoprofileY: userData.photoprofileY || 0,
           popularity: userData.popularity || 0,
@@ -1548,7 +1548,7 @@ function CreateMessage(props) {
   const handleCreateChannel = async () => {
     const channelData = {
       creator: actualUser.nickname, 
-      photoProfile: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      photoProfile: '',
       photoprofilex: 0,
       photoprofiley: 0,
       name: channelName,
@@ -1557,7 +1557,7 @@ function CreateMessage(props) {
       isSilenceable: isSilenceable,
       list_users: [creatorDetails, ...userDetails],
       list_posts: [],
-      userSilenced: [],
+      usersSilenced: [],
       description: channelDescription,
       popularity: "",
     };
