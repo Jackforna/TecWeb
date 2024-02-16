@@ -1174,73 +1174,77 @@ function CreateMessage(props) {
   };
 
   const handleSendChannelSqueal = async () => {
-    const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: 'channels', // Modifica come necessario
-      body: {
-        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
-      },
-      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
-      date: new Date().toISOString(),
-      hour: new Date().getHours(),
-      seconds: new Date().getSeconds(),
-      pos_reactions: 0,
-      neg_reactions: 0,
-      usersReactions: [],
-      answers: [],
-      usersViewed: [],
-      category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
-      channel: channelSelected.name, // Aggiungi logica se il squeal è associato a un canale
-      impressions: 0,
-    };
-  
-    console.log("Canale selezionato: ", channelSelected)
-    console.log("Squeal data: ", squealData);
-    try {
-      const resultAddSqueal = await addSqueal(squealData);
-      if (true){
-        await handleUpdateChannelPosts(channelSelected);
-      } else {
-        console.log("Non ci entra")
-      }
-      console.log('Squeal inviato con successo:', resultAddSqueal);
-      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
-      let imageChars = 0;
-      let videoChars = 0;
-      let linkChars = 0;
-      let positionChars = 0;
-      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
-      } else {
-        imageChars = 0;
-      }
-      if (squealData.body.video !== '') {
-        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
-      } else {
-        videoChars = 0;
-      }
-      if (squealData.body.link !== '') {
-        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
-      } else {
-        linkChars = 0;
-      }
-      if (squealData.body.position !== '') {
-        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
-      } else {
-        positionChars = 0;
-      }
-      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+    if (channelSelected) {
+      const squealData = {
+        sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+        typesender: 'channels', // Modifica come necessario
+        body: {
+          text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+          link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+          photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+          video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+          position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        },
+        photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
+        date: new Date().toISOString(),
+        hour: new Date().getHours(),
+        seconds: new Date().getSeconds(),
+        pos_reactions: 0,
+        neg_reactions: 0,
+        usersReactions: [],
+        answers: [],
+        usersViewed: [],
+        category: '', // Aggiungi logica per determinare la categoria se necessario
+        receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
+        channel: channelSelected.name, // Aggiungi logica se il squeal è associato a un canale
+        impressions: 0,
+      };
+    
+      console.log("Canale selezionato: ", channelSelected)
+      console.log("Squeal data: ", squealData);
+      try {
+          const resultAddSqueal = await addSqueal(squealData);
+          if (true){
+            await handleUpdateChannelPosts(channelSelected);
+          } else {
+            console.log("Non ci entra")
+          }
+          console.log('Squeal inviato con successo:', resultAddSqueal);
+          const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+          let imageChars = 0;
+          let videoChars = 0;
+          let linkChars = 0;
+          let positionChars = 0;
+          if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+            imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+          } else {
+            imageChars = 0;
+          }
+          if (squealData.body.video !== '') {
+            videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+          } else {
+            videoChars = 0;
+          }
+          if (squealData.body.link !== '') {
+            linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+          } else {
+            linkChars = 0;
+          }
+          if (squealData.body.position !== '') {
+            positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+          } else {
+            positionChars = 0;
+          }
+          const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
 
-      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-      // goToProfile();
+          handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+          // goToProfile();
 
-    } catch (error) {
-      console.error('Errore nell\'invio dello squeal nel canale:', error);
+      } catch (error) {
+        console.error('Errore nell\'invio dello squeal nel canale:', error);
+      }
+    } else {
+      alert("Seleziona un canale per inviare il tuo messaggio.");
     }
   };
   
@@ -1598,11 +1602,12 @@ function CreateMessage(props) {
         <Container 
           style={{
             margin: '0',
-            padding: '0',
-            paddingTop: '2%',
+            // padding: '20px',
+            paddingTop: '7%',
             width: '80%',
             position:'absolute',
-            left:'20%'
+            left:'20%',
+            // backgroundColor: 'red',
           }}
           className="mx-auto"
           id = "card-container-create-messagge-home"
@@ -1702,7 +1707,7 @@ function CreateMessage(props) {
     
           {/*Card per creazione messaggio*/}
           <div className="d-flex align-items-start">
-            <Card className={isDropdownActive ? 'blurred mx-auto' : 'mx-auto'} id="create-messagge-card" style = {{overflowY: "scroll", maxHeight: "90vh", WebkitOverflowScrolling: "touch"}}>
+            <Card className={isDropdownActive ? 'blurred mx-auto' : 'mx-auto'} id="create-messagge-card" style = {{overflowY: "scroll", maxHeight: "90vh", WebkitOverflowScrolling: "touch", boxShadow: "-80px -30px 0 10px #f5f5f5, 80px -30px 0 10px #f5f5f5, -80px 30px 0 10px #f5f5f5, 80px 30px 0 10px #f5f5f5", backgroundColor: "white"}}>
               <Card.Body>
                 
                 {/*Parte comune*/}
@@ -1714,7 +1719,7 @@ function CreateMessage(props) {
                         <img src={photoProfile} alt="Profile" className="profile-image"/>
                       </div>
                     ) : (
-                      <PersonCircle size='55' color='white' />
+                      <PersonCircle size='55' color='#000000DE' />
                     )}
                   </Col>
 
@@ -1724,7 +1729,7 @@ function CreateMessage(props) {
                         <Form.Select 
                           size="sm" 
                           className='Form-create-messagge-home' 
-                          style={{ fontSize: '12px', width: '100px', backgroundColor: 'transparent', borderRadius: '18px', color: 'white', textAlign:'center'}}
+                          style={{ fontSize: '12px', width: '100px', backgroundColor: 'transparent', borderRadius: '18px', color: '#000000DE', textAlign:'center', borderColor: '#555', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', appearance: 'none'}}
                           value={messageType}
                           onChange={handleMessageTypeChange}
                         >
@@ -1741,7 +1746,7 @@ function CreateMessage(props) {
                             width: '100px', 
                             backgroundColor: 'transparent', 
                             borderRadius: '18px', 
-                            color: 'white', 
+                            color: '#000000DE', 
                             textAlign:'center',
                             borderColor: '#555',
                             boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
@@ -1788,7 +1793,7 @@ function CreateMessage(props) {
                             border: 'none', // Rimuove il bordo
                             scrollbarWidth: 'none', // Nasconde le frecce verticali
                             backgroundColor: 'transparent',
-                            color: 'white',
+                            color: '#000000DE',
                             fontSize: '20px',
                             outline: 'none',
                           }}
@@ -1829,7 +1834,7 @@ function CreateMessage(props) {
                               border: 'none', // Rimuove il bordo
                               scrollbarWidth: 'none', // Nasconde le frecce verticali
                               backgroundColor: 'transparent',
-                              color: 'white',
+                              color: '#000000DE',
                               fontSize: '16px',
                               outline: 'none',
                             }}
@@ -1937,7 +1942,7 @@ function CreateMessage(props) {
                               </div>
                           )}
                           {displayedLink && (
-                              <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                              <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: '#000000DE' }}>
                                   <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
                                   <button 
                                       onClick={() => {
@@ -1966,22 +1971,22 @@ function CreateMessage(props) {
                       <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
                         {/* Fotocamera */}
                         <div id="cameraLogo" onClick={handleLogoClick} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                          <Camera color="white" size={25} />
+                          <Camera color="#000000DE" size={25} />
                         </div>
 
                         {/* Icona per il caricamento del video */}
                         <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                          <Camera color="white" size={25} />
+                          <Camera color="#000000DE" size={25} />
                         </div>
 
                         {/* URL */}
-                        <button onClick={() => setShowLinkModal(true)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: 'white', marginRight: '20px' }}>
-                          <LinkLogo size={25} color="white" />
+                        <button onClick={() => setShowLinkModal(true)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#000000DE', marginRight: '20px' }}>
+                          <LinkLogo size={25} color="#000000DE" />
                         </button>
                         
                         {/* Posizione */}
                         <button onClick={() => { if (!isMapVisible) { setIsMapVisible(true); } else { handleLocationButtonClick(); }}} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginRight: '20px' }}>
-                          <Globe size={25} color="white" />
+                          <Globe size={25} color="#000000DE" />
                         </button>
 
                         {/* Caratteri */}
@@ -2032,17 +2037,17 @@ function CreateMessage(props) {
                                   border: 'none',
                                   outline: 'none',
                                   boxShadow: 'none',
-                                  color: 'white'
+                                  color: '#000000DE'
                                 }}
                             />
 
                             {/* Lista a tendina dei suggerimenti utenti*/}
                             {searchInput && suggestedUsers.length > 0 && (
-                                <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto', color: 'white'}}>
+                                <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto', color: '#000000DE'}}>
                                     {suggestedUsers.map(user => (
                                         <li 
                                         key={user._id} 
-                                        style={{padding: '10px', cursor: 'pointer', color: 'white'}}
+                                        style={{padding: '10px', cursor: 'pointer', color: '#000000DE'}}
                                         onClick={() => handleUserSelection(user.nickname, user._id)}
                                         >
                                           {user.nickname}
@@ -2080,7 +2085,7 @@ function CreateMessage(props) {
                                 border: 'none', // Rimuove il bordo
                                 scrollbarWidth: 'none', // Nasconde le frecce verticali
                                 backgroundColor: 'transparent',
-                                color: 'white',
+                                color: '#000000DE',
                                 fontSize: '16px',
                                 outline: 'none',
                               }}
@@ -2180,7 +2185,7 @@ function CreateMessage(props) {
                                 </div>
                             )}
                             {displayedLink && (
-                                <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: '#000000DE' }}>
                                     <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
                                     <button 
                                         onClick={() => {
@@ -2206,7 +2211,7 @@ function CreateMessage(props) {
                     {/*Utenti selezionati*/}
                     <Row className="mt-2" style = {{marginLeft: '14%'}} id = "selectedUsersContainer">
                       {selectedUsers.map(user => (
-                        <Row  key={user} style={{color: 'white', padding: '0px'}}>
+                        <Row  key={user} style={{color: '#000000DE', padding: '0px'}}>
                             {user}
                         </Row>
                       ))}
@@ -2219,12 +2224,12 @@ function CreateMessage(props) {
                       <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
                           {/*Fotocamera*/}
                           <div id="cameraLogo" onClick={handleLogoClick} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                              <Camera color="white" size={25} />
+                              <Camera color="#000000DE" size={25} />
                           </div>
 
                           {/*Video*/}
                           <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                            <Camera color="white" size={25} />
+                            <Camera color="#000000DE" size={25} />
                           </div>
 
                           {/*Url*/}
@@ -2233,11 +2238,11 @@ function CreateMessage(props) {
                                     backgroundColor: 'transparent',
                                     border: 'none',
                                     cursor: 'pointer',
-                                    color: 'white',
+                                    color: '#000000DE',
                                     marginRight: '20px'
                             }}
                           >
-                            <LinkLogo size={25} color="white" />
+                            <LinkLogo size={25} color="#000000DE" />
                           </button>
 
                           {/*Icona posizione*/}
@@ -2256,14 +2261,14 @@ function CreateMessage(props) {
                                 marginRight: '20px',
                             }}
                           >
-                            <Globe size={25} color="white" />
+                            <Globe size={25} color="#000000DE" />
                           </button>
 
                           {/*Caratteri rimanenti*/}
                           <div id = "charCounterContainer"
                             style={{
                               textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                              color: privateWordsRemaining <= 10 ? 'red' : 'white',
+                              color: privateWordsRemaining <= 10 ? 'red' : '#000000DE',
                               marginRight: '20px',
                             }}
                           >
@@ -2302,7 +2307,7 @@ function CreateMessage(props) {
                                     border: 'none',
                                     outline: 'none',
                                     boxShadow: 'none',
-                                    color: 'white'
+                                    color: '#000000DE'
                                   }}
                               />
                           </InputGroup>
@@ -2342,7 +2347,7 @@ function CreateMessage(props) {
                                 style={{
                                   backgroundColor: 'transparent',
                                   borderColor: 'gray',
-                                  color: 'white',
+                                  color: '#000000DE',
                                   width: '80%',
                                 }}
                               />
@@ -2353,7 +2358,7 @@ function CreateMessage(props) {
                                     cursor: 'pointer',
                                     background: 'none',
                                     border: 'none',
-                                    color: 'white',
+                                    color: '#000000DE',
                                   }}
                                 >
                                   X
@@ -2401,7 +2406,7 @@ function CreateMessage(props) {
                                   border: 'none', // Rimuove il bordo
                                   scrollbarWidth: 'none', // Nasconde le frecce verticali
                                   backgroundColor: 'transparent',
-                                  color: 'white',
+                                  color: '#000000DE',
                                   fontSize: '16px',
                                   outline: 'none',
                                 }}
@@ -2499,7 +2504,7 @@ function CreateMessage(props) {
                               </div>
                             )}
                             {displayedLink && (
-                              <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                              <div style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: '#000000DE' }}>
                                   <a href={displayedLink} target="_blank" rel="noreferrer">{displayedLink}</a>
                                   <button 
                                       onClick={() => {
@@ -2533,7 +2538,7 @@ function CreateMessage(props) {
                                 onClick={handleLogoClick}
                                 style={{ cursor: 'pointer', marginRight: '20px'}}
                             >
-                              <Camera color="white" size={25} />
+                              <Camera color="#000000DE" size={25} />
                             </div>
                     
                             {/*Video*/}
@@ -2542,7 +2547,7 @@ function CreateMessage(props) {
                                 onClick={() => setShowVideoModal(true)}
                               style={{ cursor: 'pointer', marginRight: '20px'}}
                             >
-                              <Camera color="white" size={25} />
+                              <Camera color="#000000DE" size={25} />
                             </div>
 
                             {/*Url*/}
@@ -2552,11 +2557,11 @@ function CreateMessage(props) {
                                   backgroundColor: 'transparent',
                                   border: 'none',
                                   cursor: 'pointer',
-                                  color: 'white',
+                                  color: '#000000DE',
                                   marginRight: '20px'
                               }}
                             >
-                              <LinkLogo size={25} color="white" />
+                              <LinkLogo size={25} color="#000000DE" />
                             </button>
                             
                             {/*Posizione*/}
@@ -2575,7 +2580,7 @@ function CreateMessage(props) {
                                 marginRight: '20px'
                               }}
                             >
-                              <Globe size={25} color="white" />
+                              <Globe size={25} color="#000000DE" />
                             </button>
 
                             {/*Caratteri rimanenti*/}
@@ -2667,7 +2672,7 @@ function CreateMessage(props) {
                               <div style={{ marginTop: '4%' }}>
                                 <strong>Utenti già inseriti</strong>
                                 {selectedUsers.map(user => (
-                                    <div key={user._id} style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: 'white' }}>
+                                    <div key={user._id} style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: '#000000DE' }}>
                                         <a>{user.nickname}</a>
                                         <button 
                                           onClick={() => {
@@ -2688,7 +2693,7 @@ function CreateMessage(props) {
                                 </Modal.Header>
                                 <Modal.Body>
                                   {selectedUsers.map(user => (
-                                      <Row key={user._id} style={{color: 'white', padding: '0px'}}>
+                                      <Row key={user._id} style={{color: '#000000DE', padding: '0px'}}>
                                           {user.nickname}
                                       </Row>
                                   ))}
@@ -2702,7 +2707,7 @@ function CreateMessage(props) {
                               <div style={{ marginTop: '4%' }}>
                                 <strong>Utenti</strong>
                                 {suggestedUsers.map(user => (
-                                  <div key={user._id} style={{marginTop: '2%', cursor: 'pointer', color: 'white'}}
+                                  <div key={user._id} style={{marginTop: '2%', cursor: 'pointer', color: '#000000DE'}}
                                       onClick={() => {
                                         handleUserSelection2(user.nickname, user._id);
                                       }}>
@@ -2727,7 +2732,7 @@ function CreateMessage(props) {
                         {/*Are you sure*/}
                         <Row style = {{marginTop:'4%'}}>
                           {showAreYouSure && (
-                            <div style={{ color: 'white' }}>
+                            <div style={{ color: '#000000DE' }}>
                               <p>Sei sicuro di voler creare il canale?</p>
                               <Button onClick={handleCreateChannel}>Sì</Button>
                               <Button onClick={() => setShowAreYouSure(false)}>No</Button>

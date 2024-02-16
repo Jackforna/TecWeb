@@ -41,7 +41,7 @@
 }
 
 #create-reminder-card{
-  border-color: aquamarine;
+  /* border-color: aquamarine; */
   background-color: transparent;
   width: 60%;
   overflow: hidden;
