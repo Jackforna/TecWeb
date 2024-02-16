@@ -44,22 +44,87 @@ if (!client.connect()) {
   console.log("Connesso correttamente al server MongoDB");
 }
 
-const token = process.env.TWITTER_BEARER_TOKEN; // Assicurati di impostare questa variabile d'ambiente (da ottenere)
+/*
+let twitterBearerToken = '';
+
+const apiKey = 'hCMnmtucaW9FmfLBMrmXA8UW0';
+const apiSecretKey = 'nxnRxQblR3JDUb05dxDq83EozNn4wUG1lK1smBXPcVlcUcKOCS';
+const tokenURL = 'https://api.twitter.com/oauth2/token';
+
+const credentials = `${apiKey}:${apiSecretKey}`;
+const credentialsBase64Encoded = Buffer.from(credentials).toString('base64');
+
+const options = {
+  headers: {
+    'Authorization': `Basic ${credentialsBase64Encoded}`,
+    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+  },
+  body: 'grant_type=client_credentials'
+};
+
+needle.post(tokenURL, options.body, { headers: options.headers }, (error, response) => {
+  if (!error && response.statusCode === 200) {
+    // Qui hai il tuo token di accesso
+    twitterBearerToken = response.body.access_token; // Salva il token nella variabile globale
+    console.log('Bearer Token:', twitterBearerToken);
+  } else {
+    console.error('Errore ottenendo il Bearer Token:', error);
+  }
+});
 
 app.get('/api/getTweet', async (req, res) => {
     const url = `https://api.twitter.com/2/tweets/search/recent?query=from:twitterdev`; // Esempio di URL per ottenere tweet recenti
 
+    if (!twitterBearerToken) {
+      return res.status(500).json({ error: 'Bearer Token non disponibile' });
+    }
+
     try {
         const response = await needle('get', url, {
             headers: {
-                "Authorization": `Bearer ${token}`//aggiungere token
+                "Authorization": `Bearer ${twitterBearerToken}`//aggiungere token
             }
         });
-        res.status(200).json(response.body);
+        if (response.statusCode === 200 && response.body.data && response.body.data.length > 0) {
+          // Seleziona un tweet casuale dai risultati
+          const randomTweet = response.body.data[Math.floor(Math.random() * response.body.data.length)];
+          res.status(200).json(randomTweet);
+        } else {
+          console.log('Nessun tweet trovato o errore nella risposta API', response.body);
+            res.status(500).json({ error: 'Nessun tweet trovato o errore nella risposta API' });
+        }
     } catch (error) {
+      console.error('Errore nella richiesta API:', error);
         res.status(500).json({ error: error.message });
     }
 });
+*/
+
+const Twit = require('twit');
+
+// Configura Twit con le tue chiavi di accesso di Twitter
+const T = new Twit({
+  consumer_key: 'hCMnmtucaW9FmfLBMrmXA8UW0',
+  consumer_secret: 'nxnRxQblR3JDUb05dxDq83EozNn4wUG1lK1smBXPcVlcUcKOCS',
+  access_token: '1758439085474000896-PDwNVX2tkHkwTtGvJuAKulgKDCE00s',
+  access_token_secret: 'P33xoej1BqEyY6JmME4MBzf4ECLtmlNLc8dGkJmwsiiIE',
+  timeout_ms: 60 * 1000,
+  strictSSL: true,
+});
+
+// Endpoint per ottenere tweet casuali
+app.get('/api/random-tweet', async (req, res) => {
+  try {
+    const result = await T.get('search/tweets', { q: 'from:twitter', count: 100 });
+    const randomIndex = Math.floor(Math.random() * result.data.statuses.length);
+    const randomTweet = result.data.statuses[randomIndex];
+    res.status(200).json(randomTweet);
+  } catch (error) {
+    console.error('Error fetching tweet:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 initializeCollections();
 
@@ -208,6 +273,15 @@ app.put('/update-squeals', async (req, res) => {
   } catch (error) {
       console.error(error);
       res.status(500).send('Errore durante l\'aggiornamento degli squeals');
+  }
+});
+
+app.delete('/delete-all-squeals', async (req, res) => {
+  try {
+    await ListSquealsCollection.deleteMany({});
+    res.status(200).send('Tutti gli Squeals sono stati cancellati');
+  } catch (error) {
+    res.status(500).send('Errore durante la cancellazione di tutti gli Squeals');
   }
 });
 

@@ -10,10 +10,11 @@ import Webcam from 'react-webcam';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
+import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
 import { get, set } from 'mongoose';
 import { useHistory } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+// import Twit from 'twit';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -325,6 +326,7 @@ function CreateMessage(props) {
   /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
   const [intervalId, setIntervalId] = useState(null);
+  let counter = 0;
 
   const startInterval = (n) => {
       // Assicurati che non ci siano intervalli già in esecuzione
@@ -335,7 +337,8 @@ function CreateMessage(props) {
       // Imposta un nuovo intervallo
       const id = setInterval(() => {
         console.log('Questo messaggio appare ogni n secondi');
-        // Aggiungi qui il tuo codice che vuoi eseguire ad ogni intervallo
+        counter++;
+        console.log("Counter: ", counter);
       }, n*1000); // Sostituisci 5000 con il numero di millisecondi che desideri
   
       // Salva l'ID dell'intervallo nello stato
@@ -347,6 +350,7 @@ function CreateMessage(props) {
     if (intervalId) {
       clearInterval(intervalId);
       setIntervalId(null);
+      counter = 0;
     }
   };
 
@@ -356,34 +360,63 @@ function CreateMessage(props) {
   }
 
   /*funzione per generare una news casuale usando la API Saurav Kanchan*/
-  const [article, setArticle] = useState(null);
 
   const fetchRandomNews = async () => {
     try {
       const response = await fetch('https://saurav.tech/NewsAPI/top-headlines/category/general/us.json');
       const data = await response.json();
       const randomIndex = Math.floor(Math.random() * data.articles.length);
-      setArticle(data.articles[randomIndex]);
+      const article = data.articles[randomIndex];
+      console.log("Articolo ", article);
+      console.log("Articolo autore", article.author);
+      return article;
     } catch (error) {
       console.error('Error fetching news:', error);
+      return null;
     }
   };
 
-  /*funzione per ottenere un tweet casuale da twitter*/
-  const [tweet, setTweet] = useState(null);
-
+  /*funzione per ottenere un tweet casuale da twitter
   const fetchTweet = async () => {
     try {
-      const response = await fetch('/api/getTweet');
-      const data = await response.json();
-      setTweet(data.data[0]); // Prendi il primo tweet dall'array di tweet
+      // Assicurati che l'URL sia corretto per il tuo ambiente di sviluppo o produzione
+      const response = await fetch('http://localhost:8080/api/getTweet'); // O l'URL appropriato del tuo server
+      const tweet = await response.json();
+
+      // Assicurati che la risposta contenga i dati del tweet
+      if (tweet) {
+        console.log("Tweet", tweet);
+        return tweet; // Restituisce il tweet ottenuto
+      } else {
+        console.error('Nessun tweet trovato:', tweet);
+        return null;
+      }
     } catch (error) {
       console.error('Errore nel caricamento del tweet:', error);
+      return null;
     }
-  };
-  /*funzione per ottenere un'informazione casuale da wikipedia*/
-  const [articleUrl, setArticleUrl] = useState('');
+};
+  */
 
+  const fetchRandomTweet = async () => {
+    try {
+      // Sostituisci con l'URL del tuo server dove è implementata l'API
+      const response = await getRandomTweet();
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+      const tweet = await response.json();
+      console.log("Tweet: ", tweet.text); // Esempio di come potresti accedere al testo del tweet
+      // Restituisci l'intero oggetto tweet o solo le parti che ti servono
+      return tweet;
+    } catch (error) {
+      console.error('Error fetching tweet:', error);
+      return null;
+    }
+  }; //Non funzionante
+
+
+  /*funzione per ottenere un'informazione casuale da wikipedia*/
   const fetchRandomWikiArticle = async () => {//aggiungi in body.text "Lo sapevi che..."
     const url = "https://en.wikipedia.org/w/api.php?action=query&format=json&list=random&rnlimit=1&origin=*";
     
@@ -393,9 +426,10 @@ function CreateMessage(props) {
       const title = data.query.random[0].title;
       const pageUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
       
-      setArticleUrl(pageUrl);
+      return pageUrl;
     } catch (error) {
       console.error('Error fetching random Wikipedia article:', error);
+      return null;
     }
   };
 
@@ -987,6 +1021,7 @@ function CreateMessage(props) {
       const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
 
       await handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+      window.location.reload();
 
     } catch (error) {
       console.error('Errore nell\'invio del Squeal:', error);
@@ -1098,7 +1133,7 @@ function CreateMessage(props) {
     try {
       const result = await addSqueal(squealData);
       console.log('Squeal inviato con successo:', result);
-      window.location.href = "http://localhost:8080/squealer-app/profile";
+      window.location.reload();
     } catch (error) {
       console.error('Errore nell\'invio del Squeal:', error);
       // ...gestione dell'errore...
@@ -1174,7 +1209,8 @@ function CreateMessage(props) {
   };
 
   const handleSendChannelSqueal = async () => {
-    const squealData = {
+    if (channelSelected) {
+      const squealData = {
       sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
       typesender: 'channels', // Modifica come necessario
       body: {
@@ -1197,51 +1233,52 @@ function CreateMessage(props) {
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
       channel: channelSelected.name, // Aggiungi logica se il squeal è associato a un canale
       impressions: 0,
-    };
-  
-    console.log("Canale selezionato: ", channelSelected)
-    console.log("Squeal data: ", squealData);
-    try {
-      const resultAddSqueal = await addSqueal(squealData);
-      if (true){
-        await handleUpdateChannelPosts(channelSelected);
-      } else {
-        console.log("Non ci entra")
-      }
-      console.log('Squeal inviato con successo:', resultAddSqueal);
-      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
-      let imageChars = 0;
-      let videoChars = 0;
-      let linkChars = 0;
-      let positionChars = 0;
-      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
-      } else {
-        imageChars = 0;
-      }
-      if (squealData.body.video !== '') {
-        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
-      } else {
-        videoChars = 0;
-      }
-      if (squealData.body.link !== '') {
-        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
-      } else {
-        linkChars = 0;
-      }
-      if (squealData.body.position !== '') {
-        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
-      } else {
-        positionChars = 0;
-      }
-      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+      };
+    
+      console.log("Canale selezionato: ", channelSelected)
+      console.log("Squeal data: ", squealData);
+      try {
+        const resultAddSqueal = await addSqueal(squealData);
+        if (true){
+          await handleUpdateChannelPosts(channelSelected);
+        } else {
+          console.log("Non ci entra")
+        }
+        console.log('Squeal inviato con successo:', resultAddSqueal);
+        const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+        let imageChars = 0;
+        let videoChars = 0;
+        let linkChars = 0;
+        let positionChars = 0;
+        if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+          imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+        } else {
+          imageChars = 0;
+        }
+        if (squealData.body.video !== '') {
+          videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+        } else {
+          videoChars = 0;
+        }
+        if (squealData.body.link !== '') {
+          linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+        } else {
+          linkChars = 0;
+        }
+        if (squealData.body.position !== '') {
+          positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+        } else {
+          positionChars = 0;
+        }
+        const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
 
-          handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-          // goToProfile();
+            handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+            // goToProfile();
+            window.location.reload();
 
-      } catch (error) {
-        console.error('Errore nell\'invio dello squeal nel canale:', error);
-      }
+        } catch (error) {
+          console.error('Errore nell\'invio dello squeal nel canale:', error);
+        }
     } else {
       alert("Seleziona un canale per inviare il tuo messaggio.");
     }
@@ -1266,6 +1303,7 @@ function CreateMessage(props) {
     setDefaultMessageSearch(message);
     setIsDefaultMessageValid(true);
     console.log("Deafault message: ", defaultMessageSearch);
+
   };
 
   const cleanDefaultMessageSelection = () => {
@@ -1274,21 +1312,89 @@ function CreateMessage(props) {
     console.log("Deafault message cancellato: ", defaultMessageSearch);
   };
   
-  const processDefaultMessageType = () => {
+  const processDefaultMessageType = async () => {
     console.log("Deafault message inviato: ", defaultMessageSearch);
     switch (defaultMessageSearch.type) {
       case 'Answer':
         handleSendChannelDefaultSqueal(defaultMessageSearch.body);
         break;
-      case 'Casual Image':
+      case 'Casual Images':
+        const tempBodyImages =  {
+          text: '',
+          link: '',
+          photo: randomUnsplashImage(300, 300),
+          video: '',
+          position: '',
+        }
+        handleSendChannelDefaultSqueal(tempBodyImages);
         break;
       case 'News':
+        try {
+          const article = await fetchRandomNews();
+          if (article) { // Assicurati che article non sia null
+            console.log("Articolo fuori", article);
+            console.log("Autore fuori", article.author);
+            if (article.author === null) {
+              article.author = "Anonimo";
+            };
+            const tempBodyNews =  {
+              text: "Autore: " + article.author + "\n" + article.content + "\nPublished at: " + article.publishedAt,
+              link: article.url || '',
+              photo: article.urlToImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+              video: '',
+              position: '',
+            }
+            handleSendChannelDefaultSqueal(tempBodyNews);
+          } else {
+            // Gestisci il caso in cui article è null
+            console.error('Nessun articolo disponibile');
+          }
+        } catch (error) {
+          console.error('Errore nel recupero delle notizie:', error);
+        }
         break;
-      case 'Twitter':
+      case 'Twitter': //Non funzionante
+        try {
+          const tweet = await fetchRandomTweet();
+          console.log("Tweet fuori", tweet);
+          // const tempBodyTweet =  {
+          //   text: tweet.text,
+          //   link: tweet.link || '',
+          //   photo: tweet.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+          //   video: '',
+          //   position: '',
+          // }
+          // handleSendChannelDefaultSqueal(tempBodyTweet);
+        } catch (error) {
+          console.error('Errore nel recupero dei tweet:', error);
+        }
         break;
-      case 'Wiki info':
+      case 'WikiInfo':
+        try {
+          const wiki = await fetchRandomWikiArticle();
+          console.log("Wiki fuori", wiki);
+          const tempBodyWiki =  {
+            text: 'Lo sapevi che: ',
+            link: wiki|| '',
+            photo: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+            video: '',
+            position: '',
+          }
+          handleSendChannelDefaultSqueal(tempBodyWiki);
+        } catch (error) {
+          console.error('Errore nel recupero delle informazioni da Wikipedia:', error);
+        }
         break;
       case 'Repeat':
+        if ( defaultMessageSearch.request === '/begin') {
+          const inputString = defaultMessageSearch.repetition;
+          const numbers = inputString.match(/\d+/g).map(Number);
+          console.log(numbers);
+
+          startInterval(numbers);
+        } else if (defaultMessageSearch.request === '/end') {
+          stopInterval();
+        }
         break;
       default:
     }
@@ -1322,40 +1428,16 @@ function CreateMessage(props) {
   
     console.log("Squeal data: ", squealData);
     try {
-      const resultAddSqueal = await addSqueal(squealData);
-      console.log ("Canale selezionato: ", channelSelected);
-      await hanleUpdateChannelDefaultMessage(channelSelected, defaultCamp);
-      console.log('Squeal inviato con successo:', resultAddSqueal);
-      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
-      let imageChars = 0;
-      let videoChars = 0;
-      let linkChars = 0;
-      let positionChars = 0;
-      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
-      } else {
-        imageChars = 0;
-      }
-      if (squealData.body.video !== '') {
-        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
-      } else {
-        videoChars = 0;
-      }
-      if (squealData.body.link !== '') {
-        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
-      } else {
-        linkChars = 0;
-      }
-      if (squealData.body.position !== '') {
-        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
-      } else {
-        positionChars = 0;
-      }
-      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
-
-      handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-      // goToProfile();
-
+      if (wordsRemaining >= 125) {
+        const resultAddSqueal = await addSqueal(squealData);
+        console.log ("Canale selezionato: ", channelSelected);
+        await hanleUpdateChannelDefaultMessage(channelSelected, defaultCamp);
+        console.log('Squeal inviato con successo:', resultAddSqueal);
+        handleUpdateUser(125); // Aggiorna il numero di caratteri disponibili per l'utente
+        // goToProfile();
+    } else {
+      alert("Per mancanza di caratteri non puoi inviare il tuo messaggio, servono almeno 125 caratteri.");
+    }
     } catch (error) {
       console.error('Errore nell\'aggiornamento del canale:', error);
     }

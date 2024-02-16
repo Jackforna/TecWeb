@@ -67,6 +67,22 @@ export async function getActualUser() {
     }
 }
 
+// Funzione per richiedere un tweet casuale dal server
+export async function getRandomTweet() {
+    try {
+      const response = await fetch('http://localhost:8080/api/random-tweet');
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+      const randomTweet = await response.json();
+      return randomTweet;
+    } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+      throw error;
+    }
+  }
+  
+
 export async function getListChannels() {
     try {
         const response = await fetch('http://localhost:8080/get-listChannels');

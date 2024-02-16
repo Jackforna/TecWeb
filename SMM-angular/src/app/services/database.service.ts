@@ -126,10 +126,9 @@ export class DatabaseService {
   }
 
   deleteAllSqueals(): Observable<any> {
-    const body = {
-    };
-    return this.http.put('http://localhost:8080/update-squeals', body);
-  }
+    return this.http.delete('http://localhost:8080/delete-all-squeals');
+  };
+
 
   deleteAllChannels(): Observable<any> {
     const body = {
