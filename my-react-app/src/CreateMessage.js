@@ -223,7 +223,7 @@ function CreateMessage(props) {
           nickname: userData.nickname,
           notification: userData.notification || [true, true, true, true, true],
           password: userData.password,
-          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofile: userData.photoprofile || "",
           photoprofileX: userData.photoprofileX || 0,
           photoprofileY: userData.photoprofileY || 0,
           popularity: userData.popularity || 0,
@@ -824,7 +824,7 @@ function CreateMessage(props) {
   const handleCreateHashtagChannel = async () => {
     const channelData = {
       creator: actualUser.nickname,
-      photoProfile: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      photoProfile: '',
       photoprofilex: 0,
       photoprofiley: 0,
       name: text.replace(/#/g, ''),
@@ -842,7 +842,7 @@ function CreateMessage(props) {
           nickname: actualUser.nickname,
           notification: actualUser.notification || [true, true, true, true, true],
           password: actualUser.password,
-          photoprofile: actualUser.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofile: actualUser.photoprofile || "",
           photoprofileX: actualUser.photoprofileX || 0,
           photoprofileY: actualUser.photoprofileY || 0,
           popularity: actualUser.popularity || 0,
@@ -1148,7 +1148,7 @@ function CreateMessage(props) {
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
-      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      photoprofile: actualUser.photoProfile || '',
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
       sender: actualUser.nickname,
@@ -1174,68 +1174,67 @@ function CreateMessage(props) {
   };
 
   const handleSendChannelSqueal = async () => {
-    if (channelSelected) {
-      const squealData = {
-        sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-        typesender: 'channels', // Modifica come necessario
-        body: {
-          text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-          link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-          photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-          video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-          position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
-        },
-        photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
-        date: new Date().toISOString(),
-        hour: new Date().getHours(),
-        seconds: new Date().getSeconds(),
-        pos_reactions: 0,
-        neg_reactions: 0,
-        usersReactions: [],
-        answers: [],
-        usersViewed: [],
-        category: '', // Aggiungi logica per determinare la categoria se necessario
-        receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
-        channel: channelSelected.name, // Aggiungi logica se il squeal è associato a un canale
-        impressions: 0,
-      };
-    
-      console.log("Canale selezionato: ", channelSelected)
-      console.log("Squeal data: ", squealData);
-      try {
-          const resultAddSqueal = await addSqueal(squealData);
-          if (true){
-            await handleUpdateChannelPosts(channelSelected);
-          } else {
-            console.log("Non ci entra")
-          }
-          console.log('Squeal inviato con successo:', resultAddSqueal);
-          const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
-          let imageChars = 0;
-          let videoChars = 0;
-          let linkChars = 0;
-          let positionChars = 0;
-          if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-            imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
-          } else {
-            imageChars = 0;
-          }
-          if (squealData.body.video !== '') {
-            videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
-          } else {
-            videoChars = 0;
-          }
-          if (squealData.body.link !== '') {
-            linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
-          } else {
-            linkChars = 0;
-          }
-          if (squealData.body.position !== '') {
-            positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
-          } else {
-            positionChars = 0;
-          }
-          const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+    const squealData = {
+      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      typesender: 'channels', // Modifica come necessario
+      body: {
+        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
+        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
+        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
+        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+      },
+      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
+      date: new Date().toISOString(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      answers: [],
+      usersViewed: [],
+      category: '', // Aggiungi logica per determinare la categoria se necessario
+      receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
+      channel: channelSelected.name, // Aggiungi logica se il squeal è associato a un canale
+      impressions: 0,
+    };
+  
+    console.log("Canale selezionato: ", channelSelected)
+    console.log("Squeal data: ", squealData);
+    try {
+      const resultAddSqueal = await addSqueal(squealData);
+      if (true){
+        await handleUpdateChannelPosts(channelSelected);
+      } else {
+        console.log("Non ci entra")
+      }
+      console.log('Squeal inviato con successo:', resultAddSqueal);
+      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+      let imageChars = 0;
+      let videoChars = 0;
+      let linkChars = 0;
+      let positionChars = 0;
+      if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
+        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+      } else {
+        imageChars = 0;
+      }
+      if (squealData.body.video !== '') {
+        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+      } else {
+        videoChars = 0;
+      }
+      if (squealData.body.link !== '') {
+        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+      } else {
+        linkChars = 0;
+      }
+      if (squealData.body.position !== '') {
+        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+      } else {
+        positionChars = 0;
+      }
+      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
 
           handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
           // goToProfile();
@@ -1476,7 +1475,7 @@ function CreateMessage(props) {
           nickname: userData.nickname,
           notification: userData.notification || [true, true, true, true, true],
           password: userData.password,
-          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofile: userData.photoprofile || "",
           photoprofileX: userData.photoprofileX || 0,
           photoprofileY: userData.photoprofileY || 0,
           popularity: userData.popularity || 0,
@@ -1524,7 +1523,7 @@ function CreateMessage(props) {
           nickname: userData.nickname,
           notification: userData.notification || [true, true, true, true, true],
           password: userData.password,
-          photoprofile: userData.photoprofile || "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD…tZ+iIV1ophfMy+kSgUDTiGsvF0SRUaR9xSPkVSB6jUSmv0f/Z",
+          photoprofile: userData.photoprofile || "",
           photoprofileX: userData.photoprofileX || 0,
           photoprofileY: userData.photoprofileY || 0,
           popularity: userData.popularity || 0,
@@ -1552,7 +1551,7 @@ function CreateMessage(props) {
   const handleCreateChannel = async () => {
     const channelData = {
       creator: actualUser.nickname, 
-      photoProfile: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      photoProfile: '',
       photoprofilex: 0,
       photoprofiley: 0,
       name: channelName,
@@ -1561,7 +1560,7 @@ function CreateMessage(props) {
       isSilenceable: isSilenceable,
       list_users: [creatorDetails, ...userDetails],
       list_posts: [],
-      userSilenced: [],
+      usersSilenced: [],
       description: channelDescription,
       popularity: "",
     };

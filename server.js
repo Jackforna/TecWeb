@@ -194,6 +194,10 @@ app.put('/update-squeals', async (req, res) => {
   try {
       const updatedSqueals = req.body;
 
+      updatedSqueals.forEach((squeal) => {
+        delete squeal._id;
+      });
+
       await ListSquealsCollection.deleteMany({});
 
       if(updatedSqueals.length!=0)
@@ -254,6 +258,10 @@ app.put('/update-channels', async (req, res) => {
       const updatedChannels = req.body;
 
       await ListChannelsCollection.deleteMany({});
+
+      updatedChannels.forEach((channel) => {
+        delete channel._id;
+      });
 
       if(updatedChannels.length>0)
       await ListChannelsCollection.insertMany(updatedChannels);

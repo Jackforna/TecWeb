@@ -214,12 +214,10 @@ useEffect(()=>{
     }
   setallSquealsprint(squealsReceived);
   setallSqueals(allSquealsReceived);
-  console.log(squealsReceived);
   }
 }, [actualuser, allSquealsReceived, allCHANNELS]);
 
   const callback = (entries) => {
-    console.log("Entrato")
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         const viewedMessage = allSqueals.find(
@@ -267,7 +265,7 @@ useEffect(()=>{
                 let updatedPosts = [];
                 for (let j = 0; j < channel.list_posts.length; j++) {
                   let post = channel.list_posts[j];
-                  if (post.sender === viewedMessage.sender & post.date === viewedMessage.date & post.hour === viewedMessage.hour & post.seconds === viewedMessage.seconds) {
+                  if (post.sender === viewedMessage.sender && post.date === viewedMessage.date && post.hour === viewedMessage.hour && post.seconds === viewedMessage.seconds) {
                     let updatedPost = {
                       ...post,
                       impressions: post.impressions + 1,
@@ -290,14 +288,13 @@ useEffect(()=>{
           break;
           case 'CHANNELS':
             updatedCHANNELS = [];
-            console.log(allCHANNELS);
             for (let i = 0; i < allCHANNELS.length; i++) {
               let channel = allCHANNELS[i];
               if (channel.name === viewedMessage.channel) {
                 let updatedPosts = [];
                 for (let j = 0; j < channel.list_posts.length; j++) {
                   let post = channel.list_posts[j];
-                  if (post.sender === viewedMessage.sender & post.date === viewedMessage.date & post.hour === viewedMessage.hour & post.seconds === viewedMessage.seconds) {
+                  if (post.sender === viewedMessage.sender && post.date === viewedMessage.date && post.hour === viewedMessage.hour && post.seconds === viewedMessage.seconds) {
                     let updatedPost = {
                       ...post,
                       impressions: post.impressions + 1,
@@ -316,7 +313,6 @@ useEffect(()=>{
                 updatedCHANNELS.push(channel);
               }
             }
-            console.log(updatedCHANNELS);
             setallCHANNELS(updatedCHANNELS);
           break;
           case 'keywords':
@@ -327,7 +323,7 @@ useEffect(()=>{
                 let updatedPosts = [];
                 for (let j = 0; j < channel.list_posts.length; j++) {
                   let post = channel.list_posts[j];
-                  if (post.sender === viewedMessage.sender & post.date === viewedMessage.date & post.hour === viewedMessage.hour & post.seconds === viewedMessage.seconds) {
+                  if (post.sender === viewedMessage.sender && post.date === viewedMessage.date && post.hour === viewedMessage.hour && post.seconds === viewedMessage.seconds) {
                     let updatedPost = {
                       ...post,
                       impressions: post.impressions + 1,
@@ -385,8 +381,7 @@ useEffect(()=>{
 
 async function updateAllSqueals(squealsToUpdate){
   try{
-    const squeal = await updateSqueals(squealsToUpdate);
-    console.log(squeal);
+    await updateSqueals(squealsToUpdate);
   } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
@@ -395,8 +390,7 @@ async function updateAllSqueals(squealsToUpdate){
 
 async function updateAllChannels(ChannelsToUpdate){
   try{
-    const chan = await updateChannels(ChannelsToUpdate);
-    console.log(chan);
+    await updateChannels(ChannelsToUpdate);
   } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
