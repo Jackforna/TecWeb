@@ -154,12 +154,38 @@
         #selectedUsersContainer{
             margin-left: 14% !important;
         }
+
+        #charColContainer{
+            width: 100% !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        #profileColContainer{
+            width: 100% !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        #slectionColContainer{
+            width: 100% !important;
+            display: flex;
+            justify-content: center;
+            margin-top: 4%;
+            margin-bottom: 4%;
+        }
+
+        .profile-image-container {
+            width: 45px;
+            height: 45px;
+        }
     }
 
     @media (max-width: 401px) {
         .align-items-center{
             flex-direction: column !important;
         }
+
         .profile-image-container {
             margin-bottom: 10px !important;
             width: 45px;
@@ -198,8 +224,13 @@
         #allegatiConainer2{
             padding: 0% !important;
         }
+
         #selectedUsersContainer{
             margin-left: 10% !important;
+        }
+
+        #slectionColContainer{
+            padding: 0% !important;
         }
     }
   

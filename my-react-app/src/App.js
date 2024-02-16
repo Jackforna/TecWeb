@@ -94,15 +94,16 @@ function App() {
               <Image src={'/squealer-app'+logo} alt="Logo" roundedCircle width="80%" />
             </div>)}
 
-            <div style={{ flex: '0.1' }}></div>
+
+            <div style={{ flex: windowSize >= 1024 ? '0.2' : windowSize >= 768 ? '0.3' : '0.0' }}></div>
             
-            <div style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+            {windowSize >= 768 && (<div style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
               {photoProfile !== '' ? (
                         <div className="profile-image-container"
                           style = {
                             {
-                              width: '100px', /* Dimensione predefinita */
-                              height: '100px', /* Dimensione predefinita */
+                              width: windowSize >= 1024 ? '100px' : windowSize >= 768 ? '60px' : '0', 
+                              height: windowSize >= 1024 ? '100px' : windowSize >= 768 ? '60px' : '0', 
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -116,10 +117,10 @@ function App() {
                       ) : (
                         <PersonCircle size='100' color='white' />
               )}
-              <div className="text-center">
+              {windowSize >= 1024 && (<div className="text-center">
                 <h7>{nicknameProfile}</h7>
-              </div>
-            </div>
+              </div>)}
+            </div>)}
 
             <div style={{ flex: '0.1' }}></div>
 

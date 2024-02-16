@@ -1794,7 +1794,7 @@ function CreateMessage(props) {
                 {/*Parte comune*/}
                 <Row className="align-items-center">
 
-                  <Col xs="auto" className="d-flex justify-content-center">
+                  <Col xs="auto" className="d-flex justify-content-center" id = "profileColContainer">
                     {photoProfile !== '' ? (
                       <div className="profile-image-container">
                         <img src={photoProfile} alt="Profile" className="profile-image"/>
@@ -1804,7 +1804,7 @@ function CreateMessage(props) {
                     )}
                   </Col>
 
-                  <Col>
+                  <Col id = "slectionColContainer">
                     <Row className="gx-2 gx-lg-3 align-items-center" id = "RowSelectType">
                       <Col xs="auto">
                         <Form.Select 
@@ -1850,6 +1850,51 @@ function CreateMessage(props) {
                         </Form.Select>
                       </Col>
                     </Row>
+                  </Col>
+
+                  <Col xs="auto" className="ms-auto" id = "charColContainer">
+                    {((messageType === 'Squeal' && squealOrChannelOption === 'Public')  || (messageType === 'Channel' && squealOrChannelOption === 'Write'))&& (
+                      <div
+                      id="charCounterContainer"
+                      style={{
+                        textAlign: 'right',
+                        color: counterColor,
+                        width: '40px',
+                        height: '40px',
+                        lineHeight: '40px',
+                        borderRadius: '50%',
+                        backgroundColor: '#f0f0f0',
+                        border: '2px solid #ccc',
+                        display: 'flex',
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        fontSize: '1em', 
+                      }}
+                    >
+                      {wordsRemaining}
+                    </div>
+                    )} 
+                    {(messageType === 'Squeal' && squealOrChannelOption === 'Privato') && ( 
+                      <div id = "charCounterContainer"
+                      style={{
+                        textAlign: 'right',
+                        color: privateWordsRemaining <= 10 ? 'red' : '#000000DE',
+                        width: '40px',
+                        height: '40px',
+                        lineHeight: '40px',
+                        borderRadius: '50%',
+                        backgroundColor: '#f0f0f0',
+                        border: '2px solid #ccc',
+                        display: 'flex',
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        fontSize: '1em', 
+                      }}
+                      >
+                        {privateWordsRemaining}
+                      </div>
+                    )}
+
                   </Col>
                 </Row>
 
@@ -2069,17 +2114,6 @@ function CreateMessage(props) {
                         <button onClick={() => { if (!isMapVisible) { setIsMapVisible(true); } else { handleLocationButtonClick(); }}} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginRight: '20px' }}>
                           <Globe size={25} color="#000000DE" />
                         </button>
-
-                        {/* Caratteri */}
-                        <div id = "charCounterContainer"
-                          style={{
-                            textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                            color: counterColor,
-                            marginRight: '20px',
-                          }}
-                        >
-                          {wordsRemaining}
-                        </div>
                       </Col>
 
                       {/* Colonna per il pulsante Invia, allineata a destra */}
@@ -2344,17 +2378,6 @@ function CreateMessage(props) {
                           >
                             <Globe size={25} color="#000000DE" />
                           </button>
-
-                          {/*Caratteri rimanenti*/}
-                          <div id = "charCounterContainer"
-                            style={{
-                              textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                              color: privateWordsRemaining <= 10 ? 'red' : '#000000DE',
-                              marginRight: '20px',
-                            }}
-                          >
-                            {privateWordsRemaining}
-                          </div>
                       </Col>
 
                       {/* Colonna per il pulsante Invia, allineata a destra */}
