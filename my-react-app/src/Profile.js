@@ -1253,6 +1253,15 @@ function Profile() {
     }
 
       const exitprofile = () => {
+        localStorage.removeItem('Interval active');
+        localStorage.removeItem('secToRepeat');
+        localStorage.removeItem('Counter');
+        localStorage.removeItem('ChannelSelectedListUsers');
+        localStorage.removeItem('ChannelSelected');
+        localStorage.removeItem('ChannelSelectedName');
+        localStorage.removeItem('ChannelTypeSender');
+        localStorage.removeItem('PhotoProfile');
+        localStorage.removeItem('Nickname');
         localStorage.setItem("actualUserId", JSON.stringify(1));
         window.location.href = "http://localhost:8080";
       }

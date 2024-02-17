@@ -1202,6 +1202,7 @@ function CreateMessage(props) {
   
   const [channelSelectedHaveDefault, setChannelSelectedHaveDefault] = useState(false);
   const [channelSelectedHaveRepeat, setChannelSelectedHaveRepeat] = useState(false);
+  const [channelType, setChannelType] = useState(''); // Tipo di canale selezionato
 
   const handleChannelSelection = (channel) => {
     setChannelSearch(channel.name); // Imposta l'input di ricerca sul canale selezionato
@@ -1211,6 +1212,11 @@ function CreateMessage(props) {
       if (channel.list_mess.map(message => message.type === 'Repeat')) {
         setChannelSelectedHaveRepeat(true);
       }
+    }
+    if (channel.type === '&') {
+      setChannelType('channels');
+    } else if (channel.type === '$') {
+      setChannelType('CHANNELS');
     }
   };
 
@@ -1234,7 +1240,7 @@ function CreateMessage(props) {
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
       sender: nicknameProfile,
-      typesender: 'channels',
+      typesender: channelType,
       usersReactions: [],
       usersViewed: [],
     }
@@ -1259,7 +1265,7 @@ function CreateMessage(props) {
     if (channelSelected) {
       const squealData = {
       sender: nicknameProfile, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: 'channels', // Modifica come necessario
+      typesender: channelType, // Modifica come necessario
       body: {
         text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
         link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
@@ -1401,6 +1407,8 @@ function CreateMessage(props) {
         }
         break;
       case 'Twitter': //Non funzionante
+        alert("Funzione non ancora implementata");
+        /*
         try {
           const tweet = await fetchRandomTweet();
           console.log("Tweet fuori", tweet);
@@ -1415,6 +1423,7 @@ function CreateMessage(props) {
         } catch (error) {
           console.error('Errore nel recupero dei tweet:', error);
         }
+        */
         break;
       case 'WikiInfo':
         try {
@@ -1430,17 +1439,6 @@ function CreateMessage(props) {
           handleSendChannelDefaultSqueal(tempBodyWiki);
         } catch (error) {
           console.error('Errore nel recupero delle informazioni da Wikipedia:', error);
-        }
-        break;
-      case 'Repeat':
-        if ( defaultMessageSearch.request === '/begin') {
-          const inputString = defaultMessageSearch.repetition;
-          const numbers = inputString.match(/\d+/g).map(Number);
-          console.log(numbers);
-
-          startInterval(numbers);
-        } else if (defaultMessageSearch.request === '/end') {
-          stopInterval();
         }
         break;
       default:
@@ -1461,6 +1459,8 @@ function CreateMessage(props) {
     console.log("Utenti in list users ", localStorage.getItem('ChannelSelectedListUsers'));
     localStorage.setItem('ChannelSelected', JSON.stringify(channelSelected));
     localStorage.setItem('ChannelSelectedName', channelSelected.name);
+    localStorage.setItem('PhotoProfile', photoProfile);
+    localStorage.setItem('Nickname', nicknameProfile);
     if ( channelSelected.type === '&') {
       localStorage.setItem('ChannelTypeSender', "channels");
     } else {
@@ -1481,14 +1481,16 @@ function CreateMessage(props) {
     localStorage.removeItem('ChannelSelected');
     localStorage.removeItem('ChannelSelectedName');
     localStorage.removeItem('ChannelTypeSender');
+    localStorage.removeItem('PhotoProfile');
+    localStorage.removeItem('Nickname');
     updateInterval();
   };
 
 
   const handleSendChannelDefaultSqueal = async (defaultCamp) => {
     const squealData = {
-      sender: nicknameProfile, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : channelSearch.typesender, // Modifica come necessario
+      sender: localStorage.getItem("Interval active") ? localStorage.getItem('Nickname') : nicknameProfile, // Assumi che `actualUser` contenga il nickname del mittente
+      typesender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : channelType,
       body: {
         text: defaultCamp.text, // Assumi che questo sia il testo del tuo messaggio
         link: defaultCamp.link || '', // Aggiungi questo campo solo se è stato inserito un link
@@ -1496,7 +1498,7 @@ function CreateMessage(props) {
         video: defaultCamp.video || '', // Aggiungi questo campo solo se è stato caricato un video
         position: defaultCamp.position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
-      photoprofile: photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
+      photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : photoProfile, 
       date: new Date().toISOString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
@@ -1549,12 +1551,12 @@ function CreateMessage(props) {
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
-      photoprofile: photoProfile,
+      photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : photoProfile,
       pos_reactions: 0,
       receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
-      sender: nicknameProfile,
-      typesender: 'channels',
+      sender: localStorage.getItem("Interval active") ? localStorage.getItem('Nickname') : nicknameProfile,
+      typesender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : channelType,
       usersReactions: [],
       usersViewed: [],
     }
