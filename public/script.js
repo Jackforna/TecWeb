@@ -1996,11 +1996,21 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
             }
         break;
         case 'Repeat':
-            if(document.getElementById("userrepeatnewmessageCHANNEL").value!=""){
-                newmessage = {type:select, request:"", repetition:repetitionmessage, body:{text:"to /begin", link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
-                arrcreateCHANNELmessages.push(newmessage);
+            let j = false;
+                for(let i=0; i<arrcreateCHANNELmessages.length; i++){
+                    if(arrcreateCHANNELmessages[i].type=="Repeat"){
+                        j=true;
+                    }
+                }
+            if(j==false){
+                if(document.getElementById("userrepeatnewmessageCHANNEL").value!=""){
+                    newmessage = {type:select, request:"", repetition:repetitionmessage, body:{text:"to /begin", link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
+                    arrcreateCHANNELmessages.push(newmessage);
+                } else {
+                    alert('You must write the number of times you want to repeat this message');
+                }
             } else {
-                alert('You must write the number of times you want to repeat this message');
+                alert("There is already a repeat message in this channel");
             }
         break;
         case 'Casual Images':
