@@ -100,6 +100,7 @@ app.get('/api/getTweet', async (req, res) => {
 });
 */
 
+/*
 const Twit = require('twit');
 
 // Configura Twit con le tue chiavi di accesso di Twitter
@@ -124,6 +125,8 @@ app.get('/api/random-tweet', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+*/
 
 
 initializeCollections();

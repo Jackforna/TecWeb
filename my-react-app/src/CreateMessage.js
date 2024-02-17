@@ -116,6 +116,7 @@ function CreateMessage(props) {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [capturedVideo, setCapturedVideo] = useState(null);
   const [photoProfile, setPhotoProfile] = useState('');
+  const [nicknameProfile, setNicknameProfile] = useState('');
   const navigate = useNavigate();
 
 
@@ -180,6 +181,7 @@ function CreateMessage(props) {
         setMaxChar(userData.char_d); // Adjust 'char_d' to the actual property name for max characters
         const initialWordsRemaining = userData.char_d - squealChatTextareaValue.length;
         setPhotoProfile(userData.photoprofile);
+        setNicknameProfile(userData.nickname);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -277,7 +279,7 @@ function CreateMessage(props) {
   
     for (let i = 0; i < allchannels.length; i++) {
       for (let j = 0; j < allchannels[i].list_users.length; j++) {
-        if (allchannels[i].list_users[j].nickname === actualUser.nickname) {
+        if (allchannels[i].list_users[j].nickname === nicknameProfile) {
           setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allchannels[i]]);
           // console.log("allchannels[i]",allchannels[i]);
         }
@@ -286,7 +288,7 @@ function CreateMessage(props) {
   
     for (let i = 0; i < allCHANNELS.length; i++) {
       for (let j = 0; j < allCHANNELS[i].list_users.length; j++) {
-        if ((allCHANNELS[i].list_users[j].nickname === actualUser.nickname) && ((allCHANNELS[i].list_users[j].type === 'Modifier')|(allCHANNELS[i].list_users[j].type === 'Creator'))) {
+        if ((allCHANNELS[i].list_users[j].nickname === nicknameProfile) && ((allCHANNELS[i].list_users[j].type === 'Modifier')|(allCHANNELS[i].list_users[j].type === 'Creator'))) {
           setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allCHANNELS[i]]);
           // console.log("allCHANNELS[i]",allCHANNELS[i]);
         }
@@ -295,7 +297,7 @@ function CreateMessage(props) {
   
     for (let i = 0; i < allkeywords.length; i++) {
       for (let j = 0; j < allkeywords[i].list_users.length; j++) {
-        if (allkeywords[i].list_users[j].nickname === actualUser.nickname) {
+        if (allkeywords[i].list_users[j].nickname === nicknameProfile) {
           setallkeywordsprint(prevallchannelsprint => [...prevallchannelsprint, allkeywords[i]]);
           // console.log("allkeywords[i]",allkeywords[i]);
         }
@@ -328,6 +330,28 @@ function CreateMessage(props) {
   const [intervalId, setIntervalId] = useState(null);
   let counter = 0;
 
+  useEffect(() => {
+    // Funzione che avvia o ferma l'intervallo in base ai dati del localStorage
+    updateInterval();
+  
+    // Aggiungi l'event listener per l'evento 'storage'
+    window.addEventListener('storage', updateInterval);
+  
+    // Rimuovi l'event listener quando il componente viene smontato
+    return () => {
+      window.removeEventListener('storage', updateInterval);
+    };
+  }, []);
+
+  const updateInterval = () => {
+    const secToRepeat = localStorage.getItem("secToRepeat");
+    if (secToRepeat) {
+      startInterval(parseInt(secToRepeat));
+    } else {
+      stopInterval();
+    }
+  };
+  
   const startInterval = (n) => {
       // Assicurati che non ci siano intervalli già in esecuzione
       if (intervalId) {
@@ -336,9 +360,23 @@ function CreateMessage(props) {
   
       // Imposta un nuovo intervallo
       const id = setInterval(() => {
-        console.log('Questo messaggio appare ogni n secondi');
+        // console.log('Questo messaggio appare ogni n secondi');
+        let counter = localStorage.getItem("Counter");
         counter++;
-        console.log("Counter: ", counter);
+        localStorage.setItem("Counter", counter);
+        console.log("Questo messaggio è il numero :", counter);
+        try {
+          const tempBodyInterval =  {
+            text: 'Questo è il messaggio numero : ' + counter,
+            link: '',
+            photo: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+            video: '',
+            position: '',
+          }
+          handleSendChannelDefaultSqueal(tempBodyInterval);
+        } catch (error) {
+          console.error('Errore nel recupero delle informazioni da Wikipedia:', error);
+        }
       }, n*1000); // Sostituisci 5000 con il numero di millisecondi che desideri
   
       // Salva l'ID dell'intervallo nello stato
@@ -350,7 +388,7 @@ function CreateMessage(props) {
     if (intervalId) {
       clearInterval(intervalId);
       setIntervalId(null);
-      counter = 0;
+      window.location.reload();
     }
   };
 
@@ -849,7 +887,7 @@ function CreateMessage(props) {
       console.log("Canale non trovato");
       setExistedChannel(false);
       console.log("Canale non trovato in control channel", existedChannel)
-      setListOfUsers([actualUser.nickname]);
+      setListOfUsers([nicknameProfile]);
       handleSendSqueal(foundChannel, false);
     }
 
@@ -857,7 +895,7 @@ function CreateMessage(props) {
 
   const handleCreateHashtagChannel = async () => {
     const channelData = {
-      creator: actualUser.nickname,
+      creator: nicknameProfile,
       photoProfile: '',
       photoprofilex: 0,
       photoprofiley: 0,
@@ -873,10 +911,10 @@ function CreateMessage(props) {
           char_w: actualUser.char_w || 2000,
           email: actualUser.email,
           fullname: actualUser.fullname,
-          nickname: actualUser.nickname,
+          nickname: nicknameProfile,
           notification: actualUser.notification || [true, true, true, true, true],
           password: actualUser.password,
-          photoprofile: actualUser.photoprofile || "",
+          photoprofile: photoProfile || "",
           photoprofileX: actualUser.photoprofileX || 0,
           photoprofileY: actualUser.photoprofileY || 0,
           popularity: actualUser.popularity || 0,
@@ -900,11 +938,11 @@ function CreateMessage(props) {
           hour: new Date().getHours(),
           impressions: 0,
           neg_reactions: 0,
-          photoprofile: actualUser.photoProfile,
+          photoprofile: photoProfile,
           pos_reactions: 0,
-          receivers: [`@${actualUser.nickname}`],
+          receivers: [`@${nicknameProfile}`],
           seconds: new Date().getSeconds(),
-          sender: actualUser.nickname,
+          sender: nicknameProfile,
           typesender: 'keywords',
           usersReactions: [],
           usersViewed: [],
@@ -937,11 +975,11 @@ function CreateMessage(props) {
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
-      photoprofile: actualUser.photoProfile,
+      photoprofile: photoProfile,
       pos_reactions: 0,
       receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
-      sender: actualUser.nickname,
+      sender: nicknameProfile,
       typesender: 'keywords',
       usersReactions: [],
       usersViewed: [],
@@ -959,7 +997,7 @@ function CreateMessage(props) {
 
   const handleSendSqueal = async (channelToUpdate, flag) => {
     const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      sender: nicknameProfile, // Assumi che `actualUser` contenga il nickname del mittente
       typesender: 'keywords', // Modifica come necessario
       body: {
         text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
@@ -968,7 +1006,7 @@ function CreateMessage(props) {
         video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
-      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
+      photoprofile: photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
       date: new Date().toISOString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
@@ -1106,7 +1144,7 @@ function CreateMessage(props) {
 
   const handleSendPrivateSqueal = async () => {
     const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      sender: nicknameProfile, // Assumi che `actualUser` contenga il nickname del mittente
       typesender: 'Users', // Modifica come necessario
       body: {
         text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
@@ -1115,7 +1153,7 @@ function CreateMessage(props) {
         video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
-      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
+      photoprofile: photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
       date: new Date().toISOString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
@@ -1162,9 +1200,18 @@ function CreateMessage(props) {
     }
   };
   
+  const [channelSelectedHaveDefault, setChannelSelectedHaveDefault] = useState(false);
+  const [channelSelectedHaveRepeat, setChannelSelectedHaveRepeat] = useState(false);
+
   const handleChannelSelection = (channel) => {
     setChannelSearch(channel.name); // Imposta l'input di ricerca sul canale selezionato
     setSuggestedChannels([]); // Svuota i canali suggeriti
+    if ( channel.list_mess.length > 0) {
+      setChannelSelectedHaveDefault(true);
+      if (channel.list_mess.map(message => message.type === 'Repeat')) {
+        setChannelSelectedHaveRepeat(true);
+      }
+    }
   };
 
   const handleUpdateChannelPosts = async (channelSelectedToUpdate) => {
@@ -1183,10 +1230,10 @@ function CreateMessage(props) {
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
-      photoprofile: actualUser.photoProfile || '',
+      photoprofile: photoProfile || '',
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
-      sender: actualUser.nickname,
+      sender: nicknameProfile,
       typesender: 'channels',
       usersReactions: [],
       usersViewed: [],
@@ -1211,7 +1258,7 @@ function CreateMessage(props) {
   const handleSendChannelSqueal = async () => {
     if (channelSelected) {
       const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
+      sender: nicknameProfile, // Assumi che `actualUser` contenga il nickname del mittente
       typesender: 'channels', // Modifica come necessario
       body: {
         text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
@@ -1220,7 +1267,7 @@ function CreateMessage(props) {
         video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
-      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
+      photoprofile: photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
       date: new Date().toISOString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
@@ -1400,10 +1447,48 @@ function CreateMessage(props) {
     }
   }
 
+  // let intervalActive = localStorage.getItem('Interval active'); 
+
+  const processRepeatMessage = async () => {
+    const repeat = channelSelected.list_mess.filter(message => message.type === 'Repeat');
+    const inputString = repeat[0].repetition;
+    const numbers = inputString.match(/\d+/g).map(Number);
+    localStorage.setItem('Interval active', 'true');
+    localStorage.setItem('secToRepeat', numbers.toString());
+    localStorage.setItem('Counter', 0);
+    console.log("Channel selected in process repeat message: ", channelSelected);
+    localStorage.setItem('ChannelSelectedListUsers', JSON.stringify(channelSelected.list_users.map(user => `@${user.nickname}`)));
+    console.log("Utenti in list users ", localStorage.getItem('ChannelSelectedListUsers'));
+    localStorage.setItem('ChannelSelected', JSON.stringify(channelSelected));
+    localStorage.setItem('ChannelSelectedName', channelSelected.name);
+    if ( channelSelected.type === '&') {
+      localStorage.setItem('ChannelTypeSender', "channels");
+    } else {
+      localStorage.setItem('ChannelTypeSender', "CHANNELS");
+    }
+    // console.log(JSON.parse("Utenti in list users ", localStorage.getItem('channelSelected')).list_users.map(user => `@${user.nickname}`))
+    // setDefaultMessageSearch('');
+    updateInterval();
+  };
+
+  // const [intervalActive , setIntervalActive] = useState(false);
+
+  const stopProcessRepeatMessage = async () => {
+    localStorage.removeItem('Interval active');
+    localStorage.removeItem('secToRepeat');
+    localStorage.removeItem('Counter');
+    localStorage.removeItem('ChannelSelectedListUsers');
+    localStorage.removeItem('ChannelSelected');
+    localStorage.removeItem('ChannelSelectedName');
+    localStorage.removeItem('ChannelTypeSender');
+    updateInterval();
+  };
+
+
   const handleSendChannelDefaultSqueal = async (defaultCamp) => {
     const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: channelSearch.typesender, // Modifica come necessario
+      sender: nicknameProfile, // Assumi che `actualUser` contenga il nickname del mittente
+      typesender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : channelSearch.typesender, // Modifica come necessario
       body: {
         text: defaultCamp.text, // Assumi che questo sia il testo del tuo messaggio
         link: defaultCamp.link || '', // Aggiungi questo campo solo se è stato inserito un link
@@ -1411,7 +1496,7 @@ function CreateMessage(props) {
         video: defaultCamp.video || '', // Aggiungi questo campo solo se è stato caricato un video
         position: defaultCamp.position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
-      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
+      photoprofile: photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
       date: new Date().toISOString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
@@ -1421,21 +1506,27 @@ function CreateMessage(props) {
       answers: [],
       usersViewed: [],
       category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
-      channel: channelSearch, // Aggiungi logica se il squeal è associato a un canale
+      receivers: localStorage.getItem("Interval active") ?  JSON.parse(localStorage.getItem('ChannelSelectedListUsers')) : channelSelected.list_users.map(user => `@${user.nickname}`),
+      channel: localStorage.getItem("Interval active") ?  localStorage.getItem('ChannelSelectedName') :  channelSearch, // Aggiungi logica se il squeal è associato a un canale
       impressions: 0,
     };
   
     console.log("Squeal data: ", squealData);
     try {
-      if (wordsRemaining >= 125) {
+      if (wordsRemaining >= 125 && localStorage.getItem('Interval active') === null) {
         const resultAddSqueal = await addSqueal(squealData);
         console.log ("Canale selezionato: ", channelSelected);
         await hanleUpdateChannelDefaultMessage(channelSelected, defaultCamp);
         console.log('Squeal inviato con successo:', resultAddSqueal);
-        handleUpdateUser(125); // Aggiorna il numero di caratteri disponibili per l'utente
+        // handleUpdateUser(125); // Aggiorna il numero di caratteri disponibili per l'utente
         // goToProfile();
-    } else {
+      } else if (localStorage.getItem('Interval active') === 'true') {
+        const resultAddSqueal = await addSqueal(squealData);
+        // console.log ("Canale selezionato: ", channelSelected);
+        const channelToProcess = JSON.parse(localStorage.getItem('ChannelSelected'));
+        await hanleUpdateChannelDefaultMessage(channelToProcess, defaultCamp);
+        console.log('Squeal inviato con successo:', resultAddSqueal);
+      } else {
       alert("Per mancanza di caratteri non puoi inviare il tuo messaggio, servono almeno 125 caratteri.");
     }
     } catch (error) {
@@ -1458,18 +1549,18 @@ function CreateMessage(props) {
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
-      photoprofile: actualUser.photoProfile,
+      photoprofile: photoProfile,
       pos_reactions: 0,
       receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
-      sender: actualUser.nickname,
+      sender: nicknameProfile,
       typesender: 'channels',
       usersReactions: [],
       usersViewed: [],
     }
     try {
       
-      const resultChannel = await updateChannel(channelSelected._id, channelDataUpdatePost);
+      const resultChannel = await updateChannel(channelToUpdate._id, channelDataUpdatePost);
       console.log('Canale aggiornato con successo:', resultChannel);
     } catch (error) {
       console.error('Errore nell\'aggiornamento del canale:', error);
@@ -1632,7 +1723,7 @@ function CreateMessage(props) {
 
   const handleCreateChannel = async () => {
     const channelData = {
-      creator: actualUser.nickname, 
+      creator: nicknameProfile, 
       photoProfile: '',
       photoprofilex: 0,
       photoprofiley: 0,
@@ -2439,45 +2530,57 @@ function CreateMessage(props) {
                         {/*Default message*/}
                         <>
                           {/* Selezione deafault message */}
-                          {channelSelected && (
+                          {channelSelectedHaveDefault && (
                             <>
-                            <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
-                              <input
-                                type="text"
-                                placeholder="Cerca messaggi di default..."
-                                value={defaultMessageSearch.request}
-                                disabled={isDefaultMessageValid}
-                                onChange={(e) => setDefaultMessageSearch(e.target.value)}
-                                style={{
-                                  backgroundColor: 'transparent',
-                                  borderColor: 'gray',
-                                  color: '#000000DE',
-                                  width: '80%',
-                                }}
-                              />
-                              {isDefaultMessageValid && (
-                                <button
-                                  onClick={() => cleanDefaultMessageSelection()}
-                                  style={{
-                                    cursor: 'pointer',
-                                    background: 'none',
-                                    border: 'none',
-                                    color: '#000000DE',
-                                  }}
-                                >
-                                  X
-                                </button>
-                              )}
-                            </div>
-                            {suggestedDefaultMessages.length > 0 && (
-                              <ul style={{ listStyleType: 'none', padding: 0 }}>
-                                {suggestedDefaultMessages.map((message, index) => (
-                                  <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
-                                    {message.request} - {message.body.text}
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
+                              <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
+                                <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
+                                  <input
+                                    type="text"
+                                    placeholder="Cerca messaggi di default..."
+                                    value={defaultMessageSearch.request}
+                                    disabled={isDefaultMessageValid}
+                                    onChange={(e) => setDefaultMessageSearch(e.target.value)}
+                                    style={{
+                                      backgroundColor: 'transparent',
+                                      borderColor: 'gray',
+                                      color: '#000000DE',
+                                      width: '80%',
+                                    }}
+                                  />
+                                  {isDefaultMessageValid && (
+                                    <button
+                                      onClick={() => cleanDefaultMessageSelection()}
+                                      style={{
+                                        cursor: 'pointer',
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#000000DE',
+                                      }}
+                                    >
+                                      X
+                                    </button>
+                                  )}
+                                </div>
+                                {suggestedDefaultMessages.length > 0 && (
+                                  <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                    {suggestedDefaultMessages.map((message, index) => (
+                                      <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
+                                        {message.request} - {message.body.text}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                                {channelSelectedHaveRepeat &&  (
+                                  <button onClick={() => {processRepeatMessage()}}>
+                                    Repeat
+                                  </button>
+                                )}
+                                {localStorage.getItem('Interval active') && (
+                                  <button onClick={() => {stopProcessRepeatMessage()}}>
+                                    Stop
+                                  </button>
+                                )}
+                              </div>
                             </>
                           )}
 
