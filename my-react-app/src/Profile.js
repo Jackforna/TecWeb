@@ -913,21 +913,31 @@ function Profile() {
                         }
                     break;
                     case "Repeat":
-                        if(numSeconds!=""){
-                            setnewchannelmessages(prevmess => ([...prevmess, {
-                                body: {
-                                    text: "to /begin",
-                                    position: [],
-                                    link: '',
-                                    photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-                                    video:'',
-                                },
-                                request: '',
-                                type: selection,
-                                repetition:"every "+numSeconds+" seconds",
-                            }]));
+                        let j = false;
+                        for(let i=0; i<newchannelmessages.length; i++){
+                            if(newchannelmessages[i].type=="Repeat"){
+                                j=true;
+                            }
+                        }
+                        if(j==false){
+                            if(numSeconds!=""){
+                                setnewchannelmessages(prevmess => ([...prevmess, {
+                                    body: {
+                                        text: "to /begin",
+                                        position: [],
+                                        link: '',
+                                        photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                                        video:'',
+                                    },
+                                    request: '',
+                                    type: selection,
+                                    repetition:"every "+numSeconds+" seconds",
+                                }]));
+                            } else {
+                                alert('Insert the number of seconds for repeat');
+                            }
                         } else {
-                            alert('Insert the number of seconds for repeat');
+                            alert("There is already a repeat message in this channel");
                         }
                     break;
                     case "Casual Images":

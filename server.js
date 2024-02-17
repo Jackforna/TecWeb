@@ -100,7 +100,7 @@ app.get('/api/getTweet', async (req, res) => {
 });
 */
 
-const Twit = require('twit');
+/*const Twit = require('twit');
 
 // Configura Twit con le tue chiavi di accesso di Twitter
 const T = new Twit({
@@ -110,7 +110,7 @@ const T = new Twit({
   access_token_secret: 'P33xoej1BqEyY6JmME4MBzf4ECLtmlNLc8dGkJmwsiiIE',
   timeout_ms: 60 * 1000,
   strictSSL: true,
-});
+});*/
 
 // Endpoint per ottenere tweet casuali
 app.get('/api/random-tweet', async (req, res) => {
