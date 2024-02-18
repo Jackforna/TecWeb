@@ -81,6 +81,10 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   isChannel: boolean = false;
   accessType: string = 'write';  // Opzione di default per Canale
   channelControl = new FormControl('');  // Controllo per l'input del nome del canale
+  channelHaveDeafault: boolean = false;
+  channelHaveRepeat: boolean = false;
+  channelType: string = ''; // 
+  selectedDefaultMessage: any = null;
 
   //Inserimento utenti
   allUsers: User[] = []; // Questo ora conterrà un array di oggetti User
@@ -182,7 +186,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     /*Test only*/
     // this.updateSquealPositive();
     // this.updateSquealNegative();
-    this.deleteAllSqueals();
+    // this.deleteAllSqueals();
     // this.deleteAllChannels();
     // this.deleteUser('6586c8e5b2ca7d845782751f')
     // this.deleteUser('6586c9c3733a4e33a55d91b7')
@@ -1096,7 +1100,24 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.channelSelected = channel;
     this.suggestedChannels = [];
     this.validateChannelName(); // Convalida il nome del canale
+    if ( channel.list_mess.length > 0 ) {
+      this.channelHaveDeafault = true;
+      if (channel.list_mess.map(message => message.type === 'Repeat')) {
+        this.channelHaveRepeat = true;
+      }
+    } 
+    if (channel.type === '&'){
+      this.channelType = 'channels';
+    } else if (channel.type === '$'){
+      this.channelType = 'CHANNELS';
+    }
     this.changeDetectorRef.markForCheck(); // Forza il rilevamento dei cambiamenti
+  }
+
+  selectDefaultMessage(message: any): void {
+    this.selectedDefaultMessage = message;
+    console.log("Messaggio selezionato: ", message);
+    // Puoi anche eseguire altre azioni qui, come preparare il messaggio per l'invio
   }
   
   validateChannelName(): void {
@@ -1112,6 +1133,141 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.isSubmitting = !this.isValidChannel;
     this.changeDetectorRef.detectChanges(); // Forza il rilevamento dei cambiamenti
   }
+
+  processDefaultMessage(): void {
+    switch (this.selectedDefaultMessage.type) {
+      case 'Answer':
+        console.log('Risposta selezionata:', this.selectedDefaultMessage.body);
+        this.handleSendChannelDefaultSqueal(this.selectedDefaultMessage.body);
+        break;
+      case 'Casual Images':
+        console.log('Immagini casuali selezionate');
+        break;
+      case 'News':
+        console.log('News selezionate');
+        break;
+      case 'WikiInfo':
+        console.log('Wiki selezionate');
+        break;
+      default:
+        break;
+    }
+  };  
+
+  handleSendChannelDefaultSqueal(defaultCamp: any): void {
+    const squealData = {
+      sender: this.datiUtente.nickname,
+      typeSender: 'channels', //Da modificare
+      body: {
+        text: defaultCamp.text,
+        link: defaultCamp.link || '',
+        photo: defaultCamp.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        position: defaultCamp.position || [],
+        video: defaultCamp.video || '',
+      },
+      photoprofile: this.datiUtente.photoprofile,
+      date: new Date(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      pos_reactions: 0,
+      neg_reactions: 0,
+      usersReactions: [],
+      answers: [],
+      usersViewed: [],
+      category: '',
+      receivers: this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
+      channel: this.channelControl.value,
+      impressions: 0
+    };
+    this.databaseService.addSqueal(squealData).subscribe({
+      next: (response) => {
+        this.updateChannelDeafaultPost(defaultCamp);
+        console.log('Squeal added successfully', response);
+        const charsUsed = this.userText.length + this.calculateAttachmentChars();
+        const userId = this.datiUtente ? this.datiUtente._id : null;
+        console.log('Caratteri utilizzati:', charsUsed);
+        console.log('ID utente:', userId);
+
+        /*
+        if (userId) {
+          const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed);
+          const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed);
+          const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed);
+
+          const updateData = {
+            char_d: newCharLeftDaily,
+            char_w: newCharLeftWeekly,
+            char_m: newCharLeftMonthly
+          };
+    
+          // Aggiorna i dati dell'utente nel backend
+          this.databaseService.updateUserProfile(userId, updateData).subscribe({
+            next: (updateResponse) => {
+              console.log('Risposta del server:', updateResponse);
+    
+              // Aggiorna i valori locali
+              this.charLeftUser = newCharLeftDaily;
+              this.charLeftUserWeekly = newCharLeftWeekly;
+              this.charLeftUserMonthly = newCharLeftMonthly;
+    
+              // Aggiorna il localStorage
+              const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
+              userData.char_d = newCharLeftDaily;
+              userData.char_w = newCharLeftWeekly;
+              userData.char_m = newCharLeftMonthly;
+              localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+            },
+            error: (updateError) => {
+              console.error("Errore durante l'aggiornamento dei dati utente:", updateError);
+            }
+          });
+        }
+        */
+        this.resetForm();
+        // window.location.reload();
+        // this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
+      },
+      error: (error) => {
+        console.error('Error adding squeal', error);
+        this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
+      }
+    });
+  }
+
+  updateChannelDeafaultPost(defaultCamp: any): void {
+    const channelDataUpdatePost = {
+      answer: [],
+      body: {
+        text: defaultCamp.text,
+        link: defaultCamp.link || '',
+        photo: defaultCamp.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        position: defaultCamp.position || [],
+        video: defaultCamp.video || '',
+      },
+      category: null,
+      date: new Date(),
+      hour: new Date().getHours(),
+      seconds: new Date().getSeconds(),
+      impressions: 0,
+      neg_reactions: 0,
+      pos_reactions: 0,
+      photoprofile: this.datiUtente.photoprofile,
+      receivers: this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
+      sender: this.datiUtente.nickname,
+      typeSender: 'channels', //Da modificare
+      usersReactions: [],
+      usersViewed: [],
+    };
+    this.databaseService.updateChannel(this.channelSelected._id, channelDataUpdatePost).subscribe({
+      next: (response) => {
+        console.log('Canale aggiornato con successo:', response);
+      },
+      error: (error) => {
+        console.error('Errore durante l\'aggiornamento del canale:', error);
+      }
+    });
+  }
+
 
   /*
   isChannelNameValid(): boolean {
@@ -1360,7 +1516,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       photoprofile: this.datiUtente.photoprofile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
       receivers: this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
       sender: this.datiUtente.nickname,
-      typeSender: 'channels', //Modificare se CHANNELS
+      typeSender: this.channelType, //Modificare se CHANNELS
       usersReactions: [],
       usersViewed: [],
     };
@@ -1375,98 +1531,102 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   };
 
   createChannelSqueal(): void {
-    // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
-    this.isSubmitting = true;
-    const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
-    const typeSender = 'channels'; // O altro valore a seconda della logica
-    const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
-    const currentDate = new Date();
-    const date = currentDate.toLocaleDateString();
-    const hour = currentDate.getHours();
-    const seconds = currentDate.getSeconds();
-    const hashtag = this.hashtag;
-    const channel = this.channelControl.value;
-    const receivers = this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`);
-  
-    // Creazione dell'oggetto squeal
-    const squealData = {
-      sender: sender,
-      typeSender: typeSender,
-      body: {
-        text: this.userText,
-        link: this.sentLink || '',
-        photo: this.sentImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-        position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
-        video: this.sentVideoUrl || '', 
-      },
-      photoprofile: photoProfile,
-      date: date,
-      hour: hour,
-      seconds: seconds,
-      pos_reactions: 0,
-      neg_reactions: 0,
-      usersReactions: [],
-      answers: [],
-      usersViewed: [],
-      category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: receivers, // Aggiungi logica se ci sono destinatari specifici
-      channel: channel, // Aggiungi logica se il squeal è associato a un canale
-      impressions: 0
-    };
-  
-    // Chiamata al servizio per aggiungere il squeal
-    this.databaseService.addSqueal(squealData).subscribe({
-      next: (response) => {
-        this.updateChannlePosts();
-        console.log('Squeal added successfully', response);
-        const charsUsed = this.userText.length + this.calculateAttachmentChars();
-        const userId = this.datiUtente ? this.datiUtente._id : null;
-        console.log('Caratteri utilizzati:', charsUsed);
-        console.log('ID utente:', userId);
+    if (this.channelSelected) {
+      // Assumi che questi dati vengano recuperati dal contesto dell'utente o generati automaticamente
+      this.isSubmitting = true;
+      const sender = this.datiUtente ? this.datiUtente.nickname : 'Unknown';
+      const typeSender = this.channelType; // O altro valore a seconda della logica
+      const photoProfile = this.datiUtente ? this.datiUtente.photoprofile : '';
+      const currentDate = new Date();
+      const date = currentDate.toLocaleDateString();
+      const hour = currentDate.getHours();
+      const seconds = currentDate.getSeconds();
+      const hashtag = this.hashtag;
+      const channel = this.channelControl.value;
+      const receivers = this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`);
+    
+      // Creazione dell'oggetto squeal
+      const squealData = {
+        sender: sender,
+        typeSender: typeSender,
+        body: {
+          text: this.userText,
+          link: this.sentLink || '',
+          photo: this.sentImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+          position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
+          video: this.sentVideoUrl || '', 
+        },
+        photoprofile: photoProfile  || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        date: date,
+        hour: hour,
+        seconds: seconds,
+        pos_reactions: 0,
+        neg_reactions: 0,
+        usersReactions: [],
+        answers: [],
+        usersViewed: [],
+        category: '', // Aggiungi logica per determinare la categoria se necessario
+        receivers: receivers, // Aggiungi logica se ci sono destinatari specifici
+        channel: channel, // Aggiungi logica se il squeal è associato a un canale
+        impressions: 0
+      };
+    
+      // Chiamata al servizio per aggiungere il squeal
+      this.databaseService.addSqueal(squealData).subscribe({
+        next: (response) => {
+          this.updateChannlePosts();
+          console.log('Squeal added successfully', response);
+          const charsUsed = this.userText.length + this.calculateAttachmentChars();
+          const userId = this.datiUtente ? this.datiUtente._id : null;
+          console.log('Caratteri utilizzati:', charsUsed);
+          console.log('ID utente:', userId);
 
-        // Assicurati che userId sia valido
-        if (userId) {
-          const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed);
-          const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed);
-          const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed);
+          // Assicurati che userId sia valido
+          if (userId) {
+            const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed);
+            const newCharLeftWeekly = Math.max(0, this.charLeftUserWeekly - charsUsed);
+            const newCharLeftMonthly = Math.max(0, this.charLeftUserMonthly - charsUsed);
 
-          const updateData = {
-            char_d: newCharLeftDaily,
-            char_w: newCharLeftWeekly,
-            char_m: newCharLeftMonthly
-          };
-    
-          // Aggiorna i dati dell'utente nel backend
-          this.databaseService.updateUserProfile(userId, updateData).subscribe({
-            next: (updateResponse) => {
-              console.log('Risposta del server:', updateResponse);
-    
-              // Aggiorna i valori locali
-              this.charLeftUser = newCharLeftDaily;
-              this.charLeftUserWeekly = newCharLeftWeekly;
-              this.charLeftUserMonthly = newCharLeftMonthly;
-    
-              // Aggiorna il localStorage
-              const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
-              userData.char_d = newCharLeftDaily;
-              userData.char_w = newCharLeftWeekly;
-              userData.char_m = newCharLeftMonthly;
-              localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
-            },
-            error: (updateError) => {
-              console.error("Errore durante l'aggiornamento dei dati utente:", updateError);
-            }
-          });
+            const updateData = {
+              char_d: newCharLeftDaily,
+              char_w: newCharLeftWeekly,
+              char_m: newCharLeftMonthly
+            };
+      
+            // Aggiorna i dati dell'utente nel backend
+            this.databaseService.updateUserProfile(userId, updateData).subscribe({
+              next: (updateResponse) => {
+                console.log('Risposta del server:', updateResponse);
+      
+                // Aggiorna i valori locali
+                this.charLeftUser = newCharLeftDaily;
+                this.charLeftUserWeekly = newCharLeftWeekly;
+                this.charLeftUserMonthly = newCharLeftMonthly;
+      
+                // Aggiorna il localStorage
+                const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
+                userData.char_d = newCharLeftDaily;
+                userData.char_w = newCharLeftWeekly;
+                userData.char_m = newCharLeftMonthly;
+                localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+              },
+              error: (updateError) => {
+                console.error("Errore durante l'aggiornamento dei dati utente:", updateError);
+              }
+            });
+          }
+          this.resetForm();
+          // window.location.reload();
+          // this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
+        },
+        error: (error) => {
+          console.error('Error adding squeal', error);
+          this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
         }
-        this.resetForm();
-        // window.location.reload();
-        // this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
-      },
-      error: (error) => {
-        console.error('Error adding squeal', error);
-        this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
-      }
-    });
+      });
+    } else {
+      alert("Seleziona un canale per inviare il tuo messaggio.");
+    }
   }
 
   /*Gestione pop up caratteri rimanenti*/

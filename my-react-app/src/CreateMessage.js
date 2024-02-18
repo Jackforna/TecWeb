@@ -1236,7 +1236,7 @@ function CreateMessage(props) {
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
-      photoprofile: photoProfile || '',
+      photoprofile: photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
       sender: nicknameProfile,
@@ -1767,8 +1767,7 @@ function CreateMessage(props) {
     navigate('/squealer-app/profile');
   };
 
-  
-  
+
 
     return (
       <>

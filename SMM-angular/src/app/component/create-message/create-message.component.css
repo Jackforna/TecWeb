@@ -503,6 +503,20 @@ margin-left: 4%;
   padding-left: 2%;
 }
 
+#deafaultList{
+  cursor: pointer;
+  padding: 5px;
+}
+
+#deafaultList:hover{
+  background-color: #f8f9fa;
+}
+
+.selectedDeafaul-custom{
+  background-color: #e9ecef; /* Colore di sfondo per il messaggio selezionato */
+  cursor: pointer
+}
+
 /*Creazione canale*/
 .create-channel-container {
   display: flex;

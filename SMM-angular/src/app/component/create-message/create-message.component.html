@@ -68,6 +68,16 @@
                 </div>
             </div>
         </div>
+
+        <div *ngIf="channelHaveDeafault">
+            <h3>Messaggi Predefiniti</h3>
+            <ul>
+              <li id = "deafaultList" *ngFor="let message of channelSelected.list_mess" (click)="selectDefaultMessage(message)" [ngClass]="{'selectedDeafaul-custom': selectedDefaultMessage === message}">
+                {{ message.request }}
+              </li>
+            </ul>
+        </div>
+          
             <!--
             <div *ngIf="isChannel && accessType === 'create'">
                 <div class="create-channel-container">
@@ -83,7 +93,7 @@
             </div>
             -->
 
-            <div class="post-textarea">
+            <div class="post-textarea" *ngIf="(!selectedDefaultMessage)">
                 <textarea 
                     placeholder="A cosa stai pensando?" 
                     [attr.maxlength]="charLeftUser"
@@ -126,7 +136,7 @@
         </div>
           
           
-        <mat-card-actions *ngIf="!(isChannel && accessType === 'create')">
+        <mat-card-actions *ngIf="(!(isChannel && accessType === 'create')) && (!selectedDefaultMessage)">
             <div class="input-icons">
                 <button class="icon-button" (click)="openLinkDialog()"><i class="material-icons">attach_file</i></button>
                 <button class="icon-button" (click)="openCameraDialog()"><i class="material-icons">photo_camera</i></button>
@@ -138,6 +148,12 @@
                     <i class="material-icons" *ngIf="isChannel">send</i>
                 </button>
             </div>              
+        </mat-card-actions>
+
+        <mat-card-actions *ngIf="selectedDefaultMessage">
+            <div class="input-icons">
+                <button class="icon-button send-icon" (click)="processDefaultMessage()"><i class="material-icons">send</i></button>
+            </div>
         </mat-card-actions>
 
         <!--Modale camera-->
