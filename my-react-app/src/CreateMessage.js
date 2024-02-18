@@ -1388,10 +1388,10 @@ function CreateMessage(props) {
             console.log("Articolo fuori", article);
             console.log("Autore fuori", article.author);
             if (article.author === null) {
-              article.author = "Anonimo";
+              article.author = "Unknown";
             };
             const tempBodyNews =  {
-              text: "Autore: " + article.author + "\n" + article.content + "\nPublished at: " + article.publishedAt,
+              text: "Author: " + article.author + "\n" + article.content + "\nPublished at: " + article.publishedAt,
               link: article.url || '',
               photo: article.urlToImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
               video: '',
@@ -1485,7 +1485,6 @@ function CreateMessage(props) {
     localStorage.removeItem('Nickname');
     updateInterval();
   };
-
 
   const handleSendChannelDefaultSqueal = async (defaultCamp) => {
     const squealData = {

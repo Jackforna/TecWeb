@@ -509,11 +509,11 @@ margin-left: 4%;
 }
 
 #deafaultList:hover{
-  background-color: #f8f9fa;
+  background-color: green;
+  width: fit-content;
 }
 
 .selectedDeafaul-custom{
-  background-color: #e9ecef; /* Colore di sfondo per il messaggio selezionato */
   cursor: pointer
 }
 
@@ -537,6 +537,11 @@ margin-left: 4%;
 
 .channel-input-container {
   /* Altre regole di stile che potresti avere */
+}
+
+.defaultMessage-Container {
+  margin-left: 2%;
+  margin-top: 2%;
 }
 
 .suggested-channels {

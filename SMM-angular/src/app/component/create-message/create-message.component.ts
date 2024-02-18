@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ViewEncapsulation } from '@angular/core';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -19,7 +19,7 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrls: ['./create-message.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class CreateMessageComponent implements OnInit, AfterViewInit{
+export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
   videoWidth = 300;
@@ -85,6 +85,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   channelHaveRepeat: boolean = false;
   channelType: string = ''; // 
   selectedDefaultMessage: any = null;
+  intervalId: number | null = null;
+  showDeafaultMessage: boolean = false;
 
   //Inserimento utenti
   allUsers: User[] = []; // Questo ora conterrà un array di oggetti User
@@ -183,6 +185,11 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
 
     this.loadChannels();
 
+    this.updateInterval();
+
+    // Aggiungi l'event listener per l'evento 'storage'
+    window.addEventListener('storage', this.updateInterval);
+
     /*Test only*/
     // this.updateSquealPositive();
     // this.updateSquealNegative();
@@ -195,6 +202,15 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     // this.addChannel2();
     // this.getAllChannels();
   }
+
+  ngOnDestroy() {
+    // Rimuovi l'event listener quando il componente viene smontato
+    window.removeEventListener('storage', this.updateInterval);
+
+    // Ferma l'intervallo se attivo
+    this.stopInterval();
+  }
+
   
   ngAfterViewInit() {
 
@@ -926,7 +942,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
           });
         }
         this.resetForm();
-        window.location.reload();
       },
       error: (error) => {
         console.error('Error adding squeal', error);
@@ -1049,13 +1064,89 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.isLocationAttachmentEnabled = true;
   }
 
+  /*Funzioni default*/
+  randomUnsplashImage(width: any, height: any) {
+    return(`https://source.unsplash.com/random/${width}x${height}`);
+  }
+
+  fetchRandomNews = async () => {
+    try {
+      const response = await fetch('https://saurav.tech/NewsAPI/top-headlines/category/general/us.json');
+      const data = await response.json();
+      const randomIndex = Math.floor(Math.random() * data.articles.length);
+      const article = data.articles[randomIndex];
+      console.log("Articolo ", article);
+      console.log("Articolo autore", article.author);
+      return article;
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      return null;
+    }
+  };
+
+  fetchRandomWikiArticle = async () => {
+    const url = "https://en.wikipedia.org/w/api.php?action=query&format=json&list=random&rnlimit=1&origin=*";
+    
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const title = data.query.random[0].title;
+      const pageUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+      
+      return pageUrl;
+    } catch (error) {
+      console.error('Error fetching random Wikipedia article:', error);
+      return null;
+    }
+  };
+
+  updateInterval = () => {
+    const secToRepeat = localStorage.getItem("secToRepeat");
+    if (secToRepeat) {
+      this.startInterval(parseInt(secToRepeat));
+    } else {
+      this.stopInterval();
+    }
+  };
+
+  startInterval(n: number) {
+    // Assicurati che non ci siano intervalli già in esecuzione
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
+    }
+
+    // Imposta un nuovo intervallo
+    this.intervalId = window.setInterval(() => {
+      let counter = parseInt(localStorage.getItem("Counter") || "0");
+      counter++;
+      localStorage.setItem("Counter", counter.toString());
+      const tempBodyInterval =  {
+        text: 'Questo è il messaggio numero : ' + counter,
+        link: '',
+        photo: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        video: '',
+        position: '',
+      }
+      this.handleSendChannelDefaultSqueal(tempBodyInterval);
+      alert("Messaggio inviato: " + counter);
+      // Qui puoi chiamare altre funzioni, ad esempio per inviare un messaggio
+    }, n * 1000); // n * 1000 per convertire i secondi in millisecondi
+  }
+
+  stopInterval() {
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
+
 
   /*Canale vs Squeal*/
   onTypeChange(event: any) {
     const newType = event.target.value;
     this.isChannel = newType === 'channel';
-  
     
+    this.resetForm();
     // Se stavi in "Squeal Privato" e passi a un'altra modalità, ripristina il conteggio dei caratteri
     if (this.isPrivate && newType !== 'private') {
       this.charLeftUser = this.originalCharLeftUser;
@@ -1124,7 +1215,6 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
     this.isChannelNameValid = this.allChannels.some(ch => ch.name === this.channelControl.value);
     this.isSubmitting = !this.isChannelNameValid;
   }
-  
 
   isChannelValid(): void {
     // Controlla se il nome del canale è nella lista dei canali esistenti
@@ -1141,23 +1231,106 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
         this.handleSendChannelDefaultSqueal(this.selectedDefaultMessage.body);
         break;
       case 'Casual Images':
-        console.log('Immagini casuali selezionate');
+        const tempImageBody = {
+          text: '',
+          link: '',
+          photo: this.randomUnsplashImage(300, 300),
+          video: '',
+          position: '',
+        }
+        this.handleSendChannelDefaultSqueal(tempImageBody);
         break;
       case 'News':
-        console.log('News selezionate');
+        this.fetchRandomNews().then((article) => {
+          if (article) {
+            if (article.author === null) {
+              article.author = 'Unknown';
+            }
+            const tempNewsBody = {
+              text: "Author: " + article.author + "\n" + article.content + "\nPublished at: " + article.publishedAt,
+              link: article.url || '',
+              photo: article.urlToImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+              video: '',
+              position: '',
+            }
+            this.handleSendChannelDefaultSqueal(tempNewsBody);
+          }
+        }
+        );
         break;
       case 'WikiInfo':
-        console.log('Wiki selezionate');
+        this.fetchRandomWikiArticle().then((url) => {
+          if (url) {
+            const tempBodyWiki =  {
+              text: 'Lo sapevi che: ',
+              link: url || '',
+              photo: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+              video: '',
+              position: '',
+            }
+            this.handleSendChannelDefaultSqueal(tempBodyWiki);
+          }
+        });
         break;
       default:
         break;
     }
   };  
 
+  processRepeatMessage(): void {
+    if (!this.channelSelected || !this.channelSelected.list_mess) {
+      console.error('channelSelected o list_mess non definiti');
+      return;
+    }
+    const repeat = this.channelSelected.list_mess.find((message: { type: any; }) => message.type === 'Repeat');
+    if (!repeat) {
+      console.error('Nessun messaggio di tipo Repeat trovato');
+      return;
+    }
+    if (localStorage.getItem('Interval active')) {
+      alert('Intervallo già attivo');
+      return;
+    }
+    const inputString = repeat.repetition;
+    const numbers = inputString.match(/\d+/g).map(Number);
+    localStorage.setItem('Interval active', 'true');
+    localStorage.setItem('secToRepeat', numbers.toString());
+    localStorage.setItem('Counter', "0");
+    localStorage.setItem('ChannelSelectedListUsers', JSON.stringify(this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`)));
+    console.log("Utenti in list users ", localStorage.getItem('ChannelSelectedListUsers'));
+    localStorage.setItem('ChannelSelectedName', this.channelSelected.name);
+    localStorage.setItem('PhotoProfile', this.datiUtente.photoprofile);
+    localStorage.setItem('Nickname', this.datiUtente.nickname);
+    localStorage.setItem('Channel_id', this.channelSelected._id);
+    if ( this.channelSelected.type === '&') {
+      localStorage.setItem('ChannelTypeSender', "channels");
+    } else {
+      localStorage.setItem('ChannelTypeSender', "CHANNELS");
+    }
+    window.location.reload();
+  }
+
+  stopProcessRepeatMessage = async () => {
+    if (localStorage.getItem('Interval active')) {
+      localStorage.removeItem('Interval active');
+      localStorage.removeItem('secToRepeat');
+      localStorage.removeItem('Counter');
+      localStorage.removeItem('ChannelSelectedListUsers');
+      localStorage.removeItem('ChannelSelectedName');
+      localStorage.removeItem('ChannelTypeSender');
+      localStorage.removeItem('PhotoProfile');
+      localStorage.removeItem('Nickname');
+      localStorage.removeItem('Channel_id');
+      this.updateInterval();
+    } else {
+      alert('Nessun intervallo attivo');
+    }
+  };
+
   handleSendChannelDefaultSqueal(defaultCamp: any): void {
     const squealData = {
-      sender: this.datiUtente.nickname,
-      typeSender: 'channels', //Da modificare
+      sender: localStorage.getItem("Interval active") ? localStorage.getItem('Nickname') : this.datiUtente.nickname,
+      typeSender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : this.channelType, //Da modificare
       body: {
         text: defaultCamp.text,
         link: defaultCamp.link || '',
@@ -1165,7 +1338,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
         position: defaultCamp.position || [],
         video: defaultCamp.video || '',
       },
-      photoprofile: this.datiUtente.photoprofile,
+      photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : this.datiUtente.photoprofile,
       date: new Date(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
@@ -1175,19 +1348,25 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       answers: [],
       usersViewed: [],
       category: '',
-      receivers: this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
-      channel: this.channelControl.value,
+      receivers: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelSelectedListUsers') :  this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
+      channel: localStorage.getItem("Interval active") ?  localStorage.getItem('ChannelSelectedName') : this.channelControl.value,
       impressions: 0
     };
     this.databaseService.addSqueal(squealData).subscribe({
       next: (response) => {
-        this.updateChannelDeafaultPost(defaultCamp);
-        console.log('Squeal added successfully', response);
-        const charsUsed = this.userText.length + this.calculateAttachmentChars();
-        const userId = this.datiUtente ? this.datiUtente._id : null;
-        console.log('Caratteri utilizzati:', charsUsed);
-        console.log('ID utente:', userId);
-
+        if (this.charLeftUser >= 125 && localStorage.getItem('Interval active') === null) {
+          this.updateChannelDeafaultPost(defaultCamp);
+          console.log('Squeal added successfully', response);
+          const charsUsed = this.userText.length + this.calculateAttachmentChars();
+          const userId = this.datiUtente ? this.datiUtente._id : null;
+          console.log('Caratteri utilizzati:', charsUsed);
+          console.log('ID utente:', userId);
+        } else if (localStorage.getItem('Interval active') === 'true') {
+          this.updateChannelDeafaultPost(defaultCamp);
+        } else {
+          alert('Caratteri insufficienti per inviare il messaggio.');
+          this.showPurchasePopup = true;
+        }
         /*
         if (userId) {
           const newCharLeftDaily = Math.max(0, this.charLeftUser - charsUsed);
@@ -1223,8 +1402,8 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
           });
         }
         */
-        this.resetForm();
-        // window.location.reload();
+        // this.resetForm();
+        window.location.reload();
         // this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
       },
       error: (error) => {
@@ -1251,14 +1430,15 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
-      photoprofile: this.datiUtente.photoprofile,
-      receivers: this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
-      sender: this.datiUtente.nickname,
-      typeSender: 'channels', //Da modificare
+      photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : this.datiUtente.photoprofile,
+      receivers: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelSelectedListUsers') :  this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
+      sender: localStorage.getItem("Interval active") ? localStorage.getItem('Nickname') : this.datiUtente.nickname,
+      typeSender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : this.channelType, //Da modificare
       usersReactions: [],
       usersViewed: [],
     };
-    this.databaseService.updateChannel(this.channelSelected._id, channelDataUpdatePost).subscribe({
+    const channelIdToUse = localStorage.getItem("Interval active") ? localStorage.getItem('Channel_id') : this.channelSelected._id;
+    this.databaseService.updateChannel(channelIdToUse, channelDataUpdatePost).subscribe({
       next: (response) => {
         console.log('Canale aggiornato con successo:', response);
       },
@@ -1267,6 +1447,7 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
       }
     });
   }
+
 
 
   /*
@@ -1420,15 +1601,33 @@ export class CreateMessageComponent implements OnInit, AfterViewInit{
   }
   */
 
+
+
+
   /*Reset della card*/
   resetForm() {
-    // Svuota il testo dello squeal e l'hashtag
     this.userText = '';
     this.hashtag = '';
-  
-    // Rimuove gli allegati
     this.sentImageUrl = null;
+    this.sentVideoUrl = null;
     this.sentLink = null;
+    this.userLocation = null;
+    this.mapImageUrl = null;
+    this.isMapActive = false;
+    this.showMapModal = false;
+    this.selectedLocation = null;
+    this.tempMap = null
+
+    this.isPrivate = false;
+    this.channelName = '';
+    this.newChannelName = '';
+    this.muteChannel = false;
+    this.selectedDefaultMessage = null;
+
+    this.channelHaveDeafault = false;
+    
+    this.myControl.reset();
+    this.channelControl.reset();
   
     // Rimuove la posizione e resetta la mappa
     this.userLocation = null;

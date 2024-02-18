@@ -60,6 +60,22 @@
             </div>
         </ng-template>
     </ng-container>
+    <ng-template #confirmationDialog class = "pagamentoDialog-Container">
+        <div id = "pagamento-dialog" style = "display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <h2 mat-dialog-title>Conferma</h2>
+            <h3>Metodo di pagamento</h3>
+            <mat-radio-group [(ngModel)]="selectedPaymentMethod" id = "radioGroup-vip">
+                <mat-radio-button class="example-margin" value="PayPal">PayPal</mat-radio-button>
+                <mat-radio-button class="example-margin" value="CreditCard">Carta di credito</mat-radio-button>
+                <mat-radio-button class="example-margin" value="GooglePay">GooglePay</mat-radio-button>
+            </mat-radio-group>
+            <mat-dialog-content>Sei sicuro?</mat-dialog-content>
+            <mat-dialog-actions>
+            <button mat-button (click)="confirmSelection()">Sì</button>
+            <button mat-button mat-dialog-close>No</button>
+            </mat-dialog-actions>
+        </div>
+    </ng-template>
     <hr>
     <div class = "characterSection-container">
         <h3>Caratteri rimanenti giornalieri: {{charLeftUserDaily}}/{{charMaximunDaily}}</h3>
@@ -93,23 +109,5 @@
             <button mat-raised-button (click)="openConfirmationModal()">Go to payment</button>
         </div>
         -->
-        
-        <ng-template #confirmationDialog>
-            <div id = "pagamento-dialog">
-                <h2 mat-dialog-title>Conferma</h2>
-                <h3>Metodo di pagamento</h3>
-                <mat-radio-group [(ngModel)]="selectedPaymentMethod" id = "radioGroup-vip">
-                    <mat-radio-button class="example-margin" value="PayPal">PayPal</mat-radio-button>
-                    <mat-radio-button class="example-margin" value="CreditCard">Carta di credito</mat-radio-button>
-                    <mat-radio-button class="example-margin" value="GooglePay">GooglePay</mat-radio-button>
-                </mat-radio-group>
-                <mat-dialog-content>Sei sicuro?</mat-dialog-content>
-                <mat-dialog-actions>
-                <button mat-button (click)="confirmSelection()">Sì</button>
-                <button mat-button mat-dialog-close>No</button>
-                </mat-dialog-actions>
-            </div>
-        </ng-template>
-        
     </div>
 </body>
