@@ -420,7 +420,7 @@ function Settings() {
                         </Card.Body>
                     </Card>
                 </Container>
-                <Container className={confirmBuyProfessional ? 'text-white text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'black', overflowY:'scroll', paddingTop:'10%', left:'0', top:'0'}}>
+                <Container className={confirmBuyProfessional ? 'text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'#eee', color: 'black', overflowY:'scroll', paddingTop:'10%', left:'0', top:'0'}}>
                     <h4 className='mb-3 mt-3'>Buy a professional account</h4>
                     <p>Are you sure you want to buy a professional account?</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
@@ -428,7 +428,7 @@ function Settings() {
                         <Button onClick={() => buyProfessionalConfirm(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
                     </Row>
                 </Container>
-                <Container className={confirmBuyCharacters ? 'text-white text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'black', overflowY:'scroll', paddingTop:'10%', left:'0', top:'0'}}>
+                <Container className={confirmBuyCharacters ? 'text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'#eee', color: 'black', overflowY:'scroll', paddingTop:'10%', left:'0', top:'0'}}>
                     <h4 className='mb-3 mt-3'>Buy Characters</h4>
                     <p>Are you sure you want to buy additional characters?</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>

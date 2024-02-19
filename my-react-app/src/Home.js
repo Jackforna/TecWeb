@@ -890,20 +890,20 @@ const handleVideoChange = (e) => {
               >
               <div style={{position:'relative', marginTop:'130px', height:'100%', overflowY:'scroll', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                   {allSquealsprint.length!=0 && allSquealsprint.map((squeal,index) => (
-                    <Card key={index} data-id={squeal._id} className='message' style={{backgroundColor:'black', color:'white', borderColor:'white', width:windowSize>=600 ? '500px' : '280px', marginBottom:'5%'}}>
+                    <Card key={index} data-id={squeal._id} className='message' style={{color:'black', borderColor:'black', width:windowSize>=600 ? '500px' : '280px', marginBottom:'5%'}}>
                     <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                       <CardGroup style={{width:windowSize<600 ? '100%' : 'auto', display:'flex'}}>
                         {squeal.typesender=='Users' ?
-                          ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                          ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
-                            : (<PersonCircle size='30' color='white' className='me-3'></PersonCircle>)
+                            : (<PersonCircle size='30' color='black' className='me-3'></PersonCircle>)
                           )
                           :
-                          ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                          ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
-                            : (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                            : (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image></div>)
                           )
                         }
@@ -988,15 +988,15 @@ const handleVideoChange = (e) => {
                       style={{
                         boxShadow: 'none',
                         borderRadius: '14px',
-                        borderColor: 'white',
-                        backgroundColor: 'transparent',
+                        borderColor: 'black',
+                        backgroundColor: 'white',
                         backgroundImage: showIcon ? `url(${search_logo})` : 'none',
                         backgroundSize: '20px',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: '10px center',
                         paddingLeft: showIcon ? '40px' : '20px',
                         paddingRight: '160px',
-                        color: 'white',
+                        color: 'black',
                         width: '100%',
                       }}
                       onFocus={handleFocus}
