@@ -282,8 +282,8 @@ function Settings() {
 
     return (
         <>
-            <div style={{backgroundColor: 'black', height: '100vh', display: 'flex', flexDirection: 'column'}} className={openBar ? '' : 'd-none'}>
-                <Nav className="d-flex flex-column bg-dark text-white" style={{width: windowSize >= 1024 ? '20%' : windowSize >= 600 ? '10%' : '100%',position:'absolute', top:windowSize >= 600 ? '0' : '90%', height: windowSize >= 600 ? '100vh' : '10%', overflow:'hidden', zIndex:'1006', alignItems:'center'}}>
+            <div style={{backgroundColor: '#eee', color: "black", height: '100vh', display: 'flex', flexDirection: 'column'}} className={openBar ? '' : 'd-none'}>
+                <Nav className="d-flex flex-column text" style={{backgroundColor: "white", color: "black", width: windowSize >= 1024 ? '20%' : windowSize >= 600 ? '10%' : '100%',position:'absolute', top:windowSize >= 600 ? '0' : '90%', height: windowSize >= 600 ? '100vh' : '10%', overflow:'hidden', zIndex:'1006', alignItems:'center'}}>
                     <div style={{ flex: '0.5' }}></div>
 
                     {windowSize >= 1024 && (<div className="text-center mb-3">
@@ -292,25 +292,25 @@ function Settings() {
 
                     <div className={windowSize >= 600 ? 'd-flex flex-column' : 'd-flex flex-row'} style={{alignItems:'center', justifyContent:'space-around', flex: windowSize >= 1024 ? '0' : '1', width:'100%'}}>
                         <Nav.Item className='mb-2 d-flex' style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
-                            <Button onClick={openNotifications} style={{backgroundColor:'transparent', border:'0'}}><Bell alt="bell" size="25" className='mt-2 text-white'/></Button>
-                            {windowSize >= 1024 && (<Button onClick={openNotifications} style={{backgroundColor:'transparent', border:'0'}} className='nav-link text-white'>Notifications</Button>)}
+                            <Button onClick={openNotifications} style={{backgroundColor:'transparent', border:'0'}}><Bell alt="bell" size="25" className='mt-2' style={{color: "black"}}/></Button>
+                            {windowSize >= 1024 && (<Button onClick={openNotifications} style={{backgroundColor:'transparent', border:'0', color: "black"}} className='nav-link'>Notifications</Button>)}
                         </Nav.Item>
                         <Nav.Item className={`${actualuser.version=='moderator' ? "d-none" : "mb-2 d-flex"}`} style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
-                            <Button onClick={openAccount} style={{backgroundColor:'transparent', border:'0'}}><PersonFillUp alt="bell" size="25" className='mt-2 text-white'/></Button>
-                            {windowSize >= 1024 && (<Button onClick={openAccount} style={{backgroundColor:'transparent', border:'0'}} className='nav-link text-white'>Account</Button>)}
+                            <Button onClick={openAccount} style={{backgroundColor:'transparent', border:'0'}}><PersonFillUp alt="bell" size="25" className='mt-2' style={{color: "black"}}/></Button>
+                            {windowSize >= 1024 && (<Button onClick={openAccount} style={{backgroundColor:'transparent', border:'0', color: "black"}} className='nav-link'>Account</Button>)}
                         </Nav.Item>
                         <Nav.Item className='mb-2 d-flex' style={{borderRadius:'12px',cursor:'pointer',transition:'0.4s', width: windowSize < 600 ? '100%' : '80%', position:'relative', justifyContent:'center'}}>
-                            <Button onClick={openCharacters} style={{backgroundColor:'transparent', border:'0'}}><Bag alt="bell" size="25" className='mt-2 text-white'/></Button>
-                            {windowSize >= 1024 && (<Button onClick={openCharacters} style={{backgroundColor:'transparent', border:'0'}} className='nav-link text-white'>Characters</Button>)}
+                            <Button onClick={openCharacters} style={{backgroundColor:'transparent', border:'0'}}><Bag alt="bell" size="25" className='mt-2' style={{color: "black"}}/></Button>
+                            {windowSize >= 1024 && (<Button onClick={openCharacters} style={{backgroundColor:'transparent', border:'0', color: "black"}} className='nav-link'>Characters</Button>)}
                         </Nav.Item>
                         {windowSize < 1024 && (actualuser.version==='moderator' || actualuser.version==='SMM') && (<Button onClick={gotoDashboard} style={{ display: 'flex', justifyContent: 'center', width:'80%', backgroundColor:'transparent', border:'0'}}>
-                        {actualuser.version=='SMM' ? <Clipboard2Data alt="clipboard1" size="25" className='mt-2 text-white'></Clipboard2Data> : <Clipboard2Pulse alt="clipboard2" size="25" className='mt-2 text-white'></Clipboard2Pulse>}
+                        {actualuser.version=='SMM' ? <Clipboard2Data alt="clipboard1" size="25" className='mt-2' style={{color: "black"}}></Clipboard2Data> : <Clipboard2Pulse alt="clipboard2" size="25" className='mt-2' style={{color: "black"}}></Clipboard2Pulse>}
                         </Button>)}
                     </div>
                     
                     <div style={{ flex: '0.2' }}></div>
 
-                    {windowSize >= 1024 && (actualuser.version==='moderator' || actualuser.version==='SMM') && (<Button onClick={gotoDashboard} style={{ display: 'flex', justifyContent: 'center', width:'80%'}}>
+                    {windowSize >= 1024 && (actualuser.version==='moderator' || actualuser.version==='SMM') && (<Button onClick={gotoDashboard} style={{ display: 'flex', justifyContent: 'center', width:'80%', color: "black"}}>
                     <Button>{actualuser.version=='SMM' ? 'SMM Dashboard' : 'Moderator Dashboard'}</Button>
                     </Button>)}
                     <div style={{ flex: '0.5' }}></div>
@@ -318,49 +318,49 @@ function Settings() {
                 </Nav>
             </div>
             <Container style={{ width: windowSize >=1024 ? '80%' : windowSize>=600 ? '90%' : '100%', left: windowSize >= 1024 ? '20%' : windowSize>=600 ? '10%' : '0', height: windowSize>= 600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflowY:'scroll'}}>
-                <XCircle style={{position:'absolute', left:'10px', top:'10px', width:'30px', height:'30px', cursor:'pointer'}} color='white' className={`${openBar ? "" : "d-none"}`} onClick={() => {setOpenBar(!openBar)}}></XCircle>
-                <List style={{position:'absolute', left:'10px', top:'10px', width:'30px', height:'30px', cursor:'pointer'}} color='white' className={`${openBar ? "d-none" : ""}`} onClick={() => {setOpenBar(!openBar)}}></List>
+                <XCircle style={{position:'absolute', left:'10px', top:'10px', width:'30px', height:'30px', cursor:'pointer'}} color='black' className={`${openBar ? "" : "d-none"}`} onClick={() => {setOpenBar(!openBar)}}></XCircle>
+                <List style={{position:'absolute', left:'10px', top:'10px', width:'30px', height:'30px', cursor:'pointer'}} color='black' className={`${openBar ? "d-none" : ""}`} onClick={() => {setOpenBar(!openBar)}}></List>
 
                 <Container className={isNotifications ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center'}}>
-                    <h3 style={{color:'white', textAlign:'center'}} className='m-3'>Decide when and how receiving notifications</h3>
-                    <p style={{color:'white'}} className='m-3 mb-5'>Select the push notifications that you want receive</p>
+                    <h3 style={{textAlign:'center'}} className='m-3'>Decide when and how receiving notifications</h3>
+                    <p style={{}} className='m-3 mb-5'>Select the push notifications that you want receive</p>
                     <label className="switch d-flex flex-row mb-3" style={{width:'300px', padding:'0.5em'}}>
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[0]} onChange={() => changenotification(0)}/>
                         <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'80%', marginLeft:'70px'}}>My channels squeals</p>
+                        <p style={{width:'80%', marginLeft:'70px'}}>My channels squeals</p>
                     </label>
                     <label className="switch d-flex flex-row mb-3" style={{width:'300px', padding:'0.5em'}}>
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[1]} onChange={() => changenotification(1)}/>
                         <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'80%', marginLeft:'70px'}}>My CHANNELS squeal</p>
+                        <p style={{width:'80%', marginLeft:'70px'}}>My CHANNELS squeal</p>
                     </label>
                     <label className="switch d-flex flex-row mb-3" style={{width:'300px', padding:'0.5em'}}>
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[2]} onChange={() => changenotification(2)}/>
                         <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'80%', marginLeft:'70px'}}>For you squeals</p>
+                        <p style={{width:'80%', marginLeft:'70px'}}>For you squeals</p>
                     </label>
                     <label className="switch d-flex flex-row mb-3" style={{width:'300px', padding:'0.5em'}}>
                         <input type="checkbox" style={{cursor:'pointer'}} checked={actualuser.notifications[3]} onChange={() => changenotification(3)}/>
                         <span className="slider" style={{left:'0'}}></span>
-                        <p style={{color:'white', width:'80%', marginLeft:'70px'}}>Personal squeals</p>
+                        <p style={{width:'80%', marginLeft:'70px'}}>Personal squeals</p>
                     </label>
                 </Container>
                 <Container className={isAccount ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center', overflowY:'scroll', height:'100%'}}>
                     <div className={actualuser.version=='normal' ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center', maxWidth:'80%'}}>
-                        <h4 style={{color:'white'}} className='m-3'>Request to be verified</h4>
-                        <p style={{color:'white', width:'70%', textAlign:'center'}} className='m-3'>You'll send a message to the Squealer moderators requesting to switch to a verified account. This will allow you to be more recognizable among users</p>
+                        <h4 style={{}} className='m-3'>Request to be verified</h4>
+                        <p style={{width:'70%', textAlign:'center'}} className='m-3'>You'll send a message to the Squealer moderators requesting to switch to a verified account. This will allow you to be more recognizable among users</p>
                         <Button className='m-3' onClick={requestVerified}>Request</Button>
-                        <hr style={{color:'white', width:'100%', height:'2px'}}></hr>
+                        <hr style={{width:'100%', height:'2px'}}></hr>
                     </div>
                     <div className={actualuser.version!='SMM' & actualuser.version=='professional' ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center', maxWidth:'80%'}}>
-                        <h4 style={{color:'white'}} className='m-3'>Request to be Social Media Manager</h4>
-                        <p style={{color:'white', width:'70%', textAlign:'center'}} className='m-3'>You'll send a message to the Squealer moderators requesting to switch to a Social Media Manager account. This will allow you to be the account manager for your professional clients. You'll also have your personal access to the SMM Dashboard with the your clients data</p>
+                        <h4 style={{}} className='m-3'>Request to be Social Media Manager</h4>
+                        <p style={{width:'70%', textAlign:'center'}} className='m-3'>You'll send a message to the Squealer moderators requesting to switch to a Social Media Manager account. This will allow you to be the account manager for your professional clients. You'll also have your personal access to the SMM Dashboard with the your clients data</p>
                         <Button onClick={requestSMM} className='m-3'>Request</Button>
-                        <hr style={{color:'white', width:'100%', height:'2px'}}></hr>
+                        <hr style={{width:'100%', height:'2px'}}></hr>
                     </div>
                     <div className={actualuser.version=='professional' ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center', maxWidth:'80%'}}>
-                        <h4 style={{color:'white'}} className='m-3'>Find a Social Media Manager</h4>
-                        <p style={{color:'white', width:'70%', textAlign:'center'}} className='m-3'>You can decide a person that can manage and modify your account for you! You can remove this person from your account whenever you want</p>
+                        <h4 style={{}} className='m-3'>Find a Social Media Manager</h4>
+                        <p style={{width:'70%', textAlign:'center'}} className='m-3'>You can decide a person that can manage and modify your account for you! You can remove this person from your account whenever you want</p>
                         <div className={isFindSMM ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center'}}>
                             <InputGroup style={{ width: '500px'}} className="d-flex flex-column">
                                 <FormControl type="text" 
@@ -389,11 +389,11 @@ function Settings() {
 
                         </div>
                         <Button onClick={findSMM} className='m-3'>{isFindSMM ? 'Close' : 'Find'}</Button>
-                        <hr style={{color:'white', width:'100%', height:'2px'}}></hr>
+                        <hr style={{width:'100%', height:'2px'}}></hr>
                     </div>
                     <div className={actualuser.version=='normal' | actualuser.version=='verified' ? 'd-flex flex-column' : 'd-none'} style={{alignItems:'center', maxWidth:'80%'}}>
-                        <h4 style={{color:'white'}} className='m-3'>Buy a professional account</h4>
-                        <p style={{color:'white', width:'70%', textAlign:'center'}} className='m-3'>For 11.99$ a month, you can buy a professional account. With a professional account you can become a social media manager or decide on a social media manager who can manage your profile. Additionally, your account will be verified if it isn't already and you receive <b>300</b> more characters for day, <b>2000</b> more characters for week and <b>7000</b> more characters for month</p>
+                        <h4 style={{}} className='m-3'>Buy a professional account</h4>
+                        <p style={{width:'70%', textAlign:'center'}} className='m-3'>For 11.99$ a month, you can buy a professional account. With a professional account you can become a social media manager or decide on a social media manager who can manage your profile. Additionally, your account will be verified if it isn't already and you receive <b>300</b> more characters for day, <b>2000</b> more characters for week and <b>7000</b> more characters for month</p>
                         <Button onClick={buyProfessional} className='m-3'>Buy</Button>
                     </div>
 

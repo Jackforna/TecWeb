@@ -1319,34 +1319,34 @@ const loadImage = (event) => {
                 { actualuser.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
                 <Image src={actualuser.photoprofile} style={{height:'100%', position:'relative', marginTop: actualuser.photoprofileY, marginLeft: actualuser.photoprofileX}}></Image>
                 </div>)
-                : <PersonCircle size='70' color='white' className='mt-4'></PersonCircle>
+                : <PersonCircle size='70' color='black' className='mt-4'></PersonCircle>
                 }
-                <h4 className="text-white mt-3">{actualuser.nickname}</h4>
+                <h4 className="text mt-3">{actualuser.nickname}</h4>
                 <Row className='mt-3' style={{width:'60%', justifyContent:'space-between'}}>
-                    <p className='text-white' style={{width:'50%', padding:'0'}}>{allSquealsprint.length} post published</p>
-                    <p className='text-white' style={{width:'50%', padding:'0'}}>{allChannelsprint.length} channels of which {n_channeladmin} admin</p>
+                    <p className='text' style={{width:'50%', padding:'0'}}>{allSquealsprint.length} post published</p>
+                    <p className='text' style={{width:'50%', padding:'0'}}>{allChannelsprint.length} channels of which {n_channeladmin} admin</p>
                 </Row>
-                <p className='text-white' style={{width:'90%', padding:'0'}}>{actualuser.bio}</p>
+                <p className='text' style={{width:'90%', padding:'0'}}>{actualuser.bio}</p>
                 <Button onClick={() => editprofile()} style={{position:'absolute', top:'20px', right:'20px', backgroundColor:'#696969', borderColor:'white'}}>Edit Profile</Button>
                 <Button onClick={() => exitprofile()} style={{position:'absolute', left:'20px', top:'20px'}}>Exit</Button>
             </header>
-            <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}></hr>
+            <hr style={{width:'100%',  height:'2px', marginBottom:'0'}}></hr>
             <Row>
-                <Button className={`${mypostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilepostsactive}>Posts</Button>
-                <Button className={`${mychannelsactive ? 'active' : ''}`} style={{width:'100px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilechannelsactive}>Channels</Button>
-                <Button className={`${mycharacteractive ? 'active' : ''}`} style={{width:'110px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilecharacteractive}>Characters</Button>
+                <Button className={`${mypostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px',  background:'transparent', border:'0', borderRadius:'0px', color: 'black'}} onClick={profilepostsactive}>Posts</Button>
+                <Button className={`${mychannelsactive ? 'active' : ''}`} style={{width:'100px', height:'40px',  background:'transparent', border:'0', borderRadius:'0px', color: 'black'}} onClick={profilechannelsactive}>Channels</Button>
+                <Button className={`${mycharacteractive ? 'active' : ''}`} style={{width:'110px', height:'40px',  background:'transparent', border:'0', borderRadius:'0px', color: 'black'}} onClick={profilecharacteractive}>Characters</Button>
             </Row>
-            <Container className="text-center text-white mt-5" style={{overflowY:'scroll', height:'400px'}}>
+            <Container className="text-center text mt-5" style={{overflowY:'scroll', height:'400px'}}>
                 <Row className={`${mypostsactive ? windowSize>800 ? 'row-cols-2' : 'column' : 'd-none'}`} >
                 {allSquealsprint.map((squeal,index) => (
                 <Col key={index} className='mt-3'>
-                    <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(allSquealsprint.length-1) ? '100px' : '5%'}}>
+                    <Card style={{backgroundColor:'white',  borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(allSquealsprint.length-1) ? '100px' : '5%'}}>
                         <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                             <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                             { actualuser.photoprofile!='' ? (<div className='me-3' style={{width:'30px', minWidth:'30px', height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={actualuser.photoprofile} style={{height:'100%', position:'relative', marginTop: actualuser.photoprofileY/2.5, marginLeft: actualuser.photoprofileX/2.5}}></Image>
                             </div>)
-                            : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
+                            : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                             }
                             {squeal.sender}
                             </CardGroup>
@@ -1387,7 +1387,7 @@ const loadImage = (event) => {
                         </Card.Body>
                         <Card.Footer className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                         <Button className='mb-1' onClick={() => opendeletesqueal(index)}>Delete</Button>
-                        <Button className="text-white" style={{backgroundColor:'transparent',border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
+                        <Button className="text" style={{backgroundColor:'transparent',border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
                         <div className='d-flex'>
                             <Card.Text className='me-1' style={{cursor:'default'}}>
                             {squeal.pos_reactions}
@@ -1412,13 +1412,13 @@ const loadImage = (event) => {
                     <h5 className="text-light text-center mt-4 mb-4">All Answers</h5></div>
                 {allAnswersprint.map((squeal,index) => (
                 <Col key={index} className='mt-3'>
-                    <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
+                    <Card style={{backgroundColor:'black',  borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
                         <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                             <CardGroup>
                             { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
-                            : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
+                            : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                             }
                             {squeal.sender}
                             </CardGroup>
@@ -1469,7 +1469,7 @@ const loadImage = (event) => {
                         (<Image src={channel.photoprofile} style={{height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
                         </div>
-                        <h4 style={{color:'white',width:'60%',textAlign:'left',marginLeft:'10px'}}>{channel.name}</h4>
+                        <h4 style={{width:'60%',textAlign:'left',marginLeft:'10px'}}>{channel.name}</h4>
                     </Row>
                 ))}
                 </Row>
@@ -1479,7 +1479,7 @@ const loadImage = (event) => {
                     <h5>Monthly characters remaining: {actualuser.char_m}</h5>
                 </Col>
             </Container>
-            <Col className={confirmdeletesqueal ? 'text-white text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'black', zIndex:'1001'}}>
+            <Col className={confirmdeletesqueal ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'#eee', zIndex:'1001'}}>
                 <h4 className='mb-3'>Delete Squeal</h4>
                 <p>Are you sure you want to delete this squeal? It will no longer visible to anyone!</p>
                 <Row style={{display:'flex',justifyContent:'center'}}>
@@ -1487,30 +1487,30 @@ const loadImage = (event) => {
                     <Button onClick={() => deletesqueal(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
                 </Row>
             </Col>   
-            <Container className={editprofilevisible ? '' : 'd-none'} style={{position:'absolute',width:'100%',height:'100vh', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
+            <Container className={editprofilevisible ? '' : 'd-none'} style={{position:'absolute',width:'100%',height:'100vh', paddingTop:'10px',backgroundColor:'#eee', color: 'black', overflow:'hidden'}}>
                 <Button onClick={() => closeeditprofile(false)} className='me-3'><BoxArrowLeft className='me-2' style={{marginTop:'-2px'}}></BoxArrowLeft>Back</Button>
                 <Button onClick={() => closeeditprofile(true)} className='me-3'><BoxArrowInDown className='me-2' style={{marginTop:'-4px'}}></BoxArrowInDown>Save</Button>
                 <Button onClick={() => {setSectiondeleteprofile(true)}}>Delete</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
-                    <h3 className='text-white'>Edit Profile</h3>
+                    <h3 className='text'>Edit Profile</h3>
                     { newphotoprofile!='' ? (<div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}} className='mt-4'>
                     <Image src={newphotoprofile} onMouseDown={handleMouseDown} style={{height:'100%', position:'relative', marginTop:position.y, marginLeft:position.x, cursor: dragging ? 'grabbing' : 'grab'}}></Image>
                     </div>)
-                    : <PersonCircle size='85' color='white' className='mt-4'></PersonCircle>
+                    : <PersonCircle size='85' color='black' className='mt-4'></PersonCircle>
                     }
                     <Button onClick={openchangephoto} className='mt-4'>Change photo</Button>
                     <Container style={{ maxWidth: '800px'}} className="d-flex flex-column mt-3">
                         <Row className='row-cols-2' style={{display:'flex', flexDirection:'row'}}>
-                            <input type='text' className='texteditprofile mb-3' onChange={changevaluenickname} value={newnickname} placeholder='Nickname' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', marginLeft:'10%'}}>
+                            <input type='text' className='texteditprofile mb-3' onChange={changevaluenickname} value={newnickname} placeholder='Nickname' style={{borderRadius: '14px', backgroundColor: 'white', color: 'black', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', marginLeft:'10%'}}>
                             </input>
-                            <input type='text' className='texteditprofile mb-3' onChange={changevaluefullname} value={newfullname} placeholder='Fullname' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>
+                            <input type='text' className='texteditprofile mb-3' onChange={changevaluefullname} value={newfullname} placeholder='Fullname' style={{borderRadius: '14px', backgroundColor: 'white', color: 'black', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>
                             </input>
-                            <input type='mail' className='texteditprofile mb-3' onChange={changevaluemail} value={newmail} placeholder='Mail' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', marginLeft:'10%'}}>
+                            <input type='mail' className='texteditprofile mb-3' onChange={changevaluemail} value={newmail} placeholder='Mail' style={{borderRadius: '14px', backgroundColor: 'white', color: 'black', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', marginLeft:'10%'}}>
                             </input>
-                            <input type='text' className='texteditprofile mb-3' onChange={changevaluepassword} value={newpassword} placeholder='Password' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>
+                            <input type='text' className='texteditprofile mb-3' onChange={changevaluepassword} value={newpassword} placeholder='Password' style={{borderRadius: '14px', backgroundColor: 'white', color: 'black', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>
                             </input>
                         </Row>
-                        <textarea spellCheck='false' className='texteditprofile' onChange={changevaluebio} value={newbio} placeholder='Bio' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'100px', resize:'none'}}>
+                        <textarea spellCheck='false' className='texteditprofile' onChange={changevaluebio} value={newbio} placeholder='Bio' style={{borderRadius: '14px', backgroundColor: 'white', color: 'black', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'100px', resize:'none'}}>
 
                         </textarea>
                     </Container>
@@ -1519,21 +1519,21 @@ const loadImage = (event) => {
                     <Col style={{position:'absolute',width:'100%', bottom: windowSize>=600 ? '0' : '10%', left:'0', backgroundColor:'#232323', padding:'2em'}}>
                         <Button onClick={takecurrentphoto} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Camera style={{marginRight:'1em'}}></Camera>Take new picture</Button>
                         <input type='file' id='selectpicture' onChange={selectcurrentphoto} className='d-none'></input>
-                        <label htmlFor='selectpicture' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', color:'white', paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer', display:'flex', justifyContent:'center', alignItems:'center'}}><CardImage style={{marginRight:'1em'}}></CardImage>Select new picture</label>
+                        <label htmlFor='selectpicture' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left',  paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer', display:'flex', justifyContent:'center', alignItems:'center'}}><CardImage style={{marginRight:'1em'}}></CardImage>Select new picture</label>
                         <Button onClick={deletecurrentphoto} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Trash3 style={{marginRight:'1em'}}></Trash3>Delete picture</Button>
-                        <XCircle onClick={() => closechangephoto()} style={{position:'absolute', top:'10px', right:'10px', color:'white', cursor:'pointer'}} size='25'></XCircle>
+                        <XCircle onClick={() => closechangephoto()} style={{position:'absolute', top:'10px', right:'10px',  cursor:'pointer'}} size='25'></XCircle>
                     </Col>
                 </Container>
             </Container>
 
-            <Container className={editchannelvisible ? '' : 'd-none'} style={{position:'absolute',width:'100%',height:'100vh', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
+            <Container className={editchannelvisible ? '' : 'd-none'} style={{position:'absolute',width:'100%',height:'100vh', paddingTop:'10px',backgroundColor:'#eee',overflow:'hidden'}}>
                 <Button onClick={() => closeeditchannel(false)} className='me-1'><BoxArrowLeft className='me-2' style={{marginTop:'-2px'}}></BoxArrowLeft>Back</Button>
                 <Button onClick={() => closeeditchannel(true)} className='me-1'><BoxArrowInDown className='me-2' style={{marginTop:'-4px'}}></BoxArrowInDown>Save</Button>
                 <Button onClick={isCreator ? opendeletechannel : openleavechannel} style={{padding:'0.5em', fontSize:'14px'}}>{isCreator ? 'Delete Channel' : 'Leave Channel'}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                    <h3 className='text-white'>Edit Channel</h3>
-                    <div onMouseMove={handleMouseMovechannel} onMouseUp={handleMouseUpchannel} style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
+                    <h3 className='text'>Edit Channel</h3>
+                    <div onMouseMove={handleMouseMovechannel} onMouseUp={handleMouseUpchannel} style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                         { newphotochannel!='' ? 
                         (<Image onMouseDown={handleMouseDownchannel} src={newphotochannel} style={{height:'100%', marginTop:positionchannel.y, marginLeft:positionchannel.x, cursor: draggingchannel ? 'grabbing' : 'grab'}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
@@ -1542,32 +1542,32 @@ const loadImage = (event) => {
                     </Col>
                     <Container style={{ maxWidth: '800px', alignItems:'center'}} className="d-flex flex-column mt-3">
                         <Row className='d-flex flex-row' style={{width:'100%', justifyContent:'center'}}>
-                            <input type='text' className='texteditprofile mb-3' onChange={changevaluenamechannel} value={newnamechannel} placeholder='Name' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}></input>
+                            <input type='text' className='texteditprofile mb-3' onChange={changevaluenamechannel} value={newnamechannel} placeholder='Name' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'black', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}></input>
                             <label className="switch" style={{width:'30%', padding:'0.5em'}}>
-                                <p style={{color:'white', width:'50%'}} className={windowSize>800 ? 'd-inline' : 'd-none'}>Silenceable</p>
+                                <p style={{ width:'50%'}} className={windowSize>800 ? 'd-inline' : 'd-none'}>Silenceable</p>
                                 <input type="checkbox" onChange={changesilenceablechannel} style={{cursor:'pointer'}}/>
                                 <span className="slider"></span>
                             </label>
                         </Row>
-                        <textarea spellCheck='false' className='texteditprofile' onChange={changevaluebiochannel} value={newbiochannel} placeholder='Bio' style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
+                        <textarea spellCheck='false' className='texteditprofile' onChange={changevaluebiochannel} value={newbiochannel} placeholder='Bio' style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'black', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
-                    <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}/>
+                    <hr style={{width:'100%',  height:'2px', marginBottom:'0'}}/>
                     <Row>
-                        <Button className={`${channelpostsactive ? 'active' : ''}`} style={{width:'90px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelpostsactive}>Posts</Button>
-                        <Button className={`${channelusersactive ? 'active' : ''}`} style={{width:'100px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelusersactive}>Users</Button>
-                        <Button className={`${channelmessagesactive ? 'active' : ''}`} style={{width:'100px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelmessagesactive}>Messages</Button>
+                        <Button className={`${channelpostsactive ? 'active' : ''}`} style={{width:'90px', height:'40px',  background:'transparent', border:'0', borderRadius:'0px', color: "black"}} onClick={sectionchannelpostsactive}>Posts</Button>
+                        <Button className={`${channelusersactive ? 'active' : ''}`} style={{width:'100px', height:'40px',  background:'transparent', border:'0', borderRadius:'0px', color: "black"}} onClick={sectionchannelusersactive}>Users</Button>
+                        <Button className={`${channelmessagesactive ? 'active' : ''}`} style={{width:'100px', height:'40px',  background:'transparent', border:'0', borderRadius:'0px', color: "black"}} onClick={sectionchannelmessagesactive}>Messages</Button>
                     </Row>
-                    <Container className="text-center text-white mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
+                    <Container className="text-center text mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
                         <Row className={`${channelpostsactive ? windowSize>800 ? 'row-cols-2' : 'col' : 'd-none'}`}>
                         {newchannelposts.map((squeal,index) => (
                         <Col key={index}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelposts.length-1) ? '150px' : '5%'}}>
+                            <Card style={{ borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelposts.length-1) ? '150px' : '5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                     <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                                     { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', minWidth:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                     <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
-                                    : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
+                                    : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                     }
                                     {squeal.sender}
                                     </CardGroup>
@@ -1630,7 +1630,7 @@ const loadImage = (event) => {
                         <Row className={`${channelmessagesactive ? windowSize>= 800 ? 'row-cols-2 d-flex' : 'col' : 'd-none'}`}>
                         {newchannelmessages.map((squeal,index) => (
                         <Col key={index}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom: '5%'}}>
+                            <Card style={{borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom: '5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                     <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                                     {squeal.type} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
@@ -1676,7 +1676,7 @@ const loadImage = (event) => {
                             </Card>
                         </Col>
                         ))}
-                        <Container style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%', marginTop:'100px'}}>
+                        <Container style={{borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%', marginTop:'100px'}}>
                             <Button onClick={addmessagechannel} style={{width:'150px', height:'50px'}}>Add Message</Button>
                         </Container>
                         </Row>
@@ -1686,9 +1686,9 @@ const loadImage = (event) => {
                                 { channeluser.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden', padding:'0'}}>
                                     <Image src={channeluser.photoprofile} style={{height:'100%', position:'relative', marginTop:channeluser.photoprofileY/2.5, marginLeft:channeluser.photoprofileX/2.5}}></Image>
                                     </div>)
-                                    : <PersonCircle color='white' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
+                                    : <PersonCircle color='black' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
                                     }
-                                <p style={{color:'white',width:'40%',textAlign:'left', paddingTop:'15px'}}>{channeluser.nickname}</p>
+                                <p style={{width:'40%',textAlign:'left', paddingTop:'15px'}}>{channeluser.nickname}</p>
                                 <Button style={{width:'120px', marginRight:'3%'}} onClick={() => changetypeuserchannel(index2)}>{channeluser.type}</Button>
                                 <Button style={{width:'120px',  marginTop: windowSize<508 ? '0.25rem' : ''}} onClick={() => changeblockuserchannel(index2)}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
                             </Row>
@@ -1701,13 +1701,13 @@ const loadImage = (event) => {
                     <Col style={{position:'absolute',width:'100%', bottom:windowSize>=600 ? '0' : '10%', left:'0', backgroundColor:'#232323', padding:'2em'}}>
                         <Button onClick={takecurrentphotochannel} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Camera style={{marginTop:'-5px', marginRight:'1em'}}></Camera>Take new picture</Button>
                         <input type='file' accept="image/*" id='selectpicturechannel' onChange={selectcurrentphotochannel} className='d-none'></input>
-                        <label htmlFor='selectpicturechannel' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center', color:'white', paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer'}}><CardImage style={{marginTop:'-5px', marginRight:'1em'}}></CardImage>Select new picture</label>
+                        <label htmlFor='selectpicturechannel' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center',  paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer'}}><CardImage style={{marginTop:'-5px', marginRight:'1em'}}></CardImage>Select new picture</label>
                         <Button onClick={deletecurrentphotochannel} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Trash3 style={{marginTop:'-5px', marginRight:'1em'}}></Trash3>Delete picture</Button>
-                        <XCircle onClick={() => closechangephotochannel()} style={{position:'absolute', top:'10px', right:'10px', color:'white', cursor:'pointer'}} size='25'></XCircle>
+                        <XCircle onClick={() => closechangephotochannel()} style={{position:'absolute', top:'10px', right:'10px',  cursor:'pointer'}} size='25'></XCircle>
                     </Col>
                 </Container>
             </Container>
-                <Col className={confirmdeletepostchannel ? 'text-white text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'black', overflowY:'scroll', paddingTop:'10%', zIndex:'1001'}}>
+                <Col className={confirmdeletepostchannel ? 'text text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'#eee', overflowY:'scroll', paddingTop:'10%', zIndex:'1001'}}>
                     <h4 className='mb-3 mt-3'>Delete Squeal</h4>
                     <p>Are you sure you want to delete this squeal? It will be no longer visible to anyone!</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
@@ -1715,7 +1715,7 @@ const loadImage = (event) => {
                         <Button onClick={() => deletepostchannel(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
                     </Row>
                 </Col> 
-                <Col className={confirmdeletemessagechannel ? 'text-white text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'black', zIndex:'1001'}}>
+                <Col className={confirmdeletemessagechannel ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'#eee', zIndex:'1001'}}>
                     <h4 className='mb-3'>Delete Message</h4>
                     <p>Are you sure you want to delete this automatic message? It will be no longer usable for anyone!</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
@@ -1723,7 +1723,7 @@ const loadImage = (event) => {
                         <Button onClick={() => deletemessagechannel(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
                     </Row>
                 </Col>
-                <Col className={confirmdeletechannel ? 'text-white text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'black', zIndex:'1001'}}>
+                <Col className={confirmdeletechannel ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'#eee', zIndex:'1001'}}>
                     <h4 className='mb-3'>Delete Channel</h4>
                     <p>Are you sure you want to delete this channel? It will be no longer usable for anyone!</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
@@ -1731,7 +1731,7 @@ const loadImage = (event) => {
                         <Button onClick={() => deletechannel(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
                     </Row>
                 </Col> 
-                <Col className={confirmleavechannel ? 'text-white text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'black', zIndex:'1001'}}>
+                <Col className={confirmleavechannel ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'#eee', zIndex:'1001'}}>
                     <h4 className='mb-3'>Leave Channel</h4>
                     <p>Are you sure you want to leave this channel? You won't be able to read the channel squeals!</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
@@ -1739,7 +1739,7 @@ const loadImage = (event) => {
                         <Button onClick={() => leavechannel(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
                     </Row>
                 </Col>
-                <Col className={sectiondeleteprofile ? 'text-white text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'black', overflowY:'scroll', paddingTop:'10%', zIndex:'1001'}}>
+                <Col className={sectiondeleteprofile ? 'text text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'#eee', overflowY:'scroll', paddingTop:'10%', zIndex:'1001'}}>
                     <h4 className='mb-3 mt-3'>Delete Profile</h4>
                     <p>Are you sure you want to delete your account? You will unable to access with this credentials!</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
@@ -1747,7 +1747,7 @@ const loadImage = (event) => {
                         <Button onClick={() => deleteprofile(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
                     </Row>
                 </Col> 
-                <Col className={confirmaddmessagechannel ? 'text-white text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'3%',backgroundColor:'black', overflowY:'scroll'}}>
+                <Col className={confirmaddmessagechannel ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'3%',backgroundColor:'#eee', overflowY:'scroll'}}>
                     <h4 className='mb-3'>Add message</h4>
                     <Container className="container mt-3 d-flex flex-row" style={{justifyContent:'center', flexWrap:'wrap'}}>
                         <Dropdown onSelect={(eventKey) => setSelection(eventKey)} className='mb-1'>
@@ -1767,9 +1767,9 @@ const loadImage = (event) => {
                         </Dropdown>
                     </Container>
                     { (selection==="Welcome" || selection==="Answer" || selection==="Select an option" || selection===null) && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'200px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'200px', backgroundColor:'white', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body className='d-flex flex-column' style={{alignItems:'center'}}>
-                            <textarea placeholder='Message text' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none'}} value={newmessagetext} onChange={changenewmessagetext}></textarea>
+                            <textarea placeholder='Message text' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none'}} value={newmessagetext} onChange={changenewmessagetext}></textarea>
                             {capturedImage && (
                               <div style={{ position: 'relative', width: '300px', maxHeight: '300px', overflow: 'hidden' }}>
                                 <img src={capturedImage} alt="Taken" width="200px" />
@@ -1806,31 +1806,31 @@ const loadImage = (event) => {
                             )}
                         </Card.Body>
                         <Card.Footer>
-                            <LinkLogo size={25} color='white' className='me-3' style={{cursor:'pointer'}} onClick={() => setShowLinkModal(true)}></LinkLogo>
-                            <Camera size={25} color='white' className='me-3' style={{cursor:'pointer'}} onClick={takephotonewmessage}></Camera>
-                            <CameraVideo size={25} color='white' className='me-3' style={{cursor:'pointer'}} onClick={takevideonewmessage}></CameraVideo>
-                            <GeoAlt size={25} color="white" style={{cursor:'pointer'}} onClick={() => {if (!isMapVisible) {handleLocationButtonClick()}}}/>
+                            <LinkLogo size={25} color='black' className='me-3' style={{cursor:'pointer'}} onClick={() => setShowLinkModal(true)}></LinkLogo>
+                            <Camera size={25} color='black' className='me-3' style={{cursor:'pointer'}} onClick={takephotonewmessage}></Camera>
+                            <CameraVideo size={25} color='black' className='me-3' style={{cursor:'pointer'}} onClick={takevideonewmessage}></CameraVideo>
+                            <GeoAlt size={25} color="black" style={{cursor:'pointer'}} onClick={() => {if (!isMapVisible) {handleLocationButtonClick()}}}/>
                         </Card.Footer>
                     </Card>
                             )}
                     {selection === "Answer" && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body>
-                                <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none', outline:'none'}} value={newmessage.request} onChange={changenewmessagerequest}/>
+                                <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none', outline:'none'}} value={newmessage.request} onChange={changenewmessagerequest}/>
                         </Card.Body>
                     </Card>
                     )}
                     {selection === "Repeat" && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body>
-                                <input type="number" placeholder='Number of seconds' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none', outline:'none'}} value={numSeconds} onChange={changenewmessageseconds}/>
+                                <input type="number" placeholder='Number of seconds' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none', outline:'none'}} value={numSeconds} onChange={changenewmessageseconds}/>
                         </Card.Body>
                     </Card>
                     )}
                     {(selection === "Casual Images" || selection === "WikiInfo" || selection === "News" || selection === "Twitter") && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body>
-                                <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0', color:'white', resize:'none', outline:'none'}} value={userRequest} onChange={changenewmessageuserrequest}/>
+                                <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none', outline:'none'}} value={userRequest} onChange={changenewmessageuserrequest}/>
                         </Card.Body>
                     </Card>
                     )}
@@ -1856,21 +1856,21 @@ const loadImage = (event) => {
                         </Row>
                         <textarea spellCheck='false' readOnly className='textareaprofile' value={newBioKeyword} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
-                    <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}/>
+                    <hr style={{width:'100%',  height:'2px', marginBottom:'0'}}/>
                     <Row  style={{width:'50%', justifyContent:'center'}}>
-                        <Button className='active' style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}}>Posts</Button>
+                        <Button className='active' style={{width:'150px', height:'40px',  background:'transparent', border:'0', borderRadius:'0px'}}>Posts</Button>
                     </Row>
-                    <Container className="text-center text-white mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
+                    <Container className="text-center text mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
                         <Row className='row-cols-2'>
                         {newKeywordPosts.map((squeal,index) => (
                         <Col key={index} className='m-5' style={{width:'40%'}}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
+                            <Card style={{backgroundColor:'black',  borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                                     <CardGroup>
                                     { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                     <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
-                                    : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
+                                    : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                     }
                                     {squeal.sender}
                                     </CardGroup>

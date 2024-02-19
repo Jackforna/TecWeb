@@ -311,20 +311,20 @@ function CreateMessage(props) {
   //   console.log("PhotoProfile",photoProfile);
   // }, [photoProfile]);
 
-  /*Test only
-  useEffect(() => {
-    console.log("allChannelsprint has updated", allChannelsprint);
-  }, [allChannelsprint]); 
+
+  // useEffect(() => {
+  //   console.log("allChannelsprint has updated", allChannelsprint);
+  // }, [allChannelsprint]); 
   
   useEffect(() => {
     console.log("Tutti gli squeal ", getListSqueals());
   }, []); 
  
   
-  useEffect(() => {
-    console.log("All keywords print", allKeywordssprint);
-  }, [allKeywordssprint]);
-   */
+  // useEffect(() => {
+  //   console.log("All keywords print", allKeywordssprint);
+  // }, [allKeywordssprint]);
+
   /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
   const [intervalId, setIntervalId] = useState(null);
@@ -364,7 +364,8 @@ function CreateMessage(props) {
         let counter = localStorage.getItem("Counter");
         counter++;
         localStorage.setItem("Counter", counter);
-        console.log("Questo messaggio è il numero :", counter);
+        // console.log("Questo messaggio è il numero :", counter);
+        alert("Questo messaggio è il numero : " + counter);
         try {
           const tempBodyInterval =  {
             text: 'Questo è il messaggio numero : ' + counter,
@@ -896,7 +897,7 @@ function CreateMessage(props) {
   const handleCreateHashtagChannel = async () => {
     const channelData = {
       creator: nicknameProfile,
-      photoProfile: '',
+      photoprofile: '',
       photoprofilex: 0,
       photoprofiley: 0,
       name: text.replace(/#/g, ''),
@@ -934,7 +935,7 @@ function CreateMessage(props) {
             position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
           },
           category: null,
-          date: new Date().toISOString(),
+          date: new Date().toLocaleDateString(),
           hour: new Date().getHours(),
           impressions: 0,
           neg_reactions: 0,
@@ -948,7 +949,7 @@ function CreateMessage(props) {
           usersViewed: [],
         }
       ],
-      userSilenced: [],
+      usersSilenced: [],
       description: "",
       popularity: "",
     };
@@ -971,7 +972,7 @@ function CreateMessage(props) {
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       category: null,
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
@@ -1007,7 +1008,7 @@ function CreateMessage(props) {
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       photoprofile: photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
@@ -1154,7 +1155,7 @@ function CreateMessage(props) {
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       photoprofile: photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
@@ -1231,7 +1232,7 @@ function CreateMessage(props) {
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       category: null,
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
@@ -1274,7 +1275,7 @@ function CreateMessage(props) {
         position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       photoprofile: photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
@@ -1498,7 +1499,7 @@ function CreateMessage(props) {
         position: defaultCamp.position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : photoProfile, 
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
@@ -1519,6 +1520,7 @@ function CreateMessage(props) {
         console.log ("Canale selezionato: ", channelSelected);
         await hanleUpdateChannelDefaultMessage(channelSelected, defaultCamp);
         console.log('Squeal inviato con successo:', resultAddSqueal);
+        window.location.reload();
         // handleUpdateUser(125); // Aggiorna il numero di caratteri disponibili per l'utente
         // goToProfile();
       } else if (localStorage.getItem('Interval active') === 'true') {
@@ -1546,7 +1548,7 @@ function CreateMessage(props) {
         position: defaultCamp.position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
       },
       category: null,
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
@@ -1725,7 +1727,7 @@ function CreateMessage(props) {
   const handleCreateChannel = async () => {
     const channelData = {
       creator: nicknameProfile, 
-      photoProfile: '',
+      photoprofile: '',
       photoprofilex: 0,
       photoprofiley: 0,
       name: channelName,
