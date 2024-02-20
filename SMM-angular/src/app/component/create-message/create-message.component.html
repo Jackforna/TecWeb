@@ -68,6 +68,34 @@
                 </div>
             </div>
         </div>
+
+        <div *ngIf="channelHaveDeafault" class = "defaultMessage-Container">
+            <div style="display:flex; flex-direction: row;">
+                <h3>This channel have default message avaible</h3>
+                <button *ngIf = "!showDeafaultMessage" (click)="showDeafaultMessage = true" class="icon-button" style="margin-top: -1%;"><i class="material-icons">expand_more</i></button>
+                <button *ngIf = "showDeafaultMessage" (click)="showDeafaultMessage = false" class="icon-button" style="margin-top: -1%;"><i class="material-icons">expand_less</i></button>
+            </div>
+            <div *ngIf="showDeafaultMessage">
+                <h2 style="margin-bottom: 0%;">Messaggi Predefiniti</h2>
+                <ul style = "padding-left: 30px;">
+                    <ng-container *ngFor="let message of channelSelected.list_mess">
+                        <li id="deafaultList" *ngIf="message.request" (click)="selectDefaultMessage(message)" [ngClass]="{'selectedDeafaul-custom': selectedDefaultMessage === message}">
+                            {{ message.request }}
+                        </li>
+                    </ng-container>                    
+                </ul>
+                <div style="display:flex; flex-direction: row;" *ngIf="channelHaveRepeat">
+                    <h3>Messaggi Ripetuti</h3>
+                    <div *ngIf="channelHaveRepeat" style = "margin-left: 2%; margin-right: 2%;">
+                        <button class="icon-button"  (click)="processRepeatMessage()"><i class="material-icons">play_circle</i></button>
+                    </div>
+                    <div *ngIf="channelHaveRepeat">
+                        <button class="icon-button" (click)="stopProcessRepeatMessage()"><i class="material-icons">block</i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+          
             <!--
             <div *ngIf="isChannel && accessType === 'create'">
                 <div class="create-channel-container">
@@ -83,7 +111,7 @@
             </div>
             -->
 
-            <div class="post-textarea">
+            <div class="post-textarea" *ngIf="(!showDeafaultMessage)">
                 <textarea 
                     placeholder="A cosa stai pensando?" 
                     [attr.maxlength]="charLeftUser"
@@ -126,7 +154,7 @@
         </div>
           
           
-        <mat-card-actions *ngIf="!(isChannel && accessType === 'create')">
+        <mat-card-actions *ngIf="(!(isChannel && accessType === 'create')) && (!showDeafaultMessage)">
             <div class="input-icons">
                 <button class="icon-button" (click)="openLinkDialog()"><i class="material-icons">attach_file</i></button>
                 <button class="icon-button" (click)="openCameraDialog()"><i class="material-icons">photo_camera</i></button>
@@ -138,6 +166,12 @@
                     <i class="material-icons" *ngIf="isChannel">send</i>
                 </button>
             </div>              
+        </mat-card-actions>
+
+        <mat-card-actions *ngIf="selectedDefaultMessage">
+            <div class="input-icons">
+                <button class="icon-button send-icon" (click)="processDefaultMessage()"><i class="material-icons">send</i></button>
+            </div>
         </mat-card-actions>
 
         <!--Modale camera-->

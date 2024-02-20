@@ -627,15 +627,15 @@ const toggleSilenceChannel = () => {
                       style={{
                         boxShadow: 'none',
                         borderRadius: '14px',
-                        borderColor: 'white',
-                        backgroundColor: 'transparent',
+                        borderColor: 'black',
+                        backgroundColor: 'white',
                         backgroundImage: showIcon ? `url(${search_logo})` : 'none',
                         backgroundSize: '20px',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: '10px center',
                         paddingLeft: showIcon ? '40px' : '20px',
                         paddingRight: '160px',
-                        color: 'white',
+                        color: 'black',
                         width: '100%',
                       }}
                       onFocus={handleFocus}
@@ -672,7 +672,7 @@ const toggleSilenceChannel = () => {
               </Form>
               {allprint.length > 0 && (
                         <div className="suggested-print-container">
-                          <ul style={{paddingLeft:'0', marginTop:'60px'}}>
+                          <ul style={{paddingLeft:'0', marginTop:'60px', color: 'black'}}>
                             {allprint.map((profile, index) => (
                               <li key={index} className='mb-3' onClick={() => handleItemSelect(profile)} style={{listStyle:'none',textAlign:'center',cursor:'pointer', width:'300px', borderRadius:'12px', paddingTop:'0.6em', paddingBottom:'0.6em'}}>
                                 {profile}
@@ -685,34 +685,34 @@ const toggleSilenceChannel = () => {
               <Container style={{ width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height: windowSize>=600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflow:'hidden'}} className={`${viewprofile ? '"d-flex flex-column"' : 'd-none'}`}>
                 <header className='d-flex flex-column text-center' style={{width:'100%', alignItems:'center'}}>
                   <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeviewprofile}>Back</Button>
-                    { actualprofile.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
+                    { actualprofile.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                     <Image src={actualprofile.photoprofile} style={{height:'100%', position:'relative', marginTop: actualprofile.photoprofileY, marginLeft: actualprofile.photoprofileX}}></Image>
                     </div>)
-                    : <PersonCircle size='70' color='white' className='mt-4'></PersonCircle>
+                    : <PersonCircle size='70' color='black' className='mt-4'></PersonCircle>
                     }
-                    <h4 className="text-white mt-3">{actualprofile.nickname}</h4>
+                    <h4 className="mt-3">{actualprofile.nickname}</h4>
                     <Row className='mt-3' style={{width:'100%', justifyContent:'space-between'}}>
-                        <p className='text-white' style={{width:'50%', padding:'0'}}>{allSquealsprint.length} post published</p>
-                        <p className='text-white' style={{width:'50%', padding:'0'}}>{allChannelsprint.length} channels of which {n_channeladmin} admin</p>
+                        <p className='text' style={{width:'50%', padding:'0'}}>{allSquealsprint.length} post published</p>
+                        <p className='text' style={{width:'50%', padding:'0'}}>{allChannelsprint.length} channels of which {n_channeladmin} admin</p>
                     </Row>
-                    <textarea spellCheck='false' readOnly className='textareaprofile' value={actualprofile.bio} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
+                    <textarea spellCheck='false' readOnly className='textareaprofile' value={actualprofile.bio} style={{borderRadius: '14px', resize:'none', backgroundColor: 'white', color: 'black', width: '100%', outline:'none', boxShadow:'none', borderColor:'black', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                 </header>
-                <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}></hr>
+                <hr style={{width:'100%', color:'black', height:'2px', marginBottom:'0'}}></hr>
                 <Row  style={{width:'100%', justifyContent:'center'}}>
-                    <Button className={`${mypostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilepostsactive}>Posts</Button>
-                    <Button className={`${mychannelsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilechannelsactive}>Channels</Button>
+                    <Button className={`${mypostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'black', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilepostsactive}>Posts</Button>
+                    <Button className={`${mychannelsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'black', background:'transparent', border:'0', borderRadius:'0px'}} onClick={profilechannelsactive}>Channels</Button>
                 </Row>
-                <Container className="text-center text-white mt-5" style={{overflowY:'scroll', height:'400px'}}>
+                <Container className="text-center mt-5" style={{overflowY:'scroll', height:'400px'}}>
                     <Row className={`${mypostsactive ? windowSize>=800 ? 'row-cols-2' : 'column' : 'd-none'}`} >
                     {allSquealsprint.map((squeal,index) => (
                     <Col key={index} className='mt-3'>
-                        <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom: index===(allSquealsprint.length-1) ? '100px' : '5%'}}>
+                        <Card style={{color:'black', borderColor:'black', minWidth:'280px', minHeight:'200px', marginBottom: index===(allSquealsprint.length-1) ? '100px' : '5%'}}>
                             <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                 <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
-                                { actualprofile.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                                { actualprofile.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                 <Image src={actualprofile.photoprofile} style={{height:'100%', position:'relative', marginTop: actualprofile.photoprofileY/2.5, marginLeft: actualprofile.photoprofileX/2.5}}></Image>
                                 </div>)
-                                : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
+                                : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                 }
                                 {squeal.sender}
                                 </CardGroup>
@@ -773,25 +773,25 @@ const toggleSilenceChannel = () => {
                     </Row>
                     <Row className={`${mychannelsactive ? windowSize>800 ? 'row-cols-2' : 'col' : 'd-none'}`} >
                     {allChannelsprint.map((channel,index) => (
-                        <Row key={index} className='d-flex' style={{justifyContent:'center',alignItems:'center',cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
-                            <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
+                        <Row key={index} className='d-flex' style={{justifyContent:'center',alignItems:'center', color: 'black', cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
+                            <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden',  borderColor: 'black', color: "black"}}>
                             { channel.photoprofile!='' ? 
-                            (<Image src={channel.photoprofile} style={{height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX}}></Image>)
-                            : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
+                            (<Image src={channel.photoprofile} style={{height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX, borderColor: 'black'}}></Image>)
+                            : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen', color: 'black', borderColor: 'black'}}></Image>)}
                             </div>
-                            <h4 style={{color:'white',width:'60%',textAlign:'left',marginLeft:'10px'}}>{channel.name}</h4>
+                            <h4 style={{color:'black',width:'60%',textAlign:'left',marginLeft:'10px'}}>{channel.name}</h4>
                         </Row>
                     ))}
                     </Row>
                 </Container>
               </Container>
 
-              <Container className={viewchannel ? '' : 'd-none'} style={{position:'absolute',width:windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height:windowSize>=600 ? '100vh' : '90%', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
+              <Container className={viewchannel ? '' : 'd-none'} style={{position:'absolute',width:windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height:windowSize>=600 ? '100vh' : '90%', paddingTop:'10px',backgroundColor:'#eee', color: "black", overflow:'hidden'}}>
                 <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeviewchannel}>Back</Button>
                 <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribechannel}>{inChannel ? "Unsubscribe" : "Subscribe"}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                    <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
+                    <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                         { newphotochannel!='' ? 
                         (<Image src={newphotochannel} style={{height:'100%', marginTop:positionchannel.y, marginLeft:positionchannel.x}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
@@ -799,34 +799,34 @@ const toggleSilenceChannel = () => {
                     </Col>
                     <Container style={{ maxWidth: '800px', alignItems:'center'}} className="d-flex flex-column mt-3">
                         <Row className='d-flex flex-row' style={{width:'100%', justifyContent:'center'}}>
-                            <p className='mb-3' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>{newnamechannel}</p>
+                            <p className='mb-3' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'black', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>{newnamechannel}</p>
                             {inChannel && newsilenceablechannel && (
                             <label className="switch" style={{width:'30%', padding:'0.5em'}}>
-                                <p style={{color:'white', width:'50%'}}>Silence</p>
+                                <p style={{color:'black', width:'50%'}}>Silence</p>
                                 <input type="checkbox" style={{cursor:'pointer'}} checked={silenceChannel} onChange={toggleSilenceChannel}/>
                                 <span className="slider"></span>
                             </label>
                             )}
                         </Row>
-                        <textarea spellCheck='false' readOnly className='textareaprofile' value={newbiochannel} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
+                        <textarea spellCheck='false' readOnly className='textareaprofile' value={newbiochannel} style={{borderRadius: '14px', resize:'none', backgroundColor: 'white', color: 'black', width: '100%', outline:'none', boxShadow:'none', borderColor:'black', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
-                    <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}/>
+                    <hr style={{width:'100%', color:'black', height:'2px', marginBottom:'0'}}/>
                     <Row  style={{width:'100%', justifyContent:'center'}}>
-                        <Button className={`${channelpostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelpostsactive}>Posts</Button>
-                        <Button className={`${channelusersactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelusersactive}>Users</Button>
-                        <Button className={`${channelmessagesactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelmessagesactive}>Messages</Button>
+                        <Button className={`${channelpostsactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'black', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelpostsactive}>Posts</Button>
+                        <Button className={`${channelusersactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'black', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelusersactive}>Users</Button>
+                        <Button className={`${channelmessagesactive ? 'active' : ''}`} style={{width:'95px', height:'40px', color:'black', background:'transparent', border:'0', borderRadius:'0px'}} onClick={sectionchannelmessagesactive}>Messages</Button>
                     </Row>
-                    <Container className="text-center text-white mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
+                    <Container className="text-center mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
                         <Row className={`${channelpostsactive ? windowSize>= 800 ? 'row-cols-2' : 'col' : 'd-none'}`}>
                         {newchannelposts.map((squeal,index) => (
                         <Col key={index}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelposts.length-1) ? '100px' : '5%'}}>
+                            <Card style={{color:'black', borderColor:'black', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelposts.length-1) ? '100px' : '5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                     <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
-                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px', minWidth:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px', minWidth:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                     <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
-                                    : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
+                                    : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                     }
                                     {squeal.sender}
                                     </CardGroup>
@@ -888,7 +888,7 @@ const toggleSilenceChannel = () => {
                         <Row className={`${channelmessagesactive ? windowSize>= 800 ? 'row-cols-2 d-flex' : 'col' : 'd-none'}`}>
                         {newchannelmessages.map((squeal,index) => (
                         <Col key={index}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelmessages.length-1) ? '100px' : '5%'}}>
+                            <Card style={{color:'black', borderColor:'black', minWidth:'280px', minHeight:'200px', marginBottom:index===(newchannelmessages.length-1) ? '100px' : '5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                     <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                                     {squeal.type} {squeal.request!="" && (" "+squeal.request)} {squeal.repetition!="" && (" "+squeal.repetition)}
@@ -935,12 +935,12 @@ const toggleSilenceChannel = () => {
                         <Col style={{width:'80%',marginLeft:'10%'}} className={`${channelusersactive ? 'row-cols-2' : 'd-none'}`} >
                         {newchannelusers.map((channeluser,index2) => (
                             <Row key={index2} className='mt-3 d-flex' style={{width:'70%',justifyContent:'center',alignItems:'center', borderRadius:'12px', padding:'5px', marginLeft:'15%'}}>
-                                { channeluser.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden', padding:'0'}}>
+                                { channeluser.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden', padding:'0'}}>
                                     <Image src={channeluser.photoprofile} style={{height:'100%', position:'relative', marginTop:channeluser.photoprofileY/2.5, marginLeft:channeluser.photoprofileX/2.5}}></Image>
                                     </div>)
-                                    : <PersonCircle color='white' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
+                                    : <PersonCircle color='black' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
                                     }
-                                <p style={{color:'white',width:'40%',textAlign:'left', paddingTop:'15px'}}>{channeluser.nickname}</p>
+                                <p style={{color:'black',width:'40%',textAlign:'left', paddingTop:'15px'}}>{channeluser.nickname}</p>
                                 <Button style={{width:'120px', marginRight: '3%', cursor:'default'}}>{channeluser.type}</Button>
                                 <Button style={{width:'120px', cursor:'default', marginTop: windowSize<508 ? '0.25rem' : ''}}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
                             </Row>
@@ -950,12 +950,12 @@ const toggleSilenceChannel = () => {
                 </Col>
               </Container>
 
-              <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height:windowSize>=600 ? '100vh' : '90%', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
+              <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height:windowSize>=600 ? '100vh' : '90%', paddingTop:'10px',backgroundColor:'#eee', color: 'black', overflow:'hidden'}}>
                 <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeViewKeyword}>Back</Button>
                 <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribekeyword}>{inKeyword ? "Unsubscribe" : "Subscribe"}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                    <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
+                    <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                         { newPhotoKeyword!='' ? 
                         (<Image src={newPhotoKeyword} style={{height:'100%', marginTop:positionKeyword.y, marginLeft:positionKeyword.x}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
@@ -963,25 +963,25 @@ const toggleSilenceChannel = () => {
                     </Col>
                     <Container style={{ maxWidth: '800px', alignItems:'center'}} className="d-flex flex-column mt-3">
                         <Row className='d-flex flex-row' style={{width:'100%', justifyContent:'center'}}>
-                            <p className='mb-3' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>{newNameKeyword}</p>
+                            <p className='mb-3' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'black', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>{newNameKeyword}</p>
                         </Row>
-                        <textarea spellCheck='false' readOnly className='textareaprofile' value={newBioKeyword} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
+                        <textarea spellCheck='false' readOnly className='textareaprofile' value={newBioKeyword} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'black', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
-                    <hr style={{width:'100%', color:'white', height:'2px', marginBottom:'0'}}/>
+                    <hr style={{width:'100%', color:'black', height:'2px', marginBottom:'0'}}/>
                     <Row  style={{width:'100%', justifyContent:'center'}}>
-                        <Button className='active' style={{width:'150px', height:'40px', color:'white', background:'transparent', border:'0', borderRadius:'0px'}}>Posts</Button>
+                        <Button className='active' style={{width:'150px', height:'40px', color:'black', background:'transparent', border:'0', borderRadius:'0px'}}>Posts</Button>
                     </Row>
-                    <Container className="text-center text-white mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
+                    <Container className="text-center mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
                         <Row className='row-cols-2'>
                         {newKeywordPosts.map((squeal,index) => (
                         <Col key={index} style={{width:'40%'}}>
-                            <Card style={{backgroundColor:'black', color:'white', borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
+                            <Card style={{color:'black', borderColor:'black', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', fleWrap:'wrap'}}>
                                     <CardGroup>
-                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                                    { squeal.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                                     <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
-                                    : <PersonCircle size='30' color='white' className='me-3'></PersonCircle>
+                                    : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                     }
                                     {squeal.sender}
                                     </CardGroup>

@@ -15,7 +15,7 @@
             <mat-card-subtitle>{{ currentAnswerSqueal.date | date }} at {{ currentAnswerSqueal.hour }}:{{ currentAnswerSqueal.seconds }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <img mat-card-image *ngIf="currentAnswerSqueal.body.photo" [src]="currentAnswerSqueal.body.photo" alt="Photo" style = "width: 200px;">
+            <img mat-card-image *ngIf="(currentAnswerSqueal.body.photo != photoBase)" [src]="currentAnswerSqueal.body.photo" alt="Photo" style = "width: 200px;">
             <p>{{ currentAnswerSqueal.body.text }}</p>
             <div *ngIf="currentAnswerSqueal.body.position.length >= 2">
               <div *ngIf="currentAnswerSqueal.body.address">{{ currentAnswerSqueal.body.address }}</div>
@@ -72,7 +72,7 @@
             <mat-card-subtitle>{{ currentSqueal.date | date }} at {{ currentSqueal.hour }}:{{ currentSqueal.seconds }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <img mat-card-image *ngIf="currentSqueal.body.photo" [src]="currentSqueal.body.photo" alt="Photo" style = "width: 200px;">
+            <img mat-card-image *ngIf="(currentSqueal.body.photo !=  photoBase)" [src]="currentSqueal.body.photo" alt="Photo" style = "width: 200px;">
             <p>{{ currentSqueal.body.text }}</p>
             <div *ngIf="currentSqueal.body.position.length >= 2">
               <div *ngIf="currentSqueal.body.address">{{ currentSqueal.body.address }}</div>
@@ -106,7 +106,7 @@
                 <mat-card-subtitle>{{ currentLessReactedSqueal.date | date }} at {{ currentLessReactedSqueal.hour }}:{{ currentLessReactedSqueal.seconds }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-                <img mat-card-image *ngIf="currentLessReactedSqueal.body.photo" [src]="currentLessReactedSqueal.body.photo" alt="Photo" style="width: 200px;">
+                <img mat-card-image *ngIf="(currentLessReactedSqueal.body.photo !=  photoBase)" [src]="currentLessReactedSqueal.body.photo" alt="Photo" style="width: 200px;">
                 <p>{{ currentLessReactedSqueal.body.text }}</p>             
                 <div *ngIf="currentLessReactedSqueal.body.position.length >= 2">
                   <div *ngIf="currentLessReactedSqueal.body.address">{{ currentLessReactedSqueal.body.address }}</div>
@@ -142,7 +142,7 @@
                 <mat-card-subtitle>{{ currentPopularSqueal.date | date }} at {{ currentPopularSqueal.hour }}:{{ currentPopularSqueal.seconds }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-                <img mat-card-image *ngIf="currentPopularSqueal.body.photo" [src]="currentPopularSqueal.body.photo" alt="Photo" style="width: 200px;">
+                <img mat-card-image *ngIf="(currentPopularSqueal.body.photo !=  photoBase)" [src]="currentPopularSqueal.body.photo" alt="Photo" style="width: 200px;">
                 <p>{{ currentPopularSqueal.body.text }}</p>
                 <div *ngIf="currentPopularSqueal.body.position.length >= 2">
                   <div *ngIf="currentPopularSqueal.body.address">{{ currentPopularSqueal.body.address }}</div>
@@ -177,7 +177,7 @@
             <mat-card-subtitle>{{ currentInpopularSqueal.date | date }} at {{ currentInpopularSqueal.hour }}:{{ currentInpopularSqueal.seconds }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <img mat-card-image *ngIf="currentInpopularSqueal.body.photo" [src]="currentInpopularSqueal.body.photo" alt="Photo" style="width: 200px;">
+            <img mat-card-image *ngIf="(currentInpopularSqueal.body.photo !=  photoBase)" [src]="currentInpopularSqueal.body.photo" alt="Photo" style="width: 200px;">
             <p>{{ currentInpopularSqueal.body.text }}</p>
             <div *ngIf="currentInpopularSqueal.body.position.length >= 2">
               <div *ngIf="currentInpopularSqueal.body.address">{{ currentInpopularSqueal.body.address }}</div>
@@ -212,7 +212,7 @@
                 <mat-card-subtitle>{{ currentControversialSqueal.date | date }} at {{ currentControversialSqueal.hour }}:{{ currentControversialSqueal.seconds }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-                <img mat-card-image *ngIf="currentControversialSqueal.body.photo" [src]="currentControversialSqueal.body.photo" alt="Photo" style="width: 200px;">
+                <img mat-card-image *ngIf="(currentControversialSqueal.body.photo !=  photoBase)" [src]="currentControversialSqueal.body.photo" alt="Photo" style="width: 200px;">
                 <p>{{ currentControversialSqueal.body.text }}</p>
                 <div *ngIf="currentControversialSqueal.body.position.length >= 2">
                   <div *ngIf="currentControversialSqueal.body.address">{{ currentControversialSqueal.body.address }}</div>

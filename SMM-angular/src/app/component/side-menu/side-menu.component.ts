@@ -43,6 +43,15 @@ export class SideMenuComponent implements OnInit {
   onLogout(): void {
     // localStorage.clear();
     // localStorage.setItem('actualUserId', "1");
+    localStorage.removeItem('Interval active');
+    localStorage.removeItem('secToRepeat');
+    localStorage.removeItem('Counter');
+    localStorage.removeItem('ChannelSelectedListUsers');
+    localStorage.removeItem('ChannelSelectedName');
+    localStorage.removeItem('ChannelTypeSender');
+    localStorage.removeItem('PhotoProfile');
+    localStorage.removeItem('Nickname');
+    localStorage.removeItem('Channel_id');
     window.location.href = 'http://localhost:8080/';
   } 
 

@@ -503,6 +503,20 @@ margin-left: 4%;
   padding-left: 2%;
 }
 
+#deafaultList{
+  cursor: pointer;
+  padding: 5px;
+}
+
+#deafaultList:hover{
+  background-color: green;
+  width: fit-content;
+}
+
+.selectedDeafaul-custom{
+  cursor: pointer
+}
+
 /*Creazione canale*/
 .create-channel-container {
   display: flex;
@@ -523,6 +537,11 @@ margin-left: 4%;
 
 .channel-input-container {
   /* Altre regole di stile che potresti avere */
+}
+
+.defaultMessage-Container {
+  margin-left: 2%;
+  margin-top: 2%;
 }
 
 .suggested-channels {

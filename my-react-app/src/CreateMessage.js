@@ -1,20 +1,15 @@
 import React, { useState, useRef, useEffect} from 'react';
-import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Image, Dropdown, Card, Row, Col, Modal } from 'react-bootstrap';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { Container, Form, InputGroup, FormControl, Button, Card, Row, Col, Modal } from 'react-bootstrap';
 import './App.css';
 import './CreateMessage.css';
-import logo from '../src/img/logo.png'
-import search_logo from '../src/img/search.png'
-import { Camera, Globe, Link as LinkLogo, Gear, NodeMinus, PersonCircle } from 'react-bootstrap-icons';
+import { Camera, Globe, Link as LinkLogo, PersonCircle } from 'react-bootstrap-icons';
 import Webcam from 'react-webcam';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
-import { get, set } from 'mongoose';
-import { useHistory } from 'react-router-dom';
+import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
 import { useNavigate } from 'react-router-dom';
-// import Twit from 'twit';
+
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -55,13 +50,13 @@ function CreateMessage(props) {
 
   /*Creazione messaggio*/
   const [showMessageCreation, setShowMessageCreation] = useState(false);
-  const [messageType, setMessageType] = useState('Squeal');  // This will hold either 'Squeal' or 'Canale'
-  const [squealOrChannelOption, setSquealOrChannelOption] = useState('Public');  // This will hold either 'Public' or 'Privato' for Squeal and 'Scrivi' or 'Crea' for Canale
+  const [messageType, setMessageType] = useState('Squeal');  
+  const [squealOrChannelOption, setSquealOrChannelOption] = useState('Public');  
   const [text, setText] = useState('#');
   const [charCount, setCharCount] = useState(1);
   const [squealChatTextareaValue, setSquealChatSecondTextareaValue] = useState('');
   const [actualUser, setActualUser] = useState(null);
-  const [maxChar, setMaxChar] = useState(); // Initial value, will be updated
+  const [maxChar, setMaxChar] = useState(); 
   const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [allchannels, setallchannels] = useState([]);
   const [allCHANNELS, setallCHANNELS] = useState([]);
@@ -94,6 +89,7 @@ function CreateMessage(props) {
   const [defaultMessageSearch, setDefaultMessageSearch] = useState('');
   const [suggestedDefaultMessages, setSuggestedDefaultMessages] = useState([]);
   const [isDefaultMessageValid, setIsDefaultMessageValid] = useState(false)
+  const [showDefaultMessage, setShowDefaultMessage] = useState(false);
 
   /*Creazione messaggi funzioni comuni*/
   const [wordsRemaining, setWordsRemaining] = useState(maxChar);
@@ -116,6 +112,7 @@ function CreateMessage(props) {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [capturedVideo, setCapturedVideo] = useState(null);
   const [photoProfile, setPhotoProfile] = useState('');
+  const [nicknameProfile, setNicknameProfile] = useState('');
   const navigate = useNavigate();
 
 
@@ -123,10 +120,6 @@ function CreateMessage(props) {
   /*Crea canale*/
   const [searchTerm2, setSearchTerm2] = useState('');
   const [selectedUsers2, setSelectedUsers2] = useState([]);
-  const allUsers2 = ['Pierpaolone', 'Franco', 'Mario', 'Luigi', 'Anna'];
-  const filteredUsers2 = allUsers2
-    .filter(user => user.toLowerCase().includes(searchTerm2.toLowerCase()))
-    .slice(0, 3); // Mostra solo i primi 3 utenti filtrati
   const [showDropdown, setShowDropdown] = useState(false);
   const [showModal, setShowModal] = useState(false); // Stato per controllare la visualizzazione del modale
   const [showTextarea, setShowTextarea] = useState(false);
@@ -165,21 +158,22 @@ function CreateMessage(props) {
       oscillator.type = type;
     
       oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + duration * 0.001); // duration in milliseconds
+      oscillator.stop(audioContext.currentTime + duration * 0.001); // Converti millisecondi in secondi
     };
     /*funzione per il beep*/
     const playBeep = () => {
-      beep(520, 200, 1, 'sine'); // Gioca un beep di 520Hz per 200ms
+      beep(520, 200, 1, 'sine'); // Produce un beep di 520Hz per 200ms
     };  
 
   useEffect(() => {
     async function fetchUserData() {
       try {
-        const userData = await getActualUser(); // Assuming this function returns the logged-in user data
+        const userData = await getActualUser(); 
         setActualUser(userData);
-        setMaxChar(userData.char_d); // Adjust 'char_d' to the actual property name for max characters
+        setMaxChar(userData.char_d);
         const initialWordsRemaining = userData.char_d - squealChatTextareaValue.length;
         setPhotoProfile(userData.photoprofile);
+        setNicknameProfile(userData.nickname);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -196,7 +190,6 @@ function CreateMessage(props) {
     }, [maxCharsPrivate, maxChar, squealChatTextareaValue, capturedImage, displayedLink, position, searchInput, capturedVideo]);
   
   useEffect(() => {
-    // Initialize the privateWordsRemaining based on the initial text and attachments
     const initialPrivateWordsRemaining = calculatePrivateCharCount();
     setPrivateWordsRemaining(initialPrivateWordsRemaining);
   }, [maxCharsPrivate, privateSquealChatTextareaValue, capturedImage, displayedLink, position, capturedVideo]);
@@ -205,7 +198,7 @@ function CreateMessage(props) {
     if (searchInput) {
       debouncedSearchUsers(searchInput);
     } else {
-      setSuggestedUsers([]); // Pulisci i suggerimenti se l'input è vuoto
+      setSuggestedUsers([]); 
     }
   }, [searchInput]);
   
@@ -214,7 +207,7 @@ function CreateMessage(props) {
       try {
         const userData = await getUserById(actualUserId);
         const creatorDetails = {
-          blocked: false, // Valore predefinito per il campo blocked
+          blocked: false, 
           cell: userData.cell || "",
           char_d: userData.char_d || 300,
           char_m: userData.char_m || 7000,
@@ -228,13 +221,13 @@ function CreateMessage(props) {
           photoprofileX: userData.photoprofileX || 0,
           photoprofileY: userData.photoprofileY || 0,
           popularity: userData.popularity || 0,
-          type: "Creator", // Sovrascrivi il tipo con "Creator"
+          type: "Creator", 
           version: userData.version || "user",
           _id: userData._id,
         };
         setCreatorDetails(creatorDetails);
       } catch (error) {
-        console.error('Errore durante il recupero dei dettagli del creatore:', error);
+        console.error('Error while retrieving creator details: ', error);
       }
     };
   
@@ -245,7 +238,6 @@ function CreateMessage(props) {
     const getAll4 = async () => {
       try {
         const Channels = await getListChannels();
-        console.log("Channels",Channels);
         Channels.forEach(channel => {
           switch(channel.type) {
             case '&':
@@ -258,18 +250,16 @@ function CreateMessage(props) {
               setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
               break;
             default:
-              // gestire eventuali altri casi o errori
+              console.log("Error in loading type in channels");
               break;
           }
         });
       } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
-        // Gestire eventuali azioni di errore qui
       }
-    }; //Mi da tutti i channel
-
+    }; 
     getAll4();
-  }, []); // L'array vuoto come seconda argomentazione significa che questo effetto verrà eseguito solo una volta, quando il componente viene montato
+  }, []); //Mi da tutti i channel
   
   useEffect(() => {
     setallChannelsprint([]);
@@ -277,89 +267,96 @@ function CreateMessage(props) {
   
     for (let i = 0; i < allchannels.length; i++) {
       for (let j = 0; j < allchannels[i].list_users.length; j++) {
-        if (allchannels[i].list_users[j].nickname === actualUser.nickname) {
+        if (allchannels[i].list_users[j].nickname === nicknameProfile) {
           setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allchannels[i]]);
-          // console.log("allchannels[i]",allchannels[i]);
         }
       }
     }
   
     for (let i = 0; i < allCHANNELS.length; i++) {
       for (let j = 0; j < allCHANNELS[i].list_users.length; j++) {
-        if ((allCHANNELS[i].list_users[j].nickname === actualUser.nickname) && ((allCHANNELS[i].list_users[j].type === 'Modifier')|(allCHANNELS[i].list_users[j].type === 'Creator'))) {
+        if ((allCHANNELS[i].list_users[j].nickname === nicknameProfile) && ((allCHANNELS[i].list_users[j].type === 'Modifier')|(allCHANNELS[i].list_users[j].type === 'Creator'))) {
           setallChannelsprint(prevallchannelsprint => [...prevallchannelsprint, allCHANNELS[i]]);
-          // console.log("allCHANNELS[i]",allCHANNELS[i]);
         }
       }
     }
   
     for (let i = 0; i < allkeywords.length; i++) {
       for (let j = 0; j < allkeywords[i].list_users.length; j++) {
-        if (allkeywords[i].list_users[j].nickname === actualUser.nickname) {
+        if (allkeywords[i].list_users[j].nickname === nicknameProfile) {
           setallkeywordsprint(prevallchannelsprint => [...prevallchannelsprint, allkeywords[i]]);
-          // console.log("allkeywords[i]",allkeywords[i]);
         }
       }
     }
     
-  
   }, [actualUser, allchannels, allCHANNELS, allkeywords]); 
   
-  // useEffect(() => {
-  //   console.log("PhotoProfile",photoProfile);
-  // }, [photoProfile]);
-
-  /*Test only
-  useEffect(() => {
-    console.log("allChannelsprint has updated", allChannelsprint);
-  }, [allChannelsprint]); 
-  
-  useEffect(() => {
-    console.log("Tutti gli squeal ", getListSqueals());
-  }, []); 
  
-  
-  useEffect(() => {
-    console.log("All keywords print", allKeywordssprint);
-  }, [allKeywordssprint]);
-   */
-  /*---------------------------------------------------------------------Funzioni Jack------------------------------------------------------------------------*/
+  /*---------------------------------------------------------------------Funzioni Default------------------------------------------------------------------------*/
   /*funzioni per iniziare e finire un intervallo per i messaggi ripetuti*/
   const [intervalId, setIntervalId] = useState(null);
   let counter = 0;
 
+  useEffect(() => {
+    // Funzione che avvia o ferma l'intervallo in base ai dati del localStorage
+    updateInterval();
+  
+    // Aggiungi l'event listener per l'evento 'storage'
+    window.addEventListener('storage', updateInterval);
+  
+    // Rimuovi l'event listener quando il componente viene smontato
+    return () => {
+      window.removeEventListener('storage', updateInterval);
+    };
+  }, []);
+
+  const updateInterval = () => {
+    const secToRepeat = localStorage.getItem("secToRepeat");
+    if (secToRepeat) {
+      startInterval(parseInt(secToRepeat));
+    } else {
+      stopInterval();
+    }
+  };
+  
   const startInterval = (n) => {
-      // Assicurati che non ci siano intervalli già in esecuzione
       if (intervalId) {
         clearInterval(intervalId);
       }
-  
-      // Imposta un nuovo intervallo
       const id = setInterval(() => {
-        console.log('Questo messaggio appare ogni n secondi');
+        let counter = localStorage.getItem("Counter");
         counter++;
-        console.log("Counter: ", counter);
-      }, n*1000); // Sostituisci 5000 con il numero di millisecondi che desideri
+        localStorage.setItem("Counter", counter);
+        alert("This message is the number : " + counter);
+        try {
+          const tempBodyInterval =  {
+            text: 'This message is the number : ' + counter,
+            link: '',
+            photo: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+            video: '',
+            position: '',
+          }
+          handleSendChannelDefaultSqueal(tempBodyInterval);
+          playBeep();
+        } catch (error) {
+          console.error('Error during the interval: ', error);
+        }
+      }, n*1000);
   
-      // Salva l'ID dell'intervallo nello stato
       setIntervalId(id);
   };
   
-  // Aggiungi una funzione per fermare l'intervallo se necessario
   const stopInterval = () => {
     if (intervalId) {
       clearInterval(intervalId);
       setIntervalId(null);
-      counter = 0;
+      window.location.reload();
     }
   };
 
-  /*funzione per generare una immagine random dalla API unsplash*/
   function randomUnsplashImage(width, height) {
     return(`https://source.unsplash.com/random/${width}x${height}`);
   }
-
-  /*funzione per generare una news casuale usando la API Saurav Kanchan*/
 
   const fetchRandomNews = async () => {
     try {
@@ -367,8 +364,6 @@ function CreateMessage(props) {
       const data = await response.json();
       const randomIndex = Math.floor(Math.random() * data.articles.length);
       const article = data.articles[randomIndex];
-      console.log("Articolo ", article);
-      console.log("Articolo autore", article.author);
       return article;
     } catch (error) {
       console.error('Error fetching news:', error);
@@ -376,48 +371,7 @@ function CreateMessage(props) {
     }
   };
 
-  /*funzione per ottenere un tweet casuale da twitter
-  const fetchTweet = async () => {
-    try {
-      // Assicurati che l'URL sia corretto per il tuo ambiente di sviluppo o produzione
-      const response = await fetch('http://localhost:8080/api/getTweet'); // O l'URL appropriato del tuo server
-      const tweet = await response.json();
-
-      // Assicurati che la risposta contenga i dati del tweet
-      if (tweet) {
-        console.log("Tweet", tweet);
-        return tweet; // Restituisce il tweet ottenuto
-      } else {
-        console.error('Nessun tweet trovato:', tweet);
-        return null;
-      }
-    } catch (error) {
-      console.error('Errore nel caricamento del tweet:', error);
-      return null;
-    }
-};
-  */
-
-  const fetchRandomTweet = async () => {
-    try {
-      // Sostituisci con l'URL del tuo server dove è implementata l'API
-      const response = await getRandomTweet();
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-      const tweet = await response.json();
-      console.log("Tweet: ", tweet.text); // Esempio di come potresti accedere al testo del tweet
-      // Restituisci l'intero oggetto tweet o solo le parti che ti servono
-      return tweet;
-    } catch (error) {
-      console.error('Error fetching tweet:', error);
-      return null;
-    }
-  }; //Non funzionante
-
-
-  /*funzione per ottenere un'informazione casuale da wikipedia*/
-  const fetchRandomWikiArticle = async () => {//aggiungi in body.text "Lo sapevi che..."
+  const fetchRandomWikiArticle = async () => {
     const url = "https://en.wikipedia.org/w/api.php?action=query&format=json&list=random&rnlimit=1&origin=*";
     
     try {
@@ -433,58 +387,18 @@ function CreateMessage(props) {
     }
   };
 
-  const handleFocus = () => {
-    setShowIcon(false);
-    setSuggestedProfiles(["Profilo 1", "Profilo 2", "Profilo 3"]);
-    setIsSuggestionsVisible(true);
-  };
-
-  const handleBlur = () => {
-    setShowIcon(true);
-  };
-
-
   /*--------------------------------------------------------------------Comuni--------------------------------------------------------------------------------------*/
   const resetAttachments = () => {
     setPosition(null);
     setCapturedImage(null);
     setDisplayedLink(null);
-    // Aggiungi altre variabili che desideri resettare qui
   }
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-    setIsSuggestionsVisible(false);
-  };
-
-  const handleItemClick = (item) => {
-    const selectedIndex = selectedItems.indexOf(item);
-    let updatedItems = [...selectedItems];
-
-    setIsDropdownVisible(true);
-
-    if (selectedIndex === -1) {
-      updatedItems.push(item);
-    } else {
-      updatedItems = updatedItems.filter((selectedItem) => selectedItem !== item);
-    }
-
-    setSelectedItems(updatedItems);
-  };
-
-  const closeDropdown = () => {
-    setIsDropdownOpen(false);
-    setIsSuggestionsVisible(false);
-  };
 
   const handleMessageTypeChange = (e) => {
     const selectedType = e.target.value;
     setMessageType(selectedType);
-    // Resetta gli allegati
     resetAttachments();
 
-  
-    // Se si cambia a "Canale", impostare il valore predefinito per "squealOrChannelOption" su "Scrivi"
     if (selectedType === 'Channel') {
       setSquealOrChannelOption('Write');
     } else {
@@ -494,7 +408,6 @@ function CreateMessage(props) {
 
   const handleSquealOrChannelOptionChange = (e) => {
     setSquealOrChannelOption(e.target.value);
-    // Resetta gli allegati
     resetAttachments();
   };
 
@@ -505,8 +418,6 @@ function CreateMessage(props) {
     if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Public') || (messageType === 'Channel' && squealOrChannelOption === 'Write'))) {
       const file = e.target.files[0];
       if (file) {
-        // Qui puoi implementare la logica per gestire il file video.
-        // Per esempio, potresti voler salvare l'URL del video nello stato.
         const videoUrl = URL.createObjectURL(file);
         setCapturedVideo(videoUrl);
         setShowVideoModal(false);
@@ -516,8 +427,6 @@ function CreateMessage(props) {
     } else if (privateWordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
       const file = e.target.files[0];
       if (file) {
-        // Qui puoi implementare la logica per gestire il file video.
-        // Per esempio, potresti voler salvare l'URL del video nello stato.
         const videoUrl = URL.createObjectURL(file);
         setCapturedVideo(videoUrl);
         setShowVideoModal(false);
@@ -527,14 +436,12 @@ function CreateMessage(props) {
     } else if (messageType === 'Channel' && squealOrChannelOption === 'Create') {
       const file = e.target.files[0];
       if (file) {
-        // Qui puoi implementare la logica per gestire il file video.
-        // Per esempio, potresti voler salvare l'URL del video nello stato.
         const videoUrl = URL.createObjectURL(file);
         setCapturedVideo(videoUrl);
         setShowVideoModal(false);
       }
     } else {
-      alert("Non hai abbastanza caratteri disponibili per caricare un video.");
+      alert("You don't have enough characters available to upload a video.");
     }
   };
 
@@ -572,12 +479,9 @@ function CreateMessage(props) {
       }
     } else if (messageType === 'Channel' && squealOrChannelOption === 'Create') {
       if (navigator.geolocation) {
-        console.log("Ci sono 1");
         navigator.geolocation.getCurrentPosition((position) => {
-          console.log("Ci sono 2");
           const { latitude, longitude } = position.coords;
           setPosition([latitude, longitude]);
-          console.log("Latitude: " + latitude + " Longitude: " + longitude);
         }, (error) => {
           console.error(error);
         });
@@ -585,7 +489,7 @@ function CreateMessage(props) {
         alert('La geolocalizzazione non è supportata dal tuo browser.');
       }
     } else {
-      alert("Non hai abbastanza caratteri disponibili per aggiungere una posizione.");
+      alert("You don't have enough characters available to add a location.");
     }
   };
 
@@ -637,7 +541,7 @@ function CreateMessage(props) {
       setShowCameraModal(false);
     
     } else {
-      alert("Non hai abbastanza caratteri disponibili per caricare una foto.");
+      alert("You don't have enough characters available to upload a photo.");
     }
   };
 
@@ -659,7 +563,7 @@ function CreateMessage(props) {
       setCapturedImage(imageSrc);
       setShowCameraModal(false);
     } else {
-      alert("Non hai abbastanza caratteri disponibili per aggiungere una foto.");
+      alert("You don't have enough characters available to take a photo.");
     }
   };
   
@@ -675,7 +579,7 @@ function CreateMessage(props) {
         const remaining = calculateCharCount();
         setWordsRemaining(remaining);
       } else {
-        alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
+        alert("Please enter a link that starts with 'http://' or 'https://'.");
       }
     } else if (privateWordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
       if (isLink(inputLIink)) {
@@ -684,17 +588,17 @@ function CreateMessage(props) {
         const remainingPrivate = calculatePrivateCharCount();
         setPrivateWordsRemaining(remainingPrivate);
       } else {
-        alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
+        alert("Please enter a link that starts with 'http://' or 'https://'.");
       }
     } else if (messageType === 'Channel' && squealOrChannelOption === 'Create') {
       if (isLink(inputLIink)) {
         setDisplayedLink(inputLIink);
         setShowLinkModal(false);
       } else {
-        alert("Per favore inserisci un link che inizi con 'http://' o 'https://'.");
+        alert("Please enter a link that starts with 'http://' or 'https://'.");
       }
     } else {
-      alert("Non hai abbastanza caratteri disponibili per aggiungere un link.");
+      alert("You don't have enough characters available to add a link.");
     }
   };  
 
@@ -709,42 +613,6 @@ function CreateMessage(props) {
     const regex = /^(http:\/\/|https:\/\/)/;
     return regex.test(string);
   }
-
-  const handleDropdownOpen = () => {
-    setIsDropdownActive(true);
-    // il resto della logica per aprire il dropdown
-  };
-
-  const handleDropdownClose = () => {
-    setIsDropdownActive(false);
-    // il resto della logica per chiudere il dropdown
-  };
-
-  const getAllChannelType = async () => {
-    try {
-      const Channels = await getListChannels();
-      Channels.forEach(channel => {
-        switch(channel.type) {
-          case '&':
-            setallchannels(allchannelsprev => [...allchannelsprev, channel]);
-            break;
-          case '$':
-            setallCHANNELS(allCHANNELSprev => [...allCHANNELSprev, channel]);
-            break;
-          case '#':
-            setallkeywords(allkeywordsprev => [...allkeywordsprev, channel]);
-            break;
-          default:
-            console.log("Errore nel caricamento dei type in channels");
-            break;
-        }
-      });
-    } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
-      // Gestire eventuali azioni di errore qui, ad esempio mostrare un messaggio all'utente
-    }
-  };
-
 
 
   /*--------------------------------------------------------------------Squeal Public------------------------------------------------------------------------------*/
@@ -782,9 +650,7 @@ function CreateMessage(props) {
     } else {
         // Ripristina il valore della textarea all'ultimo valore valido
         setSquealChatSecondTextareaValue(squealChatTextareaValue);
-        alert(`Attualmente sei limitato dai caratteri insufficenti, per tornare a scrivere prosegui con l'acquisto di caratteri extra.`);
-        // Opzionalmente mostra un avviso o riproduce un suono
-        console.log(`Non puoi inserire più di ${availableTextLength} caratteri.`);
+        alert(`Currently you are limited by insufficient characters, to return to writing continue with the purchase of extra characters.`);
         e.preventDefault();
     }
   };
@@ -808,31 +674,24 @@ function CreateMessage(props) {
     if (capturedImage) count -= 125;
     if (capturedVideo) count -= 125;
     if (displayedLink) count -= 125;
-    if (position) count -= 125; // Assumendo che vuoi anche ridurre il conteggio quando inserisci una posizione
+    if (position) count -= 125;
   
     return count;
   };
 
   const handleUpdateUser = async (charToDeacrement) => {
-    const userId = actualUser._id; // Recupera l'ID dell'utente da aggiornare
+    const userId = actualUser._id; 
     const userUpdates = {
-        // Definisci qui le proprietà dell'utente da aggiornare
         char_d: actualUser.char_d - charToDeacrement,
         char_w: actualUser.char_w - charToDeacrement,
         char_m: actualUser.char_m - charToDeacrement,
-        // ... altre proprietà se necessario ...
     };
 
     try {
         const result = await updateUser(userId, userUpdates);
-        console.log(result.message); // 'Utente aggiornato con successo' o qualsiasi altra risposta dal server
-        
-        // Aggiorna lo stato dell'app, mostra una notifica, ecc.
-        // ... 
+        console.log(result.message); 
     } catch (error) {
         console.error(error);
-        // Gestisci l'errore visualizzando un messaggio all'utente, ecc.
-        // ...
     }
   };
 
@@ -840,16 +699,12 @@ function CreateMessage(props) {
     const textWithoutHashtag = text.replace(/#/g, '');
     const foundChannel = allKeywordssprint.find(channel => channel.name === textWithoutHashtag);
 
-    // Usa direttamente il risultato della ricerca senza aspettare che lo stato si aggiorni
     if (foundChannel) {
-      console.log("Canale trovato", foundChannel);
       setListOfUsers(foundChannel.list_users);
       handleSendSqueal(foundChannel, true);
     } else {
-      console.log("Canale non trovato");
       setExistedChannel(false);
-      console.log("Canale non trovato in control channel", existedChannel)
-      setListOfUsers([actualUser.nickname]);
+      setListOfUsers([nicknameProfile]);
       handleSendSqueal(foundChannel, false);
     }
 
@@ -857,8 +712,8 @@ function CreateMessage(props) {
 
   const handleCreateHashtagChannel = async () => {
     const channelData = {
-      creator: actualUser.nickname,
-      photoProfile: '',
+      creator: nicknameProfile,
+      photoprofile: '',
       photoprofilex: 0,
       photoprofiley: 0,
       name: text.replace(/#/g, ''),
@@ -873,10 +728,10 @@ function CreateMessage(props) {
           char_w: actualUser.char_w || 2000,
           email: actualUser.email,
           fullname: actualUser.fullname,
-          nickname: actualUser.nickname,
+          nickname: nicknameProfile,
           notification: actualUser.notification || [true, true, true, true, true],
           password: actualUser.password,
-          photoprofile: actualUser.photoprofile || "",
+          photoprofile: photoProfile || "",
           photoprofileX: actualUser.photoprofileX || 0,
           photoprofileY: actualUser.photoprofileY || 0,
           popularity: actualUser.popularity || 0,
@@ -889,36 +744,36 @@ function CreateMessage(props) {
         {
           answers: [],
           body: {
-            text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-            link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-            photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-            video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-            position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+            text: squealChatTextareaValue, 
+            link: displayedLink || '', 
+            photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+            video: capturedVideo || '', 
+            position: position  || '', 
           },
           category: null,
-          date: new Date().toISOString(),
+          date: new Date().toLocaleDateString(),
           hour: new Date().getHours(),
           impressions: 0,
           neg_reactions: 0,
-          photoprofile: actualUser.photoProfile,
+          photoprofile: photoProfile,
           pos_reactions: 0,
-          receivers: [`@${actualUser.nickname}`],
+          receivers: [`@${nicknameProfile}`],
           seconds: new Date().getSeconds(),
-          sender: actualUser.nickname,
+          sender: nicknameProfile,
           typesender: 'keywords',
           usersReactions: [],
           usersViewed: [],
         }
       ],
-      userSilenced: [],
+      usersSilenced: [],
       description: "",
       popularity: "",
     };
     try {
       const result = await addChannel(channelData);
-      console.log('Canale creato con successo:', result);
+      console.log('Channel created:', result);
     } catch (error) {
-      console.error('Errore nella creazione del canale:', error);
+      console.error('Error in channel creation::', error);
     }
   };
 
@@ -926,50 +781,48 @@ function CreateMessage(props) {
     const channelDataUpdatePost = {
       answers: [],
       body: {
-        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        text: squealChatTextareaValue, 
+        link: displayedLink || '', 
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+        video: capturedVideo || '', 
+        position: position  || '', 
       },
       category: null,
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
-      photoprofile: actualUser.photoProfile,
+      photoprofile: photoProfile,
       pos_reactions: 0,
       receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
-      sender: actualUser.nickname,
+      sender: nicknameProfile,
       typesender: 'keywords',
       usersReactions: [],
       usersViewed: [],
     }
 
-    const updatedListPosts = [...channelToUpdate.list_posts, channelDataUpdatePost];
-
     try {
       const result = await updateChannel(channelToUpdate._id,  channelDataUpdatePost);
-      console.log('Canale aggiornato con successo:', result);
+      console.log('Canale update:', result);
     } catch (error) {
-      console.error('Errore nell\'aggiornamento del canale:', error);
+      console.error('Error during the upadate of channel:', error);
     }
   };
 
   const handleSendSqueal = async (channelToUpdate, flag) => {
     const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: 'keywords', // Modifica come necessario
+      sender: nicknameProfile, 
+      typesender: 'keywords', 
       body: {
-        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        text: squealChatTextareaValue, 
+        link: displayedLink || '', 
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+        video: capturedVideo || '', 
+        position: position  || '', 
       },
-      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
-      date: new Date().toISOString(),
+      photoprofile: photoProfile, 
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
@@ -977,55 +830,52 @@ function CreateMessage(props) {
       usersReactions: [],
       answers: [],
       usersViewed: [],
-      category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: [listOfUsers], // Aggiungi logica se ci sono destinatari specifici
-      channel: text.replace(/#/g, ''), // Aggiungi logica se il squeal è associato a un canale
+      category: '', 
+      receivers: [listOfUsers],
+      channel: text.replace(/#/g, ''),
       impressions: 0,
     };
   
     try {
       const result = await addSqueal(squealData);
       if (flag === true) {
-        console.log("Aggiornamento del canale esistente");
         await handleUpdateHashTagChannel(channelToUpdate);
       } else {
-        console.log("Creazione di un nuovo canale");
         await handleCreateHashtagChannel();
       }
-      console.log('Squeal inviato con successo:', result);
-      const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+      console.log('Squeal send:', result);
+      const textChars = squealData.body.text.length; 
       let imageChars = 0;
       let videoChars = 0;
       let linkChars = 0;
       let positionChars = 0;
       if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-        imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+        imageChars = squealData.body.photo ? 125 : 0; 
       } else {
         imageChars = 0;
       }
       if (squealData.body.video !== '') {
-        videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+        videoChars = squealData.body.video ? 125 : 0; 
       } else {
         videoChars = 0;
       }
       if (squealData.body.link !== '') {
-        linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+        linkChars = squealData.body.link ? 125 : 0; 
       } else {
         linkChars = 0;
       }
       if (squealData.body.position !== '') {
-        positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+        positionChars = squealData.body.position ? 125 : 0; 
       } else {
         positionChars = 0;
       }
-      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
+      const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; 
 
-      await handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
+      await handleUpdateUser(usedChars);
       window.location.reload();
 
     } catch (error) {
-      console.error('Errore nell\'invio del Squeal:', error);
-      // ...gestione dell'errore...
+      console.error('Errore during the squeal sending ', error);
     }
   };
 
@@ -1033,37 +883,35 @@ function CreateMessage(props) {
   /*--------------------------------------------------------------------Squeal Private------------------------------------------------------------------------------*/
   const handleUserSelection = (user, user_id) => {
     if (selectedUsers.includes(user)) {
-        // Se l'utente è già selezionato, rimuovilo dalla lista
         setSelectedUsers(prevUsers => prevUsers.filter(u => u !== user));
         setSelectedUserIds(prevIds => prevIds.filter(id => id !== user_id));
     } else {
-        // Altrimenti, aggiungilo alla lista se non si sono già raggiunti i 3 utenti
         if (messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
           if (selectedUsers.length < 3) {
               setSelectedUsers(prevUsers => [...prevUsers, user]);
           } else {
-              alert('Puoi selezionare al massimo 3 utenti.');
+              alert('You can select up to 3 users.');
           }
         } else if (messageType === 'Channel' && squealOrChannelOption === 'Create')  {
           setSelectedUsers(prevUsers => [...prevUsers, user]);
           setSelectedUserIds(prevIds => [...prevIds, user_id]);
         }
     }
-    setSearchInput(''); // Pulisci l'input di ricerca dopo la selezione
-    setSuggestedUsers([]); // Nascondi i suggerimenti dopo la selezione
+    setSearchInput(''); 
+    setSuggestedUsers([]); 
   }
 
   const searchUsers = async (searchTerm) => {
     if (!searchTerm.trim()) {
-      setSuggestedUsers([]); // Resetta i suggerimenti se il termine di ricerca è vuoto
+      setSuggestedUsers([]); 
       return;
     }
   
     try {
-      const users = await getUsers(searchTerm); // Assumi che getUsers accetti un termine di ricerca
+      const users = await getUsers(searchTerm); 
       setSuggestedUsers(users.filter(user => user.nickname.toLowerCase().includes(searchTerm.toLowerCase())));
     } catch (error) {
-      console.error('Errore durante la ricerca degli utenti:', error);
+      console.error('Error during the users research', error);
     }
   };
   
@@ -1073,25 +921,21 @@ function CreateMessage(props) {
     if (searchInput) {
       debouncedSearchUsers(searchInput);
     } else {
-      setSuggestedUsers([]); // Pulisci i suggerimenti se l'input è vuoto
+      setSuggestedUsers([]); 
     }
   }, [searchInput]);
 
   const handlePrivateSquealChatTextareaChange = (e) => {
     const inputValue = e.target.value;
 
-      // Calculate the total available length for text considering the attachments
       const availableTextLength = maxCharsPrivate - (capturedImage ? 125 : 0) - (displayedLink ? 125 : 0) - (position ? 125 : 0) - (capturedVideo ? 125 : 0);
     
-      // Update the character count remaining considering the length of attachments
       if (inputValue.length <= availableTextLength) {
         setPrivateSquealChatTextareaValue(inputValue);
         const remainingPrivate = calculatePrivateCharCount();
         setPrivateWordsRemaining(remainingPrivate);
       } else {
-        // If you exceed the limit, you might want to show a message to the user or prevent further input.
         console.log(`You cannot enter more than ${availableTextLength} characters.`);
-        // Optionally, you might want to restore the textarea's value to the last valid value
         e.preventDefault();
       }
   };
@@ -1106,17 +950,17 @@ function CreateMessage(props) {
 
   const handleSendPrivateSqueal = async () => {
     const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: 'Users', // Modifica come necessario
+      sender: nicknameProfile, 
+      typesender: 'Users', 
       body: {
-        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        text: privateSquealChatTextareaValue, 
+        link: displayedLink || '',
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+        video: capturedVideo || '', 
+        position: position  || '', 
       },
-      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
-      date: new Date().toISOString(),
+      photoprofile: photoProfile, 
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
@@ -1132,11 +976,10 @@ function CreateMessage(props) {
   
     try {
       const result = await addSqueal(squealData);
-      console.log('Squeal inviato con successo:', result);
+      console.log('Squeal send:', result);
       window.location.reload();
     } catch (error) {
-      console.error('Errore nell\'invio del Squeal:', error);
-      // ...gestione dell'errore...
+      console.error('Error during the squeal sendind: ', error);
     }
   }; 
   
@@ -1144,8 +987,6 @@ function CreateMessage(props) {
 
 
   /*--------------------------------------------------------------------Scrivi canale------------------------------------------------------------------------------*/
-  const fakeChannels = ['Canale1', 'Canale2', 'Canale3', 'Canale4', 'Canale5']; // Elenco finto di canali per test 
-
   const handleChannelSearchChange = async (e) => {
     const searchValue = e.target.value;
     setChannelSearch(searchValue);
@@ -1162,66 +1003,78 @@ function CreateMessage(props) {
     }
   };
   
+  const [channelSelectedHaveDefault, setChannelSelectedHaveDefault] = useState(false);
+  const [channelSelectedHaveRepeat, setChannelSelectedHaveRepeat] = useState(false);
+  const [channelType, setChannelType] = useState(''); 
+
   const handleChannelSelection = (channel) => {
-    setChannelSearch(channel.name); // Imposta l'input di ricerca sul canale selezionato
-    setSuggestedChannels([]); // Svuota i canali suggeriti
+    setChannelSearch(channel.name); 
+    setSuggestedChannels([]); 
+    if ( channel.list_mess.length > 0) {
+      setChannelSelectedHaveDefault(true);
+      if(channel.list_mess.find(message => message.type === 'Repeat')) {
+        setChannelSelectedHaveRepeat(true);
+      }
+    }
+    if (channel.type === '&') {
+      setChannelType('channels');
+    } else if (channel.type === '$') {
+      setChannelType('CHANNELS');
+    }
   };
 
   const handleUpdateChannelPosts = async (channelSelectedToUpdate) => {
     const channelDataUpdatePost = {
       answers: [],
       body: {
-        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        text: squealChatTextareaValue, 
+        link: displayedLink || '', 
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        video: capturedVideo || '', 
+        position: position  || '', 
       },
       category: null,
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
-      photoprofile: actualUser.photoProfile || '',
+      photoprofile: photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
-      sender: actualUser.nickname,
-      typesender: 'channels',
+      sender: nicknameProfile,
+      typesender: channelType,
       usersReactions: [],
       usersViewed: [],
     }
 
     if (!channelSelected || !channelSelected._id) {
-      console.error("Nessun canale selezionato o ID canale mancante.");
+      console.error("No channel selected or no channel ID found. Cannot update posts in the channel.");
       return;
-  }
+    }
 
-    const updatedListPosts = [...channelSelected.list_posts, channelDataUpdatePost];
     try {
-      console.log("Canale selezionato id: ", channelSelected._id);
-      console.log("Cose da aggiornare: ", channelDataUpdatePost);
       const resultChannel = await updateChannel(channelSelected._id, channelDataUpdatePost);
-      console.log('Canale aggiornato con successo:', resultChannel);
+      console.log('Channels update succesfuly:', resultChannel);
     } catch (error) {
-      console.error('Errore nell\'aggiornamento del canale:', error);
+      console.error('Error in the channel updating:', error);
     }
   };
 
   const handleSendChannelSqueal = async () => {
     if (channelSelected) {
       const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: 'channels', // Modifica come necessario
+      sender: nicknameProfile, 
+      typesender: channelType, 
       body: {
-        text: squealChatTextareaValue, // Assumi che questo sia il testo del tuo messaggio
-        link: displayedLink || '', // Aggiungi questo campo solo se è stato inserito un link
-        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-        video: capturedVideo || '', // Aggiungi questo campo solo se è stato caricato un video
-        position: position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        text: squealChatTextareaValue, 
+        link: displayedLink || '', 
+        photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+        video: capturedVideo || '', 
+        position: position  || '',
       },
-      photoprofile: actualUser.photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Assumi che `actualUser` contenga l'URL della foto profilo
-      date: new Date().toISOString(),
+      photoprofile: photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
@@ -1229,66 +1082,56 @@ function CreateMessage(props) {
       usersReactions: [],
       answers: [],
       usersViewed: [],
-      category: '', // Aggiungi logica per determinare la categoria se necessario
+      category: '',
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
-      channel: channelSelected.name, // Aggiungi logica se il squeal è associato a un canale
+      channel: channelSelected.name,
       impressions: 0,
       };
-    
-      console.log("Canale selezionato: ", channelSelected)
-      console.log("Squeal data: ", squealData);
+
       try {
         const resultAddSqueal = await addSqueal(squealData);
-        if (true){
-          await handleUpdateChannelPosts(channelSelected);
-        } else {
-          console.log("Non ci entra")
-        }
-        console.log('Squeal inviato con successo:', resultAddSqueal);
-        const textChars = squealData.body.text.length; // caratteri nel testo del messaggio
+        await handleUpdateChannelPosts(channelSelected);
+        console.log('Squeal send:', resultAddSqueal);
+        const textChars = squealData.body.text.length; 
         let imageChars = 0;
         let videoChars = 0;
         let linkChars = 0;
         let positionChars = 0;
         if (squealData.body.photo !== 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7') {
-          imageChars = squealData.body.photo ? 125 : 0; // aggiungi 125 caratteri se c'è un'immagine
+          imageChars = squealData.body.photo ? 125 : 0; 
         } else {
           imageChars = 0;
         }
         if (squealData.body.video !== '') {
-          videoChars = squealData.body.video ? 125 : 0; // aggiungi 125 caratteri se c'è un video
+          videoChars = squealData.body.video ? 125 : 0; 
         } else {
           videoChars = 0;
         }
         if (squealData.body.link !== '') {
-          linkChars = squealData.body.link ? 125 : 0; // aggiungi 125 caratteri se c'è un link
+          linkChars = squealData.body.link ? 125 : 0; 
         } else {
           linkChars = 0;
         }
         if (squealData.body.position !== '') {
-          positionChars = squealData.body.position ? 125 : 0; // aggiungi 125 caratteri se c'è una posizione
+          positionChars = squealData.body.position ? 125 : 0; 
         } else {
           positionChars = 0;
         }
-        const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; // somma tutti i caratteri
-
-            handleUpdateUser(usedChars); // Aggiorna il numero di caratteri disponibili per l'utente
-            // goToProfile();
-            window.location.reload();
-
+        const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; 
+        handleUpdateUser(usedChars); 
+        window.location.reload();
         } catch (error) {
-          console.error('Errore nell\'invio dello squeal nel canale:', error);
+          console.error('Error during the squeal sending in the channel', error);
         }
     } else {
-      alert("Seleziona un canale per inviare il tuo messaggio.");
+      alert("Please select a channel to send the message.");
     }
   };
   
 
   useEffect(() => {
     if (defaultMessageSearch) {
-      // Filtra i messaggi di default per quelli che includono il termine di ricerca dopo "/"
-      const searchPattern = new RegExp(`${defaultMessageSearch}`, 'i'); // Case-insensitive search
+      const searchPattern = new RegExp(`${defaultMessageSearch}`, 'i');  //Crea un pattern di ricerca basato sul valore di defaultMessageSearch e lo utilizza per cercare corrispondenze in una stringa in modo case-insensitive
       const filteredMessages = channelSelected?.list_mess.filter(message => 
         message.request.split('/').pop().match(searchPattern)
       );
@@ -1299,21 +1142,16 @@ function CreateMessage(props) {
   }, [defaultMessageSearch, channelSelected]);
 
   const handleDefaultMessageSelection = (message) => {
-    // Imposta il valore di defaultMessageSearch sul campo request del messaggio selezionato
     setDefaultMessageSearch(message);
     setIsDefaultMessageValid(true);
-    console.log("Deafault message: ", defaultMessageSearch);
-
   };
 
   const cleanDefaultMessageSelection = () => {
     setDefaultMessageSearch('');
     setIsDefaultMessageValid(false);
-    console.log("Deafault message cancellato: ", defaultMessageSearch);
   };
   
   const processDefaultMessageType = async () => {
-    console.log("Deafault message inviato: ", defaultMessageSearch);
     switch (defaultMessageSearch.type) {
       case 'Answer':
         handleSendChannelDefaultSqueal(defaultMessageSearch.body);
@@ -1331,14 +1169,12 @@ function CreateMessage(props) {
       case 'News':
         try {
           const article = await fetchRandomNews();
-          if (article) { // Assicurati che article non sia null
-            console.log("Articolo fuori", article);
-            console.log("Autore fuori", article.author);
+          if (article) { 
             if (article.author === null) {
-              article.author = "Anonimo";
+              article.author = "Unknown";
             };
             const tempBodyNews =  {
-              text: "Autore: " + article.author + "\n" + article.content + "\nPublished at: " + article.publishedAt,
+              text: "Author: " + article.author + "\n" + article.content + "\nPublished at: " + article.publishedAt,
               link: article.url || '',
               photo: article.urlToImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
               video: '',
@@ -1346,19 +1182,33 @@ function CreateMessage(props) {
             }
             handleSendChannelDefaultSqueal(tempBodyNews);
           } else {
-            // Gestisci il caso in cui article è null
-            console.error('Nessun articolo disponibile');
+            console.error('No article found.');
           }
         } catch (error) {
           console.error('Errore nel recupero delle notizie:', error);
         }
         break;
+      case 'Twitter': //Non funzionante
+        try {
+          const tweet = await fetchRandomTweet();
+          console.log("Tweet fuori", tweet);
+          // const tempBodyTweet =  {
+          //   text: tweet.text,
+          //   link: tweet.link || '',
+          //   photo: tweet.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+          //   video: '',
+          //   position: '',
+          // }
+          // handleSendChannelDefaultSqueal(tempBodyTweet);
+        } catch (error) {
+          console.error('Errore nel recupero dei tweet:', error);
+        }
+        break;
       case 'WikiInfo':
         try {
           const wiki = await fetchRandomWikiArticle();
-          console.log("Wiki fuori", wiki);
           const tempBodyWiki =  {
-            text: 'Lo sapevi che: ',
+            text: 'Did you know that: ',
             link: wiki|| '',
             photo: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
             video: '',
@@ -1366,37 +1216,62 @@ function CreateMessage(props) {
           }
           handleSendChannelDefaultSqueal(tempBodyWiki);
         } catch (error) {
-          console.error('Errore nel recupero delle informazioni da Wikipedia:', error);
-        }
-        break;
-      case 'Repeat':
-        if ( defaultMessageSearch.request === '/begin') {
-          const inputString = defaultMessageSearch.repetition;
-          const numbers = inputString.match(/\d+/g).map(Number);
-          console.log(numbers);
-
-          startInterval(numbers);
-        } else if (defaultMessageSearch.request === '/end') {
-          stopInterval();
+          console.error('Error in retrieving information from Wikipedia:', error);
         }
         break;
       default:
     }
   }
 
+  const processRepeatMessage = async () => {
+    const repeat = channelSelected.list_mess.filter(message => message.type === 'Repeat');
+    const inputString = repeat[0].repetition;
+    const numbers = inputString.match(/\d+/g).map(Number);
+    localStorage.setItem('Interval active', 'true');
+    localStorage.setItem('secToRepeat', numbers.toString());
+    localStorage.setItem('Counter', 0);
+    console.log("Channel selected in process repeat message: ", channelSelected);
+    localStorage.setItem('ChannelSelectedListUsers', JSON.stringify(channelSelected.list_users.map(user => `@${user.nickname}`)));
+    console.log("Utenti in list users ", localStorage.getItem('ChannelSelectedListUsers'));
+    localStorage.setItem('ChannelSelected', JSON.stringify(channelSelected));
+    localStorage.setItem('ChannelSelectedName', channelSelected.name);
+    localStorage.setItem('PhotoProfile', photoProfile);
+    localStorage.setItem('Nickname', nicknameProfile);
+    if ( channelSelected.type === '&') {
+      localStorage.setItem('ChannelTypeSender', "channels");
+    } else {
+      localStorage.setItem('ChannelTypeSender', "CHANNELS");
+    }
+    updateInterval();
+  };
+
+
+  const stopProcessRepeatMessage = async () => {
+    localStorage.removeItem('Interval active');
+    localStorage.removeItem('secToRepeat');
+    localStorage.removeItem('Counter');
+    localStorage.removeItem('ChannelSelectedListUsers');
+    localStorage.removeItem('ChannelSelected');
+    localStorage.removeItem('ChannelSelectedName');
+    localStorage.removeItem('ChannelTypeSender');
+    localStorage.removeItem('PhotoProfile');
+    localStorage.removeItem('Nickname');
+    updateInterval();
+  };
+
   const handleSendChannelDefaultSqueal = async (defaultCamp) => {
     const squealData = {
-      sender: actualUser.nickname, // Assumi che `actualUser` contenga il nickname del mittente
-      typesender: channelSearch.typesender, // Modifica come necessario
+      sender: localStorage.getItem("Interval active") ? localStorage.getItem('Nickname') : nicknameProfile, 
+      typesender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : channelType,
       body: {
-        text: defaultCamp.text, // Assumi che questo sia il testo del tuo messaggio
-        link: defaultCamp.link || '', // Aggiungi questo campo solo se è stato inserito un link
-        photo: defaultCamp.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-        video: defaultCamp.video || '', // Aggiungi questo campo solo se è stato caricato un video
-        position: defaultCamp.position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        text: defaultCamp.text, 
+        link: defaultCamp.link || '', 
+        photo: defaultCamp.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+        video: defaultCamp.video || '', 
+        position: defaultCamp.position  || '', 
       },
-      photoprofile: actualUser.photoProfile, // Assumi che `actualUser` contenga l'URL della foto profilo
-      date: new Date().toISOString(),
+      photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : photoProfile, 
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
@@ -1404,26 +1279,29 @@ function CreateMessage(props) {
       usersReactions: [],
       answers: [],
       usersViewed: [],
-      category: '', // Aggiungi logica per determinare la categoria se necessario
-      receivers: channelSelected.list_users.map(user => `@${user.nickname}`), 
-      channel: channelSearch, // Aggiungi logica se il squeal è associato a un canale
+      category: '', 
+      receivers: localStorage.getItem("Interval active") ?  JSON.parse(localStorage.getItem('ChannelSelectedListUsers')) : channelSelected.list_users.map(user => `@${user.nickname}`),
+      channel: localStorage.getItem("Interval active") ?  localStorage.getItem('ChannelSelectedName') :  channelSearch, 
       impressions: 0,
     };
   
     console.log("Squeal data: ", squealData);
     try {
-      if (wordsRemaining >= 125) {
+      if (wordsRemaining >= 125 && localStorage.getItem('Interval active') === null) {
         const resultAddSqueal = await addSqueal(squealData);
-        console.log ("Canale selezionato: ", channelSelected);
         await hanleUpdateChannelDefaultMessage(channelSelected, defaultCamp);
-        console.log('Squeal inviato con successo:', resultAddSqueal);
-        handleUpdateUser(125); // Aggiorna il numero di caratteri disponibili per l'utente
-        // goToProfile();
-    } else {
-      alert("Per mancanza di caratteri non puoi inviare il tuo messaggio, servono almeno 125 caratteri.");
+        console.log('Squeal send:', resultAddSqueal);
+        window.location.reload();
+      } else if (localStorage.getItem('Interval active') === 'true') {
+        const resultAddSqueal = await addSqueal(squealData);
+        const channelToProcess = JSON.parse(localStorage.getItem('ChannelSelected'));
+        await hanleUpdateChannelDefaultMessage(channelToProcess, defaultCamp);
+        console.log('Squeal send:', resultAddSqueal);
+      } else {
+      alert("You don't have enough characters available to send the message.");
     }
     } catch (error) {
-      console.error('Errore nell\'aggiornamento del canale:', error);
+      console.error('Error during the channel updating: ', error);
     }
   };
 
@@ -1431,137 +1309,40 @@ function CreateMessage(props) {
     const channelDataUpdatePost = {
       answers: [],
       body: {
-        text: defaultCamp.text, // Assumi che questo sia il testo del tuo messaggio
-        link: defaultCamp.link || '', // Aggiungi questo campo solo se è stato inserito un link
-        photo: defaultCamp.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Aggiungi questo campo solo se è stata scattata una foto
-        video: defaultCamp.video || '', // Aggiungi questo campo solo se è stato caricato un video
-        position: defaultCamp.position  || '', // Aggiungi questo campo solo se è stata inserita una posizione
+        text: defaultCamp.text, 
+        link: defaultCamp.link || '', 
+        photo: defaultCamp.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+        video: defaultCamp.video || '', 
+        position: defaultCamp.position  || '', 
       },
       category: null,
-      date: new Date().toISOString(),
+      date: new Date().toLocaleDateString(),
       hour: new Date().getHours(),
       impressions: 0,
       neg_reactions: 0,
-      photoprofile: actualUser.photoProfile,
+      photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : photoProfile,
       pos_reactions: 0,
       receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
       seconds: new Date().getSeconds(),
-      sender: actualUser.nickname,
-      typesender: 'channels',
+      sender: localStorage.getItem("Interval active") ? localStorage.getItem('Nickname') : nicknameProfile,
+      typesender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : channelType,
       usersReactions: [],
       usersViewed: [],
     }
     try {
-      
-      const resultChannel = await updateChannel(channelSelected._id, channelDataUpdatePost);
-      console.log('Canale aggiornato con successo:', resultChannel);
+      const resultChannel = await updateChannel(channelToUpdate._id, channelDataUpdatePost);
+      console.log('Channel update:', resultChannel);
     } catch (error) {
-      console.error('Errore nell\'aggiornamento del canale:', error);
+      console.error('Error during the channel uodate:', error);
     }
   };
 
 
   /*--------------------------------------------------------------------Crea canale------------------------------------------------------------------------------*/
-  const handleSelectUser = user => {
-    // Controlla se l'utente esiste già in base alla proprietà "name"
-    const userExists = selectedUsers2.some(u => u.name === user);
-
-    if (!userExists) {
-      // Se non esiste, aggiungi un nuovo oggetto con le proprietà "name" e "isAdmin"
-      setSelectedUsers2(prevSelected => [...prevSelected, { name: user, isAdmin: false }]);
-    }
-  };
-
-  const handleRemoveSelectedUser = userName => {
-    setSelectedUsers2(prevSelected => prevSelected.filter(u => u.name !== userName));
-  };
-
-  const toggleAdminStatus = (userName) => {
-    setSelectedUsers2(prevUsers => {
-      return prevUsers.map(user => {
-        if (user.name === userName) {
-          return { ...user, isAdmin: !user.isAdmin };
-        }
-        return user;
-      });
-    });
-  };
-
-  // Funzione per gestire il cambiamento del testo nel textarea del reminder
-  const handleReminderTextareaChange = (e) => {
-    setReminderTextareaValue(e.target.value);
-  };
-
-  // Funzione per gestire l'invio del reminder
-  const handleSendReminder = () => {
-    // Qui puoi aggiungere la logica per inviare il reminder.
-    console.log("Reminder inviato:", reminderTextareaValue);
-  };
-
-  // Funzione per gestire il click sull'icona della fotocamera del reminder
-  const handleReminderLogoClick = () => {
-    // Qui puoi aggiungere la logica per aprire la fotocamera e catturare un'immagine
-    // per il momento, ho aggiunto una console log come placeholder
-    console.log("Icona della fotocamera del reminder cliccata");
-  };
-
-  // Funzione per gestire il click sull'icona dell'URL del reminder
-  const handleShowReminderLinkModal = () => {
-    setShowReminderLinkModal(true);
-  };
-
-  // Funzione per gestire il click sull'icona della posizione del reminder
-  const handleReminderLocationButtonClick = () => {
-      // Qui puoi aggiungere la logica per ottenere e mostrare la posizione corrente
-      // per il momento, ho aggiunto una console log come placeholder
-      console.log("Icona della posizione del reminder cliccata");
-  };
-
-  const handleRemoveUser = (userToRemove) => {
-    // Aggiorna lo stato rimuovendo l'utente
-    setSelectedUsers(prevUsers => prevUsers.filter(user => user !== userToRemove));
-  };
-
-  const fetchUserDetails = async () => {
-    try {
-      // Resetta i dettagli degli utenti prima di caricarne di nuovi
-      setUserDetails([]);
-  
-      // Ottieni i dettagli per ogni ID utente selezionato
-      for (const userId of selectedUserIds) {
-        const userData = await getUserById(userId);
-        const userDetails = {
-          blocked: false, // Puoi impostare i valori predefiniti o usarli da userData se disponibili
-          cell: userData.cell || "",
-          char_d: userData.char_d || 300,
-          char_m: userData.char_m || 7000,
-          char_w: userData.char_w || 2000,
-          email: userData.email,
-          fullname: userData.fullname,
-          nickname: userData.nickname,
-          notification: userData.notification || [true, true, true, true, true],
-          password: userData.password,
-          photoprofile: userData.photoprofile || "",
-          photoprofileX: userData.photoprofileX || 0,
-          photoprofileY: userData.photoprofileY || 0,
-          popularity: userData.popularity || 0,
-          type: userData.type || "User",
-          version: userData.version || "user",
-          _id: userData._id,
-        };
-        setUserDetails(prevDetails => [...prevDetails, userDetails]);
-        console.log('Dettagli dell\'utente:', userDetails);
-      }
-    } catch (error) {
-      console.error('Errore durante il recupero dei dettagli dell\'utente:', error);
-    }
-  };
   
   const handleUserSelection2 = (nickname, userId) => {
     const newUser = { nickname, _id: userId };
-    // Aggiungi questo oggetto all'array degli utenti selezionati
     setSelectedUsers(prevUsers => {
-        // Verifica se l'utente è già presente nell'array per evitare duplicati
         const isUserAlreadySelected = prevUsers.some(user => user._id === userId);
         if (!isUserAlreadySelected) {
             return [...prevUsers, newUser];
@@ -1571,10 +1352,8 @@ function CreateMessage(props) {
   };
 
   const processSelectedUsers = async () => {
-    // Assicurati che userDetails sia vuoto o resettato prima di aggiungere nuovi dettagli degli utenti
     setUserDetails([]);
   
-    // Recupera i dettagli di tutti gli utenti selezionati basandoti sugli ID in selectedUsers
     for (const user of selectedUsers){
       try {
         const userData = await getUserById(user._id);
@@ -1597,17 +1376,11 @@ function CreateMessage(props) {
           version: userData.version || "user",
           _id: userData._id,
         };
-  
-        // Aggiungi i dettagli dell'utente recuperato allo stato userDetails
         setUserDetails(prevDetails => [...prevDetails, userDetails]);
-        console.log('Dettagli dell\'utente:', userDetails);
       } catch (error) {
-        console.error('Errore durante il recupero dei dettagli dell\'utente:', error);
+        console.error('Error while retrieving user details: ', error);
       }
     }
-  
-    // A questo punto userDetails contiene i dettagli di tutti gli utenti selezionati
-    // Qui puoi procedere con ulteriori operazioni, come la creazione del canale con gli utenti selezionati
   };
   
   const handleRemoveUser2 = (userIdToRemove) => {
@@ -1616,8 +1389,8 @@ function CreateMessage(props) {
 
   const handleCreateChannel = async () => {
     const channelData = {
-      creator: actualUser.nickname, 
-      photoProfile: '',
+      creator: nicknameProfile, 
+      photoprofile: '',
       photoprofilex: 0,
       photoprofiley: 0,
       name: channelName,
@@ -1633,9 +1406,7 @@ function CreateMessage(props) {
     
     try {
       const result = await addChannel(channelData);
-      console.log('Canale creato con successo:', result);
-  
-      // Resetta lo stato o esegui altre azioni dopo la creazione del canale
+      console.log('Channel create: ', result);
       setChannelName('');
       setChannelDescription('');
       setChannelUsers([]);
@@ -1644,9 +1415,8 @@ function CreateMessage(props) {
       setCreatorDetails({});
       setIsSilenceable(false);
       setShowChannelModal(true);
-      // ... altre azioni se necessario ...
     } catch (error) {
-      console.error('Errore nella creazione del canale:', error);
+      console.error('Error during the channel creation:', error);
     }
   };
 
@@ -1658,8 +1428,7 @@ function CreateMessage(props) {
     navigate('/squealer-app/profile');
   };
 
-  
-  
+
 
     return (
       <>
@@ -1667,12 +1436,10 @@ function CreateMessage(props) {
         <Container 
           style={{
             margin: '0',
-            // padding: '20px',
             paddingTop: '7%',
             width: '80%',
             position:'absolute',
             left:'20%',
-            // backgroundColor: 'red',
           }}
           className="mx-auto"
           id = "card-container-create-messagge-home"
@@ -1682,7 +1449,7 @@ function CreateMessage(props) {
           <>
             <Modal show={showCameraModal} onHide={() => setShowCameraModal(false)} id = "cameraModal">
               <Modal.Header closeButton>
-                <Modal.Title>Scatta una foto</Modal.Title>
+                <Modal.Title>Take a picture</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Webcam
@@ -1691,10 +1458,10 @@ function CreateMessage(props) {
                   screenshotFormat="image/jpeg"
                   width="100%"
                 />
-                <Button className="mt-2" onClick={capture}>Scatta</Button>
+                <Button className="mt-2" onClick={capture}>Shoot</Button>
                 <div className="mt-2">
                     <label className="btn btn-primary">
-                        Carica immagine
+                        Update image
                         <input 
                             type="file" 
                             hidden 
@@ -1708,17 +1475,17 @@ function CreateMessage(props) {
 
             <Modal show={showLinkModal} onHide={() => setShowLinkModal(false)} id = "cameraModal">
                 <Modal.Header closeButton>
-                    <Modal.Title>Inserisci Link</Modal.Title>
+                    <Modal.Title>Insert Link</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <InputGroup>
                         <FormControl
-                            placeholder="Inserisci il tuo link qui"
+                            placeholder="Insert your link here..."
                             value={inputLIink}
                             onChange={handleInputChange}
                         />
                         <InputGroup.Text>
-                            <Button variant="primary" onClick={handleSubmitLink}>Invia</Button>
+                            <Button variant="primary" onClick={handleSubmitLink}>Send</Button>
                             {displayedLink && (
                                 <Button 
                                     variant="danger" 
@@ -1730,7 +1497,7 @@ function CreateMessage(props) {
                                         setWordsRemaining(remaining);
                                     }}
                                 >
-                                    Rimuovi
+                                    Remove
                                 </Button>
                             )}
                         </InputGroup.Text>
@@ -1740,12 +1507,12 @@ function CreateMessage(props) {
 
             <Modal show={showVideoModal} onHide={() => setShowVideoModal(false)} id = "cameraModal">
               <Modal.Header closeButton>
-                <Modal.Title>Carica un video</Modal.Title>
+                <Modal.Title>Upload a video</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <div className="mt-2">
                   <label className="btn btn-primary">
-                    Carica video
+                    Upload video
                     <input 
                       type="file" 
                       hidden 
@@ -1759,11 +1526,11 @@ function CreateMessage(props) {
 
             <Modal show={extraCharModal} onHide={() => setExtraCharModal(false)} id = "cameraModal">
               <Modal.Header closeButton>
-                <Modal.Title>Caratteri extra</Modal.Title>
+                <Modal.Title>Extra characters</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <p>Sei sicuro di voler usare i caratteri extra?</p>
-                <Button variant="primary" onClick={handleExtraChar}>Sì</Button>
+                <p>Are you sure you want to use the extra characters?</p>
+                <Button variant="primary" onClick={handleExtraChar}>Yes</Button>
                 <Button variant="danger" onClick={() => setExtraCharModal(false)}>No</Button>
               </Modal.Body>
             </Modal>
@@ -1895,22 +1662,22 @@ function CreateMessage(props) {
                           maxLength={51}
                           style={{
                             width: '100%',
-                            lineHeight: '1.5', // Imposta il valore di lineHeight
-                            resize: 'none', // Impedisce il ridimensionamento verticale
-                            height: '1.5em', // Imposta l'altezza fissa a una riga di testo
-                            overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
-                            overflowY: 'hidden', // Nasconde lo scorrimento orizzontale
-                            border: 'none', // Rimuove il bordo
-                            scrollbarWidth: 'none', // Nasconde le frecce verticali
+                            lineHeight: '1.5', 
+                            resize: 'none', 
+                            height: '1.5em', 
+                            overflowX: 'hidden',
+                            overflowY: 'hidden', 
+                            border: 'none', 
+                            scrollbarWidth: 'none', 
                             backgroundColor: 'transparent',
                             color: '#000000DE',
                             fontSize: '20px',
                             outline: 'none',
                           }}
-                          rows={1} // Imposta il numero di righe iniziali a 1
+                          rows={1} 
                           onKeyDown={(e) => {
                             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                              e.preventDefault(); // Impedisce lo spostamento orizzontale con le frecce
+                              e.preventDefault(); 
                             }
                           }}
                         />
@@ -1924,7 +1691,7 @@ function CreateMessage(props) {
                         <Row>
                           <Col xs={12} md={10}>
                           <textarea
-                            placeholder='A cosa stai pensando????'
+                            placeholder='What are you thinking about????'
                             value={squealChatTextareaValue}
                             onChange={(e) => {
                               handleSquealChatTextareaChange(e);
@@ -1938,17 +1705,17 @@ function CreateMessage(props) {
                             maxLength={maxChar}
                             style={{
                               width: '100%',
-                              resize: 'none', // Impedisce il ridimensionamento verticale
-                              height: '100px', // Imposta l'altezza fissa a una riga di testo
-                              overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
-                              border: 'none', // Rimuove il bordo
-                              scrollbarWidth: 'none', // Nasconde le frecce verticali
+                              resize: 'none', 
+                              height: '100px', 
+                              overflowX: 'hidden', 
+                              border: 'none', 
+                              scrollbarWidth: 'none', 
                               backgroundColor: 'transparent',
                               color: '#000000DE',
                               fontSize: '16px',
                               outline: 'none',
                             }}
-                            rows={1} // Imposta il numero di righe iniziali a 1
+                            rows={1} 
                             onKeyDown={(e) => {
                               if (wordsRemaining > 0 && e.key === 'Enter') {
                                   e.preventDefault();
@@ -1984,7 +1751,7 @@ function CreateMessage(props) {
                                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                 />
                                 <Marker position={position} icon={markerIcon}>
-                                  <Popup>Sei qui!</Popup>
+                                  <Popup>You are here!</Popup>
                                 </Marker>
                               </MapContainer>
                               <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
@@ -2008,44 +1775,43 @@ function CreateMessage(props) {
                           )}
                           {capturedImage && (
                             <div style={{ position: 'relative',  width: '300px', height: '300px', overflow: 'hidden' }} id = "photoAttachments">
-                            <img 
-                            src={capturedImage} 
-                            alt="Scattata"  
-                            style={{ 
-                              width: '100%', 
-                              height: '100%', 
-                              objectFit: 'cover', // Aggiungi questa linea
-                            }} 
-                            />
-                            <button 
-                              onClick={() => {
-                                setCapturedImage(null)
-                                const remaining = calculateCharCount();
-                                setWordsRemaining(remaining);
+                              <img 
+                              src={capturedImage} 
+                              alt="Scattata"  
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover', 
                               }} 
-                              className="btn btn-sm btn-danger" 
-                              style={{ position: 'absolute', top: '10px', right: '10px' }}
-                            >
-                              X
-                            </button>
-                          </div>
+                              />
+                              <button 
+                                onClick={() => {
+                                  setCapturedImage(null)
+                                  const remaining = calculateCharCount();
+                                  setWordsRemaining(remaining);
+                                }} 
+                                className="btn btn-sm btn-danger" 
+                                style={{ position: 'absolute', top: '10px', right: '10px' }}
+                              >
+                                X
+                              </button>
+                            </div>
                           )}
                           {capturedVideo && (
                               <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
                                 <video width="200px" height="100px" controls>
                                   <source src={capturedVideo} type="video/mp4" />
-                                  Il tuo browser non supporta il tag video.
+                                  Your browser does not support the video tag.
                                 </video>
                                 <button 
                                   onClick={() => {
                                     setCapturedVideo(null);
-                                    // Aggiorna il conteggio dei caratteri qui
                                     const remaining = calculateCharCount();
                                     setWordsRemaining(remaining);
                                     setPrivateWordsRemaining(calculatePrivateCharCount());
                                   }} 
                                   className="btn btn-sm btn-danger" 
-                                  style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il video
+                                  style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} 
                                 >
                                   X
                                 </button>
@@ -2058,13 +1824,12 @@ function CreateMessage(props) {
                                       onClick={() => {
                                           setDisplayedLink('');
                                           setinputLIink('');
-                                          // Aggiorna il conteggio dei caratteri qui
                                           const remaining = calculateCharCount();
                                           setWordsRemaining(remaining);
                                           setPrivateWordsRemaining(calculatePrivateCharCount());
                                       }} 
                                       className="btn btn-sm btn-danger" 
-                                      style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                      style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }}
                                   >
                                       X
                                   </button>
@@ -2081,28 +1846,36 @@ function CreateMessage(props) {
                       <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
                         {/* Fotocamera */}
                         <div id="cameraLogo" onClick={handleLogoClick} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                          <Camera color="#000000DE" size={25} />
+                          <Camera color="#000000DE" size={30} />
                         </div>
 
                         {/* Icona per il caricamento del video */}
-                        <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                          <Camera color="#000000DE" size={25} />
+                        <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px', marginTop: '2px' }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-camera-video" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>
+                          </svg>
                         </div>
 
                         {/* URL */}
-                        <button onClick={() => setShowLinkModal(true)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#000000DE', marginRight: '20px' }}>
-                          <LinkLogo size={25} color="#000000DE" />
+                        <button onClick={() => setShowLinkModal(true)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#000000DE', marginRight: '20px', paddingLeft: '0px', paddingRight: '0px' }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
+                            <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/>
+                            <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/>
+                          </svg>
                         </button>
                         
                         {/* Posizione */}
-                        <button onClick={() => { if (!isMapVisible) { setIsMapVisible(true); } else { handleLocationButtonClick(); }}} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginRight: '20px' }}>
-                          <Globe size={25} color="#000000DE" />
+                        <button onClick={() => { if (!isMapVisible) { setIsMapVisible(true); } else { handleLocationButtonClick(); }}} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginRight: '20px',  paddingLeft: '0px', paddingRight: '0px', marginBottom: "4px"  }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                          </svg>
                         </button>
                       </Col>
 
                       {/* Colonna per il pulsante Invia, allineata a destra */}
                       <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                        <Button onClick={controlChannel}>Invia</Button>
+                        <Button onClick={controlChannel}>Send</Button>
                       </Col>
         
                     </Row>
@@ -2123,7 +1896,7 @@ function CreateMessage(props) {
 
                             {/*Barra ricerca utenti*/}
                             <FormControl
-                                placeholder="Cerca utenti..."
+                                placeholder="Find users..."
                                   value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                                 style={{
@@ -2164,9 +1937,9 @@ function CreateMessage(props) {
 
                             {/*Testo messaggio*/}
                             <textarea
-                              placeholder='A cosa stai pensando????'
+                              placeholder='What are you thinking about????'
                               onChange={(e) => {
-                                handlePrivateSquealChatTextareaChange(e); // Modificato qui
+                                handlePrivateSquealChatTextareaChange(e); 
                                 setIsTextModified(true);
                               }}
                               value={privateSquealChatTextareaValue}
@@ -2178,17 +1951,17 @@ function CreateMessage(props) {
                               }}
                               style={{
                                 width: '100%',
-                                resize: 'none', // Impedisce il ridimensionamento verticale
-                                height: '100px', // Imposta l'altezza fissa a una riga di testo
-                                overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
-                                border: 'none', // Rimuove il bordo
-                                scrollbarWidth: 'none', // Nasconde le frecce verticali
+                                resize: 'none', 
+                                height: '100px', 
+                                overflowX: 'hidden', 
+                                border: 'none', 
+                                scrollbarWidth: 'none',
                                 backgroundColor: 'transparent',
                                 color: '#000000DE',
                                 fontSize: '16px',
                                 outline: 'none',
                               }}
-                              rows={1} // Imposta il numero di righe iniziali a 1
+                              rows={1} 
                               onKeyDown={(e) => {
                                 if (wordsRemaining > 0 && e.key === 'Enter') {
                                     e.preventDefault();
@@ -2217,14 +1990,14 @@ function CreateMessage(props) {
                       <Row>
                           <Col xs={12} md={10}>
                             {position && isMapVisible &&(
-                              <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
+                              <Card style={{  width: '200px', height: '100px', position: 'relative' }} id = "mapAttachments">
                                 <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
                                   <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                   />
                                   <Marker position={position} icon={markerIcon}>
-                                    <Popup>Sei qui!</Popup>
+                                    <Popup>You are here!</Popup>
                                   </Marker>
                                 </MapContainer>
                                 <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
@@ -2247,20 +2020,28 @@ function CreateMessage(props) {
                               </Card>
                             )}
                             {capturedImage && (
-                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }} id = "photoAttachments">
-                              <img src={capturedImage} alt="Scattata" width="100%" />
-                              <button 
-                                onClick={() => {
-                                  setCapturedImage(null)
-                                  const remaining = calculatePrivateCharCount(); 
-                                  setPrivateWordsRemaining(remaining);
-                                }} 
-                                className="btn btn-sm btn-danger" 
-                                style={{ position: 'absolute', top: '10px', right: '10px' }}
-                              >
-                                X
-                              </button>
-                            </div>
+                              <div style={{ position: 'relative',  width: '300px', height: '300px', overflow: 'hidden' }} id = "photoAttachments">
+                                <img 
+                                  src={capturedImage} 
+                                  alt="Scattata" 
+                                  style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'cover', 
+                                  }} 
+                                />
+                                <button 
+                                  onClick={() => {
+                                    setCapturedImage(null)
+                                    const remaining = calculatePrivateCharCount(); 
+                                    setPrivateWordsRemaining(remaining);
+                                  }} 
+                                  className="btn btn-sm btn-danger" 
+                                  style={{ position: 'absolute', top: '10px', right: '10px' }}
+                                >
+                                  X
+                                </button>
+                              </div>
                             )}
                             {capturedVideo && (
                                 <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
@@ -2271,13 +2052,12 @@ function CreateMessage(props) {
                                   <button 
                                     onClick={() => {
                                       setCapturedVideo(null);
-                                      // Aggiorna il conteggio dei caratteri qui
                                       const remaining = calculateCharCount();
                                       setWordsRemaining(remaining);
                                       setPrivateWordsRemaining(calculatePrivateCharCount());
                                     }} 
                                     className="btn btn-sm btn-danger" 
-                                    style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il video
+                                    style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} 
                                   >
                                     X
                                   </button>
@@ -2290,13 +2070,12 @@ function CreateMessage(props) {
                                         onClick={() => {
                                             setDisplayedLink('');
                                             setinputLIink('');
-                                            // Aggiorna il conteggio dei caratteri qui
                                             const remaining = calculateCharCount();
                                             setWordsRemaining(remaining);
                                             setPrivateWordsRemaining(calculatePrivateCharCount());
                                         }} 
                                         className="btn btn-sm btn-danger" 
-                                        style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                        style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} 
                                     >
                                         X
                                     </button>
@@ -2327,8 +2106,10 @@ function CreateMessage(props) {
                           </div>
 
                           {/*Video*/}
-                          <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                            <Camera color="#000000DE" size={25} />
+                          <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px', marginTop: '2px' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-camera-video" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>
+                            </svg>
                           </div>
 
                           {/*Url*/}
@@ -2338,10 +2119,15 @@ function CreateMessage(props) {
                                     border: 'none',
                                     cursor: 'pointer',
                                     color: '#000000DE',
-                                    marginRight: '20px'
+                                    marginRight: '20px',
+                                    paddingLeft: '0px', 
+                                    paddingRight: '0px'
                             }}
                           >
-                            <LinkLogo size={25} color="#000000DE" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
+                              <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/>
+                              <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/>
+                            </svg>
                           </button>
 
                           {/*Icona posizione*/}
@@ -2358,15 +2144,21 @@ function CreateMessage(props) {
                                 border: 'none',
                                 cursor: 'pointer',
                                 marginRight: '20px',
+                                paddingLeft: '0px',
+                                paddingRight: '0px',
+                                marginBottom: "4px"
                             }}
                           >
-                            <Globe size={25} color="#000000DE" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                              <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                              <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                            </svg>
                           </button>
                       </Col>
 
                       {/* Colonna per il pulsante Invia, allineata a destra */}
                       <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                        <Button onClick={handleSendPrivateSqueal}>Invia</Button>
+                        <Button onClick={handleSendPrivateSqueal}>Send</Button>
                       </Col>
 
                     </Row> 
@@ -2382,9 +2174,10 @@ function CreateMessage(props) {
                         <>
                           <InputGroup className="mb-3">
                               <FormControl
-                                  placeholder="Cerca canali..."
+                                  placeholder="Find channels..."
                                   value={channelSearch}
                                   onChange={handleChannelSearchChange}
+                                  disabled={channelSelected}
                                   style={{
                                     backgroundColor: 'transparent',
                                     borderColor: 'transparent',
@@ -2398,70 +2191,132 @@ function CreateMessage(props) {
                                     color: '#000000DE'
                                   }}
                               />
+                              {channelSelected &&
+                                <button
+                                  onClick={
+                                    () => {
+                                      setChannelSearch('');
+                                      setChannelSelected(null);
+                                      setChannelSelectedHaveDefault(false);
+                                      setChannelSelectedHaveRepeat(false);
+                                      setDefaultMessageSearch('');
+                                      setShowDefaultMessage(false);
+                                      setIsDefaultMessageValid(false);
+                                    }
+                                  }
+                                  style={{
+                                    cursor: 'pointer',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'red',
+                                  }}
+                                >
+                                  X
+                                </button>
+                              }
                           </InputGroup>
 
                           {/* Lista a tendina dei suggerimenti dei canali */}
                           {suggestedChannels.length > 0 && (
-                              <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto'}}>
-                                  {suggestedChannels.map(channel => (
-                                      <li 
-                                          key={channel._id} 
-                                          style={{padding: '10px', cursor: 'pointer'}}
-                                          onClick={() => {
-                                            handleChannelSelection(channel); 
-                                            setChannelSelected(channel)
-                                          }
+                            <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto', paddingLeft: '25px'}}>
+                                {suggestedChannels.map(channel => (
+                                    <li 
+                                        key={channel._id} 
+                                        style={{padding: '10px', cursor: 'pointer'}}
+                                        onClick={() => {
+                                          handleChannelSelection(channel); 
+                                          setChannelSelected(channel)
                                         }
-                                      >
-                                          {channel.name}
-                                      </li>
-                                  ))}
-                              </ul>
+                                      }
+                                    >
+                                        {channel.name}
+                                    </li>
+                                ))}
+                            </ul>
                           )}
                         </>
 
                         {/*Default message*/}
                         <>
                           {/* Selezione deafault message */}
-                          {channelSelected && (
+                          {(channelSelectedHaveDefault && channelSelected) && (
                             <>
-                            <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
-                              <input
-                                type="text"
-                                placeholder="Cerca messaggi di default..."
-                                value={defaultMessageSearch.request}
-                                disabled={isDefaultMessageValid}
-                                onChange={(e) => setDefaultMessageSearch(e.target.value)}
-                                style={{
-                                  backgroundColor: 'transparent',
-                                  borderColor: 'gray',
-                                  color: '#000000DE',
-                                  width: '80%',
-                                }}
-                              />
-                              {isDefaultMessageValid && (
-                                <button
-                                  onClick={() => cleanDefaultMessageSelection()}
-                                  style={{
-                                    cursor: 'pointer',
-                                    background: 'none',
-                                    border: 'none',
-                                    color: '#000000DE',
-                                  }}
-                                >
-                                  X
-                                </button>
+                              <div style={{display:'flex', flexDirection: 'row'}}>
+                                <h7 style = {{ fontWeight : "bold"  }}>This channel have default message avaible</h7>
+                                <div>
+                                  {(showDefaultMessage === false) ? (
+                                    // Bottone per nascondere il messaggio
+                                    <button onClick={() => setShowDefaultMessage(true)} className="icon-button" style={{marginTop: '-1%', backgroundColor: "transparent", border: "none", paddingTop: "0px"}}>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708z"/>
+                                      </svg>
+                                    </button>
+                                  ) : (
+                                    // Bottone per mostrare il messaggio
+                                    <button onClick={() => setShowDefaultMessage(false)} className="icon-button" style={{marginTop: '-1%', backgroundColor: "transparent", border: "none", paddingTop: "0px"}}>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                                      </svg>
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                              {showDefaultMessage && (
+                                <div style={{display: "flex", flexDirection: "column", marginBottom: "4%", marginTop: "6%"}}>
+                                  <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
+                                    <input
+                                      type="text"
+                                      placeholder="Find deafault message..."
+                                      value={defaultMessageSearch.request}
+                                      disabled={isDefaultMessageValid}
+                                      onChange={(e) => setDefaultMessageSearch(e.target.value)}
+                                      style={{
+                                        backgroundColor: 'transparent',
+                                        borderColor: 'gray',
+                                        color: '#000000DE',
+                                        width: '80%',
+                                      }}
+                                    />
+                                    {isDefaultMessageValid && (
+                                      <button
+                                        onClick={() => cleanDefaultMessageSelection()}
+                                        style={{
+                                          cursor: 'pointer',
+                                          background: 'none',
+                                          border: 'none',
+                                          color: '#000000DE',
+                                        }}
+                                      >
+                                        X
+                                      </button>
+                                    )}
+                                  </div>
+                                  {suggestedDefaultMessages.length > 0 && (
+                                    <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                      {suggestedDefaultMessages.map((message, index) => (
+                                        <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
+                                          {message.request} - {message.body.text}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                  {channelSelectedHaveRepeat &&  (
+                                    <div style={{ display: "flex", flexDirection: "column"}}> 
+                                      <h8>This channel have repeat message avaible</h8>
+                                      <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
+                                        <button onClick={() => {processRepeatMessage()}} style={{width: "25%"}}>
+                                          Repeat
+                                        </button>
+                                        {localStorage.getItem('Interval active') && (
+                                          <button onClick={() => {stopProcessRepeatMessage()}} style={{width: "25%"}}>
+                                            Stop
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
                               )}
-                            </div>
-                            {suggestedDefaultMessages.length > 0 && (
-                              <ul style={{ listStyleType: 'none', padding: 0 }}>
-                                {suggestedDefaultMessages.map((message, index) => (
-                                  <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
-                                    {message.request} - {message.body.text}
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
                             </>
                           )}
 
@@ -2469,12 +2324,12 @@ function CreateMessage(props) {
                         </>
 
                         {/*Textarea*/}
-                        {(!isDefaultMessageValid) &&
+                        {(showDefaultMessage === false) &&
                           <Col>
                             <Row>
                             <Col xs={12} md={10}>
                               <textarea
-                                placeholder='A cosa stai pensando????'
+                                placeholder='What are you thinking about????'
                                 value={squealChatTextareaValue}
                                 onChange={(e) => {
                                   handleSquealChatTextareaChange(e);
@@ -2488,17 +2343,17 @@ function CreateMessage(props) {
                                 maxLength={maxChar}
                                 style={{
                                   width: '100%',
-                                  resize: 'none', // Impedisce il ridimensionamento verticale
-                                  height: '100px', // Imposta l'altezza fissa a una riga di testo
-                                  overflowX: 'hidden', // Nasconde lo scorrimento orizzontale
-                                  border: 'none', // Rimuove il bordo
-                                  scrollbarWidth: 'none', // Nasconde le frecce verticali
+                                  resize: 'none', 
+                                  height: '100px', 
+                                  overflowX: 'hidden',
+                                  border: 'none', 
+                                  scrollbarWidth: 'none', 
                                   backgroundColor: 'transparent',
                                   color: '#000000DE',
                                   fontSize: '16px',
                                   outline: 'none',
                                 }}
-                                rows={1} // Imposta il numero di righe iniziali a 1
+                                rows={1} 
                                 onKeyDown={(e) => {
                                   if (wordsRemaining > 0 && e.key === 'Enter') {
                                       e.preventDefault();
@@ -2528,14 +2383,14 @@ function CreateMessage(props) {
                         <Row>
                           <Col xs={12} md={10}>
                             {position && isMapVisible &&(
-                              <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
+                              <Card style={{  width: '200px', height: '100px', position: 'relative' }} id = "mapAttachments">
                                 <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
                                   <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                   />
                                   <Marker position={position} icon={markerIcon}>
-                                    <Popup>Sei qui!</Popup>
+                                    <Popup>You are here!</Popup>
                                   </Marker>
                                 </MapContainer>
                                 <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
@@ -2558,8 +2413,17 @@ function CreateMessage(props) {
                               </Card>
                             )}
                             {capturedImage && (
-                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }} id = "photoAttachments">
-                              <img src={capturedImage} alt="Scattata" width="100%" />
+                              <div style={{ position: 'relative', width: '300px', height: '300px', overflow: 'hidden' }} id = "photoAttachments">
+                              <img 
+                                src={capturedImage} 
+                                alt="Scattata" 
+                                width="100%"
+                                style={{ 
+                                  width: '100%', 
+                                  height: '100%', 
+                                  objectFit: 'cover', 
+                                }} 
+                              />
                               <button 
                                 onClick={() => {
                                   setCapturedImage(null)
@@ -2574,18 +2438,17 @@ function CreateMessage(props) {
                               </div>
                             )}
                             {capturedVideo && (
-                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
-                                <video width="100%" controls>
+                              <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
+                                <video width="200px" height="100px" controls>
                                   <source src={capturedVideo} type="video/mp4" />
-                                  Il tuo browser non supporta il tag video.
+                                  Your browser does not support the video tag.
                                 </video>
                                 <button 
                                   onClick={() => {
                                     setCapturedVideo(null);
-                                    // Aggiungi qui qualsiasi altra logica necessaria quando il video viene rimosso
                                   }} 
                                   className="btn btn-sm btn-danger" 
-                                  style={{ position: 'absolute', top: '10px', right: '10px' }}
+                                  style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} 
                                 >
                                   X
                                 </button>
@@ -2598,13 +2461,12 @@ function CreateMessage(props) {
                                       onClick={() => {
                                           setDisplayedLink('');
                                           setinputLIink('');
-                                          // Aggiorna il conteggio dei caratteri qui
                                           const remaining = calculateCharCount();
                                           setWordsRemaining(remaining);
                                           setPrivateWordsRemaining(calculatePrivateCharCount());
                                       }} 
                                       className="btn btn-sm btn-danger" 
-                                      style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                      style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} 
                                   >
                                       X
                                   </button>
@@ -2616,7 +2478,7 @@ function CreateMessage(props) {
 
                       
                       {/*Allegati*/}
-                      {(!isDefaultMessageValid) &&
+                      {(showDefaultMessage === false) &&
                         <Row className="mt-2" style = {{marginLeft: '6%'}} id = "textAreaContentContainer"> 
                           {/* Colonna per icone */}
                           <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
@@ -2626,16 +2488,18 @@ function CreateMessage(props) {
                                 onClick={handleLogoClick}
                                 style={{ cursor: 'pointer', marginRight: '20px'}}
                             >
-                              <Camera color="#000000DE" size={25} />
+                              <Camera color="#000000DE" size={30} />
                             </div>
                     
                             {/*Video*/}
                             <div 
                               id="videoLogo" 
                                 onClick={() => setShowVideoModal(true)}
-                              style={{ cursor: 'pointer', marginRight: '20px'}}
+                              style={{ cursor: 'pointer', marginRight: '20px', marginTop: '2px'}}
                             >
-                              <Camera color="#000000DE" size={25} />
+                              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-camera-video" viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>
+                              </svg>
                             </div>
 
                             {/*Url*/}
@@ -2646,10 +2510,15 @@ function CreateMessage(props) {
                                   border: 'none',
                                   cursor: 'pointer',
                                   color: '#000000DE',
-                                  marginRight: '20px'
+                                  marginRight: '20px',
+                                  paddingLeft: '0px',
+                                  paddingRight: '0px'
                               }}
                             >
-                              <LinkLogo size={25} color="#000000DE" />
+                              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
+                                <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/>
+                                <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/>
+                              </svg>
                             </button>
                             
                             {/*Posizione*/}
@@ -2665,33 +2534,30 @@ function CreateMessage(props) {
                                 backgroundColor: 'transparent',
                                 border: 'none',
                                 cursor: 'pointer',
-                                marginRight: '20px'
-                              }}
-                            >
-                              <Globe size={25} color="#000000DE" />
-                            </button>
-
-                            {/*Caratteri rimanenti*/}
-                            <div id = "charCounterContainer"
-                              style={{
-                                textAlign: 'left', // Allinea il testo a destra all'interno del contatore
-                                color: counterColor,
                                 marginRight: '20px',
+                                paddingLeft: '0px',
+                                paddingRight: '0px',
+                                marginBottom: "4px"
                               }}
                             >
-                              {wordsRemaining}
-                            </div>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                              </svg>
+                            </button>
                           </Col>
 
                           {/* Colonna per il pulsante Invia, allineata a destra */}
                           <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                            <Button onClick={handleSendChannelSqueal}>Invia</Button>
+                            <Button onClick={handleSendChannelSqueal}>Send</Button>
                           </Col>
                         </Row>
                       }
+
+                      {/*Send default*/}
                       {isDefaultMessageValid &&
                         <Col className="col-1">
-                          <Button onClick={processDefaultMessageType}>Create</Button>
+                          <Button onClick={processDefaultMessageType}>Send</Button>
                         </Col> 
                       }
                     </>
@@ -2733,14 +2599,14 @@ function CreateMessage(props) {
 
                         {/*Descrizione*/}
                         <Row style = {{marginTop:'4%', justifyContent: 'center'}}>
-                          <Form.Control as="textarea" placeholder="Descrizione" value={channelDescription} onChange={e => setChannelDescription(e.target.value)} rows={4} style = {{width: '90%'}}/>
+                          <Form.Control as="textarea" placeholder="A few words to describe the channel" value={channelDescription} onChange={e => setChannelDescription(e.target.value)} rows={4} style = {{width: '90%'}}/>
                         </Row>
 
                         {/*Aggiungi persone*/}
                         <Row style = {{marginTop:'4%', justifyContent: 'center'}}>
                           <input
                             type="text"
-                            placeholder="Cerca Persone"
+                            placeholder="Find users..."
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             onFocus={() => setShowDropdown(true)}
@@ -2752,13 +2618,13 @@ function CreateMessage(props) {
                               fontSize: '16px',
                               outline: 'none',
                               transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
-                              marginBottom: '10px', // Aggiunto per dare spazio al dropdown
+                              marginBottom: '10px',
                             }} className="my-inputCustom-input"
                           />
                           {showDropdown && (
                             <>
                               <div style={{ marginTop: '4%' }}>
-                                <strong>Utenti già inseriti</strong>
+                                <strong>Users already entered</strong>
                                 {selectedUsers.map(user => (
                                     <div key={user._id} style={{ position: 'relative', marginTop: '10px', wordBreak: 'break-all', color: '#000000DE' }}>
                                         <a>{user.nickname}</a>
@@ -2767,7 +2633,7 @@ function CreateMessage(props) {
                                             handleRemoveUser2(user._id);
                                           }} 
                                           className="btn btn-sm btn-danger" 
-                                          style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }} // Assicurati che lo z-index sia sufficiente per renderlo sopra il link
+                                          style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }}
                                         >
                                           X
                                         </button>
@@ -2777,7 +2643,7 @@ function CreateMessage(props) {
                               {/* Aggiunta del modale per mostrare tutti gli utenti */}
                               <Modal show={showModal} onHide={() => setShowModal(false)}>
                                 <Modal.Header closeButton>
-                                  <Modal.Title>Tutti gli utenti inseriti</Modal.Title>
+                                  <Modal.Title>All users entered</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
                                   {selectedUsers.map(user => (
@@ -2788,12 +2654,12 @@ function CreateMessage(props) {
                                 </Modal.Body>
                                 <Modal.Footer>
                                   <Button variant="secondary" onClick={() => setShowModal(false)}>
-                                    Chiudi
+                                    Close
                                   </Button>
                                 </Modal.Footer>
                               </Modal>
                               <div style={{ marginTop: '4%' }}>
-                                <strong>Utenti</strong>
+                                <strong>Users</strong>
                                 {suggestedUsers.map(user => (
                                   <div key={user._id} style={{marginTop: '2%', cursor: 'pointer', color: '#000000DE'}}
                                       onClick={() => {
@@ -2803,7 +2669,7 @@ function CreateMessage(props) {
                                   </div>
                                 ))}
                               </div>
-                              <button style={{ display: 'block', margin: '10px auto' }} onClick={() => setShowDropdown(false)}>Chiudi</button>
+                              <button style={{ display: 'block', margin: '10px auto' }} onClick={() => setShowDropdown(false)}>Close</button>
                             </>
                           )}
                         </Row>
@@ -2821,8 +2687,8 @@ function CreateMessage(props) {
                         <Row style = {{marginTop:'4%'}}>
                           {showAreYouSure && (
                             <div style={{ color: '#000000DE' }}>
-                              <p>Sei sicuro di voler creare il canale?</p>
-                              <Button onClick={handleCreateChannel}>Sì</Button>
+                              <p>Are you sure you want to create the channel?</p>
+                              <Button onClick={handleCreateChannel}>Yes</Button>
                               <Button onClick={() => setShowAreYouSure(false)}>No</Button>
                             </div>
                           )}

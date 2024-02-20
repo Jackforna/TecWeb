@@ -87,7 +87,7 @@ li.active{
 }
 
 Button.active{
-  border-top:2px solid white !important;
+  border-top:2px solid black !important;
 }
 
 .texteditprofile:hover,:focus{

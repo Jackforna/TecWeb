@@ -52,6 +52,8 @@ export class MonitoringComponent implements OnInit{
   isModalOpen = false;
   selectedSquealAnswers: any[] = [];
 
+  photoBase = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
   constructor(
     private route: ActivatedRoute, 
     private databaseService: DatabaseService, 
