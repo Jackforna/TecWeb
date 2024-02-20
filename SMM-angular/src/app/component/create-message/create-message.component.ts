@@ -193,8 +193,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     /*Test only*/
     // this.updateSquealPositive();
     // this.updateSquealNegative();
-    this.deleteAllSqueals();
-    this.deleteAllChannels();
+    // this.deleteAllSqueals();
+    // this.deleteAllChannels();
     // this.deleteUser('6586c8e5b2ca7d845782751f')
     // this.deleteUser('6586c9c3733a4e33a55d91b7')
     // this.deleteUser('6596f39d4414dae1dd472cb0')

@@ -1839,12 +1839,12 @@ const loadImage = (event) => {
                         <Button onClick={() => sectionaddmessagechannel(true)} style={{width:'20%'}} className='mt-3'>Add</Button>
                     </Row>
                 </Col>
-            <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:'100%', left:'0', height:'100vh', paddingTop:'10px',backgroundColor:'black',overflow:'hidden'}}>
+            <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:'100%', left:'0', height:'100vh', paddingTop:'10px',backgroundColor:'#eee', color: "black",overflow:'hidden'}}>
                 <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeViewKeyword}>Back</Button>
                 <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribekeyword}>{inKeyword ? "Unsubscribe" : "Subscribe"}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                    <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
+                    <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                         { newPhotoKeyword!='' ? 
                         (<Image src={newPhotoKeyword} style={{height:'100%', marginTop:positionKeyword.y, marginLeft:positionKeyword.x}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
@@ -1852,19 +1852,19 @@ const loadImage = (event) => {
                     </Col>
                     <Container style={{ maxWidth: '800px', alignItems:'center'}} className="d-flex flex-column mt-3">
                         <Row className='d-flex flex-row' style={{width:'100%', justifyContent:'center'}}>
-                            <p className='mb-3' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'white', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>{newNameKeyword}</p>
+                            <p className='mb-3' style={{borderRadius: '14px', backgroundColor: 'transparent', color: 'black', width: '50%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em'}}>{newNameKeyword}</p>
                         </Row>
-                        <textarea spellCheck='false' readOnly className='textareaprofile' value={newBioKeyword} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'white', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
+                        <textarea spellCheck='false' readOnly className='textareaprofile' value={newBioKeyword} style={{borderRadius: '14px', resize:'none', backgroundColor: 'transparent', color: 'black', width: '100%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', height:'50px'}}></textarea>
                     </Container>
                     <hr style={{width:'100%',  height:'2px', marginBottom:'0'}}/>
                     <Row  style={{width:'50%', justifyContent:'center'}}>
-                        <Button className='active' style={{width:'150px', height:'40px',  background:'transparent', border:'0', borderRadius:'0px'}}>Posts</Button>
+                        <Button className='active' style={{width:'150px', height:'40px', color: "black",  background:'transparent', border:'0', borderRadius:'0px'}}>Posts</Button>
                     </Row>
                     <Container className="text-center text mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
                         <Row className='row-cols-2'>
                         {newKeywordPosts.map((squeal,index) => (
                         <Col key={index} className='m-5' style={{width:'40%'}}>
-                            <Card style={{backgroundColor:'black',  borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
+                            <Card style={{borderColor:'black', width:'500px', minHeight:'200px', marginBottom:'5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                                     <CardGroup>
                                     { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>

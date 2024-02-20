@@ -950,7 +950,7 @@ const handleVideoChange = (e) => {
                             )}
                     </Card.Body>
                     <Card.Footer className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
-                      <Button className="text-white" style={{backgroundColor:'transparent',border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
+                      <Button className="" style={{backgroundColor:'transparent',border:'0', color: "black"}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
                       {windowSize<600 && (<Card.Text style={{margin:'0', display:'flex', alignItems:'center'}}>{squeal.date+" "+squeal.hour}</Card.Text>)}
                       <div className='d-flex justify-content-center' style={{width:windowSize<600 ? '100%' : 'auto', marginTop:windowSize<600 ? '0.25rem' : '0'}}>
                         <Card.Text className='me-1'>
@@ -1080,14 +1080,14 @@ const handleVideoChange = (e) => {
                       </div>
                 </InputGroup>
               </Form> 
-              <Container style={{width: '100%', height: '100vh', position:'absolute', alignItems: 'center', overflowY:'scroll', overflowX:'hidden', alignItems:'center', zIndex:'1003', backgroundColor:'black'}} className={`${viewAnswers ? 'd-flex flex-column' : 'd-none'}`}>
-                <Form id="writenewsqueal" className="container-fluid position-relative flex-column align-items-center" style={{display: 'flex', width: '100%', top: '0', left: '0', backgroundColor:'black', marginBottom:'13%'}}>
-                  <button type="button" className="btn-close" aria-label="Close" id="closewritenewsqueal" style={{position: 'absolute', top: '3%', right: '2%', fontSize: '30px', filter: 'invert(1)', zIndex: 2}} onClick={handleClose}></button>
-                  <h3 className="text-light text-center mt-5 mb-4">Write new Answer</h3>
-                  <div className="card bg-black border-success text-light mt-3 d-flex flex-row" style={{width: windowSize >= 600 ? '400px' : '280px', minHeight: '200px', alignItems:'center'}}>
+              <Container style={{width: '100%', height: '100vh', position:'absolute', alignItems: 'center', overflowY:'scroll', overflowX:'hidden', alignItems:'center', zIndex:'1003', backgroundColor:'#eee'}} className={`${viewAnswers ? 'd-flex flex-column' : 'd-none'}`}>
+                <Form id="writenewsqueal" className="container-fluid position-relative flex-column align-items-center" style={{display: 'flex', width: '100%', top: '0', left: '0', backgroundColor:'#eee', marginBottom:'13%'}}>
+                  <button type="button" className="btn-close" aria-label="Close" id="closewritenewsqueal" style={{position: 'absolute', top: '3%', right: '2%', fontSize: '30px', filter: 'invert(1)', zIndex: 2, color: "black", backgroundColor: "gray"}} onClick={handleClose}></button>
+                  <h3 className="text-center mt-5 mb-4" style = {{color: "black !important"}}>Write new Answer</h3>
+                  <div className="card border-success mt-3 d-flex flex-row" style={{width: windowSize >= 600 ? '400px' : '280px', minHeight: '200px', alignItems:'center'}}>
                       <section  style={{width: '80%', height: '100%'}}>
                           <div className="card-body text-center d-flex align-items-center flex-column" style={{width: '100%', minHeight: '150px'}}>
-                              <textarea className="text-light bg-transparent border-0" id="textnewsqueal" style={{width: '100%', resize: 'none', outline:'none'}} placeholder="What're you thinking about?" value={textAnswer} onChange={handleTextAnswer}></textarea>
+                              <textarea className="bg-transparent border-0" id="textnewsqueal" style={{width: '100%', resize: 'none', outline:'none'}} placeholder="What're you thinking about?" value={textAnswer} onChange={handleTextAnswer}></textarea>
                               {photoAnswer!="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" && (
                               <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
                                 <img src={photoAnswer} alt="Taken" width="100%" />
@@ -1095,8 +1095,8 @@ const handleVideoChange = (e) => {
                               </div>
                             )} 
                             {videoAnswer!="" && (
-                              <div style={{ position: 'relative', width: '200px', maxHeight: '200px', overflow: 'hidden' }}>
-                                <video src={videoAnswer} alt="Taken" width="100%" controls/>
+                              <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
+                                <video src={videoAnswer} alt="Taken" width="200px" height="100px" controls/>
                                 <button onClick={() => {setVideoAnswer('')}} className="btn btn-sm btn-danger" style={{ position: 'absolute', top: '10px', right: '10px' }}>X</button>
                               </div>
                             )} 
@@ -1123,7 +1123,7 @@ const handleVideoChange = (e) => {
                                 </div>
                             )}
                           </div>
-                          <div className="card-footer d-flex justify-content-center" style={{height: '50px'}}>
+                          <div className="card-footer d-flex justify-content-center" style={{height: '50px', backgroundColor: 'transparent'}}>
                               <label style={{cursor: 'pointer'}} onClick={() => showModal()}><Link45deg className="me-3"></Link45deg></label>
                               <label style={{cursor: 'pointer'}}><Camera className="me-3" onClick={() => accessCamera()}></Camera></label>
                               <label style={{cursor: 'pointer'}}><CameraVideo className="me-3" onClick={() => accessVideo()}></CameraVideo></label>
@@ -1137,7 +1137,7 @@ const handleVideoChange = (e) => {
                 </Form>
                 <div style={{position:'relative', height:'100%', overflowY:'scroll', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                   {allAnswersprint.length!=0 && allAnswersprint.map((squeal,index) => (
-                    <Card key={index} data-id={squeal._id} className='message' style={{backgroundColor:'black', color:'white', borderColor:'white', width: windowSize>=600 ? '400px' : '280px', marginBottom: (allAnswersprint.length-1) ===index ? '100px': '5%'}}>
+                    <Card key={index} data-id={squeal._id} className='message' style={{color:'black', borderColor:'white', width: windowSize>=600 ? '400px' : '280px', marginBottom: (allAnswersprint.length-1) ===index ? '100px': '5%'}}>
                     <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                       <CardGroup>
                           {squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>

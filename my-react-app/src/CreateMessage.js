@@ -89,6 +89,7 @@ function CreateMessage(props) {
   const [defaultMessageSearch, setDefaultMessageSearch] = useState('');
   const [suggestedDefaultMessages, setSuggestedDefaultMessages] = useState([]);
   const [isDefaultMessageValid, setIsDefaultMessageValid] = useState(false)
+  const [showDefaultMessage, setShowDefaultMessage] = useState(false);
 
   /*Creazione messaggi funzioni comuni*/
   const [wordsRemaining, setWordsRemaining] = useState(maxChar);
@@ -952,7 +953,7 @@ function CreateMessage(props) {
       sender: nicknameProfile, 
       typesender: 'Users', 
       body: {
-        text: squealChatTextareaValue, 
+        text: privateSquealChatTextareaValue, 
         link: displayedLink || '',
         photo: capturedImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
         video: capturedVideo || '', 
@@ -1011,7 +1012,7 @@ function CreateMessage(props) {
     setSuggestedChannels([]); 
     if ( channel.list_mess.length > 0) {
       setChannelSelectedHaveDefault(true);
-      if (channel.list_mess.map(message => message.type === 'Repeat')) {
+      if(channel.list_mess.find(message => message.type === 'Repeat')) {
         setChannelSelectedHaveRepeat(true);
       }
     }
@@ -1758,27 +1759,27 @@ function CreateMessage(props) {
                           )}
                           {capturedImage && (
                             <div style={{ position: 'relative',  width: '300px', height: '300px', overflow: 'hidden' }} id = "photoAttachments">
-                            <img 
-                            src={capturedImage} 
-                            alt="Scattata"  
-                            style={{ 
-                              width: '100%', 
-                              height: '100%', 
-                              objectFit: 'cover', 
-                            }} 
-                            />
-                            <button 
-                              onClick={() => {
-                                setCapturedImage(null)
-                                const remaining = calculateCharCount();
-                                setWordsRemaining(remaining);
+                              <img 
+                              src={capturedImage} 
+                              alt="Scattata"  
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover', 
                               }} 
-                              className="btn btn-sm btn-danger" 
-                              style={{ position: 'absolute', top: '10px', right: '10px' }}
-                            >
-                              X
-                            </button>
-                          </div>
+                              />
+                              <button 
+                                onClick={() => {
+                                  setCapturedImage(null)
+                                  const remaining = calculateCharCount();
+                                  setWordsRemaining(remaining);
+                                }} 
+                                className="btn btn-sm btn-danger" 
+                                style={{ position: 'absolute', top: '10px', right: '10px' }}
+                              >
+                                X
+                              </button>
+                            </div>
                           )}
                           {capturedVideo && (
                               <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
@@ -1829,22 +1830,30 @@ function CreateMessage(props) {
                       <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
                         {/* Fotocamera */}
                         <div id="cameraLogo" onClick={handleLogoClick} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                          <Camera color="#000000DE" size={25} />
+                          <Camera color="#000000DE" size={30} />
                         </div>
 
                         {/* Icona per il caricamento del video */}
-                        <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                          <Camera color="#000000DE" size={25} />
+                        <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px', marginTop: '2px' }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-camera-video" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>
+                          </svg>
                         </div>
 
                         {/* URL */}
-                        <button onClick={() => setShowLinkModal(true)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#000000DE', marginRight: '20px' }}>
-                          <LinkLogo size={25} color="#000000DE" />
+                        <button onClick={() => setShowLinkModal(true)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#000000DE', marginRight: '20px', paddingLeft: '0px', paddingRight: '0px' }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
+                            <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/>
+                            <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/>
+                          </svg>
                         </button>
                         
                         {/* Posizione */}
-                        <button onClick={() => { if (!isMapVisible) { setIsMapVisible(true); } else { handleLocationButtonClick(); }}} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginRight: '20px' }}>
-                          <Globe size={25} color="#000000DE" />
+                        <button onClick={() => { if (!isMapVisible) { setIsMapVisible(true); } else { handleLocationButtonClick(); }}} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginRight: '20px',  paddingLeft: '0px', paddingRight: '0px', marginBottom: "4px"  }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                          </svg>
                         </button>
                       </Col>
 
@@ -1965,7 +1974,7 @@ function CreateMessage(props) {
                       <Row>
                           <Col xs={12} md={10}>
                             {position && isMapVisible &&(
-                              <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
+                              <Card style={{  width: '200px', height: '100px', position: 'relative' }} id = "mapAttachments">
                                 <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
                                   <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -1995,20 +2004,28 @@ function CreateMessage(props) {
                               </Card>
                             )}
                             {capturedImage && (
-                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }} id = "photoAttachments">
-                              <img src={capturedImage} alt="Scattata" width="100%" />
-                              <button 
-                                onClick={() => {
-                                  setCapturedImage(null)
-                                  const remaining = calculatePrivateCharCount(); 
-                                  setPrivateWordsRemaining(remaining);
-                                }} 
-                                className="btn btn-sm btn-danger" 
-                                style={{ position: 'absolute', top: '10px', right: '10px' }}
-                              >
-                                X
-                              </button>
-                            </div>
+                              <div style={{ position: 'relative',  width: '300px', height: '300px', overflow: 'hidden' }} id = "photoAttachments">
+                                <img 
+                                  src={capturedImage} 
+                                  alt="Scattata" 
+                                  style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'cover', 
+                                  }} 
+                                />
+                                <button 
+                                  onClick={() => {
+                                    setCapturedImage(null)
+                                    const remaining = calculatePrivateCharCount(); 
+                                    setPrivateWordsRemaining(remaining);
+                                  }} 
+                                  className="btn btn-sm btn-danger" 
+                                  style={{ position: 'absolute', top: '10px', right: '10px' }}
+                                >
+                                  X
+                                </button>
+                              </div>
                             )}
                             {capturedVideo && (
                                 <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
@@ -2073,8 +2090,10 @@ function CreateMessage(props) {
                           </div>
 
                           {/*Video*/}
-                          <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px' }}>
-                            <Camera color="#000000DE" size={25} />
+                          <div id="videoLogo" onClick={() => setShowVideoModal(true)} style={{ cursor: 'pointer', marginRight: '20px', marginTop: '2px' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-camera-video" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>
+                            </svg>
                           </div>
 
                           {/*Url*/}
@@ -2084,10 +2103,15 @@ function CreateMessage(props) {
                                     border: 'none',
                                     cursor: 'pointer',
                                     color: '#000000DE',
-                                    marginRight: '20px'
+                                    marginRight: '20px',
+                                    paddingLeft: '0px', 
+                                    paddingRight: '0px'
                             }}
                           >
-                            <LinkLogo size={25} color="#000000DE" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
+                              <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/>
+                              <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/>
+                            </svg>
                           </button>
 
                           {/*Icona posizione*/}
@@ -2104,9 +2128,15 @@ function CreateMessage(props) {
                                 border: 'none',
                                 cursor: 'pointer',
                                 marginRight: '20px',
+                                paddingLeft: '0px',
+                                paddingRight: '0px',
+                                marginBottom: "4px"
                             }}
                           >
-                            <Globe size={25} color="#000000DE" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                              <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                              <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                            </svg>
                           </button>
                       </Col>
 
@@ -2131,6 +2161,7 @@ function CreateMessage(props) {
                                   placeholder="Find channels..."
                                   value={channelSearch}
                                   onChange={handleChannelSearchChange}
+                                  disabled={channelSelected}
                                   style={{
                                     backgroundColor: 'transparent',
                                     borderColor: 'transparent',
@@ -2144,82 +2175,132 @@ function CreateMessage(props) {
                                     color: '#000000DE'
                                   }}
                               />
+                              {channelSelected &&
+                                <button
+                                  onClick={
+                                    () => {
+                                      setChannelSearch('');
+                                      setChannelSelected(null);
+                                      setChannelSelectedHaveDefault(false);
+                                      setChannelSelectedHaveRepeat(false);
+                                      setDefaultMessageSearch('');
+                                      setShowDefaultMessage(false);
+                                      setIsDefaultMessageValid(false);
+                                    }
+                                  }
+                                  style={{
+                                    cursor: 'pointer',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'red',
+                                  }}
+                                >
+                                  X
+                                </button>
+                              }
                           </InputGroup>
 
                           {/* Lista a tendina dei suggerimenti dei canali */}
                           {suggestedChannels.length > 0 && (
-                              <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto'}}>
-                                  {suggestedChannels.map(channel => (
-                                      <li 
-                                          key={channel._id} 
-                                          style={{padding: '10px', cursor: 'pointer'}}
-                                          onClick={() => {
-                                            handleChannelSelection(channel); 
-                                            setChannelSelected(channel)
-                                          }
+                            <ul style={{border: '1px solid gray', maxHeight: '150px', overflowY: 'auto', paddingLeft: '25px'}}>
+                                {suggestedChannels.map(channel => (
+                                    <li 
+                                        key={channel._id} 
+                                        style={{padding: '10px', cursor: 'pointer'}}
+                                        onClick={() => {
+                                          handleChannelSelection(channel); 
+                                          setChannelSelected(channel)
                                         }
-                                      >
-                                          {channel.name}
-                                      </li>
-                                  ))}
-                              </ul>
+                                      }
+                                    >
+                                        {channel.name}
+                                    </li>
+                                ))}
+                            </ul>
                           )}
                         </>
 
                         {/*Default message*/}
                         <>
                           {/* Selezione deafault message */}
-                          {channelSelectedHaveDefault && (
+                          {(channelSelectedHaveDefault && channelSelected) && (
                             <>
-                              <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
-                                <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
-                                  <input
-                                    type="text"
-                                    placeholder="Find deafault message..."
-                                    value={defaultMessageSearch.request}
-                                    disabled={isDefaultMessageValid}
-                                    onChange={(e) => setDefaultMessageSearch(e.target.value)}
-                                    style={{
-                                      backgroundColor: 'transparent',
-                                      borderColor: 'gray',
-                                      color: '#000000DE',
-                                      width: '80%',
-                                    }}
-                                  />
-                                  {isDefaultMessageValid && (
-                                    <button
-                                      onClick={() => cleanDefaultMessageSelection()}
-                                      style={{
-                                        cursor: 'pointer',
-                                        background: 'none',
-                                        border: 'none',
-                                        color: '#000000DE',
-                                      }}
-                                    >
-                                      X
+                              <div style={{display:'flex', flexDirection: 'row'}}>
+                                <h7 style = {{ fontWeight : "bold"  }}>This channel have default message avaible</h7>
+                                <div>
+                                  {(showDefaultMessage === false) ? (
+                                    // Bottone per nascondere il messaggio
+                                    <button onClick={() => setShowDefaultMessage(true)} className="icon-button" style={{marginTop: '-1%', backgroundColor: "transparent", border: "none", paddingTop: "0px"}}>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708z"/>
+                                      </svg>
+                                    </button>
+                                  ) : (
+                                    // Bottone per mostrare il messaggio
+                                    <button onClick={() => setShowDefaultMessage(false)} className="icon-button" style={{marginTop: '-1%', backgroundColor: "transparent", border: "none", paddingTop: "0px"}}>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                                      </svg>
                                     </button>
                                   )}
                                 </div>
-                                {suggestedDefaultMessages.length > 0 && (
-                                  <ul style={{ listStyleType: 'none', padding: 0 }}>
-                                    {suggestedDefaultMessages.map((message, index) => (
-                                      <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
-                                        {message.request} - {message.body.text}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-                                {channelSelectedHaveRepeat &&  (
-                                  <button onClick={() => {processRepeatMessage()}}>
-                                    Repeat
-                                  </button>
-                                )}
-                                {localStorage.getItem('Interval active') && (
-                                  <button onClick={() => {stopProcessRepeatMessage()}}>
-                                    Stop
-                                  </button>
-                                )}
                               </div>
+                              {showDefaultMessage && (
+                                <div style={{display: "flex", flexDirection: "column", marginBottom: "4%", marginTop: "6%"}}>
+                                  <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
+                                    <input
+                                      type="text"
+                                      placeholder="Find deafault message..."
+                                      value={defaultMessageSearch.request}
+                                      disabled={isDefaultMessageValid}
+                                      onChange={(e) => setDefaultMessageSearch(e.target.value)}
+                                      style={{
+                                        backgroundColor: 'transparent',
+                                        borderColor: 'gray',
+                                        color: '#000000DE',
+                                        width: '80%',
+                                      }}
+                                    />
+                                    {isDefaultMessageValid && (
+                                      <button
+                                        onClick={() => cleanDefaultMessageSelection()}
+                                        style={{
+                                          cursor: 'pointer',
+                                          background: 'none',
+                                          border: 'none',
+                                          color: '#000000DE',
+                                        }}
+                                      >
+                                        X
+                                      </button>
+                                    )}
+                                  </div>
+                                  {suggestedDefaultMessages.length > 0 && (
+                                    <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                      {suggestedDefaultMessages.map((message, index) => (
+                                        <li key={index} onClick={() => handleDefaultMessageSelection(message)} style={{ cursor: 'pointer' }}>
+                                          {message.request} - {message.body.text}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                  {channelSelectedHaveRepeat &&  (
+                                    <div style={{ display: "flex", flexDirection: "column"}}> 
+                                      <h8>This channel have repeat message avaible</h8>
+                                      <div style={{display: "flex", flexDirection: "row", marginBottom: "4%"}}>
+                                        <button onClick={() => {processRepeatMessage()}} style={{width: "25%"}}>
+                                          Repeat
+                                        </button>
+                                        {localStorage.getItem('Interval active') && (
+                                          <button onClick={() => {stopProcessRepeatMessage()}} style={{width: "25%"}}>
+                                            Stop
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </>
                           )}
 
@@ -2227,7 +2308,7 @@ function CreateMessage(props) {
                         </>
 
                         {/*Textarea*/}
-                        {(!isDefaultMessageValid) &&
+                        {(showDefaultMessage === false) &&
                           <Col>
                             <Row>
                             <Col xs={12} md={10}>
@@ -2286,7 +2367,7 @@ function CreateMessage(props) {
                         <Row>
                           <Col xs={12} md={10}>
                             {position && isMapVisible &&(
-                              <Card style={{ width: '100%', height: '200px', position: 'relative' }}>
+                              <Card style={{  width: '200px', height: '100px', position: 'relative' }} id = "mapAttachments">
                                 <MapContainer center={position} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
                                   <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -2316,8 +2397,17 @@ function CreateMessage(props) {
                               </Card>
                             )}
                             {capturedImage && (
-                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }} id = "photoAttachments">
-                              <img src={capturedImage} alt="Scattata" width="100%" />
+                              <div style={{ position: 'relative', width: '300px', height: '300px', overflow: 'hidden' }} id = "photoAttachments">
+                              <img 
+                                src={capturedImage} 
+                                alt="Scattata" 
+                                width="100%"
+                                style={{ 
+                                  width: '100%', 
+                                  height: '100%', 
+                                  objectFit: 'cover', 
+                                }} 
+                              />
                               <button 
                                 onClick={() => {
                                   setCapturedImage(null)
@@ -2332,8 +2422,8 @@ function CreateMessage(props) {
                               </div>
                             )}
                             {capturedVideo && (
-                              <div style={{ position: 'relative', width: '100%', maxHeight: '300px', overflow: 'hidden' }}>
-                                <video width="100%" controls>
+                              <div style={{ position: 'relative', width: '200px', height: '100px', overflow: 'hidden' }}>
+                                <video width="200px" height="100px" controls>
                                   <source src={capturedVideo} type="video/mp4" />
                                   Your browser does not support the video tag.
                                 </video>
@@ -2342,7 +2432,7 @@ function CreateMessage(props) {
                                     setCapturedVideo(null);
                                   }} 
                                   className="btn btn-sm btn-danger" 
-                                  style={{ position: 'absolute', top: '10px', right: '10px' }}
+                                  style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }} 
                                 >
                                   X
                                 </button>
@@ -2372,7 +2462,7 @@ function CreateMessage(props) {
 
                       
                       {/*Allegati*/}
-                      {(!isDefaultMessageValid) &&
+                      {(showDefaultMessage === false) &&
                         <Row className="mt-2" style = {{marginLeft: '6%'}} id = "textAreaContentContainer"> 
                           {/* Colonna per icone */}
                           <Col className="d-flex justify-content-start" md={10} id = "allegatiConainer2">
@@ -2382,16 +2472,18 @@ function CreateMessage(props) {
                                 onClick={handleLogoClick}
                                 style={{ cursor: 'pointer', marginRight: '20px'}}
                             >
-                              <Camera color="#000000DE" size={25} />
+                              <Camera color="#000000DE" size={30} />
                             </div>
                     
                             {/*Video*/}
                             <div 
                               id="videoLogo" 
                                 onClick={() => setShowVideoModal(true)}
-                              style={{ cursor: 'pointer', marginRight: '20px'}}
+                              style={{ cursor: 'pointer', marginRight: '20px', marginTop: '2px'}}
                             >
-                              <Camera color="#000000DE" size={25} />
+                              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-camera-video" viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>
+                              </svg>
                             </div>
 
                             {/*Url*/}
@@ -2402,10 +2494,15 @@ function CreateMessage(props) {
                                   border: 'none',
                                   cursor: 'pointer',
                                   color: '#000000DE',
-                                  marginRight: '20px'
+                                  marginRight: '20px',
+                                  paddingLeft: '0px',
+                                  paddingRight: '0px'
                               }}
                             >
-                              <LinkLogo size={25} color="#000000DE" />
+                              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
+                                <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/>
+                                <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/>
+                              </svg>
                             </button>
                             
                             {/*Posizione*/}
@@ -2421,22 +2518,17 @@ function CreateMessage(props) {
                                 backgroundColor: 'transparent',
                                 border: 'none',
                                 cursor: 'pointer',
-                                marginRight: '20px'
-                              }}
-                            >
-                              <Globe size={25} color="#000000DE" />
-                            </button>
-
-                            {/*Caratteri rimanenti*/}
-                            <div id = "charCounterContainer"
-                              style={{
-                                textAlign: 'left', 
-                                color: counterColor,
                                 marginRight: '20px',
+                                paddingLeft: '0px',
+                                paddingRight: '0px',
+                                marginBottom: "4px"
                               }}
                             >
-                              {wordsRemaining}
-                            </div>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                              </svg>
+                            </button>
                           </Col>
 
                           {/* Colonna per il pulsante Invia, allineata a destra */}
@@ -2445,6 +2537,8 @@ function CreateMessage(props) {
                           </Col>
                         </Row>
                       }
+
+                      {/*Send default*/}
                       {isDefaultMessageValid &&
                         <Col className="col-1">
                           <Button onClick={processDefaultMessageType}>Send</Button>
