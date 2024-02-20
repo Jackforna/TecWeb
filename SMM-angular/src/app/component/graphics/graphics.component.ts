@@ -9,7 +9,6 @@ Chart.register(...registerables);
 const chartOptions = {
   responsive: true, // Se impostato su true, il grafico si adatterà al contenitore
   maintainAspectRatio: false, // Se impostato su false, consente di impostare una dimensione fissa
-  // Altre opzioni...
 };
 
 @Component({
@@ -46,15 +45,12 @@ export class GraphicsComponent {
       (squeals) => {
         this.userSqueals = (squeals as Array<any>).filter(s => s.sender === this.userNickname); // Archivia tutti i squeal dell'utente
         this.answers = this.userSqueals.flatMap(squeal => squeal.answers || []);
-        console.log('Squeal dell\'utente:', this.userSqueals);
-        console.log('Risposte dell\'utente:', this.answers);
-        // Ora puoi elaborare questi dati per ottenere le reazioni nel tempo
         this.processUserReactionsOverTime();
         this.processUserPostsOverTime();
         this.processAnswersOverTime();
       },
       (error) => {
-        console.error('Errore durante il recupero dei squeal dell\'utente:', error);
+        console.error('Error during user squeal retrieval:', error);
       }
     );
   }
@@ -74,7 +70,6 @@ export class GraphicsComponent {
   
     const validReactionsOverTime = reactionsOverTime.filter(r => r.date !== undefined);
   
-    // Assicurati che le reazioni del primo giorno siano incluse
     const filledReactionsOverTime = [validReactionsOverTime[0]]; // Inizia con il primo giorno
 
     // Aggiungi solo le date con reazioni o la prima/ultima di una serie di date senza reazioni
@@ -91,10 +86,7 @@ export class GraphicsComponent {
       }
     }
 
-    // Assicurati che l'ultimo giorno sia incluso
     filledReactionsOverTime.push(validReactionsOverTime[validReactionsOverTime.length - 1]);
-    
-    console.log('Reazioni nel tempo:', filledReactionsOverTime);
     
     this.createChart(filledReactionsOverTime);
     this.createDifferenceChart(filledReactionsOverTime);
@@ -220,9 +212,8 @@ export class GraphicsComponent {
   processUserPostsOverTime() {
     const countsByDate: { [date: string]: number } = {};
 
-    // Assumendo che i tuoi squeal abbiano una proprietà 'date' in formato 'DD/MM/YYYY'
     this.userSqueals.forEach(squeal => {
-      // Converti la data dello squeal in un formato consistente
+      // Converte la data dello squeal in un formato consistente
       const date = moment(squeal.date, 'DD/MM/YYYY').isValid() 
         ? moment(squeal.date, 'DD/MM/YYYY').format('YYYY-MM-DD') 
         : 'Invalid date'; // Usa un segnaposto come 'Invalid date' per le date non valide
@@ -234,7 +225,7 @@ export class GraphicsComponent {
       }
     });
 
-    // Ora creiamo l'array dei dati per il grafico
+    // Creo l'array dei dati per il grafico
     const postsData = Object.keys(countsByDate).map(date => {
       return { date, count: countsByDate[date] };
     });
@@ -243,19 +234,18 @@ export class GraphicsComponent {
     // Ordina i dati per data
     validPostsData.sort((a, b) => moment(a.date).diff(moment(b.date)));
     // Crea il grafico con i dati
-    console.log('Posts nel tempo:', validPostsData);
     this.createPostChart(validPostsData);
   }
 
   createPostChart(postsData: { date: string; count: number }[]): void {
-    // Find the maximum count value to set the y-axis range
+    // Trova il valore massimo del conteggio per impostare l'intervallo dell'asse y
     const maxCount = Math.max(...postsData.map(post => post.count));
   
     const currentDate = moment().format('YYYY-MM-DD');
-    // Check if the current date exists in the postsData array
+    // Verifica se la data corrente esiste nell'array postsData
     const currentDateIndex = postsData.findIndex(post => post.date === currentDate);
 
-    // If the current date does not exist, add it with a count of 0
+    // Se la data corrente non esiste, aggiungerla con un conteggio di 0
     if (currentDateIndex === -1) {
       postsData.push({ date: currentDate, count: 0 });
     }
@@ -320,7 +310,6 @@ export class GraphicsComponent {
   processAnswersOverTime() {
     const countsByDate: { [date: string]: number } = {};
   
-    // Assuming you have the answers array with 'date' properties
     this.answers.forEach((answer: { date: string | Date; }) => {
       const answerDate = typeof answer.date === 'string' ? new Date(answer.date) : answer.date;
       const formattedDate = this.formatDate(answerDate);
@@ -332,14 +321,13 @@ export class GraphicsComponent {
     const answersData = Object.entries(countsByDate).map(([date, count]) => ({ date, count }));
     answersData.sort((a, b) => moment(a.date).diff(moment(b.date)));
   
-    // Create the chart with the answersData
     this.createAnswersChart(answersData);
     console.log('answersData:', answersData);
   }
 
   createAnswersChart(answersData: any[]) {
     const ctx = document.getElementById('answersChart') as HTMLCanvasElement;
-    console.log('ctx:', ctx); // Add this line
+    console.log('ctx:', ctx); 
   
     if (ctx && answersData && answersData.length > 0) {
       new Chart(ctx, {

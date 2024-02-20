@@ -28,11 +28,11 @@ body{
     border-radius: 50%;
     width: 100px;
     height: 100px;
-    background-position: center; /* Centra l'immagine di sfondo */
+    background-position: center; 
     background-repeat: no-repeat; /* Impedisce la ripetizione dell'immagine */
   }  
 
-  /*Azioni modfica 1*/
+  /*Azioni modfica*/
   .action1-container{
     display: flex;
     flex-direction: column;
@@ -147,7 +147,7 @@ input{
   }
 
   .custom-dialog-margin {
-    margin: 20px; /* Aggiungi qui il margine desiderato */
+    margin: 20px; 
   }
 
   #radioGroup-vip{
@@ -165,12 +165,6 @@ input{
   }
   
   @media screen and (max-width: 1440px) {
-    /*
-    #pagamento-dialog{
-      width: 40%;
-      margin-left: 20%;
-    }
-    */
   }
 
   @media screen and (max-width: 768px) {
@@ -215,12 +209,6 @@ input{
   }
 
   @media screen and (max-width: 426px) {
-    /*
-    #pagamento-dialog{
-      width: 80%;
-      margin-left: 0%;
-    }
-    */
     #pagamento-dialog{
       padding-left: 0px;
       padding-right: 0px;

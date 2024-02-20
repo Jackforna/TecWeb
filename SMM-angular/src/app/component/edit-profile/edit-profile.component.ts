@@ -75,9 +75,7 @@ export class EditProfileComponent implements OnInit{
     // console.clear();
     this.laodUserData(); // Carica i dati utente 
     this.loadManagedUsers(); // Carica gli utenti gestiti (VIP)
-    // console.log(this.userId);
 
-    // this.updateUserProfileSMM();
     /*Test
     this.databaseService.getAllUsers().subscribe((data: any) => {
       console.log('Tutti gli utenti:', data);
@@ -117,20 +115,18 @@ export class EditProfileComponent implements OnInit{
     this.databaseService.updateUserProfile(this.userId._id, updateData)
       .subscribe(
         response => {
-          // console.log('Foto profilo aggiornata con successo');
           // Aggiorna i dati dell'utente nel localStorage
           this.databaseService.getUserData(this.userId._id).subscribe((data: any) => {
             localStorage.removeItem('Dati utente amministrato');  
-            // const userDataToSave = {...data, password: undefined};
             localStorage.setItem('Dati utente amministrato', JSON.stringify(data));
           }, error => {
-            console.error('Errore nel caricamento dei dati dell\'utente:', error);
+            console.error('Error loading user data.:', error);
           });
           this.laodUserData(); // Ricarica i dati dell'utente
           window.location.reload();
           this.closeDialog();
         },
-        error => console.error('Errore nell\'aggiornamento della foto del profilo', error)
+        error => console.error('Error updating profile photo', error)
       );
   }
 
@@ -141,7 +137,6 @@ export class EditProfileComponent implements OnInit{
       const reader = new FileReader();
       reader.onload = (e: any) => {
         const dataUrl = e.target.result;
-        // console.log(dataUrl); 
         this.tempPhotoProfile = dataUrl;
       }
       reader.readAsDataURL(file);
@@ -158,7 +153,7 @@ export class EditProfileComponent implements OnInit{
       this.databaseService.getUserData(uid).subscribe(user => {
         this.vipList.push(user); // Aggiungi l'utente alla lista vipList
       }, error => {
-        console.error('Errore nel caricamento dei dati dell\'utente:', error);
+        console.error('Error loading user data.:', error);
       });
     });
   }
@@ -173,12 +168,10 @@ export class EditProfileComponent implements OnInit{
 
   selectVIP(): void {
     if (this.selectedVIP) {
-      // console.log('VIP selezionato:', this.selectedVIP);
   
       const selectedVIPIndex = this.vipList.findIndex(vip => vip.nickname === this.selectedVIP.nickname);
   
       if (selectedVIPIndex !== -1) {
-        // console.log('Indice dell\'utente selezionato:', selectedVIPIndex);
         this.userId = this.user ? JSON.parse(this.user).managedAccounts[selectedVIPIndex] : null;
         localStorage.removeItem('ActuallyUserId');  
         localStorage.setItem('actualUserId', JSON.stringify(this.userId));  
@@ -191,54 +184,50 @@ export class EditProfileComponent implements OnInit{
           this.router.onSameUrlNavigation = 'reload';
           this.router.navigate(['edit-profile']);
         }, error => {
-          console.error('Errore nel caricamento dei dati dell\'utente:', error);
+          console.error('Error loading user data.:', error);
         });
   
       } else {
-        console.error('VIP selezionato non trovato nella lista');
+        console.error('Selected VIP not found in the list');
       }
   
       this.closeVIPDialog();
     } else {
-      console.error('Nessun VIP selezionato');
+      console.error('No VIP selected');
     }
   }
 
-  /*Gestione cambio descrizione DA FARE*/
+  /*Gestione cambio descrizion*/
   openDescriptionModule(): void {
     this.dialogDescriptionRef = this.dialog.open(this.selectDescriptionDialogRef, {
-      width: '80%', // Imposta la larghezza desiderata
-      // marginLeft: '20%', // Imposta il margine sinistro
-      maxWidth: '500px', // Imposta una larghezza massima
+      width: '80%', 
+      maxWidth: '500px', 
       panelClass: 'custom-dialog-margin'
     });
   }
   
   /*Problemi aggiornamento*/
   updateDescription(newDescription: string): void {
-    // Assicurati di ottenere l'ID utente corretto dal localStorage
     const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
     const userId = userData._id;
   
     if (userId) {
-      // console.log('Aggiornamento descrizione per ID:', userId);
       this.databaseService.updateUserProfile(userId, { bio: newDescription })
         .subscribe(response => {
-          // console.log('Risposta del server:', response);
           // Aggiornamento dei dati dell'utente nel localStorage
           userData.bio = newDescription;
           localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
           this.profileDescription = newDescription; // Aggiorna la descrizione nel componente
           this.laodUserData(); // Ricarica i dati dell'utente
-          // Force a refresh of the page
+          // Forza il refresh della pagina
           this.router.routeReuseStrategy.shouldReuseRoute = () => false;
           this.router.onSameUrlNavigation = 'reload';
           this.router.navigate([this.router.url]);
         }, error => {
-          console.error('Errore nell\'aggiornamento della descrizione:', error);
+          console.error('Error in updating description:', error);
         });
     } else {
-      console.error('ID utente non trovato.');
+      console.error('User ID not found.');
     }
     this.closeDescriptionDialog(); // Chiudi il modale dopo il salvataggio
   } 
@@ -252,22 +241,16 @@ export class EditProfileComponent implements OnInit{
     if (this.selectedAmount) {
       this.dialogPaymentRef = this.dialog.open(this.confirmationDialog);
     } else {
-      // console.log('Seleziona entrambe le opzioni prima di procedere');
-      // Qui puoi mostrare un messaggio di errore all'utente
+      console.log('No import selected.');
     }
   }
 
-  // Si aggiorna solo dopo due volte che aggiorni tu
   confirmSelection(): void {
     let amountValue = this.selectedAmount === 'other' ? this.otherAmount : this.selectedAmount;
     let amountNumber = typeof amountValue === 'string' ? parseInt(amountValue, 10) : amountValue || 0;
-  
-    // console.log('Importo selezionato:', amountNumber, 'Metodo di pagamento:', this.selectedPaymentMethod);
 
     const userData = JSON.parse(localStorage.getItem('Dati utente amministrato') || '{}');
     const userId = userData._id;
-
-    // console.log('Aggiornamento caratteri per ID:', userId);
   
     // Assicurati che this.userId sia una stringa che rappresenta l'ID dell'utente
     if (typeof userId === 'string' && userId) {
@@ -285,7 +268,7 @@ export class EditProfileComponent implements OnInit{
       this.databaseService.updateUserProfile(userId, updateData)
         .subscribe({
           next: (response) => {
-            console.log('Risposta del server:', response);
+            console.log('Server response:', response);
   
             // Aggiorna i valori locali e nel localStorage
             this.charLeftUserDaily = newCharLeftDaily;
@@ -305,7 +288,7 @@ export class EditProfileComponent implements OnInit{
             localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
           },
           error: (error) => {
-            console.error("Errore durante l'aggiornamento dei dati utente:", error);
+            console.error("Error while updating user data:", error);
           },
           complete: () => {
             // Chiudi il modale di conferma
@@ -313,7 +296,7 @@ export class EditProfileComponent implements OnInit{
           }
         });
     } else {
-      console.error('ID utente non valido o non trovato.');
+      console.error('User ID invalid or not found.');
     }
   }
   

@@ -32,7 +32,7 @@
             <button mat-button>Likes ({{ currentAnswerSqueal.pos_reactions }})</button>
             <button mat-button>Dislikes ({{ currentAnswerSqueal.neg_reactions }})</button>
           </mat-card-actions>
-          <button mat-button (click)="openAnswerModal(currentAnswerSquealIndex)">Mostra Risposte</button>
+          <button mat-button (click)="openAnswerModal(currentAnswerSquealIndex)">Show answers</button>
         </mat-card>
       </div>
     
@@ -42,7 +42,7 @@
     <div class="modal" *ngIf="isModalOpen">
       <div class="modal-content">
         <span class="close-button" (click)="closeAnswerModal()">&times;</span>
-        <h2>Risposte</h2>
+        <h2>Answers</h2>
         <div class="answer" *ngFor="let answer of selectedSquealAnswers">
           <hr>
           <p>{{ answer.date | date }} at {{ answer.hour }}:{{ answer.seconds }}</p>

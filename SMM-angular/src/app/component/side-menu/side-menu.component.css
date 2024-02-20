@@ -126,7 +126,7 @@ mat-list-item[role="listitem"] mat-icon {
 
 mat-sidenav-content {
     min-height: 100vh;
-    padding: 4% 10%; /* Puoi regolare questi valori secondo necessità */
+    padding: 4% 10%; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -163,11 +163,6 @@ mat-sidenav-content {
         margin-top: 15%;
     }
 
-    /* .logOut-container{
-        margin-left: 28%;
-        text-align: justify;
-    } */
-
     .logoSquealer-container{
         width: 100%;
     }
@@ -201,12 +196,12 @@ mat-sidenav-content {
         left: 0;
         right: 0;
         top: 92%;
-        height: 8%; /* O l'altezza che desideri per il sidenav */
+        height: 8%; 
         display: flex;
         width: 100%;
         justify-content: space-around;
         align-items: center;
-        background: #eee; /* Scegli un colore di sfondo che preferisci */
+        background: #eee; 
         z-index: 1000;
         margin: 0;
         padding: 0;
@@ -218,9 +213,6 @@ mat-sidenav-content {
         overflow: hidden;
       }
 
-    /* mat-list {
-        margin-top: 50%;
-    } */
 
     .logoSquealer-container, .userLogged-container, .settings-container, .space-impaginator {
         display: none;
@@ -229,10 +221,10 @@ mat-sidenav-content {
     .pageSelector-container{
         display: flex;
         flex-direction: row;
-        position: fixed; /* o potrebbe essere anche 'absolute' se è all'interno di un contenitore posizionato */
-        top: 93%; /* Regola in base alla tua header bar se ne hai una */
+        position: fixed; 
+        top: 93%; 
         left: 15%;
-        z-index: 100; /* Assicurati che sia più alto degli altri z-index */
+        z-index: 100; 
         width: 70%;
     }
 
@@ -240,7 +232,7 @@ mat-sidenav-content {
         display: none;
     }
 
-    .active {   /*Quando è selezionato mette il colore verde*/
+    .active {  
         background-color: transparent;
     }
 
