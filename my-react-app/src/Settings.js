@@ -126,7 +126,7 @@ function Settings() {
         let newdate = actualdate.getDate() +"/"+ (actualdate.getMonth()+1) +"/"+ actualdate.getFullYear();
         let newhour = actualdate.getHours() +"/"+ actualdate.getMinutes();
         let newseconds = actualdate.getSeconds();
-        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request verified', body:{text:'Request verified', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], receivers:['@Jack', '@Gabriel Betti'], category:'', impressions:0}
+        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request verified', body:{text:'Request verified', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], receivers:['@Jack', '@Gabriel Betti'], category:'', impressions:0}
         setallSqueals([...allSqueals, newsqueal]);
         addnewSqueal(newsqueal);
     };
@@ -136,7 +136,7 @@ function Settings() {
         let newdate = actualdate.getDate() +"/"+ (actualdate.getMonth()+1) +"/"+ actualdate.getFullYear();
         let newhour = actualdate.getHours() +"/"+ actualdate.getMinutes();
         let newseconds = actualdate.getSeconds();
-        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request SMM', body:{text:'Request SMM', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], receivers:['@Jack', '@Gabriel Betti'], category:'', impressions:0}
+        let newsqueal = {sender:actualuser.nickname, photoprofile: actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, typesender:'Users', channel:'Request SMM', body:{text:'Request SMM', position:[], photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", link:'', video:''}, date: newdate, hour: newhour, seconds: newseconds, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], receivers:['@Jack', '@Gabriel Betti'], category:'', impressions:0}
         setallSqueals([...allSqueals, newsqueal]);
         addnewSqueal(newsqueal);
     };
