@@ -1747,9 +1747,6 @@ document.getElementById("viewCHANNELmessages").addEventListener("click",async ()
             case 'News':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
-            case 'Twitter':
-                document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
-            break;
             case 'WikiInfo':
                 document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
             break;
@@ -1929,14 +1926,6 @@ document.getElementById("typenewmessageCHANNEL").addEventListener("change",()=>{
             if(!document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("squealnewmessageCHANNEL").classList.add('d-none');
         break;
-        case 'Twitter':
-            if(document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
-                document.getElementById("requestnewmessageCHANNEL").classList.remove('d-none');
-            if(!document.getElementById("repeatnewmessageCHANNEL").classList.contains('d-none'))
-                document.getElementById("repeatnewmessageCHANNEL").classList.add('d-none');
-            if(!document.getElementById("squealnewmessageCHANNEL").classList.contains('d-none'))
-                document.getElementById("squealnewmessageCHANNEL").classList.add('d-none');
-        break;
         case 'WikiInfo':
             if(document.getElementById("requestnewmessageCHANNEL").classList.contains('d-none'))
                 document.getElementById("requestnewmessageCHANNEL").classList.remove('d-none');
@@ -2029,14 +2018,6 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
                 alert('User request not valid');
             }
         break;
-        case 'Twitter':
-            if(userrequesttext!="to /" && userrequesttext.startsWith("to /")){
-                newmessage = {type:select, request:userrequesttext, repetition:"", body:{text:"", link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
-                arrcreateCHANNELmessages.push(newmessage);
-            } else {
-                alert('User request not valid');
-            }
-        break;
         case 'WikiInfo':
             if(userrequesttext!="to /" && userrequesttext.startsWith("to /")){
                 newmessage = {type:select, request:userrequesttext, repetition:"", body:{text:"", link:"", photo:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", position:[], video:""}};
@@ -2068,9 +2049,6 @@ document.getElementById("addnewmessageCHANNEL").addEventListener("click", async(
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
                 case 'News':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
-                break;
-                case 'Twitter':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
                 case 'WikiInfo':
@@ -2130,9 +2108,6 @@ async function deletenewmessageCHANNEL(x){
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
                 case 'News':
-                    document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
-                break;
-                case 'Twitter':
                     document.getElementById("viewCHANNELmessageslist").innerHTML += '<div class="card border-light mb-3 d-flex" style="min-width:400px; flex-direction:column"><div class="card-header" style="width:100%; height:70px"><p class="card-text mb-0 me-3">'+arrcreateCHANNELmessages[i].type+' '+arrcreateCHANNELmessages[i].request+'</p></div><div class="card-body" style=" flex-direction:column"></div><div class="card-footer "><button class="btn btn-outline-primary" style="padding: 0.6em 2em 0.6em 2em" onclick="deletenewmessageCHANNEL('+i+')">Delete</button></div></div>';
                 break;
                 case 'WikiInfo':

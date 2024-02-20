@@ -976,24 +976,6 @@ function Profile() {
                             alert('Insert a valid request');
                         }
                     break;
-                    case "Twitter":
-                        if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
-                            setnewchannelmessages(prevmess => ([...prevmess, {
-                                body: {
-                                    text: '',
-                                    position: [],
-                                    link: '',
-                                    photo:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-                                    video:'',
-                                },
-                                request: "to "+userRequest,
-                                type: selection,
-                                repetition:'',
-                            }]));
-                        } else {
-                            alert('Insert a valid request');
-                        }
-                    break;
                     case "WikiInfo":
                         if(userRequest!="/" && userRequest.startsWith("/") && userRequest!=""){
                             setnewchannelmessages(prevmess => ([...prevmess, {
@@ -1317,7 +1299,7 @@ const loadImage = (event) => {
         <Container style={{ width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height: windowSize>=600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflow:'hidden'}} className="d-flex flex-column">
             <header className='d-flex flex-column text-center' style={{width:'100%', alignItems:'center'}}>
                 { actualuser.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
-                <Image src={actualuser.photoprofile} style={{height:'100%', position:'relative', marginTop: actualuser.photoprofileY, marginLeft: actualuser.photoprofileX}}></Image>
+                <Image src={actualuser.photoprofile} style={{height:'100%', width:'100%', position:'relative', marginTop: actualuser.photoprofileY, marginLeft: actualuser.photoprofileX}}></Image>
                 </div>)
                 : <PersonCircle size='70' color='black' className='mt-4'></PersonCircle>
                 }
@@ -1344,7 +1326,7 @@ const loadImage = (event) => {
                         <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                             <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                             { actualuser.photoprofile!='' ? (<div className='me-3' style={{width:'30px', minWidth:'30px', height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                            <Image src={actualuser.photoprofile} style={{height:'100%', position:'relative', marginTop: actualuser.photoprofileY/2.5, marginLeft: actualuser.photoprofileX/2.5}}></Image>
+                            <Image src={actualuser.photoprofile} style={{height:'100%', width:'100%', position:'relative', marginTop: actualuser.photoprofileY/2.5, marginLeft: actualuser.photoprofileX/2.5}}></Image>
                             </div>)
                             : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                             }
@@ -1466,7 +1448,7 @@ const loadImage = (event) => {
                     <Row key={index} onClick={() => editchannel(index)} className='d-flex rowchannel_profile' style={{justifyContent:'center',alignItems:'center',cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
                         <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
                         { channel.photoprofile!='' ? 
-                        (<Image src={channel.photoprofile} style={{height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX}}></Image>)
+                        (<Image src={channel.photoprofile} style={{height:'100%', width:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
                         </div>
                         <h4 style={{width:'60%',textAlign:'left',marginLeft:'10px'}}>{channel.name}</h4>
@@ -1494,7 +1476,7 @@ const loadImage = (event) => {
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <h3 className='text'>Edit Profile</h3>
                     { newphotoprofile!='' ? (<div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}} className='mt-4'>
-                    <Image src={newphotoprofile} onMouseDown={handleMouseDown} style={{height:'100%', position:'relative', marginTop:position.y, marginLeft:position.x, cursor: dragging ? 'grabbing' : 'grab'}}></Image>
+                    <Image src={newphotoprofile} onMouseDown={handleMouseDown} style={{height:'100%', width:'100%', position:'relative', marginTop:position.y, marginLeft:position.x, cursor: dragging ? 'grabbing' : 'grab'}}></Image>
                     </div>)
                     : <PersonCircle size='85' color='black' className='mt-4'></PersonCircle>
                     }
@@ -1761,7 +1743,6 @@ const loadImage = (event) => {
                             <Dropdown.Item eventKey="Repeat">Repeat</Dropdown.Item>
                             <Dropdown.Item eventKey="Casual Images">Casual Images</Dropdown.Item>
                             <Dropdown.Item eventKey="News">News</Dropdown.Item>
-                            <Dropdown.Item eventKey="Twitter">Twitter</Dropdown.Item>
                             <Dropdown.Item eventKey="WikiInfo">Wiki info</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
@@ -1828,7 +1809,7 @@ const loadImage = (event) => {
                     </Card>
                     )}
                     {(selection === "Casual Images" || selection === "WikiInfo" || selection === "News" || selection === "Twitter") && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body>
                                 <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none', outline:'none'}} value={userRequest} onChange={changenewmessageuserrequest}/>
                         </Card.Body>
@@ -1846,7 +1827,7 @@ const loadImage = (event) => {
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                     <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                         { newPhotoKeyword!='' ? 
-                        (<Image src={newPhotoKeyword} style={{height:'100%', marginTop:positionKeyword.y, marginLeft:positionKeyword.x}}></Image>)
+                        (<Image src={newPhotoKeyword} style={{height:'100%', width:'100%', marginTop:positionKeyword.y, marginLeft:positionKeyword.x}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
                     </div>
                     </Col>
@@ -1868,7 +1849,7 @@ const loadImage = (event) => {
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                                     <CardGroup>
                                     { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                                    <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
+                                    <Image src={squeal.photoprofile} style={{height:'100%', width:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
                                     : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                     }
