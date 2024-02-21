@@ -1330,7 +1330,13 @@ const loadImage = (event) => {
                             </div>)
                             : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                             }
-                            {squeal.sender}
+                            {((squeal.typesender=='channels')||(squeal.typesender=='CHANNELS')) ?
+                                (squeal.sender+" from "+squeal.channel)
+                                : (squeal.typesender=='keywords') ? 
+                                (squeal.sender+" from #"+squeal.channel)
+                                :
+                                (squeal.sender)
+                            }
                             </CardGroup>
                             <Card.Text>{squeal.date+" "+squeal.hour}</Card.Text>
                         </Card.Header>

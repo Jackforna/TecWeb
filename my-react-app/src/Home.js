@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Image, Dropdown, Card, Row, Col, Modal, CardGroup} from 'react-bootstrap';
-import { BrowserRouter as Router, Route, Link, Routes, useNavigate, useLocation} from 'react-router-dom';
+import { Container, Form, InputGroup, FormControl, Button, Image, Card, Modal, CardGroup} from 'react-bootstrap';
+import {useLocation} from 'react-router-dom';
 import './App.css';
 import search_logo from './img/search.png'
 import pos_reaction1 from './img/reaction_positive1.png'
@@ -12,11 +12,11 @@ import neg_reaction2 from './img/reaction_negative2.png'
 import neg_reaction3 from './img/reaction_negative3.png'
 import channel_profile from './img/channel_profile.png';
 import Webcam from 'react-webcam';
-import { Camera, Globe, Link as LinkLogo, PersonCircle, Gear, NodeMinus, Send, CaretDownFill, HouseDoor, Search as SearchLogo, PatchCheckFill, X, GeoAlt, CameraVideo, Link45deg} from 'react-bootstrap-icons';
+import { Camera, PersonCircle, Send, CaretDownFill, GeoAlt, CameraVideo, Link45deg} from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals} from './serverRequests.js';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -70,13 +70,7 @@ function Home(){
   const [inputLink, setinputLink] = useState("");
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [showCameraVideoModal, setShowCameraVideoModal] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [recordedChunks, setRecordedChunks] = useState([]);
-  const [stopRecording, setStopRecording] = useState(false);
-  const [stream, setStream] = useState(null);
   const webcamRef = useRef(null);
-  const videoRef = useRef(null);
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [positionMap, setPositionMap] = useState(null);
   const [displayedLink, setDisplayedLink] = useState(''); 
@@ -151,7 +145,7 @@ useEffect(()=>{
     if(JSON.parse(localStorage.getItem("actualUserId"))!="1"){
       for(let i=0; i<allSquealsReceived.length;i++){
           for(let j=0; j<allSquealsReceived[i].receivers.length; j++){
-              if(allSquealsReceived[i].receivers[j]=="@"+actualuser.nickname){
+              if((allSquealsReceived[i].receivers[j]=="@"+actualuser.nickname)||(allSquealsReceived[i].receivers[j]==actualuser.nickname)){
                 switch(allSquealsReceived[i].typesender){
                   case "CHANNELS":
                     if(actualuser.notifications[1]){
@@ -198,7 +192,19 @@ useEffect(()=>{
                   break;
                   default:
                     if(actualuser.notifications[3]){
-                      squealsReceived.push(allSquealsReceived[i]);
+                      let findIn = false;
+                      for(let k=0; k<allkeywords.length; k++){
+                        if(allkeywords[k].name==allSquealsReceived[i].channel){
+                          for(let m=0;m<allkeywords[k].usersSilenced.length;m++){
+                            if(allkeywords[k].usersSilenced[m] == actualuser.nickname){
+                              findIn = true;
+                            }
+                          }
+                        }
+                      }
+                      if(!findIn){
+                        squealsReceived.push(allSquealsReceived[i]);
+                      }
                     }
                   break;
                 }
@@ -897,7 +903,7 @@ const handleVideoChange = (e) => {
                           ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
-                            : (<PersonCircle size='30' color='black' className='me-3'></PersonCircle>)
+                            : (<PersonCircle size='30' fill='black' className='me-3'></PersonCircle>)
                           )
                           :
                           ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
@@ -907,8 +913,10 @@ const handleVideoChange = (e) => {
                             <Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image></div>)
                           )
                         }
-                        {((squeal.typesender=='channels')|(squeal.typesender=='CHANNELS')) ?
+                        {((squeal.typesender=='channels')||(squeal.typesender=='CHANNELS')) ?
                         (squeal.sender+" from "+squeal.channel)
+                        : (squeal.typesender=='keywords') ? 
+                        (squeal.sender+" from #"+squeal.channel)
                         :
                         (squeal.sender)
                       }
@@ -1070,11 +1078,11 @@ const handleVideoChange = (e) => {
                               CHANNELS
                             </li>
                             <li
-                              onClick={() => handleItemClick('keyword')}
-                              className={`${selectedItems.includes('keyword') ? 'active' : ''}`}
+                              onClick={() => handleItemClick('keywords')}
+                              className={`${selectedItems.includes('keywords') ? 'active' : ''}`}
                               style={{listStyle:'none',cursor:'pointer',color:'white',marginBottom:'3px'}}
                             >
-                              keyword
+                              keywords
                             </li>
                         </ul>
                       </div>
@@ -1143,7 +1151,7 @@ const handleVideoChange = (e) => {
                           {squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
-                            : (<PersonCircle size='30' color='white' className='me-3'></PersonCircle>)
+                            : (<PersonCircle size='30' fill='black' className='me-3'></PersonCircle>)
                           }
                         {squeal.sender}
                       </CardGroup>

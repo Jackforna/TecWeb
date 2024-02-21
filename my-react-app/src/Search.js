@@ -123,12 +123,15 @@ function Search() {
                   switch (Channels[i].type) {
                     case '&':
                       newAllchannels.push(Channels[i]);
+                      console.log(newAllchannels);
                       break;
                     case '$':
                       newAllCHANNELS.push(Channels[i]);
+                      console.log(newAllCHANNELS);
                       break;
                     case '#':
                       newAllKeywords.push(Channels[i]);
+                      console.log(newAllKeywords);
                       break;
                   }
                 }
@@ -662,10 +665,10 @@ const toggleSilenceChannel = () => {
                               style={{listStyle:'none',cursor:'pointer',color:'white',marginBottom:'3px'}}
                             >CHANNELS</li>
                             <li
-                              onClick={() => handleItemClick('keyword')}
-                              className={`${selectedItems.includes('keyword') ? 'active' : ''}`}
+                              onClick={() => handleItemClick('keywords')}
+                              className={`${selectedItems.includes('keywords') ? 'active' : ''}`}
                               style={{listStyle:'none',cursor:'pointer',color:'white',marginBottom:'3px'}}
-                            >keyword</li>
+                            >keywords</li>
                         </ul>
                       </div>
                 </InputGroup>

@@ -1188,22 +1188,6 @@ function CreateMessage(props) {
           console.error('Errore nel recupero delle notizie:', error);
         }
         break;
-      case 'Twitter': //Non funzionante
-        try {
-          const tweet = await fetchRandomTweet();
-          console.log("Tweet fuori", tweet);
-          // const tempBodyTweet =  {
-          //   text: tweet.text,
-          //   link: tweet.link || '',
-          //   photo: tweet.photo || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-          //   video: '',
-          //   position: '',
-          // }
-          // handleSendChannelDefaultSqueal(tempBodyTweet);
-        } catch (error) {
-          console.error('Errore nel recupero dei tweet:', error);
-        }
-        break;
       case 'WikiInfo':
         try {
           const wiki = await fetchRandomWikiArticle();
