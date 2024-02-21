@@ -1062,6 +1062,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
         position: '',
       }
       this.handleSendChannelDefaultSqueal(tempBodyInterval);
+      this.playBeep();
       alert("Message send numer: " + counter);
     }, n * 1000); // n * 1000 per convertire i secondi in millisecondi
   }
@@ -1073,6 +1074,26 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     }
   }
 
+  beep = (frequency = 520, duration = 200, volume = 1, type = 'sine' as OscillatorType) => {
+    const audioContext = new (window.AudioContext || window.AudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+  
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+  
+    gainNode.gain.value = volume;
+    oscillator.frequency.value = frequency;
+    oscillator.type = type;
+  
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duration * 0.001); // Converti millisecondi in secondi
+  };
+  /*funzione per il beep*/
+  playBeep = () => {
+    this.beep(520, 200, 1, 'sine'); // Produce un beep di 520Hz per 200ms
+  };  
+
 
   /*Canale vs Squeal*/
   onTypeChange(event: any) {
@@ -1083,6 +1104,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     this.myControl.reset();
     this.userControl.reset();
     this.channelControl.reset();
+    this.channelSelected = null;
+    this.showDeafaultMessage = false;
   
     if (this.myControl && this.userControl && this.channelControl) {
       this.updateCharLeftUser({} as Event);

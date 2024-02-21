@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            <div *ngIf="channelHaveDeafault" class = "defaultMessage-Container">
+            <div *ngIf="(channelHaveDeafault && (isChannelNameValid))" class = "defaultMessage-Container">
                 <div style="display:flex; flex-direction: row;">
                     <h3>This channel have default message avaible</h3>
                     <button *ngIf = "!showDeafaultMessage" (click)="showDeafaultMessage = true" class="icon-button" style="margin-top: -1%;"><i class="material-icons">expand_more</i></button>
@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <div class="post-textarea" *ngIf="(!showDeafaultMessage)">
+            <div class="post-textarea" *ngIf="(!showDeafaultMessage) || (!isChannelNameValid)">
                 <textarea 
                     placeholder="What are you thinking about?" 
                     [attr.maxlength]="charLeftUser"
@@ -104,7 +104,7 @@
         </div>
           
           
-        <mat-card-actions *ngIf="(!(isChannel && accessType === 'create')) && (!showDeafaultMessage)">
+        <mat-card-actions *ngIf="(!(isChannel && accessType === 'create')) && (!showDeafaultMessage) || (!isChannelNameValid)">
             <div class="input-icons">
                 <button class="icon-button" (click)="openLinkDialog()"><i class="material-icons">attach_file</i></button>
                 <button class="icon-button" (click)="openCameraDialog()"><i class="material-icons">photo_camera</i></button>
