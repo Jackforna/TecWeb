@@ -13,7 +13,6 @@ app-create-message .post-input-container {
   margin-bottom: 10%;
 }
 
-/* post-input.component.css */
 .post-input-container {
   width: 70%;
   margin-top: 4%;
@@ -25,8 +24,8 @@ app-create-message .post-input-container {
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  background-position: center; /* Centra l'immagine di sfondo */
-  background-repeat: no-repeat; /* Impedisce la ripetizione dell'immagine */
+  background-position: center; 
+  background-repeat: no-repeat; 
 }  
 
   .custom-select-wrapper {
@@ -41,7 +40,7 @@ app-create-message .post-input-container {
       border-radius: 20px;
       border-color: black;
       outline: none;
-      background-color: rgba(255, 255, 255, 0.2); /* Semi-trasparente */
+      background-color: rgba(255, 255, 255, 0.2); 
       color: black;
       font-size: 16px;
     }
@@ -67,31 +66,31 @@ app-create-message .post-input-container {
       margin-left: 2%;
       width: 90%;
       height: 120px;
-      position: relative; /* Aggiunto per il posizionamento assoluto della textarea all'interno */
+      position: relative; 
   }
   
   .post-textarea textarea {
-      resize: none; /* Impedisce il ridimensionamento */
-      width: 100%; /* Larghezza al 100% del contenitore */
-      height: 100%; /* Altezza al 100% del contenitore */
-      padding: 10px; /* Aggiunge un po' di spazio interno */
-      box-sizing: border-box; /* Include padding e bordo nella larghezza e altezza */
-      border: 1px solid #ccc; /* Aggiunge un bordo leggero alla textarea */
-      border-radius: 4px; /* Bordo leggermente arrotondato */
-      font-size: 1em; /* Dimensione del testo */
+      resize: none; 
+      width: 100%; 
+      height: 100%; 
+      padding: 10px; 
+      box-sizing: border-box; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+      font-size: 1em; 
   }
   
   
   .character-counter {
-      margin-left: auto; /* sposta il contatore di caratteri a destra */
+      margin-left: auto; 
   }
 
 
 .input-icons {
 display: flex;
-align-items: center; /* Allinea verticalmente le icone */
-justify-content: flex-start; /* Allinea le icone all'inizio */
-width: 100%; /* Assicurati che il contenitore abbia una larghezza completa */
+align-items: center; 
+justify-content: flex-start; 
+width: 100%; 
 margin-left: 2%;
 }
 
@@ -99,23 +98,22 @@ margin-left: 2%;
 background: none;
 border: none;
 cursor: pointer;
-padding: 5px; /* Aggiungi un po' di spazio intorno alle icone */
+padding: 5px; 
 margin-right: 2%;
 }
 
 .icon-button i.material-icons {
-color: black; /* Cambia questo colore come preferisci */
-font-size: 24px; /* O la dimensione che preferisci */
+color: black; 
+font-size: 24px; 
 }
 
 .send-icon {
-margin-left: auto; /* Spinge il pulsante 'send' a destra */
+margin-left: auto; 
 }
 
 .send-icon:disabled {
-  background-color: #cccccc; /* Colore di sfondo per il bottone disabilitato */
-  color: #666666; /* Colore del testo per il bottone disabilitato */
-  /* Altre proprietà... */
+  background-color: #cccccc; 
+  color: #666666; 
 }
 
 /*Modale camera*/
@@ -128,8 +126,8 @@ position: fixed;
 z-index: 1000;
 left: 10%;
 top: 0;
-width: 100%; /* Larghezza al 100% della viewport */
-height: 100%; /* Altezza al 100% della viewport */
+width: 100%; 
+height: 100%;
 overflow: auto;
 background-color: rgba(0, 0, 0, 0.4);
 }
@@ -140,13 +138,11 @@ padding: 20px;
 border: 1px solid #888;
 width: auto;
 max-width: 500px;
-margin: auto; /* Centrato orizzontalmente */
+margin: auto; 
 box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 animation-name: animatetop;
 animation-duration: 0.4s;
-/* Mantiene le proporzioni dell'immagine e la dimensione corretta all'interno del canvas */
 object-fit: contain;
-/* Imposta la dimensione massima del canvas per mantenere le proporzioni */
 max-width: 100%;
 max-height: 100%;
 }
@@ -160,8 +156,8 @@ max-height: 100%;
   z-index: 1000;
   left: 10%;
   top: 0;
-  width: 100%; /* Larghezza al 100% della viewport */
-  height: 100%; /* Altezza al 100% della viewport */
+  width: 100%; 
+  height: 100%; 
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
   }
@@ -172,13 +168,11 @@ max-height: 100%;
   border: 1px solid #888;
   width: auto;
   max-width: 500px;
-  margin: auto; /* Centrato orizzontalmente */
+  margin: auto; 
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   animation-name: animatetop;
   animation-duration: 0.4s;
-  /* Mantiene le proporzioni dell'immagine e la dimensione corretta all'interno del canvas */
   object-fit: contain;
-  /* Imposta la dimensione massima del canvas per mantenere le proporzioni */
   max-width: 100%;
   max-height: 100%;
   }
@@ -186,23 +180,23 @@ max-height: 100%;
 /*Gestione foto nel messaggio*/
 .sent-image-container {
   position: relative;
-  width: 300px; /* Larghezza fissa del contenitore dell'immagine */
-  height: 300px; /* Altezza fissa del contenitore dell'immagine */
+  width: 300px; 
+  height: 300px; 
   margin-left: 4%;
   margin-top: 1%;
-  overflow: hidden; /* Nasconde le parti dell'immagine che eccedono il contenitore */
+  overflow: hidden; 
 }
 
 .image-with-close {
   position: relative;
-  width: 100%; /* Usa l'intera larghezza del contenitore */
-  height: 100%; /* Usa l'intera altezza del contenitore */
+  width: 100%;
+  height: 100%; 
 }
 
 .sent-image {
-  width: 100%; /* Larghezza dell'immagine si adatta alla larghezza del contenitore */
-  height: 100%; /* Altezza dell'immagine si adatta all'altezza del contenitore */
-  object-fit: cover; /* Copre il contenitore mantenendo le proporzioni */
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
 }
 
 .close-icon {
@@ -219,17 +213,17 @@ max-height: 100%;
 /*Gestione video nel messaggio*/
 .sent-video-container{
   position: relative;
-  width: 300px; /* Larghezza fissa del contenitore dell'immagine */
-  height: 300px; /* Altezza fissa del contenitore dell'immagine */
+  width: 300px;
+  height: 300px; 
   margin-left: 4%;
   margin-top: 1%;
-  overflow: hidden; /* Nasconde le parti dell'immagine che eccedono il contenitore */
+  overflow: hidden; 
 }
 
 .sent-video-container video {
-  width: 100%; /* Adatta la larghezza del video alla larghezza del contenitore */
-  height: 100%; /* Adatta l'altezza del video all'altezza del contenitore */
-  object-fit: contain; /* Mantiene le proporzioni del video e lo adatta all'interno del contenitore senza tagliarlo */
+  width: 100%; 
+  height: 100%; 
+  object-fit: contain; 
 }
 
 
@@ -287,19 +281,19 @@ user-select: none;
 display: flex;
 align-items: center;
 justify-content: space-between;
-margin-top: 2%; /* Regola secondo il tuo layout */
+margin-top: 2%; 
 margin-left: 4%;
 padding: 0px;
-background-color: transparent; /* Sfondo per il contenitore del link */
+background-color: transparent; 
 border-radius: 4px;
 }
 
 .sent-link-container a {
-margin-right: 10px; /* Spazio tra il link e l'icona 'X' */
-overflow: hidden; /* Previene il debordamento del testo del link */
+margin-right: 10px; 
+overflow: hidden; 
 text-overflow: ellipsis; /* Aggiunge '...' se il link è troppo lungo */
 white-space: nowrap; /* Mantiene il link su una singola linea */
-max-width: 90%; /* Imposta una larghezza massima per il link */
+max-width: 90%;
 color: blue;
 }
 
@@ -330,10 +324,9 @@ font-size: 1.2em;
 }
 
 .modal-actions button:nth-child(1) {
-background-color: #6c757d; /* Colore per il pulsante di chiusura/annullamento */
+background-color: #6c757d; 
 }
 
-/* Aggiungi stili al passaggio del mouse, ecc. */
 .modal-actions button:hover {
 opacity: 0.9;
 }
@@ -342,19 +335,19 @@ opacity: 0.9;
 /*Posizione effettiva*/
 #leaflet-map {
 position: relative;
-width: 300px; /* Imposta la larghezza del contenitore della mappa */
-height: 300px; /* Imposta l'altezza del contenitore della mappa */
+width: 300px; 
+height: 300px; 
 }
 
 .leaflet-tile-container leaflet-zoom-animated{
-width: 300px; /* Imposta la larghezza del contenitore della mappa */
-height: 300px; /* Imposta l'altezza del contenitore della mappa */
+width: 300px; 
+height: 300px; 
 transform: none !important;
 }
 
 .leaflet-tile leaflet-tile-loaded{
-width: 300px; /* Imposta la larghezza del contenitore della mappa */
-height: 300px; /* Imposta l'altezza del contenitore della mappa */
+width: 300px; 
+height: 300px; 
 transform: none !important;
 }
 
@@ -411,8 +404,6 @@ margin-left: 4%;
 .example-form {
   display: flex;
   align-items: center;
-  /*margin-top: 2%;
-  margin-left: 2%;  Allinea con la textarea */
 }
 
 #hashtagInputField{
@@ -462,31 +453,31 @@ margin-left: 4%;
 }
 
 .selected-user-image {
-  width: 30px; /* o la dimensione che preferisci */
-  height: 30px; /* deve essere uguale alla larghezza per essere circolare */
-  border-radius: 50%; /* rende l'immagine circolare */
-  object-fit: cover; /* assicura che l'immagine copra tutto lo spazio senza essere distorta */
-  margin-right: 5px; /* spazio tra le immagini */
+  width: 30px; 
+  height: 30px; 
+  border-radius: 50%; 
+  object-fit: cover; 
+  margin-right: 5px; 
 }
 
 .remove-user-icon {
   position: absolute;
-  top: -5px; /* regola in base alle tue necessità */
-  right: -5px; /* regola in base alle tue necessità */
+  top: -5px; 
+  right: -5px;
   background-color: red;
   color: white;
   width: 15px;
   height: 15px;
   border-radius: 50%;
   text-align: center;
-  line-height: 15px; /* per centrare il testo verticalmente */
+  line-height: 15px; 
   cursor: pointer;
   font-size: 12px;
 }
 
 .selected-user-container {
   position: relative;
-  display: inline-block; /* o flex a seconda della tua struttura */
+  display: inline-block; 
   margin-right: 10px;
 }
 
@@ -535,10 +526,6 @@ margin-left: 4%;
   margin-right: 20px;
 }
 
-.channel-input-container {
-  /* Altre regole di stile che potresti avere */
-}
-
 .defaultMessage-Container {
   margin-left: 2%;
   margin-top: 2%;
@@ -546,10 +533,10 @@ margin-left: 4%;
 
 .suggested-channels {
   position: absolute;
-  top: 100%; /* posiziona i suggerimenti proprio sotto l'input */
+  top: 100%; 
   left: 0;
   right: 0;
-  z-index: 10; /* assicurati che i suggerimenti siano sopra gli altri elementi */
+  z-index: 10; 
   background: white;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -624,13 +611,13 @@ margin-left: 4%;
   }
 
   #leaflet-map {
-    width: 200px; /* Imposta la larghezza del contenitore della mappa */
-    height: 200px !important; /* Imposta l'altezza del contenitore della mappa */
+    width: 200px; 
+    height: 200px !important; 
     }
 
   #leaflet-map-container {
-    width: 200px !important; /* Imposta la larghezza del contenitore della mappa */
-    height: 200px !important; /* Imposta l'altezza del contenitore della mappa */
+    width: 200px !important; 
+    height: 200px !important; 
     }
 
   .sent-image-container{

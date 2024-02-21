@@ -16,20 +16,12 @@ h3{
     margin-top: 5%;
 }
 
-/*
-.most-reacted-squeals-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-*/
-
 .carousel-container {
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    width: 100%; /* Assicurati che il contenitore occupi l'intera larghezza */
+    width: 100%; 
   }
   
   .squeal-card-container {
@@ -41,7 +33,7 @@ h3{
   }
   
   .squeal-card {
-    width: 100%; /* Larghezza della card, può essere impostata a una misura fissa o percentuale */
+    width: 100%; 
     transition: transform 0.5s ease; /* Aggiunge un effetto di transizione quando si cambia la card */
   }
   
@@ -51,15 +43,15 @@ h3{
     border: none;
     cursor: pointer;
     font-size: 2rem; /* Dimensione della freccia */
-    z-index: 100; /* Assicurati che i pulsanti siano sopra le card */
+    z-index: 100; 
   }
   
   .nav-button.left {
-    left: 10px; /* Distanza dal lato sinistro del contenitore */
+    left: 10px; 
   }
   
   .nav-button.right {
-    right: 10px; /* Distanza dal lato destro del contenitore */
+    right: 10px; 
   }
   
   
@@ -93,16 +85,15 @@ h3{
 
 .video-container{
   position: relative;
-  width: 200px; /* Larghezza fissa del contenitore dell'immagine */
-  height: 200px; /* Altezza fissa del contenitore dell'immagine */
-  /* margin-left: 4%; */
+  width: 200px; 
+  height: 200px;
   margin-top: 1%;
-  overflow: hidden; /* Nasconde le parti dell'immagine che eccedono il contenitore */
+  overflow: hidden; 
 }
 
 .video-container video {
-  width: 100%; /* Adatta la larghezza del video alla larghezza del contenitore */
-  height: 100%; /* Adatta l'altezza del video all'altezza del contenitore */
+  width: 100%; 
+  height: 100%; 
   object-fit: contain; /* Mantiene le proporzioni del video e lo adatta all'interno del contenitore senza tagliarlo */
 }
   
@@ -112,11 +103,11 @@ h3{
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75); /* Rendi lo sfondo più scuro per oscurare il contenuto sottostante */
+  background-color: rgba(0, 0, 0, 0.75); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Assicurati che il modale sia sopra a tutto il resto */
+  z-index: 1000; 
 }
 
 .modal-content {
@@ -124,7 +115,7 @@ h3{
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-  max-height: 80%; /* Imposta un'altezza massima */
+  max-height: 80%; 
   overflow-y: auto; /* Permetti lo scorrimento se il contenuto è troppo lungo */
 }
 
@@ -140,9 +131,9 @@ h3{
 }
 
 .modal-content {
-  max-width: 40vw; /* larghezza massima del contenuto del modale */
-  max-height: 80vh; /* altezza massima del contenuto del modale */
-  overflow-y: auto; /* permette la scorribilità se il contenuto è troppo lungo */
+  max-width: 40vw; 
+  max-height: 80vh; 
+  overflow-y: auto; 
   margin-left: 20%;
 }
 
@@ -152,11 +143,11 @@ h3{
 }
 
 .modal-content p {
-  font-size: 1rem; /* dimensione del testo */
+  font-size: 1rem; 
 }
 
 .close-button {
-  font-size: 1.5rem; /* dimensione del bottone di chiusura */
+  font-size: 1.5rem; 
 }
 
 hr{

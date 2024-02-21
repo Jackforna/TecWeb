@@ -6,10 +6,9 @@ import { MonitoringComponent } from './component/monitoring/monitoring.component
 import { CreateMessageComponent } from './component/create-message/create-message.component';
 import { SettingsComponent } from './component/settings/settings.component';
 import { GraphicsComponent } from './component/graphics/graphics.component';
-import { authGuard } from './auth/auth.guard';
 
 const routes: Routes = [
-  { path : '', component: SideMenuComponent, canActivate: [authGuard],  children: [  
+  { path : '', component: SideMenuComponent, children: [  
     { path: '', redirectTo: 'edit-profile', pathMatch: 'full'},
     { path: 'edit-profile', component: EditProfileComponent },
     { path: 'monitoring', component: MonitoringComponent },

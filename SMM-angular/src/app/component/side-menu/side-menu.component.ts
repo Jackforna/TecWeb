@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
-import { AuthService } from 'src/app/auth/auth.service';
+import { Component, OnInit } from '@angular/core';
 import { DatabaseService } from 'src/app/services/database.service';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-side-menu',
@@ -11,23 +10,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class SideMenuComponent implements OnInit {
 
-  nickname: string | null = ''; // Definisce la variabile username a livello di classe
-  profilePictureUrl: string | null = ''; // Definisce la variabile profileImage a livello di classe
-  profileDescription: string = ''; // Definisce la variabile profileDescription a livello di classe
-  logoUrl: string = 'assets/images/logo - Copia.png'; // Definisce la variabile logoUrl a livello di classe
+  nickname: string | null = ''; 
+  profilePictureUrl: string | null = ''; 
+  profileDescription: string = ''; 
+  logoUrl: string = 'assets/images/logo - Copia.png'; 
 
   
   id_manager = localStorage.getItem('actualUserId');
   id_user: string | null = '';
 
 
-  constructor(private authService: AuthService, private databaseService: DatabaseService, private http: HttpClient, private router: Router) { }
+  constructor(private databaseService: DatabaseService, private http: HttpClient, private router: Router) { }
 
   ngOnInit(): void {
     // console.clear();
     this.getManagerDetails();
     this.setAccountData();
-    /* Chiamata per ottenere tutti gli utenti
+    /* Test
     this.databaseService.getAllUsers().subscribe( 
       (data: any) => {
         console.log('Tutti gli utenti:', data);
@@ -39,10 +38,8 @@ export class SideMenuComponent implements OnInit {
     */
   }
 
-  // Da mettere a posto
   onLogout(): void {
     // localStorage.clear();
-    // localStorage.setItem('actualUserId', "1");
     localStorage.removeItem('Interval active');
     localStorage.removeItem('secToRepeat');
     localStorage.removeItem('Counter');
@@ -63,19 +60,16 @@ export class SideMenuComponent implements OnInit {
 
         // Se l'utente è un manager e ha almeno un account gestito
         if (managerData.version === 'social media manager' && managerData.managedAccounts.length > 0) {
-          // const managerDataToSave = {...managerData, password: undefined};
           localStorage.setItem('Dati manager', JSON.stringify(managerData));
           this.databaseService.getUserData(managerData.managedAccounts[0]).subscribe((userData: any) => {  
-            // const userDataToSave = {...userData, password: undefined};
             localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
-            // console.log("Dati user: ", userDataToSave);
           }, error => {
-            console.error('Errore nella richiesta:', error);
+            console.error('Error in request:', error);
           });
         }
       },
       error => {
-        console.error('Errore nella richiesta:', error);
+        console.error('Error in request:', error);
       }
     );
   }
@@ -88,7 +82,7 @@ export class SideMenuComponent implements OnInit {
     this.profileDescription = datiUtente ? datiUtente.profilebio : '';
   }
 
-  /*Funzione per aggiornare gli account gestiti dall'utente
+  /*Funzione per aggiornare gli account gestiti dall'utente Test
   updateUserManagedAccounts(userId: string, managedAccounts: string[]) {
     this.http.put(`http://localhost:8080/update-user/${userId}`, { managedAccounts })
       .subscribe(
@@ -101,20 +95,5 @@ export class SideMenuComponent implements OnInit {
       );
   }
   */
-
-  /* Funzione aggiornamento foto profilo utente
-  updateUserProfilePicture(userId: string, newPhotoProfileUrl: string) {
-    this.http.put(`http://localhost:8080/update-user/${userId}`, { photoprofile: newPhotoProfileUrl })
-      .subscribe(
-        response => {
-          console.log('Foto profilo utente aggiornata con successo', response);
-        },
-        error => {
-          console.error('Errore durante l\'aggiornamento della foto del profilo:', error);
-        }
-      );
-  }
-  */
-  
 
 }

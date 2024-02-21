@@ -11,14 +11,14 @@ h2{
 }
 
 .chart-canvas {
-    margin: 0 auto; /* centra il canvas */
-    display: block; /* elimina l'alignement inline di default */
+    margin: 0 auto; 
+    display: block; 
     width: 400px;
     height: 200px;
   }
   
 .canvas-container {
-    margin-bottom: 7%; /* o quanto preferisci */
+    margin-bottom: 7%; 
 }
 
 

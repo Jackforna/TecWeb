@@ -5,86 +5,83 @@
             <span>{{ nickname }}</span>
         </div>
         <div class = "action1-container">
-            <a style = "margin-bottom: 6%;"  (click)="openVIPSelectModule()">Modifica VIP</a>
-            <a (click)="openDialog()">Modifica foto</a>  <!--Test il click-->
+            <a style = "margin-bottom: 6%;"  (click)="openVIPSelectModule()">Change VIP</a>
+            <a (click)="openDialog()">Change foto</a>
         </div>
-            <!--Test cambio foto profilo (NON FUNZIONANTE IL CARICAMENTO IL RESTO OK)-->
             <ng-template #selectPhotoDialog>
-                <h1 mat-dialog-title>Scegli una Foto</h1>
+                <h1 mat-dialog-title>Chose a picture</h1>
                 <div mat-dialog-content>
                 <input type="file" #fileInput (change)="onFileSelected($event)" id="fileInput" accept="image/*">
                 <!-- Pulsante per Confermare l'Invio dell'Immagine Selezionata -->
-                <button (click)="updateProfilePicture(tempPhotoProfile)">Conferma</button>
+                <button (click)="updateProfilePicture(tempPhotoProfile)">Confirm</button>
                 </div>
                 <div mat-dialog-actions>
-                <button mat-button (click)="closeDialog()">Annulla</button>
-                <!--<button mat-button (click)="modifiedImage(fileInput.files?.item(0) || undefined)">Seleziona</button>-->
+                <button mat-button (click)="closeDialog()">Cancel</button>
                 </div>
             </ng-template>
-            <!--Fine test-->
 
             <!--Cambio VIP da gestire-->
             <ng-template #selectVIPDialog>
-                <h1 mat-dialog-title>Scegli un VIP da gestire</h1>
+                <h1 mat-dialog-title>Choose a VIP to manage</h1>
                 <div mat-dialog-content>
-                <!-- Lista di opzioni VIP (da sostituire con i dati reali) -->
+                <!-- Lista di opzioni VIP -->
                 <mat-radio-group [(ngModel)]="selectedVIP" id = "radioGroup-vip">
                     <mat-radio-button *ngFor="let vip of vipList" [value]="vip">{{ vip.nickname }}</mat-radio-button>
                 </mat-radio-group>
                 </div>
                 <div mat-dialog-actions>
-                <button mat-button (click)="closeVIPDialog()">Annulla</button>
-                <button mat-button (click)="selectVIP()">Seleziona</button>
+                <button mat-button (click)="closeVIPDialog()">Cancel</button>
+                <button mat-button (click)="selectVIP()">Select</button>
                 </div>
             </ng-template>
     </div>
     <ng-container class = "descriptionPart-invisibleContainer">
         <div class = "description-container">
             <p>{{ profileDescription }}</p>
-            <a (click)="openDescriptionModule()">Modifica descrizione</a>
+            <a (click)="openDescriptionModule()">Edit description</a>
         </div>
         <!--Cambio descrizione modale-->
         <ng-template #selectDescriptionDialog id = "selectDescriptionDialog">
             <div>
-                <h1 mat-dialog-title>Cambia la descrizione</h1>
+                <h1 mat-dialog-title>Change the description</h1>
                 <div mat-dialog-content>
                 <!-- Textarea per l'input del testo con un limite di 150 caratteri -->
-                <textarea #descriptionInput matInput maxlength="150" rows="4" placeholder="Inserisci la tua descrizione qui..." style = "width: 90%; resize: none;"></textarea>
-                <p>{{ descriptionInput.value.length }}/150 caratteri</p>
+                <textarea #descriptionInput matInput maxlength="150" rows="4" placeholder="Enter your description here..." style = "width: 90%; resize: none;"></textarea>
+                <p>{{ descriptionInput.value.length }}/150 characters/p>
                 </div>
                 <div mat-dialog-actions>
-                <button mat-button (click)="closeDescriptionDialog()">Annulla</button>
+                <button mat-button (click)="closeDescriptionDialog()">Cancel</button>
                 <!-- Aggiorna la funzione di click per gestire l'input del testo -->
-                <button mat-button (click)="updateDescription(descriptionInput.value)">Salva</button>
+                <button mat-button (click)="updateDescription(descriptionInput.value)">Save</button>
                 </div>
             </div>
         </ng-template>
     </ng-container>
     <ng-template #confirmationDialog class = "pagamentoDialog-Container">
         <div id = "pagamento-dialog" style = "display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <h2 mat-dialog-title>Conferma</h2>
-            <h3>Metodo di pagamento</h3>
+            <h2 mat-dialog-title>Confirm</h2>
+            <h3>Payment method</h3>
             <mat-radio-group [(ngModel)]="selectedPaymentMethod" id = "radioGroup-vip">
                 <mat-radio-button class="example-margin" value="PayPal">PayPal</mat-radio-button>
-                <mat-radio-button class="example-margin" value="CreditCard">Carta di credito</mat-radio-button>
+                <mat-radio-button class="example-margin" value="CreditCard">Credit card</mat-radio-button>
                 <mat-radio-button class="example-margin" value="GooglePay">GooglePay</mat-radio-button>
             </mat-radio-group>
-            <mat-dialog-content>Sei sicuro?</mat-dialog-content>
+            <mat-dialog-content>Are you sure?</mat-dialog-content>
             <mat-dialog-actions>
-            <button mat-button (click)="confirmSelection()">Sì</button>
+            <button mat-button (click)="confirmSelection()">Yes</button>
             <button mat-button mat-dialog-close>No</button>
             </mat-dialog-actions>
         </div>
     </ng-template>
     <hr>
     <div class = "characterSection-container">
-        <h3>Caratteri rimanenti giornalieri: {{charLeftUserDaily}}/{{charMaximunDaily}}</h3>
+        <h3>Characters remaining daily: {{charLeftUserDaily}}/{{charMaximunDaily}}</h3>
         <mat-progress-bar class = "barraCaratteriRimanenti" mode="determinate" [value]="charLeftDaily" [bufferValue]=""></mat-progress-bar>
-        <h3>Caratteri rimanenti settimanali: {{charLeftUserWeekly}}/{{charMaximunWeekly}}</h3>
+        <h3>Weekly remaining characters: {{charLeftUserWeekly}}/{{charMaximunWeekly}}</h3>
         <mat-progress-bar class = "barraCaratteriRimanenti" mode="determinate" [value]="charLeftWeekly" [bufferValue]=""></mat-progress-bar>
-        <h3>Caratteri rimanenti mensili: {{charLeftUserMonthly}}/{{charMaximunMonthly}}</h3>
+        <h3>Characters remaining monthly: {{charLeftUserMonthly}}/{{charMaximunMonthly}}</h3>
         <mat-progress-bar class = "barraCaratteriRimanenti" mode="determinate" [value]="charLeftMonthly" [bufferValue]=""></mat-progress-bar>
-        <h2>Acquista caratteri</h2>
+        <h2>Buy characters</h2>
         <h3>Amount of character</h3>
         <section class="example-section" style="margin-bottom: 4%;">
             <mat-radio-group [(ngModel)]="selectedAmount">
@@ -97,17 +94,5 @@
                 <button mat-raised-button (click)="openConfirmationModal()" style = "border-radius: 10px; background-color: aquamarine;">Buy</button>
             </mat-radio-group>
         </section>
-        
-        <!--
-        <div class="paymentMethod-container">
-            <h3>Metodo di pagamento</h3>
-            <mat-radio-group [(ngModel)]="selectedPaymentMethod">
-                <mat-radio-button class="example-margin" value="PayPal">PayPal</mat-radio-button>
-                <mat-radio-button class="example-margin" value="CreditCard">Carta di credito</mat-radio-button>
-                <mat-radio-button class="example-margin" value="GooglePay">GooglePay</mat-radio-button>
-            </mat-radio-group>
-            <button mat-raised-button (click)="openConfirmationModal()">Go to payment</button>
-        </div>
-        -->
     </div>
 </body>

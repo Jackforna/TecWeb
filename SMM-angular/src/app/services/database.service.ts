@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../auth/auth.service';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { Observable, lastValueFrom, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { User, Channel } from 'src/app/models/user.moduls';
+import { User } from 'src/app/models/user.moduls';
 
 @Injectable({
   providedIn: 'root'
@@ -12,17 +10,16 @@ import { User, Channel } from 'src/app/models/user.moduls';
 
 export class DatabaseService {
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient,) { }
 
   getUserData(userId: string) {
     return this.http.get(`http://localhost:8080/get-user/${userId}`).pipe(
       map((data: any) => {
-        // Rimuovi la password dai dati dell'utente
         delete data.password;
         return data;
       })
     );
-  }
+  } 
 
   getAllUsers() {
     return this.http.get('/get-users');
@@ -32,18 +29,15 @@ export class DatabaseService {
     return this.http.put(`http://localhost:8080/update-user/${userId}`, updateData)
       .pipe(
         catchError(this.handleError),
-        map(response => response as { message: string }) // Aggiungi questa mappatura
+        map(response => response as { message: string }) 
       );
   }
   
-
   private handleError(error: HttpErrorResponse) {
-    // Qui puoi aggiungere la logica di gestione degli errori
     console.error('An error occurred:', error.error);
     return throwError('Something bad happened; please try again later.');
   }
 
-  // Nuova funzione che restituisce un Observable di un array di User
   getAllUsers2(): Observable<User[]> {
     return this.http.get<User[]>('/get-users').pipe(
       map(response => response as User[])
@@ -86,13 +80,11 @@ export class DatabaseService {
     return this.http.post('http://localhost:8080/add-channel', channelData);
   }
 
-
   getAllChannels(): Observable<any> {
     return this.http.get('/get-listChannels');
   }
 
   getAdressFromCoordinates(lat: number, lon: number): Observable<any> {
-    // Usa l'API di geocoding scelta qui
     const url = `https://api.geocoding.com/reverse?lat=${lat}&lon=${lon}`;
     return this.http.get(url);
   }
@@ -117,8 +109,8 @@ export class DatabaseService {
           const nazione = data.address.country || '';
           return `${via}, ${citta}, ${cap}, ${nazione}`;
         })
-      ).toPromise(); // Utilizzo .toPromise() per attendere la risposta HTTP
-      return response || ''; // Add default value to handle undefined case
+      ).toPromise();
+      return response || '';
     } catch (error) {
       console.error("Errore nella richiesta:", error);
       throw new Error("Errore nella richiesta di geocoding");
@@ -128,7 +120,6 @@ export class DatabaseService {
   deleteAllSqueals(): Observable<any> {
     return this.http.delete('http://localhost:8080/delete-all-squeals');
   };
-
 
   deleteAllChannels(): Observable<any> {
     const body = {
@@ -147,7 +138,7 @@ export class DatabaseService {
   }
 
   updateChannel(id: string, postToAdd: any): Observable<any> {
-    const url = `http://localhost:8080/update-channel/${id}`; // Sostituisci `tuoEndpoint` con l'URL effettivo del tuo backend
+    const url = `http://localhost:8080/update-channel/${id}`; 
     return this.http.put(url, { postToAdd });
   }
   
