@@ -497,7 +497,7 @@ schedule.scheduleJob('0 0 * * *', async () => {
       break;
     }
   }
-  UsersCollection.deleteMany({});
+  await UsersCollection.deleteMany({});
   await UsersCollection.insertMany(usersArray);
 });
 
