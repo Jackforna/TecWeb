@@ -779,7 +779,7 @@ const toggleSilenceChannel = () => {
                         <Row key={index} className='d-flex' style={{justifyContent:'center',alignItems:'center', color: 'black', cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
                             <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden',  borderColor: 'black', color: "black"}}>
                             { channel.photoprofile!='' ? 
-                            (<Image src={channel.photoprofile} style={{height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX, borderColor: 'black'}}></Image>)
+                            (<Image src={channel.photoprofile} style={{width:'100%', height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX, borderColor: 'black'}}></Image>)
                             : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen', color: 'black', borderColor: 'black'}}></Image>)}
                             </div>
                             <h4 style={{color:'black',width:'60%',textAlign:'left',marginLeft:'10px'}}>{channel.name}</h4>
@@ -796,7 +796,7 @@ const toggleSilenceChannel = () => {
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                     <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                         { newphotochannel!='' ? 
-                        (<Image src={newphotochannel} style={{height:'100%', marginTop:positionchannel.y, marginLeft:positionchannel.x}}></Image>)
+                        (<Image src={newphotochannel} style={{width:'100%', height:'100%', marginTop:positionchannel.y, marginLeft:positionchannel.x}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
                     </div>
                     </Col>
@@ -960,7 +960,7 @@ const toggleSilenceChannel = () => {
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                     <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                         { newPhotoKeyword!='' ? 
-                        (<Image src={newPhotoKeyword} style={{height:'100%', marginTop:positionKeyword.y, marginLeft:positionKeyword.x}}></Image>)
+                        (<Image src={newPhotoKeyword} style={{width:'100%', height:'100%', marginTop:positionKeyword.y, marginLeft:positionKeyword.x}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
                     </div>
                     </Col>

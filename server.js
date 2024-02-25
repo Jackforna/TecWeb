@@ -461,14 +461,14 @@ async function initializeCollections() {
             bio: "",
             photoprofileX: 0,
             photoprofileY: 0,
-            notifications: [false,false,false,false]
+            notifications: [true, true, true, true]
         };
 
         // Inserisci l'elemento nella collezione
         await usersCollection.insertOne(usersToInsert);
         console.log("Utente iniziale inserito nella collezione 'Users'");
     } else {
-        console.log("La collezione 'Users' esiste già");
+      console.log("La collezione 'Users' esiste già");
     }
 
   } catch (err) {
@@ -522,7 +522,7 @@ schedule.scheduleJob('0 0 * * 1', async () => {
       break;
     }
   }
-  UsersCollection.deleteMany({});
+  await UsersCollection.deleteMany({});
   await UsersCollection.insertMany(usersArray);
 });
 
@@ -547,7 +547,7 @@ schedule.scheduleJob('0 0 1 * *', async () => {
       break;
     }
   }
-  UsersCollection.deleteMany({});
+  await UsersCollection.deleteMany({});
   await UsersCollection.insertMany(usersArray);
 });
 

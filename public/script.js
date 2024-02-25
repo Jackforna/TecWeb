@@ -2130,10 +2130,14 @@ document.getElementById("closecreateCHANNELphototype").addEventListener("click",
 });
 
 document.getElementById("selectpictureCHANNEL").addEventListener("change", ()=>{
-    let file = document.getElementById("selectpictureCHANNEL").files[0];
-        if (file) {
-            newphotoprofile = URL.createObjectURL(file);
-        }
+    const file = document.getElementById("selectpictureCHANNEL").files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            newphotoprofile = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
     document.getElementById("sectioncreateCHANNELphototype").classList.add("d-none");
     document.getElementById("sectioncreateCHANNELphotoimg").src = newphotoprofile;
     document.getElementById("sectioncreateCHANNELphotoimg").style = "filter:invert(0); height:100%; width:auto";
@@ -2164,7 +2168,7 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
     let name_empty = name.replace(/\s/g,"");
     let Valid = true;
     if(name===name.toUpperCase()){
-    if((name_empty!="")&&(name_empty.length>=3)&&(description!="")&&(list_users.length>0)&&(list_mess.length>=3)){
+    if((name_empty!="")&&(name_empty.length>=3)&&(description!="")&&(list_users.length>0)){
         for(i=0;i<channels.length;i++){
             if(name==channels[i].name){   //per evitare che ci siano più gruppi con lo stesso nome
                 Valid = false;

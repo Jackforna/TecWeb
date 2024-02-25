@@ -597,23 +597,31 @@ function Profile() {
     }
 
     const selectcurrentphoto = (event) => {
-        let file = event.target.files[0];
+        const file = event.target.files[0];
         if (file) {
-            setnewphotoprofile(URL.createObjectURL(file));
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setnewphotoprofile(e.target.result);
+            setopensectionchangephotochannel(false);
+            setPositionchannel({ x: 0, y: 0});
+            setLastMousePoschannel({ x: 0, y: 0});
+        };
+        reader.readAsDataURL(file);
         }
-        setopensectionchangephoto(false);
-        setPosition({ x: 0, y: 0});
-        setLastMousePos({ x: 0, y: 0});
     }
 
     const selectcurrentphotochannel = (event) => {
-        let file = event.target.files[0];
+        const file = event.target.files[0];
         if (file) {
-            setnewphotochannel(URL.createObjectURL(file));
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setnewphotochannel(e.target.result);
+            setopensectionchangephotochannel(false);
+            setPositionchannel({ x: 0, y: 0});
+            setLastMousePoschannel({ x: 0, y: 0});
+        };
+        reader.readAsDataURL(file);
         }
-        setopensectionchangephotochannel(false);
-        setPositionchannel({ x: 0, y: 0});
-        setLastMousePoschannel({ x: 0, y: 0});
     }
 
     const takecurrentphoto = () => {
@@ -1523,7 +1531,7 @@ const loadImage = (event) => {
                     <h3 className='text'>Edit Channel</h3>
                     <div onMouseMove={handleMouseMovechannel} onMouseUp={handleMouseUpchannel} style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                         { newphotochannel!='' ? 
-                        (<Image onMouseDown={handleMouseDownchannel} src={newphotochannel} style={{height:'100%', marginTop:positionchannel.y, marginLeft:positionchannel.x, cursor: draggingchannel ? 'grabbing' : 'grab'}}></Image>)
+                        (<Image onMouseDown={handleMouseDownchannel} src={newphotochannel} style={{width:'100%', height:'100%', marginTop:positionchannel.y, marginLeft:positionchannel.x, cursor: draggingchannel ? 'grabbing' : 'grab'}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
                     </div>
                     <Button onClick={openchangephotochannel} className='mt-4'>Change photo</Button>

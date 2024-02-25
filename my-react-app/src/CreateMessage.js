@@ -417,28 +417,37 @@ function CreateMessage(props) {
   const handleVideoChange = (e) => {
     if (wordsRemaining >= 125 && ((messageType === 'Squeal' && squealOrChannelOption === 'Public') || (messageType === 'Channel' && squealOrChannelOption === 'Write'))) {
       const file = e.target.files[0];
-      if (file) {
-        const videoUrl = URL.createObjectURL(file);
-        setCapturedVideo(videoUrl);
-        setShowVideoModal(false);
-        const remaining = calculateCharCount();
-        setWordsRemaining(remaining);
-      }
+        if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setCapturedVideo(event.target.result);
+          setShowVideoModal(false);
+          const remaining = calculateCharCount();
+          setWordsRemaining(remaining);
+        };
+        reader.readAsDataURL(file);
+        }
     } else if (privateWordsRemaining >= 125 && messageType === 'Squeal' && squealOrChannelOption === 'Privato') {
       const file = e.target.files[0];
       if (file) {
-        const videoUrl = URL.createObjectURL(file);
-        setCapturedVideo(videoUrl);
-        setShowVideoModal(false);
-        const remainingPrivate = calculatePrivateCharCount();
-        setPrivateWordsRemaining(remainingPrivate);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setCapturedVideo(event.target.result);
+          setShowVideoModal(false);
+          const remainingPrivate = calculatePrivateCharCount();
+          setPrivateWordsRemaining(remainingPrivate);
+        };
+        reader.readAsDataURL(file);
       }
     } else if (messageType === 'Channel' && squealOrChannelOption === 'Create') {
       const file = e.target.files[0];
       if (file) {
-        const videoUrl = URL.createObjectURL(file);
-        setCapturedVideo(videoUrl);
-        setShowVideoModal(false);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setCapturedVideo(event.target.result);
+          setShowVideoModal(false);
+        };
+        reader.readAsDataURL(file);
       }
     } else {
       alert("You don't have enough characters available to upload a video.");

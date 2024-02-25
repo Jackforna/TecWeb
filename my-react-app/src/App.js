@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Image, Dropdown, Card, Row, Col, Modal, CardGroup} from 'react-bootstrap';
-import { BrowserRouter as Router, Route, Link, Routes, useNavigate, useLocation} from 'react-router-dom';
+import { Nav, Button, Image} from 'react-bootstrap';
+import { BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
 import './App.css';
 import logo from './img/logo.png'
-import { Camera, Globe, Link as LinkLogo, PersonCircle, Gear, NodeMinus, Send, CaretDownFill, HouseDoor, Search as SearchLogo, PatchCheckFill, PlusCircle, PersonPlus} from 'react-bootstrap-icons';
+import {PersonCircle, Gear, HouseDoor, Search as SearchLogo, PlusCircle, PersonPlus} from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import Home from './Home';
 import CreateMessage from './CreateMessage';
@@ -12,7 +12,7 @@ import Redirector from './Redirector';
 import Search from './Search';
 import Profile from './Profile';
 import Settings from './Settings';
-import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
+import {getActualUser} from './serverRequests.js';
 
 
 //ogni user è composto da nickname, bio, photoprofile, fullname, email, password, clients, version (normal, verified, professional, SMM, moderator), blocked(booleano), char_d, char_w, char_m : 7000, popularity, notifications[]

@@ -127,6 +127,7 @@ function Home(){
             try{
                 const squeals = await getListSqueals();
                 setAllSquealsReceived(squeals);
+                console.log(squeals);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
                 throw error;
@@ -219,7 +220,7 @@ useEffect(()=>{
       }
     }
   setallSquealsprint(squealsReceived);
-  setallSqueals(allSquealsReceived);
+  setallSqueals(squealsReceived);
   }
 }, [actualuser, allSquealsReceived, allCHANNELS]);
 
@@ -901,13 +902,13 @@ const handleVideoChange = (e) => {
                       <CardGroup style={{width:windowSize<600 ? '100%' : 'auto', display:'flex'}}>
                         {squeal.typesender=='Users' ?
                           ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                            <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
+                            <Image src={squeal.photoprofile} style={{width:'100%', height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
                             : (<PersonCircle size='30' fill='black' className='me-3'></PersonCircle>)
                           )
                           :
                           ( squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                            <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
+                            <Image src={squeal.photoprofile} style={{width:'100%', height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
                             : (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image></div>)
@@ -1149,7 +1150,7 @@ const handleVideoChange = (e) => {
                     <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                       <CardGroup>
                           {squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                            <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
+                            <Image src={squeal.photoprofile} style={{width:'100%', height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
                             : (<PersonCircle size='30' fill='black' className='me-3'></PersonCircle>)
                           }
