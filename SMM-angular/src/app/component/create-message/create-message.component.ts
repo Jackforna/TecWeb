@@ -1607,7 +1607,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
 
-  /*TEST ONLY 
+ 
   deleteAllSqueals() {
     this.databaseService.deleteAllSqueals().subscribe({
       next: (response) => {
@@ -1629,7 +1629,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       }
     });
   }
-
+ /*TEST ONLY 
   deleteUser(userIdToDelete: any){
     this.databaseService.deleteUser(userIdToDelete).subscribe({
       next: (response) => {

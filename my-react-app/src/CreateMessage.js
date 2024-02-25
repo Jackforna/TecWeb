@@ -46,6 +46,10 @@ function CreateMessage(props) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
 
 
   /*Creazione messaggio*/
@@ -614,7 +618,6 @@ function CreateMessage(props) {
     return regex.test(string);
   }
 
-
   /*--------------------------------------------------------------------Squeal Public------------------------------------------------------------------------------*/
 
   const handleInputChangeHashtag = (e) => {
@@ -752,7 +755,7 @@ function CreateMessage(props) {
           },
           category: null,
           date: new Date().toLocaleDateString(),
-          hour: new Date().getHours(),
+          hour: formattedTime,
           impressions: 0,
           neg_reactions: 0,
           photoprofile: photoProfile,
@@ -789,7 +792,7 @@ function CreateMessage(props) {
       },
       category: null,
       date: new Date().toLocaleDateString(),
-      hour: new Date().getHours(),
+      hour: formattedTime,
       impressions: 0,
       neg_reactions: 0,
       photoprofile: photoProfile,
@@ -823,7 +826,7 @@ function CreateMessage(props) {
       },
       photoprofile: photoProfile, 
       date: new Date().toLocaleDateString(),
-      hour: new Date().getHours(),
+      hour: formattedTime,
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
       neg_reactions: 0,
@@ -961,7 +964,7 @@ function CreateMessage(props) {
       },
       photoprofile: photoProfile, 
       date: new Date().toLocaleDateString(),
-      hour: new Date().getHours(),
+      hour: formattedTime,
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
       neg_reactions: 0,
@@ -982,7 +985,6 @@ function CreateMessage(props) {
       console.error('Error during the squeal sendind: ', error);
     }
   }; 
-  
   
 
 
@@ -1035,7 +1037,7 @@ function CreateMessage(props) {
       },
       category: null,
       date: new Date().toLocaleDateString(),
-      hour: new Date().getHours(),
+      hour: formattedTime,
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
@@ -1075,7 +1077,7 @@ function CreateMessage(props) {
       },
       photoprofile: photoProfile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
       date: new Date().toLocaleDateString(),
-      hour: new Date().getHours(),
+      hour: formattedTime,
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
       neg_reactions: 0,
@@ -1256,7 +1258,7 @@ function CreateMessage(props) {
       },
       photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : photoProfile, 
       date: new Date().toLocaleDateString(),
-      hour: new Date().getHours(),
+      hour: formattedTime,
       seconds: new Date().getSeconds(),
       pos_reactions: 0,
       neg_reactions: 0,
@@ -1301,7 +1303,7 @@ function CreateMessage(props) {
       },
       category: null,
       date: new Date().toLocaleDateString(),
-      hour: new Date().getHours(),
+      hour: formattedTime,
       impressions: 0,
       neg_reactions: 0,
       photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : photoProfile,
@@ -1523,7 +1525,14 @@ function CreateMessage(props) {
     
           {/*Card per creazione messaggio*/}
           <div className="d-flex align-items-start">
-            <Card className={isDropdownActive ? 'blurred mx-auto' : 'mx-auto'} id="create-messagge-card" style = {{overflowY: "scroll", maxHeight: "90vh", WebkitOverflowScrolling: "touch", boxShadow: "-80px -30px 0 10px #f5f5f5, 80px -30px 0 10px #f5f5f5, -80px 30px 0 10px #f5f5f5, 80px 30px 0 10px #f5f5f5", backgroundColor: "white"}}>
+            <Card className={isDropdownActive ? 'blurred mx-auto' : 'mx-auto'} id="create-messagge-card" 
+              style = {{
+                overflowY: "scroll", 
+                maxHeight: "90vh", 
+                WebkitOverflowScrolling: "touch", 
+                boxShadow: "-80px -30px 0 10px #f5f5f5, 80px -30px 0 10px #f5f5f5, -80px 30px 0 10px #f5f5f5, 80px 30px 0 10px #f5f5f5", 
+                backgroundColor: "white",
+              }}>
               <Card.Body>
                 
                 {/*Parte comune*/}
@@ -2668,7 +2677,7 @@ function CreateMessage(props) {
                         </Row>
 
                         {/*Are you sure*/}
-                        <Row style = {{marginTop:'4%'}}>
+                        <Row style = {{marginTop:'4%', marginBottom:'5%'}}>
                           {showAreYouSure && (
                             <div style={{ color: '#000000DE' }}>
                               <p>Are you sure you want to create the channel?</p>
