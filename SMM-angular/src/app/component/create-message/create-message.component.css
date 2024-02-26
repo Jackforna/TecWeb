@@ -11,6 +11,7 @@ body{
 
 app-create-message .post-input-container {
   margin-bottom: 10%;
+  border: solid 1px #9a6634;
 }
 
 .post-input-container {
@@ -112,7 +113,7 @@ margin-left: auto;
 }
 
 .send-icon:disabled {
-  background-color: #cccccc; 
+  /* background-color: #cccccc;  */
   color: #666666; 
 }
 
