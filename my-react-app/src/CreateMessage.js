@@ -97,7 +97,7 @@ function CreateMessage(props) {
 
   /*Creazione messaggi funzioni comuni*/
   const [wordsRemaining, setWordsRemaining] = useState(maxChar);
-  const [counterColor, setCounterColor] = useState('purple');
+  // const [counterColor, setCounterColor] = useState('');
   const [isTextModified, setIsTextModified] = useState(false);
   const webcamRef = useRef(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -651,11 +651,6 @@ function CreateMessage(props) {
         setSquealChatSecondTextareaValue(inputValue);
         const remaining = calculateCharCount();
         setWordsRemaining(remaining);
-        if (remaining <= 10) {
-            setCounterColor('red');
-        } else {
-            setCounterColor('purple');
-        }
         if ((remaining === 1) && (isExtraCharUsed === false)) {
             setExtraCharModal(true);
         }
@@ -1382,6 +1377,11 @@ function CreateMessage(props) {
     setSelectedUsers(prevUsers => prevUsers.filter(user => user._id !== userIdToRemove));
   };
 
+  const isChannelExists = (channelName) => {
+    console.log(allChannelsprint.some(channel => channel.name === channelName))
+    return allChannelsprint.some(channel => channel.name === channelName);
+  };
+
   const handleCreateChannel = async () => {
     const channelData = {
       creator: nicknameProfile, 
@@ -1400,16 +1400,23 @@ function CreateMessage(props) {
     };
     
     try {
-      const result = await addChannel(channelData);
-      console.log('Channel create: ', result);
-      setChannelName('');
-      setChannelDescription('');
-      setChannelUsers([]);
-      setUserDetails([]);
-      setSelectedUserIds([]);
-      setCreatorDetails({});
-      setIsSilenceable(false);
-      setShowChannelModal(true);
+      isChannelExists(channelName);
+      if (channelName === '') {
+        alert('Please enter a name for the channel.');
+      } else if (isChannelExists(channelName)) {
+        alert('A channel with this name already exists. Please choose a different name.');
+      } else {
+        const result = await addChannel(channelData);
+        console.log('Channel create: ', result);
+        setChannelName('');
+        setChannelDescription('');
+        setChannelUsers([]);
+        setUserDetails([]);
+        setSelectedUserIds([]);
+        setCreatorDetails({});
+        setIsSilenceable(false);
+        setShowChannelModal(true);
+      }
     } catch (error) {
       console.error('Error during the channel creation:', error);
     }
@@ -1611,13 +1618,12 @@ function CreateMessage(props) {
                       id="charCounterContainer"
                       style={{
                         textAlign: 'right',
-                        color: counterColor,
                         width: '40px',
                         height: '40px',
                         lineHeight: '40px',
                         borderRadius: '50%',
-                        backgroundColor: '#f0f0f0',
-                        border: '2px solid #ccc',
+                        // backgroundColor: '#f0f0f0',
+                        // border: '2px solid #ccc',
                         display: 'flex',
                         justifyContent: 'center', 
                         alignItems: 'center',
@@ -1636,8 +1642,8 @@ function CreateMessage(props) {
                         height: '40px',
                         lineHeight: '40px',
                         borderRadius: '50%',
-                        backgroundColor: '#f0f0f0',
-                        border: '2px solid #ccc',
+                        // backgroundColor: '#f0f0f0',
+                        // border: '2px solid #ccc',
                         display: 'flex',
                         justifyContent: 'center', 
                         alignItems: 'center',
@@ -1877,7 +1883,7 @@ function CreateMessage(props) {
 
                       {/* Colonna per il pulsante Invia, allineata a destra */}
                       <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                        <Button onClick={controlChannel}>Send</Button>
+                        <Button onClick={controlChannel} id = "buttonSend">Send</Button>
                       </Col>
         
                     </Row>
@@ -2160,7 +2166,7 @@ function CreateMessage(props) {
 
                       {/* Colonna per il pulsante Invia, allineata a destra */}
                       <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                        <Button onClick={handleSendPrivateSqueal}>Send</Button>
+                        <Button onClick={handleSendPrivateSqueal} id = "buttonSend">Send</Button>
                       </Col>
 
                     </Row> 
@@ -2551,7 +2557,7 @@ function CreateMessage(props) {
 
                           {/* Colonna per il pulsante Invia, allineata a destra */}
                           <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                            <Button onClick={handleSendChannelSqueal}>Send</Button>
+                            <Button onClick={handleSendChannelSqueal} id = "buttonSend">Send</Button>
                           </Col>
                         </Row>
                       }
@@ -2559,7 +2565,7 @@ function CreateMessage(props) {
                       {/*Send default*/}
                       {isDefaultMessageValid &&
                         <Col className="col-1">
-                          <Button onClick={processDefaultMessageType}>Send</Button>
+                          <Button onClick={processDefaultMessageType} id = "buttonSend">Send</Button>
                         </Col> 
                       }
                     </>
@@ -2678,11 +2684,13 @@ function CreateMessage(props) {
                         
                         {/*Invio*/}
                         <Row style = {{marginTop:'4%'}}>
-                          <Button onClick={() =>{
+                          <Button 
+                          onClick={() =>{
                             processSelectedUsers();
                             setShowAreYouSure(true);
-                          }
-                          }>Create</Button>
+                          }}
+                          id = "buttonSend"
+                          >Create</Button>
                         </Row>
 
                         {/*Are you sure*/}
@@ -2690,8 +2698,8 @@ function CreateMessage(props) {
                           {showAreYouSure && (
                             <div style={{ color: '#000000DE' }}>
                               <p>Are you sure you want to create the channel?</p>
-                              <Button onClick={handleCreateChannel}>Yes</Button>
-                              <Button onClick={() => setShowAreYouSure(false)}>No</Button>
+                              <Button onClick={handleCreateChannel} id = "buttonSend">Yes</Button>
+                              <Button onClick={() => setShowAreYouSure(false)} id = "buttonSend">No</Button>
                             </div>
                           )}
                         </Row>

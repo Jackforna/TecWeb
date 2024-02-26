@@ -1318,7 +1318,7 @@ const loadImage = (event) => {
                 </Row>
                 <p className='text' style={{width:'90%', padding:'0'}}>{actualuser.bio}</p>
                 <Button onClick={() => editprofile()} style={{position:'absolute', top:'20px', right:'20px', backgroundColor:'#696969', borderColor:'white'}}>Edit Profile</Button>
-                <Button onClick={() => exitprofile()} style={{position:'absolute', left:'20px', top:'20px'}}>Exit</Button>
+                <Button onClick={() => exitprofile()}  id = "buttonSend" style={{position:'absolute', left:'20px', top:'20px'}}>Exit</Button>
             </header>
             <hr style={{width:'100%',  height:'2px', marginBottom:'0'}}></hr>
             <Row>
@@ -1382,7 +1382,7 @@ const loadImage = (event) => {
                             )}
                         </Card.Body>
                         <Card.Footer className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
-                        <Button className='mb-1' onClick={() => opendeletesqueal(index)}>Delete</Button>
+                        <Button className='mb-1' onClick={() => opendeletesqueal(index)} id = "buttonSend">Delete</Button>
                         <Button className="text" style={{backgroundColor:'transparent', color: 'black', border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
                         <div className='d-flex'>
                             <Card.Text className='me-1' style={{cursor:'default'}}>
@@ -1404,7 +1404,7 @@ const loadImage = (event) => {
                   ))}
                 </Row>
                 <Container style={{alignItems:'center'}} className={`${viewAnswers ? 'd-flex flex-column' : 'd-none'}`} >
-                    <div className='d-flex flex-row'><button type="button" className="btn-close" aria-label="Close" style={{position: 'relative', marginLeft: '2%', marginRight:'30px', fontSize: '30px'}} onClick={()=>{setViewAnswers(false); setmypostsactive(true)}}></button>
+                    <div className='d-flex flex-row'><button type="button" id = "buttonSend" className="btn-close" aria-label="Close" style={{position: 'relative', marginLeft: '2%', marginRight:'30px', fontSize: '30px'}} onClick={()=>{setViewAnswers(false); setmypostsactive(true)}}></button>
                     <h5 className="text text-center mt-4 mb-4">All Answers</h5></div>
                 {allAnswersprint.map((squeal,index) => (
                 <Col key={index} className='mt-3'>
@@ -1484,9 +1484,9 @@ const loadImage = (event) => {
                 </Row>
             </Col>   
             <Container className={editprofilevisible ? '' : 'd-none'} style={{position:'absolute',width:'100%',height:'100vh', paddingTop:'10px',backgroundColor:'#eee', color: 'black', overflow:'hidden'}}>
-                <Button onClick={() => closeeditprofile(false)} className='me-3'><BoxArrowLeft className='me-2' style={{marginTop:'-2px'}}></BoxArrowLeft>Back</Button>
-                <Button onClick={() => closeeditprofile(true)} className='me-3'><BoxArrowInDown className='me-2' style={{marginTop:'-4px'}}></BoxArrowInDown>Save</Button>
-                <Button onClick={() => {setSectiondeleteprofile(true)}}>Delete</Button>
+                <Button onClick={() => closeeditprofile(false)} className='me-3' id = "buttonSend"><BoxArrowLeft className='me-2' style={{marginTop:'-2px'}}></BoxArrowLeft>Back</Button>
+                <Button onClick={() => closeeditprofile(true)} className='me-3' id = "buttonSend"><BoxArrowInDown className='me-2' style={{marginTop:'-4px'}}></BoxArrowInDown>Save</Button>
+                <Button onClick={() => {setSectiondeleteprofile(true)}}  id = "buttonSend">Delete</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <h3 className='text'>Edit Profile</h3>
                     { newphotoprofile!='' ? (<div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}} className='mt-4'>
@@ -1494,7 +1494,7 @@ const loadImage = (event) => {
                     </div>)
                     : <PersonCircle size='85' color='black' className='mt-4'></PersonCircle>
                     }
-                    <Button onClick={openchangephoto} className='mt-4'>Change photo</Button>
+                    <Button onClick={openchangephoto} id = "buttonSend" className='mt-4'>Change photo</Button>
                     <Container style={{ maxWidth: '800px'}} className="d-flex flex-column mt-3">
                         <Row className='row-cols-2' style={{display:'flex', flexDirection:'row'}}>
                             <input type='text' className='texteditprofile mb-3' onChange={changevaluenickname} value={newnickname} placeholder='Nickname' style={{borderRadius: '14px', backgroundColor: 'white', color: 'black', width: '40%', outline:'none', boxShadow:'none', borderColor:'transparent', textAlign:'center', padding:'0.5em', marginLeft:'10%'}}>
@@ -1523,9 +1523,9 @@ const loadImage = (event) => {
             </Container>
 
             <Container className={editchannelvisible ? '' : 'd-none'} style={{position:'absolute',width:'100%',height:'100vh', paddingTop:'10px',backgroundColor:'#eee',overflow:'hidden'}}>
-                <Button onClick={() => closeeditchannel(false)} className='me-1'><BoxArrowLeft className='me-2' style={{marginTop:'-2px'}}></BoxArrowLeft>Back</Button>
-                <Button onClick={() => closeeditchannel(true)} className='me-1'><BoxArrowInDown className='me-2' style={{marginTop:'-4px'}}></BoxArrowInDown>Save</Button>
-                <Button onClick={isCreator ? opendeletechannel : openleavechannel} style={{padding:'0.5em', fontSize:'14px'}}>{isCreator ? 'Delete Channel' : 'Leave Channel'}</Button>
+                <Button onClick={() => closeeditchannel(false)} className='me-1' id = "buttonSend"><BoxArrowLeft className='me-2' style={{marginTop:'-2px'}}></BoxArrowLeft>Back</Button>
+                <Button onClick={() => closeeditchannel(true)} className='me-1' id = "buttonSend"><BoxArrowInDown className='me-2' style={{marginTop:'-4px'}}></BoxArrowInDown>Save</Button>
+                <Button onClick={isCreator ? opendeletechannel : openleavechannel} style={{padding:'0.5em', fontSize:'14px'}} id = "buttonSend">{isCreator ? 'Delete Channel' : 'Leave Channel'}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                     <h3 className='text'>Edit Channel</h3>
@@ -1534,7 +1534,7 @@ const loadImage = (event) => {
                         (<Image onMouseDown={handleMouseDownchannel} src={newphotochannel} style={{width:'100%', height:'100%', marginTop:positionchannel.y, marginLeft:positionchannel.x, cursor: draggingchannel ? 'grabbing' : 'grab'}}></Image>)
                         : (<Image src={'/squealer-app'+channel_profile} style={{width:'100%', mixBlendMode:'screen'}}></Image>)}
                     </div>
-                    <Button onClick={openchangephotochannel} className='mt-4'>Change photo</Button>
+                    <Button onClick={openchangephotochannel} id = "buttonSend" className='mt-4'>Change photo</Button>
                     </Col>
                     <Container style={{ maxWidth: '800px', alignItems:'center'}} className="d-flex flex-column mt-3">
                         <Row className='d-flex flex-row' style={{width:'100%', justifyContent:'center'}}>
@@ -1603,7 +1603,7 @@ const loadImage = (event) => {
                                 )}
                                 </Card.Body>
                                 <Card.Footer className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
-                                <Button className='mb-1' onClick={() => opendeletepostchannel(index)}>Delete</Button>
+                                <Button className='mb-1' onClick={() => opendeletepostchannel(index)}  id = "buttonSend">Delete</Button>
                                 <div className='d-flex'>
                                     <Card.Text className='me-1' style={{cursor:'default'}}>
                                     {squeal.pos_reactions}
@@ -1667,13 +1667,13 @@ const loadImage = (event) => {
                                 )}
                                 </Card.Body>
                                 <Card.Footer className='d-flex' style={{justifyContent:'space-between'}}>
-                                <Button className='mb-1' onClick={() => opendeletemessagechannel(index)}>Delete</Button>
+                                <Button className='mb-1' onClick={() => opendeletemessagechannel(index)}  id = "buttonSend">Delete</Button>
                                 </Card.Footer>
                             </Card>
                         </Col>
                         ))}
                         <Container style={{borderColor:'white', width:'500px', minHeight:'200px', marginBottom:'5%', marginTop:'100px'}}>
-                            <Button onClick={addmessagechannel} style={{width:'150px', height:'50px'}}>Add Message</Button>
+                            <Button onClick={addmessagechannel} style={{width:'150px', height:'50px'}} id = "buttonSend">Add Message</Button>
                         </Container>
                         </Row>
                         <Col style={{width:'80%',marginLeft:'10%', overflowY:'scroll', height:'100%'}} className={`${channelusersactive ? 'row-cols-2' : 'd-none'}`} >
@@ -1685,8 +1685,8 @@ const loadImage = (event) => {
                                     : <PersonCircle color='black' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
                                     }
                                 <p style={{width:'40%',textAlign:'left', paddingTop:'15px'}}>{channeluser.nickname}</p>
-                                <Button style={{width:'120px', marginRight:'3%'}} onClick={() => changetypeuserchannel(index2)}>{channeluser.type}</Button>
-                                <Button style={{width:'120px',  marginTop: windowSize<508 ? '0.25rem' : ''}} onClick={() => changeblockuserchannel(index2)}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
+                                <Button style={{width:'120px', marginRight:'3%'}} id = "buttonSend" onClick={() => changetypeuserchannel(index2)}>{channeluser.type}</Button>
+                                <Button style={{width:'120px',  marginTop: windowSize<508 ? '0.25rem' : ''}} id = "buttonSend" onClick={() => changeblockuserchannel(index2)}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
                             </Row>
                         ))}
                         </Col>
@@ -1747,7 +1747,7 @@ const loadImage = (event) => {
                     <h4 className='mb-3'>Add message</h4>
                     <Container className="container mt-3 d-flex flex-row" style={{justifyContent:'center', flexWrap:'wrap'}}>
                         <Dropdown onSelect={(eventKey) => setSelection(eventKey)} className='mb-1'>
-                            <Dropdown.Toggle variant="info">
+                            <Dropdown.Toggle variant="info" id = "buttonSend">
                             {selection || "Select an option"}
                             </Dropdown.Toggle>
 
@@ -1762,7 +1762,7 @@ const loadImage = (event) => {
                         </Dropdown>
                     </Container>
                     { (selection==="Welcome" || selection==="Answer" || selection==="Select an option" || selection===null) && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'200px', backgroundColor:'white', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'200px', backgroundColor:'white', border:'1px solid #9a6634', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body className='d-flex flex-column' style={{alignItems:'center'}}>
                             <textarea placeholder='Message text' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none'}} value={newmessagetext} onChange={changenewmessagetext}></textarea>
                             {capturedImage && (
@@ -1809,34 +1809,34 @@ const loadImage = (event) => {
                     </Card>
                             )}
                     {selection === "Answer" && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid #9a6634', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body>
                                 <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none', outline:'none'}} value={newmessage.request} onChange={changenewmessagerequest}/>
                         </Card.Body>
                     </Card>
                     )}
                     {selection === "Repeat" && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid #9a6634', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body>
                                 <input type="number" placeholder='Number of seconds' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none', outline:'none'}} value={numSeconds} onChange={changenewmessageseconds}/>
                         </Card.Body>
                     </Card>
                     )}
                     {(selection === "Casual Images" || selection === "WikiInfo" || selection === "News" || selection === "Twitter") && (
-                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'black', border:'1px solid green', borderRadius:'12px', marginLeft:'15%'}}>
+                    <Card className='mt-5' style={{width:'70%', minHeight:'50px', backgroundColor:'white', border:'1px solid #9a6634', borderRadius:'12px', marginLeft:'15%'}}>
                         <Card.Body>
                                 <textarea placeholder='/Request message' style={{width:'100%', padding:'0.5em', backgroundColor:'transparent', border:'0',  resize:'none', outline:'none'}} value={userRequest} onChange={changenewmessageuserrequest}/>
                         </Card.Body>
                     </Card>
                     )}
                     <Row className='mt-4 mb-4' style={{display:'flex',justifyContent:'center'}}>
-                        <Button onClick={() => sectionaddmessagechannel(false)} style={{width:'20%'}} className='me-3 mt-3'>Back</Button>
-                        <Button onClick={() => sectionaddmessagechannel(true)} style={{width:'20%'}} className='mt-3'>Add</Button>
+                        <Button onClick={() => sectionaddmessagechannel(false)} id = "buttonSend" style={{width:'20%'}} className='me-3 mt-3'>Back</Button>
+                        <Button onClick={() => sectionaddmessagechannel(true)} id = "buttonSend"style={{width:'20%'}} className='mt-3'>Add</Button>
                     </Row>
                 </Col>
             <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:'100%', left:'0', height:'100vh', paddingTop:'10px',backgroundColor:'#eee', color: "black",overflow:'hidden'}}>
-                <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeViewKeyword}>Back</Button>
-                <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribekeyword}>{inKeyword ? "Unsubscribe" : "Subscribe"}</Button>
+                <Button style={{position:'absolute', top:'10px', left:'10px'}} id = "buttonSend" onClick={closeViewKeyword}>Back</Button>
+                <Button style={{position:'absolute', top:'10px', right:'10px'}} id = "buttonSend" onClick={subscribekeyword}>{inKeyword ? "Unsubscribe" : "Subscribe"}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                     <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>

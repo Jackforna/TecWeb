@@ -56,6 +56,11 @@
         border-color: #007bff;
     }
 
+    #buttonSend {
+        background-color: #cd9933 !important;
+        border: none !important;
+    }
+
     @media (max-width: 2560px) {
         #cameraModal{
             margin-left: 50%;

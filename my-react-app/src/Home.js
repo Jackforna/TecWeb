@@ -1018,7 +1018,7 @@ const handleVideoChange = (e) => {
                           boxShadow: 'none',
                           borderRadius: '14px',
                           width: windowSize>=600 ? '150px' : '100px',
-                          backgroundColor: 'blueviolet',
+                          backgroundColor: '#cd9933',
                           color: 'white',
                           position: 'absolute',
                           left: windowSize>=600 ? '351px' : '201px',
@@ -1048,7 +1048,7 @@ const handleVideoChange = (e) => {
                             width: windowSize>=600 ? '150px' : '100px',
                             height: '130px',
                             marginLeft:windowSize>600 ? '350px' : '201px',
-                            backgroundColor: 'blueviolet',
+                            backgroundColor: '#cd9933',
                             color: 'white',
                             position:'relative',
                             padding:'0',
@@ -1093,7 +1093,7 @@ const handleVideoChange = (e) => {
                 <Form id="writenewsqueal" className="container-fluid position-relative flex-column align-items-center" style={{display: 'flex', width: '100%', top: '0', left: '0', backgroundColor:'#eee', marginBottom:'13%'}}>
                   <button type="button" className="btn-close" aria-label="Close" id="closewritenewsqueal" style={{position: 'absolute', top: '3%', right: '2%', fontSize: '30px', filter: 'invert(1)', zIndex: 2, color: "black", backgroundColor: "gray"}} onClick={handleClose}></button>
                   <h3 className="text-center mt-5 mb-4" style = {{color: "black !important"}}>Write new Answer</h3>
-                  <div className="card border-success mt-3 d-flex flex-row" style={{width: windowSize >= 600 ? '400px' : '280px', minHeight: '200px', alignItems:'center'}}>
+                  <div className="card border mt-3 d-flex flex-row" style={{width: windowSize >= 600 ? '400px' : '280px', minHeight: '200px', alignItems:'center', border: '#9a6634'}}>
                       <section  style={{width: '80%', height: '100%'}}>
                           <div className="card-body text-center d-flex align-items-center flex-column" style={{width: '100%', minHeight: '150px'}}>
                               <textarea className="bg-transparent border-0" id="textnewsqueal" style={{width: '100%', resize: 'none', outline:'none'}} placeholder="What're you thinking about?" value={textAnswer} onChange={handleTextAnswer}></textarea>

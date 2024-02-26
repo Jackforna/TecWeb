@@ -158,10 +158,10 @@ function App() {
             <div style={{ flex: '0.2' }}></div>
 
             {windowSize >= 1024 && (<Link to="/squealer-app/create-message" className={entered ? '' : 'd-none'} style={{ display: 'flex', justifyContent: 'center'}}>
-              <Button>Create Message</Button>
+              <Button id = "buttonSend">Create Message</Button>
             </Link>)}
 
-            {windowSize >= 1024 && (<Button onClick={goToAccess} className={entered ? 'd-none' : ''} style={{ display: 'flex', justifyContent: 'center'}}>Create Account</Button>)}
+            {windowSize >= 1024 && (<Button onClick={goToAccess} id = "buttonSend" className={entered ? 'd-none' : ''} style={{ display: 'flex', justifyContent: 'center'}}>Create Account</Button>)}
             
             <div style={{ flex: '0.5' }}></div>
 

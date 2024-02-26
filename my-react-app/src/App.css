@@ -9,8 +9,17 @@
   display: none;
 }
 
+a {
+  text-decoration: none !important;
+}
+
+#buttonSend {
+  background-color: #cd9933 !important;
+  border: none !important;
+}
+
 .suggested-profiles-container {
-  background-color: purple;
+  background-color: #cd9933;
   width: 350px; /* Larghezza uguale a quella dell'InputGroup */
   max-height: 200px;
   top: 9%; /* Posiziona il riquadro sotto l'InputGroup */
@@ -34,7 +43,7 @@
 }
 
 #create-messagge-card {
-  border-color: aquamarine;
+  border-color: #9a6634;
   background-color: transparent;
   width: 60%;
   overflow: hidden;
@@ -49,7 +58,7 @@
 
 @media screen and (min-width:1025px) {
   .nav-item:hover{
-    background-color: #696969;
+    background-color: #9a6634;
   }
 }
 
@@ -58,7 +67,7 @@
 }
 
 li.active{
-  background-color: #0d6efd !important;
+  background-color: #9a6634 !important;
 }
 
 .formcontroll-inputSearch::placeholder{
@@ -66,7 +75,7 @@ li.active{
 }
 
 .formcontroll-inputSearchlight::placeholder{
-  color:grey !important;
+  color:#9a6634 !important;
 }
 
 .suggested-print-container {
@@ -83,7 +92,7 @@ li.active{
 }
 
 .suggested-print-container ul li:hover{
-  background-color: #696969;
+  background-color: #9a6634;
 }
 
 Button.active{

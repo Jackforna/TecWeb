@@ -645,9 +645,9 @@ const toggleSilenceChannel = () => {
                       onBlur={handleBlur}
                       onChange={writeinputSearch}
                     />
-                      <Button id="dropdown-button-dark-example1" variant="secondary" style={{ boxShadow: 'none', borderRadius: '14px', width: windowSize>=600 ? '150px' : '100px', backgroundColor: 'blueviolet', color: 'white', position: 'absolute', left:windowSize>=600 ? '351px' : '201px', cursor:'pointer'}} onClick={toggleDropdown}>Filter<CaretDownFill size='12' style={{marginLeft:'10px'}}></CaretDownFill></Button>
+                      <Button id="dropdown-button-dark-example1" variant="secondary" style={{ boxShadow: 'none', borderRadius: '14px', width: windowSize>=600 ? '150px' : '100px', backgroundColor: '#cd9933', color: 'white', position: 'absolute', left:windowSize>=600 ? '351px' : '201px', cursor:'pointer'}} onClick={toggleDropdown}>Filter<CaretDownFill size='12' style={{marginLeft:'10px'}}></CaretDownFill></Button>
                       <div className='d-flex' width='500px'>
-                        <ul style={{ boxShadow: 'none', borderRadius: '14px', width: windowSize>=600 ? '150px' : '100px', height: '130px', marginLeft:windowSize>600 ? '350px' : '201px', backgroundColor: 'blueviolet', color: 'white', position:'relative', padding:'0', paddingTop:'12px', textAlign:'center'}} className={`${isDropdownOpen ? '' : 'd-none'}`}>
+                        <ul style={{ boxShadow: 'none', borderRadius: '14px', width: windowSize>=600 ? '150px' : '100px', height: '130px', marginLeft:windowSize>600 ? '350px' : '201px', backgroundColor: '#cd9933', color: 'white', position:'relative', padding:'0', paddingTop:'12px', textAlign:'center'}} className={`${isDropdownOpen ? '' : 'd-none'}`}>
                           {/* Contenuto della tendina */}
                           <li
                               onClick={() => handleItemClick('Users')}
@@ -687,7 +687,7 @@ const toggleSilenceChannel = () => {
               </Container>
               <Container style={{ width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height: windowSize>=600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflow:'hidden'}} className={`${viewprofile ? '"d-flex flex-column"' : 'd-none'}`}>
                 <header className='d-flex flex-column text-center' style={{width:'100%', alignItems:'center'}}>
-                  <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeviewprofile}>Back</Button>
+                  <Button style={{position:'absolute', top:'10px', left:'10px', backgroundColor: '#cd9933', border: 'none'}} onClick={closeviewprofile}>Back</Button>
                     { actualprofile.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                     <Image src={actualprofile.photoprofile} style={{height:'100%', position:'relative', marginTop: actualprofile.photoprofileY, marginLeft: actualprofile.photoprofileX}}></Image>
                     </div>)
@@ -790,8 +790,8 @@ const toggleSilenceChannel = () => {
               </Container>
 
               <Container className={viewchannel ? '' : 'd-none'} style={{position:'absolute',width:windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height:windowSize>=600 ? '100vh' : '90%', paddingTop:'10px',backgroundColor:'#eee', color: "black", overflow:'hidden'}}>
-                <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeviewchannel}>Back</Button>
-                <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribechannel}>{inChannel ? "Unsubscribe" : "Subscribe"}</Button>
+                <Button style={{position:'absolute', top:'10px', left:'10px', backgroundColor: '#cd9933', border: 'none'}} onClick={closeviewchannel}>Back</Button>
+                <Button style={{position:'absolute', top:'10px', right:'10px', backgroundColor: '#cd9933', border: 'none'}} onClick={subscribechannel}>{inChannel ? "Unsubscribe" : "Subscribe"}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                     <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
@@ -944,8 +944,8 @@ const toggleSilenceChannel = () => {
                                     : <PersonCircle color='black' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
                                     }
                                 <p style={{color:'black',width:'40%',textAlign:'left', paddingTop:'15px'}}>{channeluser.nickname}</p>
-                                <Button style={{width:'120px', marginRight: '3%', cursor:'default'}}>{channeluser.type}</Button>
-                                <Button style={{width:'120px', cursor:'default', marginTop: windowSize<508 ? '0.25rem' : ''}}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
+                                <Button style={{width:'120px', marginRight: '3%', cursor:'default', backgroundColor: '#cd9933', border: 'none'}}>{channeluser.type}</Button>
+                                <Button style={{width:'120px', cursor:'default', backgroundColor: '#cd9933', border: 'none', marginTop: windowSize<508 ? '0.25rem' : ''}}>{`${channeluser.block ? 'Blocked' : 'Unblocked'}`}</Button>
                             </Row>
                         ))}
                         </Col>
@@ -954,8 +954,8 @@ const toggleSilenceChannel = () => {
               </Container>
 
               <Container className={viewKeyword ? '' : 'd-none'} style={{position:'absolute',width:windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height:windowSize>=600 ? '100vh' : '90%', paddingTop:'10px',backgroundColor:'#eee', color: 'black', overflow:'hidden'}}>
-                <Button style={{position:'absolute', top:'10px', left:'10px'}} onClick={closeViewKeyword}>Back</Button>
-                <Button style={{position:'absolute', top:'10px', right:'10px'}} onClick={subscribekeyword}>{inKeyword ? "Unsubscribe" : "Subscribe"}</Button>
+                <Button style={{position:'absolute', top:'10px', left:'10px', backgroundColor: '#cd9933', border: 'none'}} onClick={closeViewKeyword}>Back</Button>
+                <Button style={{position:'absolute', top:'10px', right:'10px', backgroundColor: '#cd9933', border: 'none'}} onClick={subscribekeyword}>{inKeyword ? "Unsubscribe" : "Subscribe"}</Button>
                 <Col style={{display:'flex', flexDirection:'column', alignItems:'center', width:'100%', height:'100%'}}>
                     <Col style={{width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                     <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
