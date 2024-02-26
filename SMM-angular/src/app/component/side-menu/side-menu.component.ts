@@ -49,7 +49,7 @@ export class SideMenuComponent implements OnInit {
     localStorage.removeItem('PhotoProfile');
     localStorage.removeItem('Nickname');
     localStorage.removeItem('Channel_id');
-    window.location.href = 'http://localhost:8080/';
+    window.location.href = 'https://site222325.tw.cs.unibo.it';
   } 
 
   getManagerDetails() {

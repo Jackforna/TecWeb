@@ -12,8 +12,11 @@ export class DatabaseService {
 
   constructor(private http: HttpClient,) { }
 
+  UrlSite = 'https://site222325.tw.cs.unibo.it';
+  UrlLocal = 'http://localhost:8080';
+
   getUserData(userId: string) {
-    return this.http.get(`http://localhost:8080/get-user/${userId}`).pipe(
+    return this.http.get(this.UrlSite+`/get-user/${userId}`).pipe(
       map((data: any) => {
         delete data.password;
         return data;
@@ -26,7 +29,7 @@ export class DatabaseService {
   }
 
   updateUserProfile(userId: string, updateData: any): Observable<any> {
-    return this.http.put(`http://localhost:8080/update-user/${userId}`, updateData)
+    return this.http.put(this.UrlSite+`/update-user/${userId}`, updateData)
       .pipe(
         catchError(this.handleError),
         map(response => response as { message: string }) 
@@ -45,16 +48,16 @@ export class DatabaseService {
   }
 
   addSqueal(squealData: any): Observable<any> {
-    const url = 'http://localhost:8080/add-squeal';
+    const url = this.UrlSite+'/add-squeal';
     return this.http.post(url, squealData);
   }
 
   updateSqueal(squealId: string, updateData: any): Observable<any> {
-    return this.http.put(`http://localhost:8080/update-squeal/${squealId}`, updateData);
+    return this.http.put(this.UrlSite+`/update-squeal/${squealId}`, updateData);
   }
 
   getAllSquealsByUser() {
-    return this.http.get(`http://localhost:8080/get-listSqueals`);
+    return this.http.get(this.UrlSite+`/get-listSqueals`);
   }
   
   sendEmail(subject: string, message: string, username: string): Observable<any> {
@@ -64,11 +67,11 @@ export class DatabaseService {
       username: username
     };
 
-    return this.http.post(`http://localhost:8080/send-email`, emailData);
+    return this.http.post(this.UrlSite+`/send-email`, emailData);
   }
 
   addChannel(channelData: any): Observable<any> {
-    const url = 'http://localhost:8080/add-channel';
+    const url = this.UrlSite+'/add-channel';
     return this.http.post(url, channelData);
   }
 
@@ -77,7 +80,7 @@ export class DatabaseService {
       name: channelName,
       sender: sender
     };
-    return this.http.post('http://localhost:8080/add-channel', channelData);
+    return this.http.post(this.UrlSite+'/add-channel', channelData);
   }
 
   getAllChannels(): Observable<any> {
@@ -118,27 +121,27 @@ export class DatabaseService {
   }
 
   deleteAllSqueals(): Observable<any> {
-    return this.http.delete('http://localhost:8080/delete-all-squeals');
+    return this.http.delete(this.UrlSite+'/delete-all-squeals');
   };
 
   deleteAllChannels(): Observable<any> {
     const body = {
     };
-    return this.http.put('http://localhost:8080/update-channels', body);
+    return this.http.put(this.UrlSite+'/update-channels', body);
   }
 
   deleteUser(squealId: string): Observable<any> {
     const body = {
     };
-    return this.http.delete(`http://localhost:8080/delete-user/${squealId}`, body);
+    return this.http.delete(this.UrlSite+`/delete-user/${squealId}`, body);
   }
 
   uploadVideo(video: any): Observable<any> {
-    return this.http.post(`http://localhost:8080/upload-video`, video);
+    return this.http.post(this.UrlSite+`/upload-video`, video);
   }
 
   updateChannel(id: string, postToAdd: any): Observable<any> {
-    const url = `http://localhost:8080/update-channel/${id}`; 
+    const url = this.UrlSite+`/update-channel/${id}`; 
     return this.http.put(url, { postToAdd });
   }
   
