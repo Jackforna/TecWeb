@@ -1383,7 +1383,7 @@ const loadImage = (event) => {
                         </Card.Body>
                         <Card.Footer className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                         <Button className='mb-1' onClick={() => opendeletesqueal(index)}>Delete</Button>
-                        <Button className="text" style={{backgroundColor:'transparent',border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
+                        <Button className="text" style={{backgroundColor:'transparent', color: 'black', border:'0'}} onClick={() => OpenAnswers(index)}><Send style={{cursor:'pointer'}}></Send>{'('+squeal.answers.length+')'}</Button>
                         <div className='d-flex'>
                             <Card.Text className='me-1' style={{cursor:'default'}}>
                             {squeal.pos_reactions}
@@ -1404,14 +1404,14 @@ const loadImage = (event) => {
                   ))}
                 </Row>
                 <Container style={{alignItems:'center'}} className={`${viewAnswers ? 'd-flex flex-column' : 'd-none'}`} >
-                    <div className='d-flex flex-row'><button type="button" className="btn-close" aria-label="Close" style={{position: 'relative', marginLeft: '2%', marginRight:'30px', fontSize: '30px', filter: 'invert(1)'}} onClick={()=>{setViewAnswers(false); setmypostsactive(true)}}></button>
-                    <h5 className="text-light text-center mt-4 mb-4">All Answers</h5></div>
+                    <div className='d-flex flex-row'><button type="button" className="btn-close" aria-label="Close" style={{position: 'relative', marginLeft: '2%', marginRight:'30px', fontSize: '30px'}} onClick={()=>{setViewAnswers(false); setmypostsactive(true)}}></button>
+                    <h5 className="text text-center mt-4 mb-4">All Answers</h5></div>
                 {allAnswersprint.map((squeal,index) => (
                 <Col key={index} className='mt-3'>
-                    <Card style={{backgroundColor:'black',  borderColor:'white', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
+                    <Card style={{color: 'black', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
                         <Card.Header className='d-flex' style={{justifyContent:'space-between'}}>
                             <CardGroup>
-                            { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
+                            { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
                             <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                             </div>)
                             : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
