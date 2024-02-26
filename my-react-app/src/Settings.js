@@ -287,7 +287,7 @@ function Settings() {
                     <div style={{ flex: '0.5' }}></div>
 
                     {windowSize >= 1024 && (<div className="text-center mb-3">
-                    <Image src={'/squealer-app'+logo} alt="Logo" roundedCircle width="80%" />
+                    <Image src={logo} alt="Logo" roundedCircle width="80%" />
                     </div>)}
 
                     <div className={windowSize >= 600 ? 'd-flex flex-column' : 'd-flex flex-row'} style={{alignItems:'center', justifyContent:'space-around', flex: windowSize >= 1024 ? '0' : '1', width:'100%'}}>

@@ -91,7 +91,7 @@ function App() {
             <div style={{ flex: '0.2' }}></div>
 
             {windowSize >= 1024 && (<div className="text-center mb-3">
-              <Image src={'/squealer-app'+logo} alt="Logo" roundedCircle width="80%" />
+              <Image src={logo} alt="Logo" roundedCircle width="80%" />
             </div>)}
 
 
