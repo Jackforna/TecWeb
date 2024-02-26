@@ -6,7 +6,8 @@ const app = express();
 const needle = require('needle');
 const port = 8080; // Puoi cambiare la porta se necessario
 const dbUrl = 'mongodb://root:example@localhost:27017';
-const client = new MongoClient(dbUrl);
+const Url = 'mongodb://site222325:ooB6ahw2@mongo_site222325:27017';
+const client = new MongoClient(Url);
 const dbName = 'my-mongo-container';
 const multer = require('multer');
 const schedule = require('node-schedule');
@@ -43,90 +44,6 @@ if (!client.connect()) {
 } else {
   console.log("Connesso correttamente al server MongoDB");
 }
-
-/*
-let twitterBearerToken = '';
-
-const apiKey = 'hCMnmtucaW9FmfLBMrmXA8UW0';
-const apiSecretKey = 'nxnRxQblR3JDUb05dxDq83EozNn4wUG1lK1smBXPcVlcUcKOCS';
-const tokenURL = 'https://api.twitter.com/oauth2/token';
-
-const credentials = `${apiKey}:${apiSecretKey}`;
-const credentialsBase64Encoded = Buffer.from(credentials).toString('base64');
-
-const options = {
-  headers: {
-    'Authorization': `Basic ${credentialsBase64Encoded}`,
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-  },
-  body: 'grant_type=client_credentials'
-};
-
-needle.post(tokenURL, options.body, { headers: options.headers }, (error, response) => {
-  if (!error && response.statusCode === 200) {
-    // Qui hai il tuo token di accesso
-    twitterBearerToken = response.body.access_token; // Salva il token nella variabile globale
-    console.log('Bearer Token:', twitterBearerToken);
-  } else {
-    console.error('Errore ottenendo il Bearer Token:', error);
-  }
-});
-
-app.get('/api/getTweet', async (req, res) => {
-    const url = `https://api.twitter.com/2/tweets/search/recent?query=from:twitterdev`; // Esempio di URL per ottenere tweet recenti
-
-    if (!twitterBearerToken) {
-      return res.status(500).json({ error: 'Bearer Token non disponibile' });
-    }
-
-    try {
-        const response = await needle('get', url, {
-            headers: {
-                "Authorization": `Bearer ${twitterBearerToken}`//aggiungere token
-            }
-        });
-        if (response.statusCode === 200 && response.body.data && response.body.data.length > 0) {
-          // Seleziona un tweet casuale dai risultati
-          const randomTweet = response.body.data[Math.floor(Math.random() * response.body.data.length)];
-          res.status(200).json(randomTweet);
-        } else {
-          console.log('Nessun tweet trovato o errore nella risposta API', response.body);
-            res.status(500).json({ error: 'Nessun tweet trovato o errore nella risposta API' });
-        }
-    } catch (error) {
-      console.error('Errore nella richiesta API:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
-
-
-const Twit = require('twit');
-
-// Configura Twit con le tue chiavi di accesso di Twitter
-const T = new Twit({
-  consumer_key: 'hCMnmtucaW9FmfLBMrmXA8UW0',
-  consumer_secret: 'nxnRxQblR3JDUb05dxDq83EozNn4wUG1lK1smBXPcVlcUcKOCS',
-  access_token: '1758439085474000896-PDwNVX2tkHkwTtGvJuAKulgKDCE00s',
-  access_token_secret: 'P33xoej1BqEyY6JmME4MBzf4ECLtmlNLc8dGkJmwsiiIE',
-  timeout_ms: 60 * 1000,
-  strictSSL: true,
-});
-
-// Endpoint per ottenere tweet casuali
-app.get('/api/random-tweet', async (req, res) => {
-  try {
-    const result = await T.get('search/tweets', { q: 'from:twitter', count: 100 });
-    const randomIndex = Math.floor(Math.random() * result.data.statuses.length);
-    const randomTweet = result.data.statuses[randomIndex];
-    res.status(200).json(randomTweet);
-  } catch (error) {
-    console.error('Error fetching tweet:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-*/
-
 
 initializeCollections();
 
@@ -377,46 +294,6 @@ app.put('/update-channel/:id', async (req, res) => {
   }
 });
 
-/*
-app.put('/update-channel/:id', async (req, res) => {
-  try {
-      const id = req.params.id;
-
-      // Verifica se l'ID è valido per ObjectId
-      if (!ObjectId.isValid(id)) {
-          return res.status(400).send('ID non valido');
-      }
-
-      const updates = req.body;
-      console.log(`Tentativo di aggiornamento per il canale con ID: ${id}`, updates);
-
-      // Verifica preliminare per vedere se il canale esiste
-      const channelExists = await ListChannelsCollection.findOne({ _id: new ObjectId(id) });
-      if (!channelExists) {
-          console.log(`Canale non trovato con ID: ${id}`);
-          return res.status(404).send('Canale non trovato');
-      }
-
-      // Procedi con l'aggiornamento
-      const result = await ListChannelsCollection.updateOne(
-          { _id: new ObjectId(id) },
-          { $push: { list_posts: updates.postToAdd } }
-      );
-
-      console.log(`Documenti corrispondenti: ${result.matchedCount}, Documenti aggiornati: ${result.modifiedCount}`);
-
-      if (result.modifiedCount === 0) {
-          return res.status(404).send('Nessun aggiornamento necessario o canale non trovato');
-      }
-
-      res.status(200).json({ message: 'Canale aggiornato con successo' });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Errore durante l\'aggiornamento del canale' });
-  }
-});
-*/
-
 async function initializeCollections() {
   try {
     await client.connect();
@@ -552,5 +429,5 @@ schedule.scheduleJob('0 0 1 * *', async () => {
 });
 
 app.listen(port, () => {
-  console.log(`Server in esecuzione su http://localhost:${port}`);
+  console.log(`Server in esecuzione su https://site2223525.tw.cs.unibo.it`);
 });
