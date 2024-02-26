@@ -76,6 +76,7 @@ function Home(){
   const [displayedLink, setDisplayedLink] = useState(''); 
   const [idAnswer, setIdAnswer] = useState(-1);
   const windowSize = useWindowSize();
+  const UrlSite = 'https://site222325.tw.cs.unibo.it';
 
   useEffect( () => {
     if(location.pathname.endsWith('/home')){

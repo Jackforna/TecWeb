@@ -33,11 +33,12 @@ let longitude = '';
 var inputLink = '';
 var map = null;
 var map2 = null;
+const UrlSite = 'https://site222325.tw.cs.unibo.it';
 
 
 function getActualUser(){
     let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
-    fetch(`http://localhost:8080/get-user/${actualUserId}`)
+    fetch(UrlSite+`/get-user/${actualUserId}`)
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -54,7 +55,7 @@ function getActualUser(){
 }
 
 window.onload = function() {
-    fetch('http://localhost:8080/get-users')
+    fetch(UrlSite+'/get-users')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
@@ -70,7 +71,7 @@ window.onload = function() {
 
     getActualUser();
 
-    fetch('http://localhost:8080/get-listSqueals')
+    fetch(UrlSite+'/get-listSqueals')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
@@ -115,7 +116,7 @@ window.onload = function() {
     })
     .catch(error => console.error('There has been a problem with your fetch operation:', error));
 
-    fetch('http://localhost:8080/get-listChannels')
+    fetch(UrlSite+'/get-listChannels')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
@@ -130,7 +131,7 @@ window.onload = function() {
 }
 
 function updateUsers(updatedUsers) {
-    fetch('http://localhost:8080/update-users', {
+    fetch(UrlSite+'/update-users', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -153,7 +154,7 @@ function updateUsers(updatedUsers) {
 }
 
 function updateSqueals(updatedSqueals) {
-    fetch('http://localhost:8080/update-squeals', {
+    fetch(UrlSite+'/update-squeals', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -175,7 +176,7 @@ function updateSqueals(updatedSqueals) {
 }
 
 function updateChannels(updatedChannels) {
-    fetch('http://localhost:8080/update-channels', {
+    fetch(UrlSite+'/update-channels', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -197,7 +198,7 @@ function updateChannels(updatedChannels) {
 }
 
 function addSqueal(squealData) {
-    fetch('http://localhost:8080/add-squeal', {
+    fetch(UrlSite+'/add-squeal', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -219,7 +220,7 @@ function addSqueal(squealData) {
 }
 
 function addChannel(channelData) {
-    fetch('http://localhost:8080/add-channel', {
+    fetch(UrlSite+'/add-channel', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -241,7 +242,7 @@ function addChannel(channelData) {
 }
 
 document.getElementById("gotosquealer").addEventListener("click",()=>{      //fare collegamento con squealer app
-    window.location.href = "http://localhost:8080/squealer-app";
+    window.location.href = UrlSite+"/squealer-app";
 });
 
 function usersbtnclick(){

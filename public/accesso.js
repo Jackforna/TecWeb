@@ -1,5 +1,6 @@
 const formsign = document.getElementById("formsign");
 const formcell = document.getElementById("formcell");
+const UrlSite = 'https://site222325.tw.cs.unibo.it';
 let sign = true;
 let security = false;
 let actualuser;
@@ -9,7 +10,7 @@ let users;
 
 async function getUsers(){
     try {
-        const response = await fetch('http://localhost:8080/get-users');
+        const response = await fetch(UrlSite+'/get-users');
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
@@ -21,58 +22,6 @@ async function getUsers(){
     }
 }
 
-/*Vecchia funzione funzionante
-async function addUserAndActualUser(nickname, email, password, fullname, type) {
-    try {
-      // Prima aggiungi l'utente
-      await addUserAsync({
-        nickname: nickname, 
-        photoprofile: "", 
-        email: email, 
-        password: password, 
-        fullname: fullname, 
-        cell: "", 
-        version: type, 
-        clients: [],
-        blocked: false, 
-        popularity: 0, 
-        char_d: 300, 
-        char_w: 2000,
-        char_m: 7000, 
-        notifications: [false, false, false, false, false]
-      });
-  
-      // Dopo che l'utente è stato aggiunto, ottieni gli utenti
-      users = await getUsers();
-  
-      if (users && users.length > 0) {
-        actualuser = users[users.length - 1];
-        localStorage.setItem("actualUserId", JSON.stringify(actualuser._id));
-        switch(type){
-            case "normal":
-                window.location.href = 'http://localhost:8080/squealer-app';
-            break;
-            case "social media manager":
-                window.location.href = 'http://localhost:8080/SMM';
-            break;
-            case "moderator":
-                window.location.href = 'http://localhost:8080/moderator';
-            break;
-            default:
-                window.location.href = 'http://localhost:8080/squealer-app';
-            break;
-        }
-      } else {
-        console.log("Nessun utente trovato");
-      }
-    } catch (error) {
-      console.error('There has been a problem:', error);
-      // Gestire l'errore come necessario
-    }
-  }
-*/
-
-/*Nuova funzione */
 async function addUserAndActualUser(nickname, email, password, fullname, type) {
     try {
         // Crea un oggetto utente base
@@ -109,16 +58,16 @@ async function addUserAndActualUser(nickname, email, password, fullname, type) {
             // Esegui altri compiti che dipendono da actualuser
             switch(type){
                 case "normal":
-                    window.location.href = 'http://localhost:8080/squealer-app';
+                    window.location.href = UrlSite+'/squealer-app';
                 break;
                 case "social media manager":
-                    window.location.href = 'http://localhost:8080/SMM';
+                    window.location.href = UrlSite+'/SMM';
                 break;
                 case "moderator":
-                    window.location.href = 'http://localhost:8080/moderator';
+                    window.location.href = UrlSite+'/moderator';
                 break;
                 default:
-                    window.location.href = 'http://localhost:8080/squealer-app';
+                    window.location.href = UrlSite+'/squealer-app';
                 break;
             }
         } else {
@@ -132,7 +81,7 @@ async function addUserAndActualUser(nickname, email, password, fullname, type) {
 /*Fine nuova funzione */
 
 
-fetch('http://localhost:8080/get-users')
+fetch(UrlSite+'/get-users')
 .then(response => {
     if (!response.ok) {
         throw new Error('Network response was not ok ' + response.statusText);
@@ -146,7 +95,7 @@ fetch('http://localhost:8080/get-users')
 
 async function addUserAsync(userData) {
     try {
-        const response = await fetch('http://localhost:8080/add-user', {
+        const response = await fetch(UrlSite+'/add-user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -167,7 +116,7 @@ async function addUserAsync(userData) {
 }
 
 function addUser(userData) {
-    fetch('http://localhost:8080/add-user', {
+    fetch(UrlSite+'/add-user', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -186,7 +135,7 @@ function addUser(userData) {
 }
 
 function getUserById(id) {
-    fetch(`http://localhost:8080/get-user/${id}`)
+    fetch(UrlSite+`/get-user/${id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -301,13 +250,13 @@ function login(x){
             if(actualuser.blocked!=true){
                 switch(actualuser.version){
                     case "normal":
-                        window.location.href = 'http://localhost:8080/squealer-app';
+                        window.location.href = UrlSite+'/squealer-app';
                     break;
                     case "social media manager":
-                        window.location.href = 'http://localhost:8080/SMM';
+                        window.location.href = UrlSite+'/SMM';
                     break;
                     case "moderator":
-                        window.location.href = 'http://localhost:8080/moderator';
+                        window.location.href = UrlSite+'/moderator';
                     break;
                     default:
                         
@@ -359,13 +308,13 @@ document.getElementById("infopassword").addEventListener("mouseout", ()=>{
 });
 
 document.getElementById("notsign").addEventListener("click", ()=>{
-    window.location.href = "http://localhost:8080/squealer-app";
+    window.location.href = UrlSite+"/squealer-app";
     actualuser = "1";
     localStorage.setItem("actualUserId", JSON.stringify(actualuser));
 });
 
 document.getElementById("notsigncell").addEventListener("click", ()=>{
-    window.location.href = "http://localhost:8080/squealer-app";
+    window.location.href = UrlSite+"/squealer-app";
     actualuser = "1";
     localStorage.setItem("actualUserId", JSON.stringify(actualuser));
 });

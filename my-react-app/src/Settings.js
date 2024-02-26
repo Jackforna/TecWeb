@@ -41,6 +41,7 @@ function Settings() {
     const [confirmBuyCharacters, setConfirmBuyCharacters] = useState(false);
     const [optionCharacters, setOptionCharacters] = useState(0);
     const windowSize = useWindowSize();
+    const UrlSite = 'https://site222325.tw.cs.unibo.it';
 
     useEffect(() => {
         if (location.pathname.endsWith('/settings')) {
@@ -115,9 +116,9 @@ function Settings() {
 
     const gotoDashboard = () => {
         if(actualuser.version=="SMM"){
-            window.location.href = "http://localhost:8080/SMM";
+            window.location.href = UrlSite+"/SMM";
         } else {
-            window.location.href = "http://localhost:8080/moderator";
+            window.location.href = UrlSite+"/moderator";
         }
     };
 

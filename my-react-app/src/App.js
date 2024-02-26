@@ -42,6 +42,7 @@ function App() {
   const [actualUserProfile, setActualUserProfile] = useState(null);
   const [photoProfile, setPhotoProfile] = useState('');
   const [nicknameProfile, setNicknameProfile] = useState('');
+  const UrlSite = 'https://site222325.tw.cs.unibo.it';
   
   useEffect(()=>{
     if (JSON.parse(localStorage.getItem('actualUserId'))!=1) {
@@ -67,7 +68,7 @@ function App() {
   
 
   const goToAccess = () => {
-    window.location.href = "http://localhost:8080";
+    window.location.href = UrlSite;
   }
 
   return (

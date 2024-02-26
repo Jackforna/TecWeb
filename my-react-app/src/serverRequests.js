@@ -1,6 +1,8 @@
+const UrlSite = 'https://site222325.tw.cs.unibo.it';
+
 export async function getUsers(){
     try {
-        const response = await fetch('http://localhost:8080/get-users');
+        const response = await fetch(UrlSite+'/get-users');
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
@@ -14,7 +16,7 @@ export async function getUsers(){
 
 export async function addUser(userData) {
     try {
-        const response = await fetch('http://localhost:8080/add-user', {
+        const response = await fetch(UrlSite+'/add-user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -36,7 +38,7 @@ export async function addUser(userData) {
 
 export async function getUserById(id) {
     try {
-        const response = await fetch(`http://localhost:8080/get-user/${id}`);
+        const response = await fetch(UrlSite+`/get-user/${id}`);
 
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -53,7 +55,7 @@ export async function getUserById(id) {
 export async function getActualUser() {
     try {
         let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
-        const response = await fetch(`http://localhost:8080/get-user/${actualUserId}`);
+        const response = await fetch(UrlSite+`/get-user/${actualUserId}`);
 
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -65,27 +67,11 @@ export async function getActualUser() {
         console.error('Errore nella richiesta:', error);
         throw error;
     }
-}
-
-// Funzione per richiedere un tweet casuale dal server
-export async function getRandomTweet() {
-    try {
-      const response = await fetch('http://localhost:8080/api/random-tweet');
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-      const randomTweet = await response.json();
-      return randomTweet;
-    } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
-      throw error;
-    }
-  }
-  
+}  
 
 export async function getListChannels() {
     try {
-        const response = await fetch('http://localhost:8080/get-listChannels');
+        const response = await fetch(UrlSite+'/get-listChannels');
 
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
@@ -101,7 +87,7 @@ export async function getListChannels() {
 
 export async function getListSqueals() {
     try {
-        const response = await fetch('http://localhost:8080/get-listSqueals');
+        const response = await fetch(UrlSite+'/get-listSqueals');
 
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
@@ -117,7 +103,7 @@ export async function getListSqueals() {
 
 export async function updateUsers(updatedUsers) {
     try {
-        const response = await fetch('http://localhost:8080/update-users', {
+        const response = await fetch(UrlSite+'/update-users', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -139,7 +125,7 @@ export async function updateUsers(updatedUsers) {
 
 export async function updateUser(id, updates) {
     try {
-        const response = await fetch(`http://localhost:8080/update-user/${id}`, {
+        const response = await fetch(UrlSite+`/update-user/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -165,7 +151,7 @@ export async function updateUser(id, updates) {
 
 export async function deleteUsers(updatedUsers) {
     try {
-        const response = await fetch(`http://localhost:8080/delete-user/${updatedUsers}`, {
+        const response = await fetch(UrlSite+`/delete-user/${updatedUsers}`, {
             method: 'DELETE'
           });
 
@@ -183,7 +169,7 @@ export async function deleteUsers(updatedUsers) {
 
 export async function updateSqueals(updatedSqueals) {
     try {
-        const response = await fetch('http://localhost:8080/update-squeals', {
+        const response = await fetch(UrlSite+'/update-squeals', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -205,7 +191,7 @@ export async function updateSqueals(updatedSqueals) {
 
 export async function updateChannels(updatedChannels) {
     try {
-        const response = await fetch('http://localhost:8080/update-channels', {
+        const response = await fetch(UrlSite+'/update-channels', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -227,7 +213,7 @@ export async function updateChannels(updatedChannels) {
 
 export async function updateChannel(id, updates) {
     try {
-        const response = await fetch(`http://localhost:8080/update-channel/${id}`, {
+        const response = await fetch(UrlSite+`/update-channel/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -256,7 +242,7 @@ export async function updateChannel(id, updates) {
 
 export async function addSqueal(squealData) {
     try {
-        const response = await fetch('http://localhost:8080/add-squeal', {
+        const response = await fetch(UrlSite+'/add-squeal', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -278,7 +264,7 @@ export async function addSqueal(squealData) {
 
 export async function addChannel(channelData) {
     try {
-        const response = await fetch('http://localhost:8080/add-channel', {
+        const response = await fetch(UrlSite+'/add-channel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -127,6 +127,7 @@ function Profile() {
     const [userRequest, setUserRequest] = useState('');
     const [numSeconds, setNumSeconds] = useState('');
     const windowSize = useWindowSize();
+    const UrlSite = 'https://site222325.tw.cs.unibo.it';
 
     useEffect(() => {
         if (location.pathname.endsWith('/profile')) {
@@ -1163,7 +1164,7 @@ function Profile() {
             updateAllChannels(allChannelsModified);
             let idActualUser = JSON.parse(localStorage.getItem("actualUserId"));
             deleteUser(idActualUser);
-            window.location.href = 'http://localhost:8080';
+            window.location.href = UrlSite;
         }
         setSectiondeleteprofile(false);
     } 
@@ -1253,7 +1254,7 @@ function Profile() {
         localStorage.removeItem('PhotoProfile');
         localStorage.removeItem('Nickname');
         localStorage.setItem("actualUserId", JSON.stringify(1));
-        window.location.href = "http://localhost:8080";
+        window.location.href = UrlSite;
       }
 
       const OpenAnswers = (index) => {
