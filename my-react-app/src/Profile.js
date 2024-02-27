@@ -3,15 +3,15 @@ import { Navbar, Container, Nav, Form, InputGroup, FormControl, Button, Dropdown
 import { BrowserRouter as Router, Route, Link, Routes, useLocation} from 'react-router-dom';
 import './App.css';
 import Webcam from 'react-webcam';
-import { Camera, GeoAlt, Link45deg as LinkLogo, Gear, NodeMinus, PersonCircle, BoxArrowLeft, BoxArrowInDown, Trash3, XCircle, CardImage, PatchCheckFill, CameraVideo, Send } from 'react-bootstrap-icons';
+import { Camera, GeoAlt, Link45deg as LinkLogo, Gear, NodeMinus, PersonCircle, BoxArrowLeft, BoxArrowInDown, Trash3, XCircle, CardImage, PatchCheckFill, CameraVideo, Send, People } from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
+import channel_profile from './img/channel_profile.png';
 import pos_reaction1 from '../src/img/reaction_positive1.png'
 import pos_reaction2 from '../src/img/reaction_positive2.png'
 import pos_reaction3 from '../src/img/reaction_positive3.png'
 import neg_reaction1 from '../src/img/reaction_negative1.png'
 import neg_reaction2 from '../src/img/reaction_negative2.png'
 import neg_reaction3 from '../src/img/reaction_negative3.png'
-import channel_profile from '../src/img/channel_profile.png';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
@@ -1307,7 +1307,7 @@ const loadImage = (event) => {
         <>
         <Container style={{ width: windowSize>=1024 ? '80%': windowSize>=600 ? '90%' : '100%', left:windowSize>=1024 ? '20%': windowSize>=600 ? '10%' : '0', height: windowSize>=600 ? '100vh' : '90%', position:'absolute', alignItems: 'center', overflow:'hidden'}} className="d-flex flex-column">
             <header className='d-flex flex-column text-center' style={{width:'100%', alignItems:'center'}}>
-                { actualuser.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden'}}>
+                { actualuser.photoprofile!='' ? (<div className='mt-4' style={{width:'70px',height:'70px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid black', overflow:'hidden'}}>
                 <Image src={actualuser.photoprofile} style={{height:'100%', width:'100%', position:'relative', marginTop: actualuser.photoprofileY, marginLeft: actualuser.photoprofileX}}></Image>
                 </div>)
                 : <PersonCircle size='70' color='black' className='mt-4'></PersonCircle>
@@ -1516,9 +1516,9 @@ const loadImage = (event) => {
                     <Col style={{position:'absolute',width:'100%', bottom: windowSize>=600 ? '0' : '10%', left:'0', backgroundColor:'#232323', padding:'2em'}}>
                         <Button onClick={takecurrentphoto} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Camera style={{marginRight:'1em'}}></Camera>Take new picture</Button>
                         <input type='file' id='selectpicture' onChange={selectcurrentphoto} className='d-none'></input>
-                        <label htmlFor='selectpicture' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left',  paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer', display:'flex', justifyContent:'center', alignItems:'center'}}><CardImage style={{marginRight:'1em'}}></CardImage>Select new picture</label>
+                        <label htmlFor='selectpicture' style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', marginBottom:'1em', textAlign:'left',  paddingTop:'0.5em', paddingBottom:'0.5em', borderRadius:'6px', cursor:'pointer', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}><CardImage style={{marginRight:'1em'}}></CardImage>Select new picture</label>
                         <Button onClick={deletecurrentphoto} style={{backgroundColor:'#69696976', width:'70%', marginLeft:'15%', border:'0', textAlign:'left', display:'flex', justifyContent:'center', alignItems:'center'}}><Trash3 style={{marginRight:'1em'}}></Trash3>Delete picture</Button>
-                        <XCircle onClick={() => closechangephoto()} style={{position:'absolute', top:'10px', right:'10px',  cursor:'pointer'}} size='25'></XCircle>
+                        <XCircle onClick={() => closechangephoto()} style={{position:'absolute', top:'10px', right:'10px',  cursor:'pointer'}} size='25' fill='white'></XCircle>
                     </Col>
                 </Container>
             </Container>
@@ -1744,7 +1744,7 @@ const loadImage = (event) => {
                         <Button onClick={() => deleteprofile(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
                     </Row>
                 </Col> 
-                <Col className={confirmaddmessagechannel ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'3%',backgroundColor:'#eee', overflowY:'scroll'}}>
+                <Col className={confirmaddmessagechannel ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'3%',backgroundColor:'#eee', overflowY:'scroll', zIndex:'1001'}}>
                     <h4 className='mb-3'>Add message</h4>
                     <Container className="container mt-3 d-flex flex-row" style={{justifyContent:'center', flexWrap:'wrap'}}>
                         <Dropdown onSelect={(eventKey) => setSelection(eventKey)} className='mb-1'>

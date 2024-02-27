@@ -116,7 +116,7 @@ function App() {
                           <img src={photoProfile} alt="Profile" className="profile-image"/>
                         </div>
                       ) : (
-                        <PersonCircle size='100' color='white' />
+                        <PersonCircle size='100' color='black' />
               )}
               {windowSize >= 1024 && (<div className="text-center">
                 <h7>{nicknameProfile}</h7>
