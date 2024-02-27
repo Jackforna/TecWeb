@@ -12,7 +12,7 @@ export class DatabaseService {
 
   constructor(private http: HttpClient,) { }
 
-  UrlSite = 'https://site222325.tw.cs.unibo.it';
+  UrlSite = 'http://localhost:8080'; 
   UrlLocal = 'http://localhost:8080';
 
   getUserData(userId: string) {

@@ -127,7 +127,7 @@ function Profile() {
     const [userRequest, setUserRequest] = useState('');
     const [numSeconds, setNumSeconds] = useState('');
     const windowSize = useWindowSize();
-    const UrlSite = 'https://site222325.tw.cs.unibo.it';
+    const UrlSite = 'http://localhost:8080';
 
     useEffect(() => {
         if (location.pathname.endsWith('/profile')) {

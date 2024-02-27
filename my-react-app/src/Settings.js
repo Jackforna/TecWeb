@@ -41,7 +41,7 @@ function Settings() {
     const [confirmBuyCharacters, setConfirmBuyCharacters] = useState(false);
     const [optionCharacters, setOptionCharacters] = useState(0);
     const windowSize = useWindowSize();
-    const UrlSite = 'https://site222325.tw.cs.unibo.it';
+    const UrlSite = 'http://localhost:8080';
 
     useEffect(() => {
         if (location.pathname.endsWith('/settings')) {

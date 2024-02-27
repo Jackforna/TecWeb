@@ -1,6 +1,6 @@
 const formsign = document.getElementById("formsign");
 const formcell = document.getElementById("formcell");
-const UrlSite = 'https://site222325.tw.cs.unibo.it';
+const UrlSite = 'http://localhost:8080';
 let sign = true;
 let security = false;
 let actualuser;

@@ -36,6 +36,7 @@ export class SideMenuComponent implements OnInit {
       }
     );
     */
+    // this.updateUserManagedAccounts("65b791fcd5997e7ede8b49ec", ["65b79216d5997e7ede8b49ed","65ddcc5a37ac7434ed50f82e"]);
   }
 
   onLogout(): void {
@@ -49,7 +50,7 @@ export class SideMenuComponent implements OnInit {
     localStorage.removeItem('PhotoProfile');
     localStorage.removeItem('Nickname');
     localStorage.removeItem('Channel_id');
-    window.location.href = 'https://site222325.tw.cs.unibo.it';
+    window.location.href = 'http://localhost:8080';
   } 
 
   getManagerDetails() {
@@ -82,7 +83,7 @@ export class SideMenuComponent implements OnInit {
     this.profileDescription = datiUtente ? datiUtente.profilebio : '';
   }
 
-  /*Funzione per aggiornare gli account gestiti dall'utente Test
+  
   updateUserManagedAccounts(userId: string, managedAccounts: string[]) {
     this.http.put(`http://localhost:8080/update-user/${userId}`, { managedAccounts })
       .subscribe(
@@ -94,6 +95,7 @@ export class SideMenuComponent implements OnInit {
         }
       );
   }
+  /*Funzione per aggiornare gli account gestiti dall'utente Test
   */
 
 }

@@ -707,12 +707,19 @@ function CreateMessage(props) {
     const foundChannel = allKeywordssprint.find(channel => channel.name === textWithoutHashtag);
 
     if (foundChannel) {
-      setListOfUsers(foundChannel.list_users);
-      handleSendSqueal(foundChannel, true);
+      const flagg = foundChannel.list_users;
+      setListOfUsers(flagg);
+      console.log('Channel found');
+      console.log(foundChannel.list_users);
+      console.log(listOfUsers)
+      console.log(flagg);
+      handleSendSqueal(foundChannel, true, flagg);
     } else {
       setExistedChannel(false);
+      console.log('Channel not found');
+      console.log([nicknameProfile]);
       setListOfUsers([nicknameProfile]);
-      handleSendSqueal(foundChannel, false);
+      handleSendSqueal(foundChannel, false, [nicknameProfile]);
     }
 
   };
@@ -817,7 +824,7 @@ function CreateMessage(props) {
     }
   };
 
-  const handleSendSqueal = async (channelToUpdate, flag) => {
+  const handleSendSqueal = async (channelToUpdate, flag, flagg) => {
     const squealData = {
       sender: nicknameProfile, 
       typesender: 'keywords', 
@@ -838,18 +845,18 @@ function CreateMessage(props) {
       answers: [],
       usersViewed: [],
       category: '', 
-      receivers: [listOfUsers],
+      receivers: flag === false ? [actualUser.nickname] : flagg.map(user => user.nickname),
       channel: text.replace(/#/g, ''),
       impressions: 0,
     };
   
     try {
-      const result = await addSqueal(squealData);
       if (flag === true) {
         await handleUpdateHashTagChannel(channelToUpdate);
       } else {
         await handleCreateHashtagChannel();
       }
+      const result = await addSqueal(squealData);
       console.log('Squeal send:', result);
       const textChars = squealData.body.text.length; 
       let imageChars = 0;
@@ -879,7 +886,7 @@ function CreateMessage(props) {
       const usedChars = textChars + imageChars + videoChars + linkChars + positionChars; 
 
       await handleUpdateUser(usedChars);
-      window.location.reload();
+      // window.location.reload();
 
     } catch (error) {
       console.error('Errore during the squeal sending ', error);

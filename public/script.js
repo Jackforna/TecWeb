@@ -33,7 +33,7 @@ let longitude = '';
 var inputLink = '';
 var map = null;
 var map2 = null;
-const UrlSite = 'https://site222325.tw.cs.unibo.it';
+const UrlSite = 'http://localhost:8080';
 
 
 function getActualUser(){

@@ -42,7 +42,7 @@ function App() {
   const [actualUserProfile, setActualUserProfile] = useState(null);
   const [photoProfile, setPhotoProfile] = useState('');
   const [nicknameProfile, setNicknameProfile] = useState('');
-  const UrlSite = 'https://site222325.tw.cs.unibo.it';
+  const UrlSite = 'http://localhost:8080';
   
   useEffect(()=>{
     if (JSON.parse(localStorage.getItem('actualUserId'))!=1) {

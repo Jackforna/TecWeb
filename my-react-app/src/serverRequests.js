@@ -1,4 +1,4 @@
-const UrlSite = 'https://site222325.tw.cs.unibo.it';
+const UrlSite = 'http://localhost:8080';
 
 export async function getUsers(){
     try {
