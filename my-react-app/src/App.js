@@ -57,7 +57,6 @@ function App() {
         setActualUserProfile(userData);
         setPhotoProfile(userData.photoprofile);
         setNicknameProfile(userData.nickname);
-        console.log('User data:', userData);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }

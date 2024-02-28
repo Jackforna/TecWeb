@@ -7,7 +7,7 @@ import Webcam from 'react-webcam';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
+import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, addSqueal, addChannel, updateChannel, updateUsers} from './serverRequests.js';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -181,8 +181,7 @@ function CreateMessage(props) {
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
-    }
-
+    }    
     fetchUserData();
   }, []);
 
@@ -693,12 +692,25 @@ function CreateMessage(props) {
         char_w: actualUser.char_w - charToDeacrement,
         char_m: actualUser.char_m - charToDeacrement,
     };
+    
+    const users = await getUsers();
 
-    try {
-        const result = await updateUser(userId, userUpdates);
-        console.log(result.message); 
+    const indice = users.findIndex(oggetto => oggetto._id === userId);
+
+      const UsersToUpdate = users.map((oggetto, index) => {
+        if (index === indice) {
+          // Utilizza lo spread operator per unire l'oggetto esistente con i nuovi valori,
+          // mantenendo lo stesso _id ma aggiornando gli altri campi
+          return { ...oggetto, ...userUpdates };
+        }
+        return oggetto;
+      });
+
+    try{
+      await updateUsers(UsersToUpdate);
     } catch (error) {
-        console.error(error);
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
     }
   };
 
