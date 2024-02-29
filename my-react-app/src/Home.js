@@ -402,7 +402,12 @@ async function updateAllSqueals(squealsToUpdate){
 
 async function updateAllChannels(ChannelsToUpdate){
   try{
-    await updateChannels(ChannelsToUpdate);
+    const Channels = await getListChannels();
+    const ChannelsUpdated = Channels.map(oggetto1 => {
+      const chan = ChannelsToUpdate.find(oggetto2 => oggetto2.name === oggetto1.name);
+      return chan ? chan : oggetto1;
+    });
+    await updateChannels(ChannelsUpdated);
   } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
@@ -837,15 +842,15 @@ const sendAnswer = async () => {
     }
     return obj;
   });
-  const newSquealsReceived = allSqueals.map(obj => {
-    if (obj._id === idAnswer) {
-      // Aggiorna l'array all'interno dell'oggetto
-      return { ...obj, answers: [...obj.answers, answer] };
+  const newSquealsPrint = allSqueals.map(subItem => {
+    const superItem = newSqueals.find(item => item._id === subItem._id);
+    if (superItem) {
+      return { ...subItem, ...superItem };
     }
-    return obj;
+    return subItem;
   });
+  setallSqueals(newSquealsPrint);
   setAllSquealsCollection(newSqueals);
-  setallSqueals(newSquealsReceived);
   let squealsReceived = [];
     if(JSON.parse(localStorage.getItem("actualUserId"))!="1"){
       for(let i=0; i<newSqueals.length;i++){

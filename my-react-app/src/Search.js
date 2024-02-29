@@ -153,7 +153,12 @@ function Search() {
 
     async function updateAllChannels(ChannelsToUpdate){
       try{
-        await updateChannels(ChannelsToUpdate);
+        const Channels = await getListChannels();
+        const ChannelsUpdated = Channels.map(oggetto1 => {
+          const chan = ChannelsToUpdate.find(oggetto2 => oggetto2.name === oggetto1.name);
+          return chan ? chan : oggetto1;
+        });
+        await updateChannels(ChannelsUpdated);
       } catch (error) {
           console.error('There has been a problem with your fetch operation:', error);
           throw error;
@@ -776,7 +781,7 @@ const toggleSilenceChannel = () => {
                     </Row>
                     <Row className={`${mychannelsactive ? windowSize>800 ? 'row-cols-2' : 'col' : 'd-none'}`} >
                     {allChannelsprint.map((channel,index) => (
-                        <Row key={index} className='d-flex' style={{justifyContent:'center',alignItems:'center', color: 'black', cursor:'pointer', borderRadius:'12px', padding:'5px'}}>
+                        <Row key={index} className='d-flex' style={{justifyContent:'center',alignItems:'center', color: 'black', cursor:'pointer', borderRadius:'12px', padding:'5px', marginBottom:index===(allChannelsprint.length-1) ? '150px' : '5%'}}>
                             <div style={{width:'80px',height:'80px', display:'flex', alignItems:'center', borderRadius:'50%', border:'2px solid white', overflow:'hidden',  borderColor: 'black', color: "black"}}>
                             { channel.photoprofile!='' ? 
                             (<Image src={channel.photoprofile} style={{width:'100%', height:'100%', marginTop:channel.photoprofileY, marginLeft:channel.photoprofileX, borderColor: 'black'}}></Image>)
@@ -975,10 +980,10 @@ const toggleSilenceChannel = () => {
                         <Button className='active' style={{width:'150px', height:'40px', color:'black', background:'transparent', border:'0', borderRadius:'0px'}}>Posts</Button>
                     </Row>
                     <Container className="text-center mt-3"  style={{overflowY:'scroll', height:'100vh'}}>
-                        <Row className='row-cols-2'>
+                        <Row className={`${windowSize>= 800 ? 'row-cols-2' : 'col'}`}>
                         {newKeywordPosts.map((squeal,index) => (
-                        <Col key={index} style={{width:'40%'}}>
-                            <Card style={{color:'black', borderColor:'black', minWidth:'280px', minHeight:'200px', marginBottom:'5%'}}>
+                        <Col key={index}>
+                            <Card style={{color:'black', borderColor:'black', minWidth:'280px', minHeight:'200px', marginBottom:index===(newKeywordPosts.length-1) ? '100px' : '5%'}}>
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', fleWrap:'wrap'}}>
                                     <CardGroup>
                                     { squeal.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>

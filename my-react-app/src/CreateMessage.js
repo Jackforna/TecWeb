@@ -218,7 +218,7 @@ function CreateMessage(props) {
           email: userData.email,
           fullname: userData.fullname,
           nickname: userData.nickname,
-          notification: userData.notification || [true, true, true, true, true],
+          notification: userData.notification || [true, true, true, true],
           password: userData.password,
           photoprofile: userData.photoprofile || "",
           photoprofileX: userData.photoprofileX || 0,
@@ -797,6 +797,7 @@ function CreateMessage(props) {
     };
     try {
       const result = await addChannel(channelData);
+      setallkeywords(allkeywordsprev => [...allkeywordsprev, channelData]);
       console.log('Channel created:', result);
     } catch (error) {
       console.error('Error in channel creation::', error);
@@ -1071,11 +1072,6 @@ function CreateMessage(props) {
       typesender: channelType,
       usersReactions: [],
       usersViewed: [],
-    }
-
-    if (!channelSelected || !channelSelected._id) {
-      console.error("No channel selected or no channel ID found. Cannot update posts in the channel.");
-      return;
     }
 
     try {
@@ -1426,6 +1422,7 @@ function CreateMessage(props) {
         alert('A channel with this name already exists. Please choose a different name.');
       } else {
         const result = await addChannel(channelData);
+        setallchannels(allchannelsprev => [...allchannelsprev, channelData]);
         console.log('Channel create: ', result);
         setChannelName('');
         setChannelDescription('');

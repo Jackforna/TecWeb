@@ -244,9 +244,12 @@ function Profile() {
 
     async function updateAllChannels(ChannelsToUpdate){
         try{
-            console.log(ChannelsToUpdate)
-          const chan = await updateChannels(ChannelsToUpdate);
-          console.log(chan);
+            const Channels = await getListChannels();
+            const ChannelsUpdated = Channels.map(oggetto1 => {
+              const chan = ChannelsToUpdate.find(oggetto2 => oggetto2.name === oggetto1.name);
+              return chan ? chan : oggetto1;
+            });
+            await updateChannels(ChannelsUpdated);
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
             throw error;
