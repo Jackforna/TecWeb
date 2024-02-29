@@ -5,7 +5,15 @@
                 <img [src] = "logoUrl" alt = "logo">
             </div>
             <div class = "userLogged-container">
-                <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
+                <ng-container *ngIf="profilePictureUrl; else defaultAvatar">
+                    <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
+                </ng-container>
+            
+                <!-- Template alternativo mostrato se profilePictureUrl è vuoto -->
+                <ng-template #defaultAvatar>
+                    <span class="material-icons">account_circle</span>
+                </ng-template>
+
                 <span>{{ nickname }}</span>
             </div>
             <div class = "pageSelector-container">

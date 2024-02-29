@@ -140,9 +140,66 @@ export class DatabaseService {
     return this.http.post(this.UrlSite+`/upload-video`, video);
   }
 
-  updateChannel(id: string, postToAdd: any): Observable<any> {
+  updateChannel(id: string, updates: any): Observable<any> {
     const url = this.UrlSite+`/update-channel/${id}`; 
-    return this.http.put(url, { postToAdd });
+    return this.http.put(url, {  postToAdd : updates });
   }
+
+  // Aggiunta della funzione all'interno della classe DatabaseService
+  updateChannels(updatedChannels: any): Observable<any> {
+    const url = `${this.UrlSite}/update-channels`; // Usa la proprietà UrlSite per costruire l'URL completo
+    return this.http.put(url, updatedChannels, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).pipe(
+      catchError(this.handleError), // Usa la funzione handleError esistente per gestire gli errori
+      map(response => response as any) // Mappa la risposta come necessario, qui lasciato generico come `any`
+    );
+  }
+
+  getFormattedDate(): string {
+    const data = new Date();
+
+    let month: string;
+    if ((data.getMonth() + 1) < 10) {
+      month = "0" + (data.getMonth() + 1);
+    } else {
+      month = (data.getMonth() + 1).toString();
+    }
+
+    const year = data.getFullYear();
+    const day = data.getDate() < 10 ? `0${data.getDate()}` : data.getDate().toString();
+
+    return `${year}-${month}-${day}`;
+  }
+
+  
+
+  // updateChannel(id: string, updates: any): Observable<any> {
+  //   const url = this.UrlSite+`/update-channel/${id}`;
+  //   return this.http.put<any>(url, { updates })
+  //     .pipe(
+  //       catchError(error => {
+  //         console.error('Error updating channel:', error);
+  //         return throwError('Error updating channel. Please try again later.');
+  //       })
+  //     );
+  // }
+
+  // async updateChannel(id: string, updates: any): Promise<any> {
+  //   try {
+  //     const response = await this.http.put(`${this.UrlSite}/update-channel/${id}`, { postToAdd: updates }).toPromise();
+
+  //     if (!response) {
+  //       throw new Error('Canale non trovato o nessun aggiornamento necessario');
+  //     }
+
+  //     return response;
+  //   } catch (error) {
+  //     console.error('Errore durante l\'aggiornamento del canale:', error);
+  //     throw error;
+  //   }
+  // }
   
 }
