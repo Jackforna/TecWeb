@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 export class SideMenuComponent implements OnInit {
 
   nickname: string | null = ''; 
-  profilePictureUrl: string | null = ''; 
+  profilePictureUrl: string | null = 'dat'; 
   profileDescription: string = ''; 
   logoUrl: string = 'assets/images/logo - Copia.png'; 
 

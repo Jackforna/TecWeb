@@ -283,7 +283,7 @@ app.put('/update-channel/:id', async (req, res) => {
     if (result.modifiedCount === 0) {
       console.log(`Canale non trovato con ID: ${id}`);
       return res.status(404).send('Canale non trovato o nessun aggiornamento necessario');
-  }
+    }
   
   
 

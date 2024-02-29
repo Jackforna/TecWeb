@@ -2,7 +2,14 @@
     <mat-card class="post-input-container">
 
         <mat-card-header>
-            <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
+            <ng-container *ngIf="profilePictureUrl; else defaultAvatar">
+                <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
+            </ng-container>
+        
+            <!-- Template alternativo mostrato se profilePictureUrl è vuoto -->
+            <ng-template #defaultAvatar>
+                <span class="material-icons">person</span>
+            </ng-template>
         <div class="custom-select-wrapper">
             <select (change)="onTypeChange($event)">
                 <option value="squeal" [selected]="!isChannel">Squeal</option>

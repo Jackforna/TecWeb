@@ -1,7 +1,13 @@
 <body>
     <div class = "userLoggedActionInline-container">
         <div class = "userLogged-container">
-            <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
+            <ng-container *ngIf="profilePictureUrl; else defaultAvatar">
+                <div class="mat-card-avatar user-avatar" [style.backgroundImage]="'url(' + profilePictureUrl + ')'"></div>
+            </ng-container>
+        
+            <ng-template #defaultAvatar>
+                <span class="material-icons">person</span>
+            </ng-template>
             <span>{{ nickname }}</span>
         </div>
         <div class = "action1-container">

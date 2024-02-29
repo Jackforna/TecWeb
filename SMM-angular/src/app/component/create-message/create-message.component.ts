@@ -117,6 +117,12 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
   //Gestione pop up caratteri
   showPurchasePopup = false;
 
+  now = new Date();
+  hours = this.now.getHours();
+  minutes = this.now.getMinutes();
+  formattedTime = `${this.hours}:${this.minutes < 10 ? '0' : ''}${this.minutes}`;
+  formattedDate: string = '';
+
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -132,6 +138,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     this.charLeftUserWeekly = this.datiUtente ? this.datiUtente.char_w : 0;
     this.charLeftUserMonthly = this.datiUtente ? this.datiUtente.char_m : 0;  
     this.remainingChars = this.charLeftUser; 
+    this.formattedDate = this.databaseService.getFormattedDate();
 
     // Recupera tutti gli utenti dal backend
     this.databaseService.getAllUsers2().subscribe((users: User[]) => {
@@ -304,6 +311,11 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     }
   }
 
+  resetCurrentPageWithDelay(): void {
+    setTimeout(() => {
+      this.router.navigate(['/']);
+    }, 2000);
+  }
 
   /*Modale fotocamera*/
   openCameraDialog(): void {
@@ -879,6 +891,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
           });
         }
         this.resetForm();
+        this.resetCurrentPageWithDelay();
       },
       error: (error) => {
         console.error('Error adding squeal', error);
@@ -910,16 +923,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       usersReactions: [],
       usersViewed: [],
     };
-    this.databaseService.updateChannel(channelToUpdate._id, channelDataUpdatePost).subscribe({
-      next: (response) => {
-        console.log('Hashtag update succesfuly: ', response);
-
-      },
-      error: (error) => {
-        console.error('Error during the hashtag: ', error);
-      }
-    });
-  };
+    this.addPostToChannel(channelToUpdate.name, channelDataUpdatePost);
+  }
 
   handleCreateHashtagChannel(channelToUpdate: any): void {
     const channelDataCreatePost = {
@@ -972,7 +977,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
         usersReactions: [],
         usersViewed: [],
       }],
-      userSilenced: [],
+      usersSilenced: [],
       description: "",
       popularity: "",
     };
@@ -1294,6 +1299,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
           console.log('Squeal added successfully', response);
           const charsUsed = this.userText.length + this.calculateAttachmentChars();
           const userId = this.datiUtente ? this.datiUtente._id : null;
+          this.resetCurrentPageWithDelay();
         } else if (localStorage.getItem('Interval active') === 'true') {
           this.updateChannelDeafaultPost(defaultCamp);
         } else {
@@ -1336,7 +1342,6 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
         }
         */
         // this.resetForm();
-        window.location.reload();
         // this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
       },
       error: (error) => {
@@ -1345,6 +1350,31 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       }
     });
   }
+
+  addPostToChannel(channelName: any, post: any): void {
+    this.databaseService.getAllChannels().subscribe({
+      next: (response) => {
+        this.allChannels = response;
+      },
+      error: (error) => {
+        console.error('Error fetching channels:', error);
+      }
+    });
+    // Trova l'indice del canale nell'array `channels` che corrisponde al `channelName` dato
+    const channelIndex = this.allChannels.findIndex(channel => channel.name === channelName);
+  
+    // Se il canale è stato trovato...
+    if (channelIndex !== -1) {
+      // Aggiunge il `post` all'array `list_posts` del canale trovato
+      this.allChannels[channelIndex].list_posts.push(post);
+      this.databaseService.updateChannels(this.allChannels);
+  
+      console.log(`Post aggiunto al canale ${channelName}.`);
+    } else {
+      console.log(`Canale ${channelName} non trovato.`);
+    }
+  }
+  
 
   updateChannelDeafaultPost(defaultCamp: any): void {
     const channelDataUpdatePost = {
@@ -1371,14 +1401,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       usersViewed: [],
     };
     const channelIdToUse = localStorage.getItem("Interval active") ? localStorage.getItem('Channel_id') : this.channelSelected._id;
-    this.databaseService.updateChannel(channelIdToUse, channelDataUpdatePost).subscribe({
-      next: (response) => {
-        console.log('Channel update succesfuly: ', response);
-      },
-      error: (error) => {
-        console.error('Error during the channel updating:', error);
-      }
-    });
+    const channelNameToUse = localStorage.getItem("Interval active") ? localStorage.getItem('ChannelSelectedName') : this.channelSelected.name;
+    this.addPostToChannel(channelNameToUse, channelDataUpdatePost);
   }
   
   /*Inserimento user*/
@@ -1475,21 +1499,14 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
-      photoprofile: this.datiUtente.photoprofile || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      photoprofile: this.datiUtente.photoprofile || '',
       receivers: this.channelSelected.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
       sender: this.datiUtente.nickname,
       typeSender: this.channelType, 
       usersReactions: [],
       usersViewed: [],
     };
-    this.databaseService.updateChannel(this.channelSelected._id, channelDataUpdatePost).subscribe({
-      next: (response) => {
-        console.log('Channel update succesfuly: ', response);
-      },
-      error: (error) => {
-        console.error('Error during the channel update:', error);
-      }
-    });
+    this.addPostToChannel(this.channelSelected.name, channelDataUpdatePost);
   };
 
   createChannelSqueal(): void {
@@ -1517,7 +1534,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
           position: this.userLocation ? [this.userLocation.lat, this.userLocation.lng] : [],
           video: this.sentVideoUrl || '', 
         },
-        photoprofile: photoProfile  || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        photoprofile: photoProfile  || '',
         date: date,
         hour: hour,
         seconds: seconds,
@@ -1574,6 +1591,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
             });
           }
           this.resetForm();
+          this.resetCurrentPageWithDelay();
           // window.location.reload();
           // this.isSubmitting = false; // Riattiva il pulsante dopo l'invio
         },
