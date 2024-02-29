@@ -77,6 +77,7 @@ function Home(){
   const [idAnswer, setIdAnswer] = useState(-1);
   const windowSize = useWindowSize();
   const UrlSite = 'http://localhost:8080';
+  const [allSquealsCollection, setAllSquealsCollection] = useState();
 
   useEffect( () => {
     if(location.pathname.endsWith('/home')){
@@ -106,6 +107,7 @@ function Home(){
           async function getAll3(){
             try{
                 const Channels = await getListChannels();
+                console.log(Channels);
                 Channels.forEach(channel => {
                   switch(channel.type) {
                     case '&':
@@ -128,6 +130,7 @@ function Home(){
             try{
                 const squeals = await getListSqueals();
                 setAllSquealsReceived(squeals);
+                setAllSquealsCollection(squeals);
                 console.log(squeals);
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
@@ -247,7 +250,7 @@ useEffect(()=>{
             }
             setallSqueals(updatedMessages);
           updatedMessages = [];
-            for (let i = 0; i < allSqueals.length; i++) {
+            for (let i = 0; i < allSquealsCollection.length; i++) {
               if (allSquealsReceived[i]._id === viewedMessage._id) {
                 let updatedMessage = {
                   ...allSquealsReceived[i],
@@ -260,6 +263,7 @@ useEffect(()=>{
               }
             }
             setAllSquealsReceived(updatedMessages);
+            setAllSquealsCollection(updatedMessages);
             updateAllSqueals(updatedMessages);
         let updatedChannels = [...allchannels];
         let updatedCHANNELS = [...allCHANNELS];
@@ -483,8 +487,10 @@ const handleFocus = () => {
     }
   };
 
-  const reactionSqueal = (indexSqueal,x) => {
-    let newallSqueals = [...allSqueals];
+  const reactionSqueal = (index,x) => {
+    let newallSqueals = [...allSquealsCollection];
+    const idToFind = allSqueals[index]._id;
+    let indexSqueal = newallSqueals.findIndex(item => item._id === idToFind);
     let newallUsers = [...allUsers];
     let channelsModified = [...allchannels];
     let CHANNELSModified = [...allCHANNELS];
@@ -492,13 +498,13 @@ const handleFocus = () => {
     if(x<4){
         newallSqueals[indexSqueal].pos_reactions += x;
         let find = false;
-        for(let j=0; j<allSqueals[indexSqueal].usersReactions.length;j++){
-          if(allSqueals[indexSqueal].usersReactions[j].nickname===actualuser.nickname){
+        for(let j=0; j<allSquealsCollection[indexSqueal].usersReactions.length;j++){
+          if(allSquealsCollection[indexSqueal].usersReactions[j].nickname===actualuser.nickname){
             find = true;
-            newallSqueals[indexSqueal].pos_reactions -= allSqueals[indexSqueal].usersReactions[j].posReactions;
+            newallSqueals[indexSqueal].pos_reactions -= allSquealsCollection[indexSqueal].usersReactions[j].posReactions;
             if(newallSqueals[indexSqueal].pos_reactions<0)
               newallSqueals[indexSqueal].pos_reactions = 0;
-            newallSqueals[indexSqueal].neg_reactions -= allSqueals[indexSqueal].usersReactions[j].negReactions;
+            newallSqueals[indexSqueal].neg_reactions -= allSquealsCollection[indexSqueal].usersReactions[j].negReactions;
             if(newallSqueals[indexSqueal].neg_reactions<0)
               newallSqueals[indexSqueal].neg_reactions = 0;
             newallSqueals[indexSqueal].usersReactions[j] = {nickname: actualuser.nickname, posReactions:x, negReactions:0};
@@ -605,13 +611,13 @@ const handleFocus = () => {
       x-= 3;
         newallSqueals[indexSqueal].neg_reactions += x;
         let find = false;
-        for(let j=0; j<allSqueals[indexSqueal].usersReactions.length;j++){
-          if(allSqueals[indexSqueal].usersReactions[j].nickname===actualuser.nickname){
+        for(let j=0; j<allSquealsCollection[indexSqueal].usersReactions.length;j++){
+          if(allSquealsCollection[indexSqueal].usersReactions[j].nickname===actualuser.nickname){
             find = true;
-            newallSqueals[indexSqueal].pos_reactions -= allSqueals[indexSqueal].usersReactions[j].posReactions;
+            newallSqueals[indexSqueal].pos_reactions -= allSquealsCollection[indexSqueal].usersReactions[j].posReactions;
             if(newallSqueals[indexSqueal].pos_reactions<0)
               newallSqueals[indexSqueal].pos_reactions = 0;
-            newallSqueals[indexSqueal].neg_reactions -= allSqueals[indexSqueal].usersReactions[j].negReactions;
+            newallSqueals[indexSqueal].neg_reactions -= allSquealsCollection[indexSqueal].usersReactions[j].negReactions;
             if(newallSqueals[indexSqueal].neg_reactions<0)
               newallSqueals[indexSqueal].neg_reactions = 0;
             newallSqueals[indexSqueal].usersReactions[j] = {nickname: actualuser.nickname, posReactions:0, negReactions:x};
@@ -715,8 +721,16 @@ const handleFocus = () => {
           }
         }
     }
-    setallSqueals(newallSqueals);
     updateAllSqueals(newallSqueals);
+    setAllSquealsCollection(newallSqueals);
+    const newSquealsPrint = allSqueals.map(subItem => {
+      const superItem = newallSqueals.find(item => item._id === subItem._id);
+      if (superItem) {
+        return { ...subItem, ...superItem };
+      }
+      return subItem;
+    });
+    setallSqueals(newSquealsPrint);
     let ListChannelsModified = [...channelsModified, ...CHANNELSModified, ...keywordsModified];
     updateAllChannels(ListChannelsModified);
     setAllUsers(newallUsers);
@@ -816,14 +830,22 @@ const sendAnswer = async () => {
   let answer = {sender:actualuser.nickname,body:{text:text,photo:img,video:video,link:link,position:position}, photoprofile:actualuser.photoprofile, photoprofileX:actualuser.photoprofileX, photoprofileY:actualuser.photoprofileY, date:date,hour:hour,seconds:seconds};
   const allAnswers = [...allAnswersprint,answer];
   setAllAnswersprint(allAnswers);
-  const newSqueals = allSqueals.map(obj => {
+  const newSqueals = allSquealsCollection.map(obj => {
     if (obj._id === idAnswer) {
       // Aggiorna l'array all'interno dell'oggetto
       return { ...obj, answers: [...obj.answers, answer] };
     }
     return obj;
   });
-  setallSqueals(newSqueals);
+  const newSquealsReceived = allSqueals.map(obj => {
+    if (obj._id === idAnswer) {
+      // Aggiorna l'array all'interno dell'oggetto
+      return { ...obj, answers: [...obj.answers, answer] };
+    }
+    return obj;
+  });
+  setAllSquealsCollection(newSqueals);
+  setallSqueals(newSquealsReceived);
   let squealsReceived = [];
     if(JSON.parse(localStorage.getItem("actualUserId"))!="1"){
       for(let i=0; i<newSqueals.length;i++){

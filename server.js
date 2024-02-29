@@ -3,18 +3,16 @@ const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 const path = require('path');
 const app = express();
-const needle = require('needle');
 const port = 8080; // Puoi cambiare la porta se necessario
 const dbUrl = 'mongodb://root:example@localhost:27017';
 const Url = 'mongodb://site222325:ooB6ahw2@mongo_site222325:27017';
 const client = new MongoClient(dbUrl);
 const dbName = 'my-mongo-container';
-const multer = require('multer');
 const schedule = require('node-schedule');
 
 
-app.use(bodyParser.json({ limit: '100mb' }));
-app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+app.use(bodyParser.json({ limit: '10000mb' }));
+app.use(bodyParser.urlencoded({ limit: '10000mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/squealer-app', express.static(path.join(__dirname, 'my-react-app/build')));
 
@@ -70,6 +68,8 @@ app.get('/get-user/:id', async (req, res) => {
         if (!object) {
             return res.status(404).send('Oggetto non trovato');
         }
+      } else {
+        object = {};
       }
       res.status(200).json(object);
   } catch (error) {
@@ -429,5 +429,5 @@ schedule.scheduleJob('0 0 1 * *', async () => {
 });
 
 app.listen(port, () => {
-  console.log(`Server in esecuzione su https://site2223525.tw.cs.unibo.it`);
+  console.log(`Server in esecuzione su https://site222325.tw.cs.unibo.it`);
 });

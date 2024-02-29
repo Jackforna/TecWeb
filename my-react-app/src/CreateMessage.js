@@ -7,7 +7,7 @@ import Webcam from 'react-webcam';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, addSqueal, addChannel, updateChannel, updateChannels} from './serverRequests.js';
+import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
 import { useNavigate } from 'react-router-dom';
 import { set } from 'mongoose';
 
@@ -201,8 +201,7 @@ function CreateMessage(props) {
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
-    }
-
+    }    
     fetchUserData();
   }, []);
 
@@ -756,13 +755,13 @@ function CreateMessage(props) {
         char_w: actualUser.char_w - charToDeacrement,
         char_m: actualUser.char_m - charToDeacrement,
     };
-    setMaxChar(userUpdates.char_d);
 
     try {
         const result = await updateUser(userId, userUpdates);
         console.log(result.message); 
     } catch (error) {
-        console.error(error);
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
     }
   };
 
