@@ -146,17 +146,40 @@ export class DatabaseService {
   }
 
   // Aggiunta della funzione all'interno della classe DatabaseService
-  updateChannels(updatedChannels: any): Observable<any> {
-    const url = `${this.UrlSite}/update-channels`; // Usa la proprietà UrlSite per costruire l'URL completo
-    return this.http.put(url, updatedChannels, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).pipe(
-      catchError(this.handleError), // Usa la funzione handleError esistente per gestire gli errori
-      map(response => response as any) // Mappa la risposta come necessario, qui lasciato generico come `any`
-    );
+  // updateChannels(updatedChannels: any): Observable<any> {
+  //   const url = `${this.UrlSite}/update-channels`; // Usa la proprietà UrlSite per costruire l'URL completo
+  //   return this.http.put(url, updatedChannels, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   }).pipe(
+  //     catchError(this.handleError), // Usa la funzione handleError esistente per gestire gli errori
+  //     map(response => response as any) // Mappa la risposta come necessario, qui lasciato generico come `any`
+  //   );
+  // }
+
+  async updateChannels(updatedChannels: any) {
+    try {
+      const response = await fetch(this.UrlSite+'/update-channels', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedChannels)
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Errore nella richiesta:', error);
+      throw error;
+    }
   }
+  
 
   getFormattedDate(): string {
     const data = new Date();

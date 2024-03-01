@@ -26,6 +26,7 @@ export class SideMenuComponent implements OnInit {
     // console.clear();
     this.getManagerDetails();
     this.setAccountData();
+    this.updateUserManagedAccounts("65e093240bd4d94cf1d69356", ["65e093330bd4d94cf1d69357", "65e093c60bd4d94cf1d69358", "65e094300bd4d94cf1d69359"]);
     /* Test
     this.databaseService.getAllUsers().subscribe( 
       (data: any) => {

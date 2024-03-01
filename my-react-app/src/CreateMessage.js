@@ -767,8 +767,10 @@ function CreateMessage(props) {
 
   const controlChannel = () => {
     const textWithoutHashtag = text.replace(/#/g, '');
-    const foundChannel = allKeywordssprint.find(channel => channel.name === textWithoutHashtag);
-
+    console.log(getListChannels().find(channel => (channel.name === textWithoutHashtag && channel.type === '#')));
+    const foundChannel = allkeywords.find(channel => (channel.name === textWithoutHashtag && channel.type === '#'));
+    //allKeywordssprint.find(channel => channel.name === textWithoutHashtag);
+    
     if (foundChannel) {
       const flagg = foundChannel.list_users;
       setListOfUsers(flagg);
@@ -889,6 +891,8 @@ function CreateMessage(props) {
   };
 
   const handleSendSqueal = async (channelToUpdate, flag, flagg) => {
+    const receiversFlagg = flagg.map(user => user.nickname);
+    receiversFlagg.push(nicknameProfile);
     const squealData = {
       sender: nicknameProfile, 
       typesender: 'keywords', 
@@ -909,7 +913,7 @@ function CreateMessage(props) {
       answers: [],
       usersViewed: [],
       category: '', 
-      receivers: flag === false ? [actualUser.nickname] : flagg.map(user => user.nickname),
+      receivers: flag === false ? [actualUser.nickname] : receiversFlagg,
       channel: text.replace(/#/g, ''),
       impressions: 0,
     };
@@ -1101,6 +1105,20 @@ function CreateMessage(props) {
       setChannelType('CHANNELS');
     }
   };
+
+  async function updateAllChannels(ChannelsToUpdate){
+    try{
+      const Channels = await getListChannels();
+      const ChannelsUpdated = Channels.map(oggetto1 => {
+        const chan = ChannelsToUpdate.find(oggetto2 => oggetto2.name === oggetto1.name);
+        return chan ? chan : oggetto1;
+      });
+      await updateChannels(ChannelsUpdated);
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
+    }
+  }
 
   async function addPostToChannel(channelName, post) {
     const getAllChannels = await getListChannels(); 

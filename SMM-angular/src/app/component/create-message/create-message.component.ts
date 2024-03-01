@@ -796,15 +796,21 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
   controlHashtagExist() {
-    const foundChannel = this.allkeywordsprint.find(channel => channel.name === this.hashtag);
-
-    if (foundChannel) {
-      this.listOfUsers = foundChannel.list_users;
-      this.handleSendPublicSqueal(foundChannel, true);
-    } else {
-      this.listOfUsers = [this.datiUtente.nickname];
-      this.handleSendPublicSqueal(foundChannel, false);
-    }
+    const channelHashtag = this.databaseService.getAllChannels();
+    channelHashtag.pipe(
+      map((channels: any[]) => channels.find((channel: { name: any; type: any; }) => ((channel.name === this.hashtag) && (channel.type === '#'))))
+    ).subscribe((foundChannel) => {
+      console.log(this.hashtag);
+      console.log(foundChannel);
+      if (foundChannel) {
+        this.listOfUsers = foundChannel.list_users.map((user: { nickname: any; }) => `@${user.nickname}`);
+        this.listOfUsers.push(`@${this.datiUtente.nickname}`);
+        this.handleSendPublicSqueal(foundChannel, true);
+      } else {
+        this.listOfUsers = [`@${this.datiUtente.nickname}`];
+        this.handleSendPublicSqueal(foundChannel, false);
+      }
+    });
   }
 
   handleSendPublicSqueal(channelToUpdate: any, flag: boolean): void {
@@ -829,7 +835,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
         video: this.sentVideoUrl || '',
       },
       photoprofile: photoProfile,
-      date: date,
+      date: '20/02/2024',
       hour: hour,
       seconds: seconds,
       pos_reactions: 0,
@@ -1351,6 +1357,21 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     });
   }
 
+  async updateAllChannels(ChannelsToUpdate : any): Promise<void> {
+    try {
+      const Channels = await this.databaseService.getAllChannels().toPromise();
+      const ChannelsUpdated = Channels.map((oggetto1: { name: any; }) => {
+        const chan = ChannelsToUpdate.find((oggetto2: { name: any; }) => oggetto2.name === oggetto1.name);
+        return chan ? chan : oggetto1;
+      });
+      await this.databaseService.updateChannels(ChannelsUpdated);
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
+    }
+  }
+
+
   addPostToChannel(channelName: any, post: any): void {
     this.databaseService.getAllChannels().subscribe({
       next: (response) => {
@@ -1367,8 +1388,9 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     if (channelIndex !== -1) {
       // Aggiunge il `post` all'array `list_posts` del canale trovato
       this.allChannels[channelIndex].list_posts.push(post);
-      this.databaseService.updateChannels(this.allChannels);
-  
+      //this.databaseService.updateChannels(this.allChannels);
+      this.updateAllChannels(this.allChannels);
+      
       console.log(`Post aggiunto al canale ${channelName}.`);
     } else {
       console.log(`Canale ${channelName} non trovato.`);
@@ -1647,6 +1669,10 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       }
     });
   }
+
+  sendPastSqueal() {
+
+  };
  /*TEST ONLY 
   deleteUser(userIdToDelete: any){
     this.databaseService.deleteUser(userIdToDelete).subscribe({
