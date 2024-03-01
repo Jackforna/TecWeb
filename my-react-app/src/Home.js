@@ -393,7 +393,12 @@ useEffect(()=>{
 
 async function updateAllSqueals(squealsToUpdate){
   try{
-    await updateSqueals(squealsToUpdate);
+    const Squeals = await getListSqueals();
+    const SquealsUpdated = Squeals.map(oggetto1 => {
+      const mess = squealsToUpdate.find(oggetto2 => (oggetto2.sender === oggetto1.sender && oggetto2.date === oggetto1.date && oggetto2.hour === oggetto1.hour && oggetto2.seconds === oggetto1.seconds));
+      return mess ? mess : oggetto1;
+    })
+    await updateSqueals(SquealsUpdated);
   } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;

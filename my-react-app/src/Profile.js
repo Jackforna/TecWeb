@@ -258,8 +258,12 @@ function Profile() {
 
     async function updateAllSqueals(SquealsToUpdate){
         try{
-          const squeal = await updateSqueals(SquealsToUpdate);
-          console.log(squeal);
+            const Squeals = await getListSqueals();
+            const SquealsUpdated = Squeals.map(oggetto1 => {
+              const mess = SquealsToUpdate.find(oggetto2 => (oggetto2.sender === oggetto1.sender && oggetto2.date === oggetto1.date && oggetto2.hour === oggetto1.hour && oggetto2.seconds === oggetto1.seconds));
+              return mess ? mess : oggetto1;
+            })
+            await updateSqueals(SquealsUpdated);
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
             throw error;
@@ -1682,7 +1686,7 @@ const loadImage = (event) => {
                         </Row>
                         <Col style={{width:'80%',marginLeft:'10%', overflowY:'scroll', height:'100%'}} className={`${channelusersactive ? 'row-cols-2' : 'd-none'}`} >
                         {newchannelusers.map((channeluser,index2) => (
-                            <Row key={index2} className='mt-3 d-flex' style={{width:'70%',justifyContent:'center',alignItems:'center', borderRadius:'12px', padding:'5px', marginLeft:'15%'}}>
+                            <Row key={index2} className='mt-3 d-flex' style={{width:'70%',justifyContent:'center',alignItems:'center', borderRadius:'12px', padding:'5px', marginLeft:'15%', marginBottom:index2===(newchannelusers.length-1) ? '100px' : ''}}>
                                 { channeluser.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden', padding:'0'}}>
                                     <Image src={channeluser.photoprofile} style={{height:'100%', position:'relative', marginTop:channeluser.photoprofileY/2.5, marginLeft:channeluser.photoprofileX/2.5}}></Image>
                                     </div>)

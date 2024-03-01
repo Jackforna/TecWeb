@@ -175,26 +175,41 @@ function updateSqueals(updatedSqueals) {
     });
 }
 
-function updateChannels(updatedChannels) {
-    fetch(UrlSite+'/update-channels', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedChannels)
-    })
+async function updateChannels(updatedChannels) {
+    fetch(UrlSite+'/get-listChannels')
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error('Network response was not ok ' + response.statusText);
         }
         return response.json();
-        })
-        .then(data => {
-            console.log(data);
-        })
-    .catch(error => {
-        console.error('Errore nella richiesta:', error);
-    });
+    })
+    .then(data => {
+        let Channels = data;
+        const ChannelsUpdated = Channels.map(oggetto1 => {
+            const chan = updatedChannels.find(oggetto2 => oggetto2.name === oggetto1.name);
+            return chan ? chan : oggetto1;
+          });
+          fetch(UrlSite+'/update-channels', {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(ChannelsUpdated)
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              return response.json();
+              })
+              .then(data => {
+                  console.log(data);
+              })
+          .catch(error => {
+              console.error('Errore nella richiesta:', error);
+          });
+    })
+    .catch(error => console.error('There has been a problem with your fetch operation:', error));
 }
 
 function addSqueal(squealData) {
@@ -936,7 +951,7 @@ function editpositivereactions(){
     if(editsqueal.pos_reactions>0.25*editsqueal.impressions){
         if(editsqueal.neg_reactions>0.25*editsqueal.impressions){
           editsqueal.category = "controversial";
-          for(let i=0;i<channels;i++){
+          for(let i=0;i<channels.length;i++){
             if(channels[i].name == "CONTROVERSIAL"){
                 channels[i].list_posts.push(editsqueal);
             }

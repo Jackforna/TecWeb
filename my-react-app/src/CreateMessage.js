@@ -988,7 +988,7 @@ function CreateMessage(props) {
   
     try {
       const users = await getUsers(searchTerm); 
-      setSuggestedUsers(users.filter(user => user.nickname.toLowerCase().includes(searchTerm.toLowerCase())));
+      setSuggestedUsers(users.filter(user => user.nickname.toLowerCase().includes(searchTerm.toLowerCase()) && user.nickname!==actualUser.nickname));
     } catch (error) {
       console.error('Error during the users research', error);
     }
@@ -1492,9 +1492,8 @@ function CreateMessage(props) {
       } else if (isChannelExists(channelName)) {
         alert('A channel with this name already exists. Please choose a different name.');
       } else {
-        const result = await addChannel(channelData);
+        setShowAreYouSure(false);
         setallchannels(allchannelsprev => [...allchannelsprev, channelData]);
-        console.log('Channel create: ', result);
         setChannelName('');
         setChannelDescription('');
         setChannelUsers([]);
@@ -1502,6 +1501,7 @@ function CreateMessage(props) {
         setSelectedUserIds([]);
         setCreatorDetails({});
         setIsSilenceable(false);
+        const result = await addChannel(channelData);
         setShowChannelModal(true);
       }
     } catch (error) {

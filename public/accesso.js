@@ -259,7 +259,7 @@ function login(x){
                         window.location.href = UrlSite+'/moderator';
                     break;
                     default:
-                        
+                        window.location.href = UrlSite+'/squealer-app';
                     break;
                 }
             } else {

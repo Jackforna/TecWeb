@@ -718,7 +718,7 @@ const toggleSilenceChannel = () => {
                             <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                 <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                                 { actualprofile.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                                <Image src={actualprofile.photoprofile} style={{height:'100%', position:'relative', marginTop: actualprofile.photoprofileY/2.5, marginLeft: actualprofile.photoprofileX/2.5}}></Image>
+                                <Image src={actualprofile.photoprofile} style={{width:'100%', height:'100%', position:'relative', marginTop: actualprofile.photoprofileY/2.5, marginLeft: actualprofile.photoprofileX/2.5}}></Image>
                                 </div>)
                                 : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                 }
@@ -832,7 +832,7 @@ const toggleSilenceChannel = () => {
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                     <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                                     { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px', minWidth:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                                    <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
+                                    <Image src={squeal.photoprofile} style={{width:'100%', height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
                                     : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                     }
@@ -944,7 +944,7 @@ const toggleSilenceChannel = () => {
                         {newchannelusers.map((channeluser,index2) => (
                             <Row key={index2} className='mt-3 d-flex' style={{width:'70%',justifyContent:'center',alignItems:'center', borderRadius:'12px', padding:'5px', marginLeft:'15%'}}>
                                 { channeluser.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden', padding:'0'}}>
-                                    <Image src={channeluser.photoprofile} style={{height:'100%', position:'relative', marginTop:channeluser.photoprofileY/2.5, marginLeft:channeluser.photoprofileX/2.5}}></Image>
+                                    <Image src={channeluser.photoprofile} style={{width:'100%', height:'100%', position:'relative', marginTop:channeluser.photoprofileY/2.5, marginLeft:channeluser.photoprofileX/2.5}}></Image>
                                     </div>)
                                     : <PersonCircle color='black' style={{width:'40px', height:'20px', padding:'0'}}></PersonCircle>
                                     }
@@ -987,7 +987,7 @@ const toggleSilenceChannel = () => {
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', fleWrap:'wrap'}}>
                                     <CardGroup>
                                     { squeal.photoprofile!='' ? (<div className='me-3' style={{minWidth:'30px', width:'30px',height:'30px', borderRadius:'50%', border:'2px solid black', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                                    <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
+                                    <Image src={squeal.photoprofile} style={{width:'100%', height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
                                     : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                     }
