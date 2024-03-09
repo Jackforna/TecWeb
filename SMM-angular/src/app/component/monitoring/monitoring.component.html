@@ -39,7 +39,7 @@
       <button *ngIf="currentAnswerSquealIndex < squealsWithAnswers.length - 1" (click)="showNextAnswerSqueal()" class="nav-button right">▶</button>
     </div>   
 
-    <div class="modal" *ngIf="isModalOpen">
+    <div class="modal" *ngIf="isModalOpen" id = "answerContainer-modal">
       <div class="modal-content">
         <span class="close-button" (click)="closeAnswerModal()">&times;</span>
         <h2>Answers</h2>

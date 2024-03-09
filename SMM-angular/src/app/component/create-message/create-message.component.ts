@@ -39,6 +39,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
   userDati = localStorage.getItem('Dati utente amministrato');
   datiUtente = this.userDati ? JSON.parse(this.userDati) : null;
 
+  isButtonDisabled: boolean = false;
+
   /*Modale fotocamera*/
   showCameraModal: boolean = false;
   imageDataUrl: string | null = null; // Variabile per tenere l'immagine
@@ -313,6 +315,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
 
   resetCurrentPageWithDelay(): void {
     setTimeout(() => {
+      this.isSubmitting = false;
       this.router.navigate(['/']);
     }, 2000);
   }
@@ -796,17 +799,24 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
   controlHashtagExist() {
+    this.isSubmitting = true;
     const channelHashtag = this.databaseService.getAllChannels();
+    console.log(channelHashtag);
     channelHashtag.pipe(
       map((channels: any[]) => channels.find((channel: { name: any; type: any; }) => ((channel.name === this.hashtag) && (channel.type === '#'))))
     ).subscribe((foundChannel) => {
       console.log(this.hashtag);
       console.log(foundChannel);
       if (foundChannel) {
+        console.log('Hashtag already exists');
         this.listOfUsers = foundChannel.list_users.map((user: { nickname: any; }) => `@${user.nickname}`);
-        this.listOfUsers.push(`@${this.datiUtente.nickname}`);
+        if ((!this.listOfUsers.includes(`@${this.datiUtente.nickname}`)) || (!this.listOfUsers.includes(`${this.datiUtente.nickname}`))){
+          console.log('User not in the list');
+          this.listOfUsers.push(`@${this.datiUtente.nickname}`);
+        }
         this.handleSendPublicSqueal(foundChannel, true);
       } else {
+        console.log('Hashtag does not exist');
         this.listOfUsers = [`@${this.datiUtente.nickname}`];
         this.handleSendPublicSqueal(foundChannel, false);
       }
@@ -848,7 +858,6 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       channel: hashtag, 
       impressions: 0
     };
-  
     // Chiamata al servizio per aggiungere il squeal
     this.databaseService.addSqueal(squealData).subscribe({
       next: (response) => {
@@ -905,6 +914,34 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     });
   };
 
+  addPostToHashtag(channelName: any, post: any, usersToAdd: any): void {
+    this.databaseService.getAllChannels().subscribe({
+      next: (response) => {
+        this.allChannels = response;
+      },
+      error: (error) => {
+        console.error('Error fetching channels:', error);
+      }
+    });
+    // Trova l'indice del canale nell'array `channels` che corrisponde al `channelName` dato
+    const channelIndex = this.allChannels.findIndex((channel: { name: any; }) => channel.name === channelName);
+  
+    // Se il canale è stato trovato...
+    if (channelIndex !== -1) {
+      // Aggiunge il `post` all'array `list_posts` del canale trovato
+      this.allChannels[channelIndex].list_posts.push(post);
+      if (usersToAdd) {
+        this.allChannels[channelIndex].list_users.push(usersToAdd);
+      }
+      //this.databaseService.updateChannels(this.allChannels);
+      this.updateAllChannels(this.allChannels);
+      
+      console.log(`Post aggiunto al canale ${channelName}.`);
+    } else {
+      console.log(`Canale ${channelName} non trovato.`);
+    }
+  }
+
   handleUpdateHashtagChannel(channelToUpdate: any): void {
     const channelDataUpdatePost = {
       answer: [],
@@ -923,13 +960,34 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       neg_reactions: 0,
       pos_reactions: 0,
       photoprofile: this.datiUtente.photoprofile,
-      receivers: channelToUpdate.list_users.map((user: { nickname: any; }) => `@${user.nickname}`),
+      receivers: [this.listOfUsers],
       sender: this.datiUtente.nickname,
       typeSender: 'keywords',
       usersReactions: [],
       usersViewed: [],
     };
-    this.addPostToChannel(channelToUpdate.name, channelDataUpdatePost);
+    let userToAdd = null;
+    if (!(channelToUpdate.list_users.find((user: { nickname: any; }) => user.nickname === this.datiUtente.nickname))) {
+      userToAdd = {
+        blocked: false,
+        cell: this.datiUtente.cell,
+        char_d: this.datiUtente.char_d,
+        char_m: this.datiUtente.char_m,
+        char_w: this.datiUtente.char_w,
+        email: this.datiUtente.email,
+        fullname: this.datiUtente.fullname,
+        nickname: this.datiUtente.nickname,
+        notification: this.datiUtente.notification || [true, true, true, true, true],
+        photoprofile: this.datiUtente.photoprofile,
+        photoprofileX: this.datiUtente.photoprofileX || 0,
+        photoprofileY: this.datiUtente.photoprofileX || 0,
+        popularity: this.datiUtente.popularity,
+        type: this.datiUtente.type || 'User',
+        version: this.datiUtente.version || "user",
+        _id: this.datiUtente._id
+      };
+    } 
+    this.addPostToHashtag(channelToUpdate.name, channelDataUpdatePost, userToAdd);
   }
 
   handleCreateHashtagChannel(channelToUpdate: any): void {
@@ -1373,6 +1431,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
 
 
   addPostToChannel(channelName: any, post: any): void {
+    //let channelUpdating: any;
     this.databaseService.getAllChannels().subscribe({
       next: (response) => {
         this.allChannels = response;
@@ -1382,7 +1441,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       }
     });
     // Trova l'indice del canale nell'array `channels` che corrisponde al `channelName` dato
-    const channelIndex = this.allChannels.findIndex(channel => channel.name === channelName);
+    const channelIndex = this.allChannels.findIndex((channel: { name: any; }) => channel.name === channelName);
   
     // Se il canale è stato trovato...
     if (channelIndex !== -1) {
