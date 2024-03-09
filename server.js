@@ -302,7 +302,7 @@ app.put('/update-channel/:id', async (req, res) => {
 
       const result = await ListChannelsCollection.updateOne(
         { _id: objectId },
-        { $push: { list_posts: updates.postToAdd } } // Esempio: { postToAdd: { ...dati del post... } }
+        { $set: updates }
     );
 
     if (result.modifiedCount === 0) {
