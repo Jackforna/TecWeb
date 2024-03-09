@@ -234,7 +234,6 @@ app.put('/update-squeal/:id', async (req, res) => {
           { _id: new ObjectId(id) },
           { $set: updates }
       );
-
       if (result.modifiedCount === 0) {
           return res.status(404).send('Squeal non trovato o nessun aggiornamento necessario');
       }

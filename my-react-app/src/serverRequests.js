@@ -246,7 +246,7 @@ export async function updateChannel(id, updates) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ postToAdd: updates })
+            body: JSON.stringify(updates)
         });
 
         if (!response.ok) {
