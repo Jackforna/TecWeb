@@ -85,6 +85,7 @@ export class EditProfileComponent implements OnInit{
     );
     */
     
+    
   }
 
   laodUserData(): void {
@@ -116,6 +117,7 @@ export class EditProfileComponent implements OnInit{
       .subscribe(
         response => {
           // Aggiorna i dati dell'utente nel localStorage
+          this.userId.photoprofile = newImageUrl;
           this.databaseService.getUserData(this.userId._id).subscribe((data: any) => {
             localStorage.removeItem('Dati utente amministrato');  
             localStorage.setItem('Dati utente amministrato', JSON.stringify(data));
@@ -123,8 +125,8 @@ export class EditProfileComponent implements OnInit{
             console.error('Error loading user data.:', error);
           });
           this.laodUserData(); // Ricarica i dati dell'utente
-          window.location.reload();
-          this.closeDialog();
+          //window.location.reload();
+          this.closeDialog(); 
         },
         error => console.error('Error updating profile photo', error)
       );
@@ -173,10 +175,11 @@ export class EditProfileComponent implements OnInit{
   
       if (selectedVIPIndex !== -1) {
         this.userId = this.user ? JSON.parse(this.user).managedAccounts[selectedVIPIndex] : null;
-        localStorage.removeItem('ActuallyUserId');  
-        localStorage.setItem('actualUserId', JSON.stringify(this.userId));  
+        //localStorage.removeItem('ActuallyUserId');  
+        //localStorage.setItem('actualUserId', JSON.stringify(this.userId));  
         this.databaseService.getUserData(this.userId).subscribe((data: any) => {
           localStorage.removeItem('Dati utente amministrato');  
+          console.log('Dati utente amministrato:', data);
           localStorage.setItem('Dati utente amministrato', JSON.stringify(data)); 
           this.laodUserData(); // Ricarica i dati dell'utente
   

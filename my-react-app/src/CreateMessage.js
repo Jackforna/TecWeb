@@ -7,7 +7,7 @@ import Webcam from 'react-webcam';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, updateUser, getListChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
+import {getUsers, updateUser, getListChannels, updateChannels, getUserById, getListSqueals, getRandomTweet, getActualUser, addSqueal, addChannel, updateChannel} from './serverRequests.js';
 import { useNavigate } from 'react-router-dom';
 import { set } from 'mongoose';
 
@@ -51,6 +51,7 @@ function CreateMessage(props) {
   const hours = now.getHours();
   const minutes = now.getMinutes();
   const formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+  const [disabledSendButton, setDisabledSendButton] = useState(false);
 
 
   /*Creazione messaggio*/
@@ -755,6 +756,9 @@ function CreateMessage(props) {
         char_w: actualUser.char_w - charToDeacrement,
         char_m: actualUser.char_m - charToDeacrement,
     };
+    // const tempChar = maxChar - charToDeacrement;
+    // setMaxChar(tempChar);
+    // setWordsRemaining(tempChar);
 
     try {
         const result = await updateUser(userId, userUpdates);
@@ -773,17 +777,15 @@ function CreateMessage(props) {
     
     if (foundChannel) {
       const flagg = foundChannel.list_users;
-      setListOfUsers(flagg);
-      console.log('Channel found');
-      console.log(foundChannel.list_users);
-      console.log(listOfUsers)
-      console.log(flagg);
+      if (!(flagg.find(user => user.nickname === nicknameProfile))) {
+        flagg.push(`@${nicknameProfile}`);
+      }
+      setDisabledSendButton(true);
       handleSendSqueal(foundChannel, true, flagg);
     } else {
       setExistedChannel(false);
-      console.log('Channel not found');
-      console.log([nicknameProfile]);
       setListOfUsers([nicknameProfile]);
+      setDisabledSendButton(true);
       handleSendSqueal(foundChannel, false, [nicknameProfile]);
     }
 
@@ -857,6 +859,27 @@ function CreateMessage(props) {
     }
   };
 
+  async function addPostToHashtag(channelName, post, userToAdd) {
+    const getAllChannels = await getListChannels(); 
+      // Trova l'indice del canale nell'array `channels` che corrisponde al `channelName` dato
+    const channelIndex = getAllChannels.findIndex(channel => channel.name === channelName);
+    
+      // Se il canale è stato trovato...
+      if (channelIndex !== -1) {
+        // Aggiunge il `post` all'array `list_posts` del canale trovato
+        getAllChannels[channelIndex].list_posts.push(post);
+        console.log('User to add1:', userToAdd);
+        if ( userToAdd !== null) {
+          console.log('User to add2:', userToAdd);
+          getAllChannels[channelIndex].list_users.push(userToAdd);
+        }
+        await updateChannels(getAllChannels);
+        console.log(`Post aggiunto al canale ${channelName}.`);
+    } else {
+      console.log(`Canale ${channelName} non trovato.`);
+    }
+  }
+
   const handleUpdateHashTagChannel = async (channelToUpdate) => {
     const channelDataUpdatePost = {
       answers: [],
@@ -882,8 +905,30 @@ function CreateMessage(props) {
       usersViewed: [],
     }
 
+    let userToAdd = null;
+    if (!(channelToUpdate.list_users.find(user => user.nickname === nicknameProfile))){
+      userToAdd = {
+        blocked: false,
+        cell: actualUser.cell || "",
+        char_d: actualUser.char_d || 300,
+        char_m: actualUser.char_m || 7000,
+        char_w: actualUser.char_w || 2000,
+        email: actualUser.email,
+        fullname: actualUser.fullname,
+        nickname: nicknameProfile,
+        notification: actualUser.notification || [true, true, true, true, true],
+        photoprofile: photoProfile || "",
+        photoprofileX: actualUser.photoprofileX || 0,
+        photoprofileY: actualUser.photoprofileY || 0,
+        popularity: actualUser.popularity || 0,
+        type: actualUser.type || "User",
+        version: actualUser.version || "user",
+        _id: actualUser._id,
+      };
+    } 
+
     try {
-      const result = await addPostToChannel(channelToUpdate.name,  channelDataUpdatePost);
+      const result = await addPostToHashtag(channelToUpdate.name,  channelDataUpdatePost, userToAdd);
       console.log('Canale update:', result);
     } catch (error) {
       console.error('Error during the upadate of channel:', error);
@@ -892,7 +937,9 @@ function CreateMessage(props) {
 
   const handleSendSqueal = async (channelToUpdate, flag, flagg) => {
     const receiversFlagg = flagg.map(user => user.nickname);
-    receiversFlagg.push(nicknameProfile);
+    if ((!(flagg.find(user => user.nickname === nicknameProfile))) && (!(flagg.find(user => user.nickname === `@${nicknameProfile}`)))){
+      receiversFlagg.push(nicknameProfile);
+    }
     const squealData = {
       sender: nicknameProfile, 
       typesender: 'keywords', 
@@ -955,10 +1002,15 @@ function CreateMessage(props) {
 
       await handleUpdateUser(usedChars);
       // window.location.reload();
+      setSquealChatSecondTextareaValue('');
+      setWordsRemaining(maxChar);
       resetForm();
-
+      setDisabledSendButton(false);
+      goToProfile();
     } catch (error) {
       console.error('Errore during the squeal sending ', error);
+      window.location.reload();
+      setDisabledSendButton(false);
     }
   };
 
@@ -1032,6 +1084,7 @@ function CreateMessage(props) {
   };
 
   const handleSendPrivateSqueal = async () => {
+    setDisabledSendButton(true);
     const squealData = {
       sender: nicknameProfile, 
       typesender: 'Users', 
@@ -1062,8 +1115,12 @@ function CreateMessage(props) {
       console.log('Squeal send:', result);
       // window.location.reload();
       resetForm();
+      setDisabledSendButton(false);
+      goToProfile();
     } catch (error) {
       console.error('Error during the squeal sendind: ', error);
+      setDisabledSendButton(false);
+      window.location.reload();
     }
   }; 
   
@@ -1129,7 +1186,7 @@ function CreateMessage(props) {
       if (channelIndex !== -1) {
         // Aggiunge il `post` all'array `list_posts` del canale trovato
         getAllChannels[channelIndex].list_posts.push(post);
-        updateChannels(getAllChannels);
+        await updateChannels(getAllChannels);
         console.log(`Post aggiunto al canale ${channelName}.`);
     } else {
       console.log(`Canale ${channelName} non trovato.`);
@@ -1170,6 +1227,7 @@ function CreateMessage(props) {
   };
 
   const handleSendChannelSqueal = async () => {
+    setDisabledSendButton(true);
     if (channelSelected) {
       const squealData = {
       sender: nicknameProfile, 
@@ -1229,11 +1287,16 @@ function CreateMessage(props) {
         handleUpdateUser(usedChars); 
         // window.location.reload();
         resetForm();
+        setDisabledSendButton(false);
+        goToProfile();
         } catch (error) {
           console.error('Error during the squeal sending in the channel', error);
+          setDisabledSendButton(false);
+          window.location.reload();
         }
     } else {
       alert("Please select a channel to send the message.");
+      setDisabledSendButton(false);
     }
   };
   
@@ -1317,6 +1380,7 @@ function CreateMessage(props) {
   }
 
   const processRepeatMessage = async () => {
+    setDisabledSendButton(true);
     const repeat = channelSelected.list_mess.filter(message => message.type === 'Repeat');
     const inputString = repeat[0].repetition;
     const numbers = inputString.match(/\d+/g).map(Number);
@@ -1338,7 +1402,6 @@ function CreateMessage(props) {
     updateInterval();
   };
 
-
   const stopProcessRepeatMessage = async () => {
     localStorage.removeItem('Interval active');
     localStorage.removeItem('secToRepeat');
@@ -1350,9 +1413,11 @@ function CreateMessage(props) {
     localStorage.removeItem('PhotoProfile');
     localStorage.removeItem('Nickname');
     updateInterval();
+    setDisabledSendButton(false);
   };
 
   const handleSendChannelDefaultSqueal = async (defaultCamp) => {
+    setDisabledSendButton(true);
     const squealData = {
       sender: localStorage.getItem("Interval active") ? localStorage.getItem('Nickname') : nicknameProfile, 
       typesender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : channelType,
@@ -1386,6 +1451,8 @@ function CreateMessage(props) {
         console.log('Squeal send:', resultAddSqueal);
         // window.location.reload();
         resetForm();
+        setDisabledSendButton(false);
+        goToProfile();
       } else if (localStorage.getItem('Interval active') === 'true') {
         const resultAddSqueal = await addSqueal(squealData);
         const channelToProcess = JSON.parse(localStorage.getItem('ChannelSelected'));
@@ -1393,9 +1460,12 @@ function CreateMessage(props) {
         console.log('Squeal send:', resultAddSqueal);
       } else {
       alert("You don't have enough characters available to send the message.");
+      setDisabledSendButton(false);
     }
     } catch (error) {
       console.error('Error during the channel updating: ', error);
+      setDisabledSendButton(false);
+      window.location.reload();
     }
   };
 
@@ -1507,8 +1577,10 @@ function CreateMessage(props) {
       isChannelExists(channelName);
       if (channelName === '') {
         alert('Please enter a name for the channel.');
+        setDisabledSendButton(false);
       } else if (isChannelExists(channelName)) {
         alert('A channel with this name already exists. Please choose a different name.');
+        setDisabledSendButton(false);
       } else {
         setShowAreYouSure(false);
         setallchannels(allchannelsprev => [...allchannelsprev, channelData]);
@@ -1537,11 +1609,68 @@ function CreateMessage(props) {
 
   const styleButtonBottom = windowSize < 426 ? { marginBottom: "30% !important" } : { };
 
+  /*
+  const loSapeviChe = async () => {
+    const article = await fetchRandomNews();
+      if (article) { 
+        if (article.author === null) {
+          article.author = "Unknown";
+        };
+        const tempBodyNews =  {
+          text: "Author: " + article.author + "\n" + article.content + "\nPublished at: " + article.publishedAt,
+          link: article.url || '',
+          photo: article.urlToImage || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+          video: '',
+          position: '',
+        }
+      
+  };
+  */
 
+  const generateOs = () => {
+    const os = [];
+    for (let i = 0; i < 100; i++) {
+      os.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+      });
+    }
+    return os;
+  };
+
+  const [gameState, setGameState] = useState({
+    started: false,
+    timeLeft: 30,
+    score: 0,
+    os: generateOs(),
+  });
+
+  useEffect(() => {
+    setGameState((prevState) => ({ ...prevState, started: true }));
+  }, []);
+
+  const handleClick = (o) => {
+    // Rimuovi l'O dallo schermo
+    // Incrementa il punteggio
+    setGameState((prevState) => ({
+      ...prevState,
+      score: prevState.score + 1,
+      os: prevState.os.filter((oItem) => oItem !== o),
+    }));
+  };
 
     return (
       <>
-        {/*Crea messaggio*/}
+        {(disabledSendButton && (!(messageType === 'Channel' && squealOrChannelOption === 'Create'))) ? (
+          <>
+            <lord-icon
+              src="https://cdn.lordicon.com/nqisoomz.json"
+              trigger="hover"
+              colors="primary:#121331,secondary:#ebe6ef,tertiary:#efcd4c,quaternary:#3a3347"
+              style={{width:'250px', height: '250px' }}>
+            </lord-icon>
+          </>
+        ) : (
         <Container 
           style={{
             margin: '0',
@@ -1990,7 +2119,7 @@ function CreateMessage(props) {
 
                       {/* Colonna per il pulsante Invia, allineata a destra */}
                       <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                        <Button onClick={controlChannel} id="buttonSend" style={{ marginBottom: windowSize < 426 ? "30%" : undefined }}>Send</Button>
+                        <Button onClick={controlChannel} id="buttonSend" disabled = {disabledSendButton} style={{ marginBottom: windowSize < 426 ? "30%" : undefined }}>Send</Button>
                       </Col>
         
                     </Row>
@@ -2273,7 +2402,7 @@ function CreateMessage(props) {
 
                       {/* Colonna per il pulsante Invia, allineata a destra */}
                       <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                        <Button onClick={handleSendPrivateSqueal} id = "buttonSend" style={{ marginBottom: windowSize < 426 ? "30%" : undefined }}>Send</Button>
+                        <Button onClick={handleSendPrivateSqueal} disabled = {disabledSendButton} id = "buttonSend" style={{ marginBottom: windowSize < 426 ? "30%" : undefined }}>Send</Button>
                       </Col>
 
                     </Row> 
@@ -2664,7 +2793,7 @@ function CreateMessage(props) {
 
                           {/* Colonna per il pulsante Invia, allineata a destra */}
                           <Col className="d-flex justify-content-end" md={2} id = "sendMessage">
-                            <Button onClick={handleSendChannelSqueal} id = "buttonSend" style={{ marginBottom: windowSize < 426 ? "30%" : undefined }}>Send</Button>
+                            <Button onClick={handleSendChannelSqueal} disabled = {disabledSendButton} id = "buttonSend" style={{ marginBottom: windowSize < 426 ? "30%" : undefined }}>Send</Button>
                           </Col>
                         </Row>
                       }
@@ -2672,7 +2801,7 @@ function CreateMessage(props) {
                       {/*Send default*/}
                       {isDefaultMessageValid &&
                         <Col className="col-1">
-                          <Button onClick={processDefaultMessageType} id = "buttonSend" style={{ marginBottom: windowSize < 426 ? "30%" : undefined }}>Send</Button>
+                          <Button onClick={processDefaultMessageType} disabled = {disabledSendButton} id = "buttonSend" style={{ marginBottom: windowSize < 426 ? "30%" : undefined }}>Send</Button>
                         </Col> 
                       }
                     </>
@@ -2689,7 +2818,7 @@ function CreateMessage(props) {
                             type="name" 
                             placeholder="Channel name" 
                             value={channelName} 
-                            onChange={e => setChannelName(e.target.value)}
+                            onChange={e => setChannelName(e.target.value.toLowerCase())}
                             style = {{
                               width: '60%',
                               borderRadius: '20px',
@@ -2795,8 +2924,10 @@ function CreateMessage(props) {
                           onClick={() =>{
                             processSelectedUsers();
                             setShowAreYouSure(true);
+                            setDisabledSendButton(true);
                           }}
                           id = "buttonSend"
+                          disabled = {disabledSendButton}
                           >Create</Button>
                         </Row>
 
@@ -2832,16 +2963,21 @@ function CreateMessage(props) {
               <Button variant="secondary" onClick={() => {
                 handleChannelModalClose();
                 resetForm();
+                setDisabledSendButton(false);
               }}>
                 Close
               </Button>
-              <Button variant="primary" onClick={goToProfile}>
+              <Button variant="primary" onClick={() => {
+                goToProfile();
+                setDisabledSendButton(false);
+              }}>
                 Go to edit channel
               </Button>
             </Modal.Footer>
           </Modal>
         
         </Container>
+        )}
       </>
     );
 }

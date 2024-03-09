@@ -24,9 +24,17 @@ export class SideMenuComponent implements OnInit {
 
   ngOnInit(): void {
     // console.clear();
+    this.databaseService.getAllUsers().subscribe(
+      (data: any) => {
+        console.log('Tutti gli utenti:', data);
+      },
+      error => {
+        console.error('Errore nella richiesta:', error);
+      }
+    );
     this.getManagerDetails();
     this.setAccountData();
-    this.updateUserManagedAccounts("65e093240bd4d94cf1d69356", ["65e093330bd4d94cf1d69357", "65e093c60bd4d94cf1d69358", "65e094300bd4d94cf1d69359"]);
+    //this.updateUserManagedAccounts("65e093240bd4d94cf1d69356", ["65e093330bd4d94cf1d69357", "65e093c60bd4d94cf1d69358", "65e094300bd4d94cf1d69359"]);
     /* Test
     this.databaseService.getAllUsers().subscribe( 
       (data: any) => {
@@ -37,7 +45,7 @@ export class SideMenuComponent implements OnInit {
       }
     );
     */
-    // this.updateUserManagedAccounts("65b791fcd5997e7ede8b49ec", ["65b79216d5997e7ede8b49ed","65ddcc5a37ac7434ed50f82e"]);
+    //this.updateUserManagedAccounts("65b791fcd5997e7ede8b49ec", ["fvPro","Nome Buffo1", "Nome Buffo2"]);
   }
 
   onLogout(): void {
@@ -63,12 +71,36 @@ export class SideMenuComponent implements OnInit {
         // Se l'utente è un manager e ha almeno un account gestito
         if (managerData.version === 'social media manager' && managerData.managedAccounts.length > 0) {
           localStorage.setItem('Dati manager', JSON.stringify(managerData));
-          this.databaseService.getUserData(managerData.managedAccounts[0]).subscribe((userData: any) => {  
-            localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
-          }, error => {
-            console.error('Error in request:', error);
-          });
+          if (localStorage.getItem('Dati utente amministrato') === null) {
+            this.databaseService.getUserData(managerData.managedAccounts[0]).subscribe((userData: any) => {  
+              localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+              // window.location.reload();
+            }, error => {
+              console.error('Error in request:', error);
+            });
+          }
+          // this.obtainUserIdFromName();
         }
+      },
+      error => {
+        console.error('Error in request:', error);
+      }
+    );
+  }
+
+  obtainUserIdFromName() {
+    this.databaseService.getAllUsers().subscribe(
+      (data: any) => {
+        data.forEach((user: any) => {
+          if (user.nickname === this.nickname) {
+            this.id_user = user._id;
+            this.databaseService.getUserData(this.id_user ?? '').subscribe((userData: any) => {  
+              localStorage.setItem('Dati utente amministrato', JSON.stringify(userData));
+            }, error => {
+              console.error('Error in request:', error);
+            });
+          }
+        });
       },
       error => {
         console.error('Error in request:', error);
@@ -83,7 +115,6 @@ export class SideMenuComponent implements OnInit {
     this.profilePictureUrl = datiUtente ? datiUtente.photoprofile : '';
     this.profileDescription = datiUtente ? datiUtente.profilebio : '';
   }
-
   
   updateUserManagedAccounts(userId: string, managedAccounts: string[]) {
     this.http.put(`http://localhost:8080/update-user/${userId}`, { managedAccounts })

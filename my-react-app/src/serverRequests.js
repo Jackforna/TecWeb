@@ -290,6 +290,24 @@ export async function addSqueal(squealData) {
     }
 }
 
+export async function deleteSqueal(id) {
+    try {
+        const response = await fetch(UrlSite+`/delete-squeal/${id}`, {
+            method: 'DELETE'
+          });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
 export async function addChannel(channelData) {
     try {
         const response = await fetch(UrlSite+'/add-channel', {
