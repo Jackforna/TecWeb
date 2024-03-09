@@ -16,7 +16,7 @@ import { Camera, PersonCircle, Send, CaretDownFill, GeoAlt, CameraVideo, Link45d
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals} from './serverRequests.js';
+import {getUsers, getListChannels, getListSqueals, getActualUser, updateUsers, updateUser, updateChannel, updateSqueals, updateSqueal} from './serverRequests.js';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -78,6 +78,21 @@ function Home(){
   const windowSize = useWindowSize();
   const UrlSite = 'http://localhost:8080';
   const [allSquealsCollection, setAllSquealsCollection] = useState();
+
+  function rimuoviDuplicati(array) {
+    const oggettiUnici = {};
+    const risultato = [];
+
+    for (const oggetto of array) {
+        const chiave = oggetto.sender + '|' + oggetto.date + '|' + oggetto.hour + '|' + oggetto.seconds;
+        if (!oggettiUnici[chiave]) {
+            oggettiUnici[chiave] = true;
+            risultato.push(oggetto);
+        }
+    }
+
+    return risultato;
+}
 
   useEffect( () => {
     if(location.pathname.endsWith('/home')){
@@ -229,7 +244,7 @@ useEffect(()=>{
 }, [actualuser, allSquealsReceived, allCHANNELS]);
 
   const callback = (entries) => {
-    entries.forEach((entry) => {
+    entries.forEach(async(entry) => {
       if (entry.isIntersecting) {
         const viewedMessage = allSqueals.find(
           (msg) => msg._id === entry.target.getAttribute('data-id')
@@ -262,9 +277,11 @@ useEffect(()=>{
                 updatedMessages.push(allSquealsReceived[i]);
               }
             }
+            updatedMessages = rimuoviDuplicati(updatedMessages);
             setAllSquealsReceived(updatedMessages);
             setAllSquealsCollection(updatedMessages);
-            updateAllSqueals(updatedMessages);
+            let indexSqueal = updatedMessages.findIndex(item => item._id === viewedMessage._id);
+            await updateAllSqueals(updatedMessages, indexSqueal);
         let updatedChannels = [...allchannels];
         let updatedCHANNELS = [...allCHANNELS];
         let updatedkeywords = [...allkeywords];
@@ -361,7 +378,9 @@ useEffect(()=>{
           break;
         }
         let allupdatedChannels = [...updatedChannels,...updatedCHANNELS,...updatedkeywords];
-        updateAllChannels(allupdatedChannels);
+        allupdatedChannels = rimuoviDuplicati(allupdatedChannels);
+        let index = allupdatedChannels.findIndex(item => item.name === viewedMessage.channel);
+        await updateAllChannels(allupdatedChannels, index);
         }
       }
     });
@@ -384,35 +403,35 @@ useEffect(()=>{
 
   async function updateAllUsers(UsersToUpdate){
     try{
-      await updateUsers(UsersToUpdate);
+      let userUpdate = {}
+            for(let i=0; i< UsersToUpdate.length; i++){
+                if(UsersToUpdate[i].nickname === actualuser.nickname){
+                    userUpdate = {char_d:UsersToUpdate[i].char_d, char_w:UsersToUpdate[i].char_w, char_m:UsersToUpdate[i].char_m, popularity:UsersToUpdate[i].popularity};
+                }
+            }
+            await updateUser(actualuser._id, userUpdate);
     } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
         throw error;
     }
 }
 
-async function updateAllSqueals(squealsToUpdate){
+async function updateAllSqueals(squealsToUpdate, idsqueal){
   try{
-    const Squeals = await getListSqueals();
-    const SquealsUpdated = Squeals.map(oggetto1 => {
-      const mess = squealsToUpdate.find(oggetto2 => (oggetto2.sender === oggetto1.sender && oggetto2.date === oggetto1.date && oggetto2.hour === oggetto1.hour && oggetto2.seconds === oggetto1.seconds));
-      return mess ? mess : oggetto1;
-    })
-    await updateSqueals(SquealsUpdated);
+    const squealUpdate = {impressions:squealsToUpdate[idsqueal].impressions, pos_reactions:squealsToUpdate[idsqueal].pos_reactions, neg_reactions:squealsToUpdate[idsqueal].neg_reactions, category:squealsToUpdate[idsqueal].category, usersReactions:squealsToUpdate[idsqueal].usersReactions, usersViewed:squealsToUpdate[idsqueal].usersViewed, answers:squealsToUpdate[idsqueal].answers};
+    await updateSqueal(squealsToUpdate[idsqueal]._id, squealUpdate);
   } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
   }
 }
 
-async function updateAllChannels(ChannelsToUpdate){
+async function updateAllChannels(ChannelsToUpdate, indexChannel){
   try{
-    const Channels = await getListChannels();
-    const ChannelsUpdated = Channels.map(oggetto1 => {
-      const chan = ChannelsToUpdate.find(oggetto2 => oggetto2.name === oggetto1.name);
-      return chan ? chan : oggetto1;
-    });
-    await updateChannels(ChannelsUpdated);
+    if(indexChannel!==-1){
+      const ChannelsUpdated = {list_posts:ChannelsToUpdate[indexChannel].list_posts, popularity:ChannelsToUpdate[indexChannel].popularity};
+      await updateChannel(ChannelsToUpdate[indexChannel]._id, ChannelsUpdated);
+    }
   } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
@@ -497,7 +516,7 @@ const handleFocus = () => {
     }
   };
 
-  const reactionSqueal = (index,x) => {
+  const reactionSqueal = async (index,x) => {
     let newallSqueals = [...allSquealsCollection];
     const idToFind = allSqueals[index]._id;
     let indexSqueal = newallSqueals.findIndex(item => item._id === idToFind);
@@ -526,7 +545,7 @@ const handleFocus = () => {
         if(newallSqueals[indexSqueal].pos_reactions>0.25*newallSqueals[indexSqueal].impressions){
           if(newallSqueals[indexSqueal].neg_reactions>0.25*newallSqueals[indexSqueal].impressions){
             newallSqueals[indexSqueal].category = "controversial";
-            for(let i=0;i<allCHANNELS;i++){
+            for(let i=0;i<allCHANNELS.length;i++){
               if(allCHANNELS[i].name == "CONTROVERSIAL"){
                   allCHANNELS[i].list_posts.push(newallSqueals[indexSqueal]);
               }
@@ -639,7 +658,7 @@ const handleFocus = () => {
         if(newallSqueals[indexSqueal].pos_reactions>0.25*newallSqueals[indexSqueal].impressions){
           if(newallSqueals[indexSqueal].neg_reactions>0.25*newallSqueals[indexSqueal].impressions){
             newallSqueals[indexSqueal].category = "controversial";
-            for(let i=0;i<allCHANNELS;i++){
+            for(let i=0;i<allCHANNELS.length;i++){
               if(allCHANNELS[i].name == "CONTROVERSIAL"){
                   allCHANNELS[i].list_posts.push(newallSqueals[indexSqueal]);
               }
@@ -731,7 +750,7 @@ const handleFocus = () => {
           }
         }
     }
-    updateAllSqueals(newallSqueals);
+    await updateAllSqueals(newallSqueals, indexSqueal);
     setAllSquealsCollection(newallSqueals);
     const newSquealsPrint = allSqueals.map(subItem => {
       const superItem = newallSqueals.find(item => item._id === subItem._id);
@@ -742,7 +761,10 @@ const handleFocus = () => {
     });
     setallSqueals(newSquealsPrint);
     let ListChannelsModified = [...channelsModified, ...CHANNELSModified, ...keywordsModified];
-    updateAllChannels(ListChannelsModified);
+    let ind = ListChannelsModified.findIndex(item => item.name === newallSqueals[indexSqueal].channel);
+    await updateAllChannels(ListChannelsModified, ind);
+    ind = ListChannelsModified.findIndex(item => item.name === "CONTROVERSIAL");
+    await updateAllChannels(ListChannelsModified, ind);
     setAllUsers(newallUsers);
     updateAllUsers(newallUsers);
   };
@@ -856,24 +878,9 @@ const sendAnswer = async () => {
   });
   setallSqueals(newSquealsPrint);
   setAllSquealsCollection(newSqueals);
-  let squealsReceived = [];
-    if(JSON.parse(localStorage.getItem("actualUserId"))!="1"){
-      for(let i=0; i<newSqueals.length;i++){
-          for(let j=0; j<newSqueals[i].receivers.length; j++){
-              if(newSqueals[i].receivers[j]=="@"+actualuser.nickname){
-                  squealsReceived.push(newSqueals[i]);
-              }
-          }
-      }
-    } else {
-      for(let i=0;i<allCHANNELS.length;i++){
-        for(let j=0;j<allCHANNELS[i].list_posts.length;j++){
-          squealsReceived.push(allCHANNELS[i].list_posts[j]);
-        }
-      }
-    }
-  setallSquealsprint(squealsReceived);
-  updateAllSqueals(newSqueals);
+  setallSquealsprint(newSquealsPrint);
+  let index = newSqueals.findIndex(obj => obj._id === idAnswer);
+  updateAllSqueals(newSqueals, index);
   setLinkAnswer("");
   setTextAnswer("");
   setVideoAnswer("");

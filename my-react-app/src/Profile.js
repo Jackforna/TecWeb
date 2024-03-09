@@ -14,7 +14,7 @@ import neg_reaction2 from '../src/img/reaction_negative2.png'
 import neg_reaction3 from '../src/img/reaction_negative3.png'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUsers, updateUser, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 const useWindowSize = () => {
     const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -66,7 +66,6 @@ function Profile() {
     const webcamRef = useRef(null);
     const webcamRef2 = useRef(null);
     const webcamRef3 = useRef(null);
-    const videoRef = useRef(null);
     const [dragging, setDragging] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
@@ -117,17 +116,13 @@ function Profile() {
     const [positionKeyword, setPositionKeyword] = useState({ x: 0, y: 0 });
     const [inKeyword, setInKeyword] = useState(false);
     const [ChannelPostsDeleted, setChannelPostsDeleted] = useState([]);
-    const [isRecording, setIsRecording] = useState(false);
-    const [mediaRecorder, setMediaRecorder] = useState(null);
-    const [recordedChunks, setRecordedChunks] = useState([]);
-    const [stopRecording, setStopRecording] = useState(false);
-    const [stream, setStream] = useState(null);
     const [viewAnswers, setViewAnswers] = useState(false);
     const [allAnswersprint, setAllAnswersprint] = useState([]);
     const [userRequest, setUserRequest] = useState('');
     const [numSeconds, setNumSeconds] = useState('');
     const windowSize = useWindowSize();
     const UrlSite = 'http://localhost:8080';
+    const [disableButton, setDisableButton] = useState(false);
 
     useEffect(() => {
         if (location.pathname.endsWith('/profile')) {
@@ -224,18 +219,31 @@ function Profile() {
 
     async function updateAllUsers(UsersToUpdate){
         try{
-          const user = await updateUsers(UsersToUpdate);
-          console.log(user)
+            let userUpdate = {}
+            for(let i=0; i< UsersToUpdate.length; i++){
+                if(UsersToUpdate[i].nickname === actualuser.nickname){
+                    userUpdate = {nickname:UsersToUpdate[i].nickname, bio:UsersToUpdate[i].bio, email:UsersToUpdate[i].email, fullname:UsersToUpdate[i].fullname, photoprofile:UsersToUpdate[i].photoprofile, password:UsersToUpdate[i].password};
+                }
+            }
+            await updateUser(actualuser._id, userUpdate);
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
             throw error;
         }
     }
 
-    async function deleteUser(UsersToUpdate){
+    async function deleteUser(){
         try{
-          const user = await deleteUsers(UsersToUpdate);
-          console.log(user)
+            const Users = await getUsers();
+            const ActualUser = await getActualUser();
+            let UsersToUpdate = [];
+            for(let i=0; i<Users.length; i++){
+                if(Users[i].nickname!==ActualUser.nickname){
+                    UsersToUpdate.push(Users[i]);
+                }
+            }
+            const user = await deleteUsers(UsersToUpdate);
+            console.log(user)
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
             throw error;
@@ -275,9 +283,10 @@ function Profile() {
         setconfirmdeletesqueal(true);
     }
 
-    const deletesqueal = (eliminate) => {
+    const deletesqueal = async (eliminate) => {
         if(eliminate){
-        const newallSqueals = [...allSquealsprint];
+        setDisableButton(true);
+        let newallSqueals = [...allSquealsprint];
         let listnewchannels = [...allchannels];
         let listnewCHANNELS = [...allCHANNELS];
         let listnewkeywords = [...allkeywords];
@@ -289,7 +298,7 @@ function Profile() {
                             listnewchannels[i].list_posts = [];
                             for(let j=0;j<allchannels[i].list_posts.length;j++){
                                 if((allSquealsprint[indexsquealtodelete].sender!=allchannels[i].list_posts[j].sender)|(allSquealsprint[indexsquealtodelete].date!=allchannels[i].list_posts[j].date)|(allSquealsprint[indexsquealtodelete].hour!=allchannels[i].list_posts[j].hour)|(allSquealsprint[indexsquealtodelete].seconds!=allchannels[i].list_posts[j].seconds)){
-                                    listnewchannels[i].list_posts.push(allSquealsprint[indexsquealtodelete]);
+                                    listnewchannels[i].list_posts.push(allchannels[i].list_posts[j]);
                                 }
                             }
                         }
@@ -301,7 +310,7 @@ function Profile() {
                             listnewCHANNELS[i].list_posts = [];
                             for(let j=0;j<allCHANNELS[i].list_posts.length;j++){
                                 if((allSquealsprint[indexsquealtodelete].sender!=allCHANNELS[i].list_posts[j].sender)|(allSquealsprint[indexsquealtodelete].date!=allCHANNELS[i].list_posts[j].date)|(allSquealsprint[indexsquealtodelete].hour!=allCHANNELS[i].list_posts[j].hour)|(allSquealsprint[indexsquealtodelete].seconds!=allCHANNELS[i].list_posts[j].seconds)){
-                                    listnewCHANNELS[i].list_posts.push(allSquealsprint[indexsquealtodelete]);
+                                    listnewCHANNELS[i].list_posts.push(allCHANNELS[i].list_posts[j]);
                                 }
                             }
                         }
@@ -313,7 +322,7 @@ function Profile() {
                             listnewkeywords[i].list_posts = [];
                             for(let j=0;j<allkeywords[i].list_posts.length;j++){
                                 if((allSquealsprint[indexsquealtodelete].sender!=allkeywords[i].list_posts[j].sender)|(allSquealsprint[indexsquealtodelete].date!=allkeywords[i].list_posts[j].date)|(allSquealsprint[indexsquealtodelete].hour!=allkeywords[i].list_posts[j].hour)|(allSquealsprint[indexsquealtodelete].seconds!=allkeywords[i].list_posts[j].seconds)){
-                                    listnewkeywords[i].list_posts.push(allSquealsprint[indexsquealtodelete]);
+                                    listnewkeywords[i].list_posts.push(allkeywords[i].list_posts[j]);
                                 }
                             }
                         }
@@ -324,11 +333,19 @@ function Profile() {
         newallSqueals.splice(indexsquealtodelete, 1);
         setallSquealsprint(newallSqueals);
         setallSqueals(newallSqueals);
-        updateAllSqueals(newallSqueals);
-        let allnewChannels = [...listnewchannels,...listnewCHANNELS,...listnewkeywords];
-        updateAllChannels(allnewChannels);
-        }
         setconfirmdeletesqueal(false);
+        const SquealsToUpdate = await getListSqueals();
+        let SquealsUpdated = [];
+        for(let i=0; i<SquealsToUpdate.length; i++){
+            if((SquealsToUpdate[i].sender!=allSquealsprint[indexsquealtodelete].sender) || (SquealsToUpdate[i].date!=allSquealsprint[indexsquealtodelete].date) || (SquealsToUpdate[i].hour!=allSquealsprint[indexsquealtodelete].hour) || (SquealsToUpdate[i].seconds!=allSquealsprint[indexsquealtodelete].seconds)){
+                SquealsUpdated.push(SquealsToUpdate[i]);
+            }
+        }
+        await updateSqueals(SquealsUpdated);
+        let allnewChannels = [...listnewchannels,...listnewCHANNELS,...listnewkeywords];
+        await updateAllChannels(allnewChannels);
+        setDisableButton(false);
+        }
     }
 
     const editprofile = () => {
@@ -407,8 +424,9 @@ function Profile() {
         setnewpassword(value);
     }
 
-    const closeeditprofile = (save) => {
+    const closeeditprofile = async (save) => {
         if(save){
+            setDisableButton(true);
             const newinfo = {
                 ...actualuser,
                 nickname: newnickname,
@@ -483,9 +501,10 @@ function Profile() {
             setallchannels(newlistchannel);
             setallCHANNELS(newlistCHANNEL);
             setallkeywords(newlistkeywords);
-            updateAllUsers(newlistusers);
+            await updateAllUsers(newlistusers);
             let ListChannelsToUpdate = [...newlistchannel,...newlistCHANNEL,...newlistkeywords];
-            updateAllChannels(ListChannelsToUpdate);
+            await updateAllChannels(ListChannelsToUpdate);
+            setDisableButton(false);
         }
         seteditprofilevisible(false);
     }
@@ -776,21 +795,23 @@ function Profile() {
         setconfirmleavechannel(true);
     }
 
-    const deletechannel = (confirm) => {
+    const deletechannel = async (confirm) => {
         if(confirm){
+            setDisableButton(true);
             seteditchannelvisible(false);
             let newlistchannel = allchannels.filter(oggetto => oggetto.name !== allChannelsprint[indexchanneledit].name);
             let newlistCHANNEL = allCHANNELS.filter(oggetto => oggetto.name !== allChannelsprint[indexchanneledit].name);
-            const ListSqueals = allSqueals.filter(message =>
-                !allChannelsprint[indexchanneledit].list_posts.some(toDelete =>
-                  message.sender == toDelete.sender &&
-                  message.date == toDelete.date &&
-                  message.hour == toDelete.hour &&
-                  message.seconds == toDelete.seconds
-                )
-              );
-            updateAllSqueals(ListSqueals);
-            setallSqueals(ListSqueals);
+            const SquealsToUpdate = await getListSqueals();
+              let SquealsUpdated = [];
+              for(let i=0; i<SquealsToUpdate.length; i++){
+                for(let j=0; j<allChannelsprint[indexchanneledit].list_posts.length; j++){
+                  if((SquealsToUpdate[i].sender!=allChannelsprint[indexchanneledit].list_posts[j].sender) || (SquealsToUpdate[i].date!=allChannelsprint[indexchanneledit].list_posts[j].date) || (SquealsToUpdate[i].hour!=allChannelsprint[indexchanneledit].list_posts[j].hour) || (SquealsToUpdate[i].seconds!=allChannelsprint[indexchanneledit].list_posts[j].seconds)){
+                      SquealsUpdated.push(SquealsToUpdate[i]);
+                  }
+                }
+              }
+            updateSqueals(SquealsUpdated);
+            setallSqueals(SquealsUpdated);
             const ListSquealsUser = allSquealsprint.filter(message =>
                 !allChannelsprint[indexchanneledit].list_posts.some(toDelete =>
                   message.sender == toDelete.sender &&
@@ -802,7 +823,16 @@ function Profile() {
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
             let allChannelsModified = [...newlistchannel, ...newlistCHANNEL, ...allkeywords];
-            updateAllChannels(allChannelsModified);
+            const ChannelsToUpdate = await getListChannels();
+            let ChannelsUpdated = [];
+            for(let i=0; i<ChannelsToUpdate.length; i++){
+                for(let j=0;j<allChannelsModified.length; j++){
+                    if((ChannelsToUpdate[i].name==allChannelsModified[j].name)&&(ChannelsToUpdate[i].type==allChannelsModified[j].type)){
+                        ChannelsUpdated.push(allChannelsModified[j]);
+                    }
+                }
+            }
+            await updateChannels(ChannelsUpdated);
             for(let i=0; i<allChannelsprint[indexchanneledit].list_users.length;i++){
                 if((allChannelsprint[indexchanneledit].list_users[i].nickname==actualuser.nickname)&((allChannelsprint[indexchanneledit].list_users[i].type=='Creator')|(allChannelsprint[indexchanneledit].list_users[i].type=='Modifier'))){
                     let channeladmin = n_channeladmin-1;
@@ -814,6 +844,7 @@ function Profile() {
                 ...allChannelsprint.slice(indexchanneledit + 1)
             ]
             setallChannelsprint(newlist);
+            setDisableButton(false);
         }
         setconfirmdeletechannel(false);    
     }
@@ -1116,8 +1147,9 @@ function Profile() {
     setShowCameraModalmessage(false);
     }
 
-    const deleteprofile = (confirm) => {
+    const deleteprofile = async (confirm) => {
         if(confirm){
+            setDisableButton(true);
             let newlistusers = [];
             for(let i=0; i<allUsers.length; i++){
                         if(allUsers[i].nickname!=actualuser.nickname){
@@ -1125,52 +1157,67 @@ function Profile() {
                         }
                     }
             setAllUsers(newlistusers);
-            let newlistchannel = [];
-            let newlistCHANNEL = [];
+            let newlistchannel = [...allchannels];
+            let newlistCHANNEL = [...allCHANNELS];
             let newlistkeywords = [...allkeywords];
-            let k=-1;
-            for(let i=0; i<allchannels.length; i++){
-                if(allchannels[i].creator!=actualuser.nickname){
-                    newlistchannel.push(allchannels[i]);
-                    k += 1;
-                    newlistchannel[k].list_users = [];
-                    for(let j=0;j<allchannels[i].list_users.length;j++){
-                        if(allchannels[i].list_users[j].nickname!=actualuser.nickname){
-                            newlistchannel[k].list_users.push(allchannels[i].list_users[j]);
+            for(let i = newlistchannel.length - 1; i >= 0; i--){
+                if(newlistchannel[i].creator != actualuser.nickname){
+                    let listUsers = newlistchannel[i].list_users;
+                    for(let j = listUsers.length - 1; j >= 0; j--){
+                        if(listUsers[j].nickname == actualuser.nickname){
+                            listUsers.splice(j, 1);
                         }
                     }
+                } else {
+                    newlistchannel.splice(i, 1);
                 }
             }
-            k = -1;
-            for(let i=0; i<allCHANNELS.length; i++){
-                if(allCHANNELS[i].creator!=actualuser.nickname){
-                    newlistCHANNEL.push(allCHANNELS[i]);
-                    k += 1;
-                    newlistCHANNEL[k].list_users = [];
-                    for(let j=0;j<allCHANNELS[i].list_users.length;j++){
-                        if(allCHANNELS[i].list_users[j].nickname!=actualuser.nickname){
-                            newlistCHANNEL[k].list_users.push(allCHANNELS[i].list_users[j]);
+            
+            for(let i = newlistCHANNEL.length - 1; i >= 0; i--){
+                if(newlistCHANNEL[i].creator != actualuser.nickname){
+                    let listUsers = newlistCHANNEL[i].list_users;
+                    for(let j = listUsers.length - 1; j >= 0; j--){
+                        if(listUsers[j].nickname == actualuser.nickname){
+                            listUsers.splice(j, 1);
                         }
                     }
+                } else {
+                    newlistCHANNEL.splice(i, 1);
                 }
             }
-            for(let i=0; i<allkeywords.length; i++){
-                    newlistkeywords[i].list_users = [];
-                    for(let j=0;j<allkeywords[i].list_users.length;j++){
-                        if(allkeywords[i].list_users[j].nickname!=actualuser.nickname){
-                            newlistkeywords[i].list_users.push(allkeywords[i].list_users[j]);
-                        }
+            
+            for(let i = newlistkeywords.length - 1; i >= 0; i--){
+                let listUsers = newlistkeywords[i].list_users;
+                for(let j = listUsers.length - 1; j >= 0; j--){
+                    if(listUsers[j].nickname == actualuser.nickname){
+                        listUsers.splice(j, 1);
                     }
+                }
             }
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
             setallkeywords(newlistkeywords);
             let allChannelsModified = [...newlistchannel,...newlistCHANNEL,...newlistkeywords];
-            let newlistSqueals = allSqueals.filter(oggetto => oggetto.sender !== actualuser.nickname);
-            updateAllSqueals(newlistSqueals);
-            updateAllChannels(allChannelsModified);
-            let idActualUser = JSON.parse(localStorage.getItem("actualUserId"));
-            deleteUser(idActualUser);
+            const SquealsToUpdate = await getListSqueals();
+            let SquealsUpdated = [];
+            for(let i=0; i<SquealsToUpdate.length; i++){
+                if(SquealsToUpdate[i].sender!=actualuser.nickname){
+                    SquealsUpdated.push(SquealsToUpdate[i]);
+                }
+            }
+            await updateSqueals(SquealsUpdated);
+            const ChannelsToUpdate = await getListChannels();
+            let ChannelsUpdated = [];
+            for(let i=0; i<ChannelsToUpdate.length; i++){
+                for(let j=0;j<allChannelsModified.length; j++){
+                    if((ChannelsToUpdate[i].name==allChannelsModified[j].name)&&(ChannelsToUpdate[i].type==allChannelsModified[j].type)){
+                        ChannelsUpdated.push(allChannelsModified[j]);
+                    }
+                }
+            }
+            await updateChannels(ChannelsUpdated);
+            await deleteUser();
+            setDisableButton(false);
             window.location.href = UrlSite;
         }
         setSectiondeleteprofile(false);
@@ -1487,8 +1534,8 @@ const loadImage = (event) => {
                 <h4 className='mb-3'>Delete Squeal</h4>
                 <p>Are you sure you want to delete this squeal? It will no longer visible to anyone!</p>
                 <Row style={{display:'flex',justifyContent:'center'}}>
-                    <Button onClick={() => deletesqueal(false)} style={{width:'20%'}} className='me-3 mt-3'>No</Button>
-                    <Button onClick={() => deletesqueal(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
+                    <Button onClick={() => deletesqueal(false)} style={{width:'20%'}} className='me-3 mt-3' disabled={disableButton}>No</Button>
+                    <Button onClick={() => deletesqueal(true)} style={{width:'20%'}} className='mt-3' disabled={disableButton}>Yes</Button>
                 </Row>
             </Col>   
             <Container className={editprofilevisible ? '' : 'd-none'} style={{position:'absolute',width:'100%',height:'100vh', paddingTop:'10px',backgroundColor:'#eee', color: 'black', overflow:'hidden'}}>
@@ -1731,24 +1778,24 @@ const loadImage = (event) => {
                     <h4 className='mb-3'>Delete Channel</h4>
                     <p>Are you sure you want to delete this channel? It will be no longer usable for anyone!</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
-                        <Button onClick={() => deletechannel(false)} style={{width:'20%'}} className='me-3 mt-3'>No</Button>
-                        <Button onClick={() => deletechannel(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
+                        <Button onClick={() => deletechannel(false)} style={{width:'20%'}} className='me-3 mt-3' disabled={disableButton}>No</Button>
+                        <Button onClick={() => deletechannel(true)} style={{width:'20%'}} className='mt-3' disabled={disableButton}>Yes</Button>
                     </Row>
                 </Col> 
                 <Col className={confirmleavechannel ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'10%',backgroundColor:'#eee', zIndex:'1001'}}>
                     <h4 className='mb-3'>Leave Channel</h4>
                     <p>Are you sure you want to leave this channel? You won't be able to read the channel squeals!</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
-                        <Button onClick={() => leavechannel(false)} style={{width:'20%'}} className='me-3 mt-3'>No</Button>
-                        <Button onClick={() => leavechannel(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
+                        <Button onClick={() => leavechannel(false)} style={{width:'20%'}} className='me-3 mt-3' disabled={disableButton}>No</Button>
+                        <Button onClick={() => leavechannel(true)} style={{width:'20%'}} className='mt-3' disabled={disableButton}>Yes</Button>
                     </Row>
                 </Col>
                 <Col className={sectiondeleteprofile ? 'text text-center' : 'd-none'} style={{position:'absolute', width:'100%', minHeight:'100vh', backgroundColor:'#eee', overflowY:'scroll', paddingTop:'10%', zIndex:'1001'}}>
                     <h4 className='mb-3 mt-3'>Delete Profile</h4>
                     <p>Are you sure you want to delete your account? You will unable to access with this credentials!</p>
                     <Row style={{display:'flex',justifyContent:'center'}}>
-                        <Button onClick={() => deleteprofile(false)} style={{width:'20%'}} className='me-3 mt-3'>No</Button>
-                        <Button onClick={() => deleteprofile(true)} style={{width:'20%'}} className='mt-3'>Yes</Button>
+                        <Button onClick={() => deleteprofile(false)} style={{width:'20%'}} className='me-3 mt-3' disabled={disableButton}>No</Button>
+                        <Button onClick={() => deleteprofile(true)} style={{width:'20%'}} className='mt-3' disabled={disableButton}>Yes</Button>
                     </Row>
                 </Col> 
                 <Col className={confirmaddmessagechannel ? 'text text-center' : 'd-none'} style={{position:'absolute',width:'100%',height:'100%',paddingTop:'3%',backgroundColor:'#eee', overflowY:'scroll', zIndex:'1001'}}>

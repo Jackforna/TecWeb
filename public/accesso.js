@@ -7,6 +7,7 @@ let actualuser;
 var range;
 let access = false;
 let users;
+localStorage.setItem('inAwait', JSON.stringify(false));
 
 async function getUsers(){
     try {

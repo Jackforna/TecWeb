@@ -14,7 +14,7 @@ import {CaretDownFill, PersonCircle} from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);

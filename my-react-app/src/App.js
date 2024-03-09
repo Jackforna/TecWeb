@@ -76,19 +76,21 @@ function App() {
     <div style={{backgroundColor: '#eee', color: '#000000DE', height: '100vh', display: 'flex', flexDirection: 'column'}}>
 
           <Routes>  
-            <Route path="/squealer-app/home" element={<Home />} />
+            <Route path="/squealer-app/home" element={<Home />}/>
 
-            <Route path="/squealer-app/create-message" element={<CreateMessage />} />
+            <Route path="/squealer-app/create-message" element={<CreateMessage />}/>
 
-            <Route path="/squealer-app/search" element={<Search />} />
+            <Route path="/squealer-app/search" element={<Search />}/>
 
-            <Route path="/squealer-app/profile" element={<Profile />} />
+            <Route path="/squealer-app/profile" element={<Profile />}/>
 
-            <Route path="/squealer-app/settings" element={<Settings />} />
+            <Route path="/squealer-app/settings" element={<Settings />}/>
           </Routes>
 
           <Nav className="d-flex flex-column bg-white text-black" style={{width: windowSize >= 1024 ? '20%' : windowSize >= 600 ? '10%' : '100%',position:'absolute', top:windowSize >= 600 ? '0' : '90%', height: windowSize >= 600 ? '100vh' : '10%', overflow:'hidden', zIndex:'1005', alignItems:'center'}}>
             <div style={{ flex: '0.2' }}></div>
+
+            <div style={{width:'100%', height:'100%', position:'absolute', top:'0', left:'0', zIndex:'1006', display: JSON.parse(localStorage.getItem("inAwait")) ? 'inline' : 'none', backgroundColor:'black', opacity:'0.2'}}></div>
 
             {windowSize >= 1024 && (<div className="text-center mb-3">
               <Image src={logo} alt="Logo" roundedCircle width="80%" />

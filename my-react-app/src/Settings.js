@@ -6,7 +6,7 @@ import search_logo from '../src/img/search.png'
 import logo from './img/logo.png'
 import {XCircle, List, PersonFillUp, Bag, Bell, PatchCheckFill, Clipboard2Pulse, Clipboard2Data } from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUser, updateChannels, addUser, addSqueal, addChannel} from './serverRequests.js';
 
 const useWindowSize = () => {
     const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -80,7 +80,13 @@ function Settings() {
 
     async function updateAllUsers(UsersToUpdate){
         try{
-          await updateUsers(UsersToUpdate);
+            let userUpdate = {}
+            for(let i=0; i< UsersToUpdate.length; i++){
+                if(UsersToUpdate[i].nickname === actualuser.nickname){
+                    userUpdate = {char_d:UsersToUpdate[i].char_d, char_w:UsersToUpdate[i].char_w, char_m:UsersToUpdate[i].char_m, version:UsersToUpdate[i].version, notifications:UsersToUpdate[i].notifications};
+                }
+            }
+            await updateUser(actualuser._id, userUpdate);
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
             throw error;
@@ -200,7 +206,7 @@ function Settings() {
     }
     };
 
-    const handleItemSelect = (item) => {
+    const handleItemSelect = async (item) => {
         setIsFindSMM(!isFindSMM);
         setClientInputSearch('');
         setAllPrint([]);
@@ -209,19 +215,24 @@ function Settings() {
                 
               return {
                 ...obj,
-                clients: [...obj.clients, actualuser.nickname],
+                managedAccounts: [...obj.managedAccounts, actualuser._id],
               };
             }
             return obj;
           });
-          setactualuser({...actualuser, smm:item});
-          alert("You select your new SMM "+item);
-      
           setAllUsers(updatedUsers);
-          updateAllUsers(updatedUsers);
+          let userUpdate = {}
+          let idUpdate;
+            for(let i=0; i< updatedUsers.length; i++){
+                if(updatedUsers[i].nickname === item){
+                    userUpdate = {managedAccounts:updatedUsers[i].managedAccounts};
+                    idUpdate = updatedUsers[i]._id;
+                }
+            }
+          await updateUser(idUpdate, userUpdate);
     }
 
-    const changenotification = (x) => {
+    const changenotification = async (x) => {
         const newnotifications = [...actualuser.notifications];
         newnotifications[x] = !newnotifications[x];
         setactualuser({...actualuser, notifications:newnotifications});
@@ -236,7 +247,7 @@ function Settings() {
             return obj;
           });
           setAllUsers(updatedUsers);
-          updateAllUsers(updatedUsers);
+          await updateAllUsers(updatedUsers);
     }
 
     const morecharacter = (x) => {
@@ -244,7 +255,7 @@ function Settings() {
         setOptionCharacters(x);
     }
 
-    const buyCharactersConfirm = (confirm) => {
+    const buyCharactersConfirm = async (confirm) => {
         if(confirm){
             if(optionCharacters==1){
                 setactualuser({...actualuser, char_d:actualuser.char_d + 300, char_w: actualuser.char_w + 2000, char_m: actualuser.char_m + 7000});
@@ -260,7 +271,7 @@ function Settings() {
                 });
                 alert("Your payment was successfull. You've now access to the professional actions");
                 setAllUsers(updatedUsers);
-                updateAllUsers(updatedUsers);
+                await updateAllUsers(updatedUsers);
             } else if(optionCharacters==2){
                 setactualuser({...actualuser, char_d:actualuser.char_d + 700, char_w: actualuser.char_w + 4500, char_m: actualuser.char_m + 16000});
                 const updatedUsers = allUsers.map((obj) => {
@@ -275,7 +286,7 @@ function Settings() {
                 });
                 alert("Your payment was successfull. You've now more characters to use this month");
                 setAllUsers(updatedUsers);
-                updateAllUsers(updatedUsers);
+                await updateAllUsers(updatedUsers);
             }
         }
         setConfirmBuyCharacters(false);

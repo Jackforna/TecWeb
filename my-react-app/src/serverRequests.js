@@ -148,12 +148,15 @@ export async function updateUser(id, updates) {
     }
 }
 
-
 export async function deleteUsers(updatedUsers) {
     try {
-        const response = await fetch(UrlSite+`/delete-user/${updatedUsers}`, {
-            method: 'DELETE'
-          });
+        const response = await fetch(UrlSite+'/delete-users', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedUsers)
+        });
 
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -185,6 +188,31 @@ export async function updateSqueals(updatedSqueals) {
         return data;
     } catch (error) {
         console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
+export async function updateSqueal(id, updates) {
+    try {
+        const response = await fetch(UrlSite+`/update-squeal/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updates)
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('Squeal non trovato o nessun aggiornamento necessario');
+            }
+            throw new Error('Errore di rete. Impossibile completare la richiesta.');
+        }
+
+        const data = await response.json();
+        return data;  // Potrebbe contenere un messaggio di successo o altro a seconda della risposta del server
+    } catch (error) {
+        console.error('Errore durante l\'aggiornamento dello squeal:', error);
         throw error;
     }
 }

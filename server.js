@@ -96,15 +96,11 @@ app.put('/update-users', async (req, res) => {
 
       const { _id: idToRemove, ...replacementData } = user;
 
-      if (Array.isArray(replacementData.notifications) && replacementData.notifications.length && Array.isArray(replacementData.notifications[0])) {
-        replacementData.notifications = replacementData.notifications[0];
-      }
-
       return {
         replaceOne: {
           filter: { _id: _id },
           replacement: replacementData, // Non include l'`_id` nel documento di sostituzione
-          upsert: true // Crea un nuovo documento se nessuno corrisponde al filtro
+          upsert: false // Crea un nuovo documento se nessuno corrisponde al filtro
         }
       };
     });
@@ -131,6 +127,27 @@ app.delete('/delete-user/:id', async (req, res) => {
     res.status(500).send('Errore durante la lettura dei dati della lista dei messaggi');
   }
 });
+
+app.put('/delete-users', async (req, res) => {
+  try {
+    const updatedUsers = req.body;
+
+    updatedUsers.forEach((user) => {
+      delete user._id;
+    });
+
+    await UsersCollection.deleteMany({});
+
+    if(updatedUsers.length!=0)
+      await UsersCollection.insertMany(updatedUsers);
+    
+    const listUsers = await UsersCollection.find().toArray();
+    res.status(200).json(listUsers);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Errore durante l\'aggiornamento degli squeals');
+  }
+})
 
 app.put('/update-user/:id', async (req, res) => {
   try {
@@ -177,16 +194,20 @@ app.post('/add-squeal', async (req, res) => {
 app.put('/update-squeals', async (req, res) => {
   try {
       const updatedSqueals = req.body;
-
-      updatedSqueals.forEach((squeal) => {
-        delete squeal._id;
+      const operations = updatedSqueals.map(squeal => {
+        const _id = typeof squeal._id === 'string' ? new ObjectId(squeal._id) : squeal._id;
+  
+        const { _id: idToRemove, ...replacementData } = squeal;
+  
+        return {
+          replaceOne: {
+            filter: { _id: _id },
+            replacement: replacementData,
+            upsert: false
+          }
+        };
       });
-
-      await ListSquealsCollection.deleteMany({});
-
-      if(updatedSqueals.length!=0)
-        await ListSquealsCollection.insertMany(updatedSqueals);
-      
+      await ListSquealsCollection.bulkWrite(operations);
       const listSqueals = await ListSquealsCollection.find().toArray();
     res.status(200).json(listSqueals);
   } catch (error) {
@@ -249,16 +270,20 @@ app.post('/add-channel', async (req, res) => {
 app.put('/update-channels', async (req, res) => {
   try {
       const updatedChannels = req.body;
-
-      await ListChannelsCollection.deleteMany({});
-
-      updatedChannels.forEach((channel) => {
-        delete channel._id;
+      const operations = updatedChannels.map(channel => {
+        const _id = typeof channel._id === 'string' ? new ObjectId(channel._id) : channel._id;
+  
+        const { _id: idToRemove, ...replacementData } = user;
+  
+        return {
+          replaceOne: {
+            filter: { _id: _id },
+            replacement: replacementData,
+            upsert: false
+          }
+        };
       });
-
-      if(updatedChannels.length>0)
-      await ListChannelsCollection.insertMany(updatedChannels);
-      
+      await ListChannelsCollection.bulkWrite(operations);
       const listChannels = await ListChannelsCollection.find().toArray();
     res.status(200).json(listChannels);
   } catch (error) {
