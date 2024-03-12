@@ -752,9 +752,9 @@ function CreateMessage(props) {
   const handleUpdateUser = async (charToDeacrement) => {
     const userId = actualUser._id; 
     const userUpdates = {
-        char_d: actualUser.char_d - charToDeacrement,
-        char_w: actualUser.char_w - charToDeacrement,
-        char_m: actualUser.char_m - charToDeacrement,
+        char_d: parseInt(actualUser.char_d - charToDeacrement),
+        char_w: parseInt(actualUser.char_w - charToDeacrement),
+        char_m: parseInt(actualUser.char_m - charToDeacrement),
     };
     // const tempChar = maxChar - charToDeacrement;
     // setMaxChar(tempChar);
