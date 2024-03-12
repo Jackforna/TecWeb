@@ -341,7 +341,16 @@
             Load video
             <input type="file" hidden id="videoInput" accept="video/*"/>
     </section>
+    <section id="preload" class="d-none" style="position:absolute; width:100%; height:100%; background-color: black; opacity:0.3; z-index:1050">
+        <lord-icon
+            src="https://cdn.lordicon.com/pxwxddbb.json"
+            trigger="loop"
+            delay="2000"
+            style="width:250px;height:250px">
+        </lord-icon>
+    </section>
     <script type="text/javascript" src="script.js"></script>
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
 </body>
 </html>

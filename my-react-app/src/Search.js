@@ -14,7 +14,7 @@ import {CaretDownFill, PersonCircle} from 'react-bootstrap-icons';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, getListSqueals, getActualUser, updateUsers, updateChannels, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getListSqueals, getActualUser, updateChannel, addSqueal} from './serverRequests.js';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -151,14 +151,12 @@ function Search() {
         }
     },[location.pathname]);
 
-    async function updateAllChannels(ChannelsToUpdate){
+    async function updateAllChannels(ChannelsToUpdate, indexChannel){
       try{
-        const Channels = await getListChannels();
-        const ChannelsUpdated = Channels.map(oggetto1 => {
-          const chan = ChannelsToUpdate.find(oggetto2 => oggetto2.name === oggetto1.name);
-          return chan ? chan : oggetto1;
-        });
-        await updateChannels(ChannelsUpdated);
+        if(indexChannel!==-1){
+          const ChannelsUpdated = {list_users:ChannelsToUpdate[indexChannel].list_users, usersSilenced:ChannelsToUpdate[indexChannel].usersSilenced};
+          await updateChannel(ChannelsToUpdate[indexChannel]._id, ChannelsUpdated);
+        }
       } catch (error) {
           console.error('There has been a problem with your fetch operation:', error);
           throw error;
@@ -439,7 +437,7 @@ const closeViewKeyword = () => {
   setViewsearch(true);
 }
 
-const subscribechannel = () => {
+const subscribechannel = async () => {
   if(inChannel){
     for(let i=0; i<allchannels.length; i++){
       if(allchannels[i].name==newnamechannel){
@@ -515,7 +513,7 @@ const subscribechannel = () => {
               photoprofileX:actualuser.photoprofileX, 
               photoprofileY:actualuser.photoprofileY, 
               type:'User', 
-              block:false
+              blocked:false
             });
             for(let j=0; j<allCHANNELS[i].list_mess.length; j++){
               if(allCHANNELS[i].list_mess[j].type=='Welcome'){
@@ -549,10 +547,11 @@ const subscribechannel = () => {
   setallchannels(allchannels);
   setInChannel(!inChannel);
   let ListChannels = [...allchannels, ...allCHANNELS, ...allkeywords];
-  updateAllChannels(ListChannels);
+  let ind = ListChannels.findIndex(item => item.name === newnamechannel);
+  await updateAllChannels(ListChannels, ind);
 }
 
-const subscribekeyword = () => {
+const subscribekeyword = async () => {
   if(inKeyword){
     for(let i=0; i<allkeywords.length; i++){
       if(allkeywords[i].name==newNameKeyword){
@@ -572,7 +571,7 @@ const subscribekeyword = () => {
               photoprofileX:actualuser.photoprofileX, 
               photoprofileY:actualuser.photoprofileY, 
               type:'User', 
-              block:false
+              blocked:false
             });
       }
     }
@@ -580,7 +579,8 @@ const subscribekeyword = () => {
   setallkeywords(allkeywords);
   setInKeyword(!inKeyword);
   let ListChannels = [...allchannels, ...allCHANNELS, ...allkeywords];
-  updateAllChannels(ListChannels);
+  let ind = ListChannels.findIndex(item => item.name === newNameKeyword);
+  await updateAllChannels(ListChannels, ind);
 }
 
 const toggleSilenceChannel = () => {
@@ -622,7 +622,8 @@ const toggleSilenceChannel = () => {
   setallCHANNELS(allCHANNELS);
   setallchannels(allchannels);
   let ListChannels = [...allchannels, ...allCHANNELS, ...allkeywords];
-  updateAllChannels(ListChannels);
+  let ind = ListChannels.findIndex(item => item.name === newnamechannel);
+  updateAllChannels(ListChannels, ind);
   setSilenceChannel(!silenceChannel);
 }
 

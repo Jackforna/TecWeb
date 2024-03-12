@@ -115,7 +115,7 @@ app.put('/update-users', async (req, res) => {
 
 app.delete('/delete-user/:id', async (req, res) => {
   try {
-    const idToDelete = req.params.id; // Ottieni l'ID dall'URL
+    const idToDelete = req.params.id;
     if (!ObjectId.isValid(idToDelete)) {
       return res.status(400).send('ID non valido');
     }
@@ -123,6 +123,36 @@ app.delete('/delete-user/:id', async (req, res) => {
       
       const listUsers = await UsersCollection.find().toArray();
     res.status(200).json(listUsers);
+  } catch (error) {
+    res.status(500).send('Errore durante la lettura dei dati della lista dei messaggi');
+  }
+});
+
+app.delete('/delete-squeal/:id', async (req, res) => {
+  try {
+    const idToDelete = req.params.id;
+    if (!ObjectId.isValid(idToDelete)) {
+      return res.status(400).send('ID non valido');
+    }
+    await ListSquealsCollection.deleteOne({ _id: new ObjectId(idToDelete) });
+      
+      const listSqueals = await ListSquealsCollection.find().toArray();
+    res.status(200).json(listSqueals);
+  } catch (error) {
+    res.status(500).send('Errore durante la lettura dei dati della lista dei messaggi');
+  }
+});
+
+app.delete('/delete-channel/:id', async (req, res) => {
+  try {
+    const idToDelete = req.params.id;
+    if (!ObjectId.isValid(idToDelete)) {
+      return res.status(400).send('ID non valido');
+    }
+    await ListChannelsCollection.deleteOne({ _id: new ObjectId(idToDelete) });
+      
+      const listChannels = await ListChannelsCollection.find().toArray();
+    res.status(200).json(listChannels);
   } catch (error) {
     res.status(500).send('Errore durante la lettura dei dati della lista dei messaggi');
   }

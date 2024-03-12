@@ -14,7 +14,7 @@ import neg_reaction2 from '../src/img/reaction_negative2.png'
 import neg_reaction3 from '../src/img/reaction_negative3.png'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUsers, updateUser, updateChannels, updateSqueals, addUser, addSqueal, addChannel} from './serverRequests.js';
+import {getUsers, getListChannels, getUserById, deleteUsers, getListSqueals, getActualUser, updateUser, updateChannel, updateSqueal, deleteChannel, deleteSqueal} from './serverRequests.js';
 
 const useWindowSize = () => {
     const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -250,28 +250,40 @@ function Profile() {
         }
     }
 
-    async function updateAllChannels(ChannelsToUpdate){
+    async function updateAllChannels(ChannelsToUpdate, indexChannel){
         try{
-            const Channels = await getListChannels();
-            const ChannelsUpdated = Channels.map(oggetto1 => {
-              const chan = ChannelsToUpdate.find(oggetto2 => oggetto2.name === oggetto1.name);
-              return chan ? chan : oggetto1;
-            });
-            await updateChannels(ChannelsUpdated);
+          if(indexChannel!==-1){
+            const ChannelsUpdated = {list_posts:ChannelsToUpdate[indexChannel].list_posts, list_users:ChannelsToUpdate[indexChannel].list_users, list_mess:ChannelsToUpdate[indexChannel].list_mess, name:ChannelsToUpdate[indexChannel].name, photoprofile:ChannelsToUpdate[indexChannel].photoprofile, bio:ChannelsToUpdate[indexChannel].bio, silenceable:ChannelsToUpdate[indexChannel].silenceable};
+            await updateChannel(ChannelsToUpdate[indexChannel]._id, ChannelsUpdated);
+          }
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
             throw error;
         }
-    }
+      }
 
-    async function updateAllSqueals(SquealsToUpdate){
+      async function deleteOneChannel(idChannel){
         try{
-            const Squeals = await getListSqueals();
-            const SquealsUpdated = Squeals.map(oggetto1 => {
-              const mess = SquealsToUpdate.find(oggetto2 => (oggetto2.sender === oggetto1.sender && oggetto2.date === oggetto1.date && oggetto2.hour === oggetto1.hour && oggetto2.seconds === oggetto1.seconds));
-              return mess ? mess : oggetto1;
-            })
-            await updateSqueals(SquealsUpdated);
+          await deleteChannel(idChannel);
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+      }
+
+      async function deleteOneSqueal(idSqueal){
+        try{
+          await deleteSqueal(idSqueal);
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+            throw error;
+        }
+      }
+
+    async function updateAllSqueals(SquealsToUpdate, indexSqueal){
+        try{
+            const SquealsUpdated = {sender: SquealsToUpdate[indexSqueal].sender};
+            await updateSqueal(SquealsToUpdate[indexSqueal]._id, SquealsUpdated);
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
             throw error;
@@ -330,20 +342,14 @@ function Profile() {
                 break;
             }
         }
+        await deleteOneSqueal(newallSqueals[indexsquealtodelete]._id);
         newallSqueals.splice(indexsquealtodelete, 1);
         setallSquealsprint(newallSqueals);
         setallSqueals(newallSqueals);
         setconfirmdeletesqueal(false);
-        const SquealsToUpdate = await getListSqueals();
-        let SquealsUpdated = [];
-        for(let i=0; i<SquealsToUpdate.length; i++){
-            if((SquealsToUpdate[i].sender!=allSquealsprint[indexsquealtodelete].sender) || (SquealsToUpdate[i].date!=allSquealsprint[indexsquealtodelete].date) || (SquealsToUpdate[i].hour!=allSquealsprint[indexsquealtodelete].hour) || (SquealsToUpdate[i].seconds!=allSquealsprint[indexsquealtodelete].seconds)){
-                SquealsUpdated.push(SquealsToUpdate[i]);
-            }
-        }
-        await updateSqueals(SquealsUpdated);
         let allnewChannels = [...listnewchannels,...listnewCHANNELS,...listnewkeywords];
-        await updateAllChannels(allnewChannels);
+        let ind = allnewChannels.findIndex(item => item.name === allSquealsprint[indexsquealtodelete].channel);
+        await updateAllChannels(allnewChannels, ind);
         setDisableButton(false);
         }
     }
@@ -426,7 +432,6 @@ function Profile() {
 
     const closeeditprofile = async (save) => {
         if(save){
-            setDisableButton(true);
             const newinfo = {
                 ...actualuser,
                 nickname: newnickname,
@@ -438,6 +443,14 @@ function Profile() {
                 photoprofileY: position.y,
                 photoprofile: newphotoprofile
             }
+            const modifiedSqueals = [...allSqueals];
+            for(let i=0; i<modifiedSqueals.length; i++){
+                if(modifiedSqueals[i].sender==actualuser.nickname){
+                    modifiedSqueals[i].sender = newnickname;
+                    await updateAllSqueals(modifiedSqueals, i);
+                }
+            }
+            setallSqueals(modifiedSqueals);
             const updatedItems = [...allChannelsprint];
             for (let i = 0; i < updatedItems.length; i++) {
                 for(let j=0; j<updatedItems[i].list_users.length;j++){
@@ -503,8 +516,13 @@ function Profile() {
             setallkeywords(newlistkeywords);
             await updateAllUsers(newlistusers);
             let ListChannelsToUpdate = [...newlistchannel,...newlistCHANNEL,...newlistkeywords];
-            await updateAllChannels(ListChannelsToUpdate);
-            setDisableButton(false);
+            for(let i=0; i<ListChannelsToUpdate.length; i++){
+                for(let j=0; j<updatedItems.length; j++){
+                    if(ListChannelsToUpdate[i]._id===updatedItems[j]._id){
+                        await updateAllChannels(ListChannelsToUpdate, i);
+                    }
+                }
+            }
         }
         seteditprofilevisible(false);
     }
@@ -527,7 +545,7 @@ function Profile() {
         }
     }
 
-    const closeeditchannel = (save) => {
+    const closeeditchannel = async (save) => {
         if(save){
             const updatedItems = [...allChannelsprint];
             for (let i = 0; i < updatedItems.length; i++) {
@@ -566,15 +584,13 @@ function Profile() {
                     }
                 }
             }
-            const ListSqueals = allSqueals.filter(message =>
-                !ChannelPostsDeleted.some(toDelete =>
-                  message.sender == toDelete.sender &&
-                  message.date == toDelete.date &&
-                  message.hour == toDelete.hour &&
-                  message.seconds == toDelete.seconds
-                )
-              );
-            updateAllSqueals(ListSqueals);
+            for(let i=0; i<allSqueals.length; i++){
+                for(let j=0; j<ChannelPostsDeleted.length; j++){
+                    if((allSqueals[i].sender == ChannelPostsDeleted[j].sender)&&(allSqueals[i].date == ChannelPostsDeleted[j].date)&&(allSqueals[i].hour == ChannelPostsDeleted[j].hour)&&(allSqueals[i].seconds == ChannelPostsDeleted[j].seconds)){
+                        await deleteOneSqueal(allSqueals[i]._id);
+                    }
+                }
+            }
             const ListSquealsUser = allSquealsprint.filter(message =>
                 !ChannelPostsDeleted.some(toDelete =>
                   message.sender == toDelete.sender &&
@@ -584,7 +600,7 @@ function Profile() {
                 ));
             setallSquealsprint(ListSquealsUser);
             let ListChannelsToUpdate = [...allchannels,...allCHANNELS,...allkeywords];
-            updateAllChannels(ListChannelsToUpdate);
+            await updateAllChannels(ListChannelsToUpdate, indexchanneledit);
         }
         seteditchannelvisible(false);
     }
@@ -801,6 +817,13 @@ function Profile() {
             seteditchannelvisible(false);
             let newlistchannel = allchannels.filter(oggetto => oggetto.name !== allChannelsprint[indexchanneledit].name);
             let newlistCHANNEL = allCHANNELS.filter(oggetto => oggetto.name !== allChannelsprint[indexchanneledit].name);
+            for(let i=0; i<allSqueals.length; i++){
+                for(let j=0; j<allChannelsprint[indexchanneledit].list_posts.length; j++){
+                    if((allSqueals[i].sender == allChannelsprint[indexchanneledit].list_posts[j].sender)&&(allSqueals[i].date == allChannelsprint[indexchanneledit].list_posts[j].date)&&(allSqueals[i].hour == allChannelsprint[indexchanneledit].list_posts[j].hour)&&(allSqueals[i].seconds == allChannelsprint[indexchanneledit].list_posts[j].seconds)){
+                        await deleteOneSqueal(allSqueals[i]._id);
+                    }
+                }
+            }
             const SquealsToUpdate = await getListSqueals();
               let SquealsUpdated = [];
               for(let i=0; i<SquealsToUpdate.length; i++){
@@ -810,7 +833,6 @@ function Profile() {
                   }
                 }
               }
-            updateSqueals(SquealsUpdated);
             setallSqueals(SquealsUpdated);
             const ListSquealsUser = allSquealsprint.filter(message =>
                 !allChannelsprint[indexchanneledit].list_posts.some(toDelete =>
@@ -822,17 +844,7 @@ function Profile() {
             setallSquealsprint(ListSquealsUser);
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
-            let allChannelsModified = [...newlistchannel, ...newlistCHANNEL, ...allkeywords];
-            const ChannelsToUpdate = await getListChannels();
-            let ChannelsUpdated = [];
-            for(let i=0; i<ChannelsToUpdate.length; i++){
-                for(let j=0;j<allChannelsModified.length; j++){
-                    if((ChannelsToUpdate[i].name==allChannelsModified[j].name)&&(ChannelsToUpdate[i].type==allChannelsModified[j].type)){
-                        ChannelsUpdated.push(allChannelsModified[j]);
-                    }
-                }
-            }
-            await updateChannels(ChannelsUpdated);
+            await deleteOneChannel(allChannelsprint[indexchanneledit]._id);
             for(let i=0; i<allChannelsprint[indexchanneledit].list_users.length;i++){
                 if((allChannelsprint[indexchanneledit].list_users[i].nickname==actualuser.nickname)&((allChannelsprint[indexchanneledit].list_users[i].type=='Creator')|(allChannelsprint[indexchanneledit].list_users[i].type=='Modifier'))){
                     let channeladmin = n_channeladmin-1;
@@ -849,7 +861,7 @@ function Profile() {
         setconfirmdeletechannel(false);    
     }
 
-    const leavechannel = (confirm) => {             //backend aggiungere allkeywords
+    const leavechannel = async (confirm) => {
         if(confirm){
             seteditchannelvisible(false);
             for(let i=0; i<allChannelsprint[indexchanneledit].list_users.length;i++){
@@ -881,7 +893,7 @@ function Profile() {
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
             let allChannelsModified = [...newlistchannel, ...newlistCHANNEL, ...allkeywords];
-            updateAllChannels(allChannelsModified);
+            await updateAllChannels(allChannelsModified, indexchanneledit);
             const newlist = [
                 ...allChannelsprint.slice(0, indexchanneledit),
                 ...allChannelsprint.slice(indexchanneledit + 1)
@@ -1169,6 +1181,7 @@ function Profile() {
                         }
                     }
                 } else {
+                    await deleteOneChannel(newlistchannel[i]._id);
                     newlistchannel.splice(i, 1);
                 }
             }
@@ -1182,6 +1195,7 @@ function Profile() {
                         }
                     }
                 } else {
+                    await deleteOneChannel(newlistCHANNEL[i]._id);
                     newlistCHANNEL.splice(i, 1);
                 }
             }
@@ -1197,25 +1211,12 @@ function Profile() {
             setallCHANNELS(newlistCHANNEL);
             setallchannels(newlistchannel);
             setallkeywords(newlistkeywords);
-            let allChannelsModified = [...newlistchannel,...newlistCHANNEL,...newlistkeywords];
             const SquealsToUpdate = await getListSqueals();
-            let SquealsUpdated = [];
             for(let i=0; i<SquealsToUpdate.length; i++){
                 if(SquealsToUpdate[i].sender!=actualuser.nickname){
-                    SquealsUpdated.push(SquealsToUpdate[i]);
+                    await deleteOneSqueal(SquealsToUpdate[i]._id);
                 }
             }
-            await updateSqueals(SquealsUpdated);
-            const ChannelsToUpdate = await getListChannels();
-            let ChannelsUpdated = [];
-            for(let i=0; i<ChannelsToUpdate.length; i++){
-                for(let j=0;j<allChannelsModified.length; j++){
-                    if((ChannelsToUpdate[i].name==allChannelsModified[j].name)&&(ChannelsToUpdate[i].type==allChannelsModified[j].type)){
-                        ChannelsUpdated.push(allChannelsModified[j]);
-                    }
-                }
-            }
-            await updateChannels(ChannelsUpdated);
             await deleteUser();
             setDisableButton(false);
             window.location.href = UrlSite;
@@ -1266,7 +1267,7 @@ function Profile() {
         setViewKeyword(false);
     }
 
-    const subscribekeyword = () => {
+    const subscribekeyword = async () => {
         if(inKeyword){
             for(let i=0; i<allkeywords.length; i++){
               if(allkeywords[i].name==newNameKeyword){
@@ -1286,14 +1287,15 @@ function Profile() {
                       photoprofileX:actualuser.photoprofileX, 
                       photoprofileY:actualuser.photoprofileY, 
                       type:'User', 
-                      block:false
+                      blocked:false
                     });
               }
             }
           }
           setallkeywords(allkeywords);
           let allChannelsModified = [...allchannels,...allCHANNELS,...allkeywords];
-          updateAllChannels(allChannelsModified);
+          let ind = allChannelsModified.findIndex(item => item.name === newNameKeyword);
+          await updateAllChannels(allChannelsModified, ind);
           setInKeyword(!inKeyword);
     }
 
@@ -1616,7 +1618,7 @@ const loadImage = (event) => {
                                 <Card.Header className='d-flex' style={{justifyContent:'space-between', flexWrap:'wrap'}}>
                                     <CardGroup style={{display:'flex', maxWidth:'280px', overflow:'hidden'}}>
                                     { squeal.photoprofile!='' ? (<div className='me-3' style={{width:'30px',height:'30px', minWidth:'30px', borderRadius:'50%', border:'2px solid white', display:'flex', alignItems:'center', overflow:'hidden'}}>
-                                    <Image src={squeal.photoprofile} style={{height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
+                                    <Image src={squeal.photoprofile} style={{width:'100%', height:'100%', position:'relative', marginTop: squeal.photoprofileY/2.5, marginLeft: squeal.photoprofileX/2.5}}></Image>
                                     </div>)
                                     : <PersonCircle size='30' color='black' className='me-3'></PersonCircle>
                                     }

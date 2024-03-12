@@ -122,7 +122,6 @@ function Home(){
           async function getAll3(){
             try{
                 const Channels = await getListChannels();
-                console.log(Channels);
                 Channels.forEach(channel => {
                   switch(channel.type) {
                     case '&':

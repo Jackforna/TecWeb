@@ -36,9 +36,9 @@ var map2 = null;
 const UrlSite = 'http://localhost:8080';
 
 
-function getActualUser(){
+async function getActualUser(){
     let actualUserId = JSON.parse(localStorage.getItem("actualUserId"));
-    fetch(UrlSite+`/get-user/${actualUserId}`)
+    await fetch(UrlSite+`/get-user/${actualUserId}`)
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -54,8 +54,77 @@ function getActualUser(){
     });
 }
 
-window.onload = function() {
-    fetch(UrlSite+'/get-users')
+async function deleteSqueal(id) {
+    try {
+        const response = await fetch(UrlSite+`/delete-squeal/${id}`, {
+            method: 'DELETE'
+          });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
+async function deleteChannel(id) {
+    try {
+        const response = await fetch(UrlSite+`/delete-channel/${id}`, {
+            method: 'DELETE'
+          });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Errore nella richiesta:', error);
+        throw error;
+    }
+}
+
+async function getListChannels() {
+    try {
+        const response = await fetch(UrlSite+'/get-listChannels');
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
+    }
+}
+
+async function getListSqueals() {
+    try {
+        const response = await fetch(UrlSite+'/get-listSqueals');
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const data = await response.json();
+        return data.reverse();
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        throw error;
+    }
+}
+
+window.onload = async function() {
+    document.getElementById("preload").classList.remove("d-none");
+    await fetch(UrlSite+'/get-users')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
@@ -71,7 +140,7 @@ window.onload = function() {
 
     getActualUser();
 
-    fetch(UrlSite+'/get-listSqueals')
+    await fetch(UrlSite+'/get-listSqueals')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
@@ -116,7 +185,7 @@ window.onload = function() {
     })
     .catch(error => console.error('There has been a problem with your fetch operation:', error));
 
-    fetch(UrlSite+'/get-listChannels')
+    await fetch(UrlSite+'/get-listChannels')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
@@ -128,15 +197,16 @@ window.onload = function() {
         console.log(channels);
     })
     .catch(error => console.error('There has been a problem with your fetch operation:', error));
+    document.getElementById("preload").classList.add("d-none");
 }
 
-function updateUsers(updatedUsers) {
-    fetch(UrlSite+'/update-users', {
+async function updateUsers(updates, id) {
+    await fetch(UrlSite+`/update-user/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedUsers)
+        body: JSON.stringify(updates)
     })
     .then(response => {
         if (!response.ok) {
@@ -153,13 +223,13 @@ function updateUsers(updatedUsers) {
     });
 }
 
-function updateSqueals(updatedSqueals) {
-    fetch(UrlSite+'/update-squeals', {
+async function updateSqueals(updates, id) {
+    await fetch(UrlSite+`/update-squeal/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedSqueals)
+        body: JSON.stringify(updates)
     })
     .then(response => {
         if (!response.ok) {
@@ -175,41 +245,33 @@ function updateSqueals(updatedSqueals) {
     });
 }
 
-async function updateChannels(updatedChannels) {
-    fetch(UrlSite+'/get-listChannels')
-    .then(response => {
+async function updateChannel(updates, id) {
+    try {
+        const response = await fetch(UrlSite+`/update-channel/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updates)
+        });
+
         if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
+            if (response.status === 404) {
+                throw new Error('Canale non trovato o nessun aggiornamento necessario');
+            } else if (response.status === 400) {
+                throw new Error('Errore di rete. Impossibile completare la richiesta.');
+            } else if (response.status === 500) {
+                throw new Error('Errore di rete. Impossibile completare la richiesta.');
+            }
+            throw new Error('Errore di rete. Impossibile completare la richiesta.');
         }
-        return response.json();
-    })
-    .then(data => {
-        let Channels = data;
-        const ChannelsUpdated = Channels.map(oggetto1 => {
-            const chan = updatedChannels.find(oggetto2 => oggetto2.name === oggetto1.name);
-            return chan ? chan : oggetto1;
-          });
-          fetch(UrlSite+'/update-channels', {
-              method: 'PUT',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(ChannelsUpdated)
-          })
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error('Network response was not ok');
-              }
-              return response.json();
-              })
-              .then(data => {
-                  console.log(data);
-              })
-          .catch(error => {
-              console.error('Errore nella richiesta:', error);
-          });
-    })
-    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+
+        const data = await response.json();
+        return data;  // Potrebbe contenere un messaggio di successo o altro a seconda della risposta del server
+    } catch (error) {
+        console.error('Errore durante l\'aggiornamento del canale:', error);
+        throw error;
+    }
 }
 
 function addSqueal(squealData) {
@@ -370,7 +432,7 @@ document.getElementById("filterusertype").addEventListener("change",()=>{
                         }
                     break;
                     case 'social media manager':
-                        if(arruser[i].version=='SMM'){
+                        if(arruser[i].version=='social media manager'){
                             arrusertype.push(arruser[i]);
                         }
                     break;
@@ -515,7 +577,8 @@ function savechangesuser(){
             users[i] = edit;
         }
     }
-    updateUsers(users);
+    const updates = {blocked: edit.blocked, char_d: edit.char_d, char_w: edit.char_w, char_m: edit.char_m}
+    updateUsers(updates, edit._id);
 }
 
 document.getElementById("closeedituser").addEventListener("click", ()=>{
@@ -858,7 +921,8 @@ function savechangessqueal(){
                         for(k=0; k<channels[j].list_posts.length; k++){
                             if((editsqueal.sender==channels[j].list_posts[k].sender)&(editsqueal.date==channels[j].list_posts[k].date)&(editsqueal.hour==channels[j].list_posts[k].hour)&(editsqueal.seconds==channels[j].list_posts[k].seconds)){
                                 channels[j].list_posts[k] = editsqueal;
-                                updateChannels(channels);
+                                const updates = {list_posts: channels[j].list_posts};
+                                updateChannel(updates, channels[j]._id);
                             }
                         }
                     }
@@ -866,7 +930,8 @@ function savechangessqueal(){
             }
         }
     }
-    updateSqueals(squeals);
+    const updates = {receivers: editsqueal.receivers, pos_reactions: editsqueal.pos_reactions, neg_reactions: editsqueal.neg_reactions}
+    updateSqueals(updates, editsqueal._id);
     for(j=0;j<channels.length;j++){
         if(editsqueal.sender == channels[j].name){
             if(channels[j].type=="$"){
@@ -954,6 +1019,8 @@ function editpositivereactions(){
           for(let i=0;i<channels.length;i++){
             if(channels[i].name == "CONTROVERSIAL"){
                 channels[i].list_posts.push(editsqueal);
+                const updates = {list_posts: channels[i].list_posts};
+                updateChannel(updates, channels[i]._id);
             }
           }
         } else {
@@ -965,7 +1032,6 @@ function editpositivereactions(){
     document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
     document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
     savechangessqueal();
-    updateChannels(channels);
     }
 }
 
@@ -982,6 +1048,8 @@ function editnegativereactions(){
           for(let i=0;i<channels;i++){
             if(channels[i].name == "CONTROVERSIAL"){
                 channels[i].list_posts.push(editsqueal);
+                const updates = {list_posts: channels[i].list_posts};
+                updateChannel(updates, channels[i]._id);
             }
           }
         } else {
@@ -993,7 +1061,6 @@ function editnegativereactions(){
     document.getElementById("sectioneditsquealreactions").innerHTML = '<h3 style="margin-bottom:2%">Reactions</h3>';
     document.getElementById("sectioneditsquealreactions").innerHTML += '<div><p style="min-width:30px">'+editsqueal.pos_reactions+'</p><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt="" style="margin-right:50px"><input type="number" id="editpositivereactions"><button class="btn btn-outline-primary"  onclick="editpositivereactions()">Edit reactions</button></div><div><p style="min-width:30px">'+editsqueal.neg_reactions+'</p><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt="" style="margin-right:50px"><input type="number" id="editnegativereactions"><button class="btn btn-outline-primary" onclick="editnegativereactions()">Edit reactions</button></div>';
     savechangessqueal();
-    updateChannels(channels);
     }
 }
 
@@ -1510,7 +1577,8 @@ function savechangeschannel(){
             channels[i] = editchannel;
         }
     }
-    updateChannels(channels);
+    const updates = {list_posts:editchannel.list_posts, list_users: editchannel.list_users, name: editchannel.name, blocked: editchannel.blocked};
+    updateChannel(updates, editchannel._id);
 }
 
 document.getElementById("sectioneditchannelchangename").addEventListener("click",()=>{
@@ -1649,11 +1717,11 @@ async function deletesquealCHANNEL(x){
     let i = squeals.length - 1;
     while (i >= 0) {
         if ((squeals[i].sender === editCHANNEL.list_posts[x].sender)&(squeals[i].date === editCHANNEL.list_posts[x].date)&(squeals[i].hour === editCHANNEL.list_posts[x].hour)&(squeals[i].seconds === editCHANNEL.list_posts[x].seconds)) {
+            deleteSqueal(squeals[i]._id);
             squeals.splice(i, 1);
         }
         i--;
     }
-    updateSqueals(squeals);
     editCHANNEL.list_posts.splice(x,1);
     savechangesCHANNEL();
     document.getElementById("sectioneditCHANNELsquealers").innerHTML = '<div class="d-flex flex-row mb-3"><h3 class="me-3">Squealers</h3><button class="btn btn-outline-primary" onclick="createnewCHANNELsqueal()">Create</button><div>';
@@ -1676,18 +1744,19 @@ async function deletesquealCHANNEL(x){
     }
 }
 
-document.getElementById("sectioneditCHANNELdelete").addEventListener("click",()=>{
+document.getElementById("sectioneditCHANNELdelete").addEventListener("click",async()=>{
     for(i=0;i<channels.length;i++){
-        if(channels[i]==editCHANNEL){
+        if(channels[i].name==editCHANNEL.name){
+            await deleteChannel(channels[i]._id);
             channels.splice(i,1);
         }
     }
     for(i=0;i<squeals.length;i++){
-        if(editCHANNEL.name == squeals[i].sender)
+        if(editCHANNEL.name == squeals[i].channel){
+            await deleteSqueal(squeals[i]._id);
             squeals.splice(i,1);
+        }
     }
-    updateChannels(channels);
-    updateSqueals(squeals);
     document.getElementById("sectioneditCHANNEL").style = "display:none";
     arrCHANNELS = [];
     for(i=0;i<channels.length;i++){
@@ -1718,7 +1787,8 @@ function savechangesCHANNEL(){
             channels[i] = editCHANNEL;
         }
     }
-    updateChannels(channels);
+    const updates = {list_posts:editCHANNEL.list_posts, list_users: editCHANNEL.list_users, name: editCHANNEL.name, blocked: editCHANNEL.blocked};
+    updateChannel(updates, editCHANNEL._id);
 }
 
 document.getElementById("viewCHANNELowners").addEventListener("click",()=>{
@@ -2173,7 +2243,7 @@ document.getElementById("deletephotoCHANNEL").addEventListener("click", ()=>{
     document.getElementById("sectioncreateCHANNELphotoimg").style = "filter:invert(1); height:30px; width:30px";
 });
 
-document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
+document.getElementById("btncreatenewCHANNEL").addEventListener("click",async ()=>{
     let photo = newphotoprofile;
     let name = document.getElementById("sectioncreateCHANNELname").value;
     let description = document.getElementById("sectioncreateCHANNELdescription").value;
@@ -2193,13 +2263,14 @@ document.getElementById("btncreatenewCHANNEL").addEventListener("click",()=>{
         }
         if(Valid){
         let newCHANNEL = {creator:creator, photoprofile:photo, photoprofileX:0, photoprofileY:0, name:name, description:description, silenceable:silenceable, list_users:list_users, list_mess:list_mess, usersSilenced:[], type:'$', list_posts:[], popularity:0};
-        channels.push(newCHANNEL);
-        addChannel(newCHANNEL);
+        await addChannel(newCHANNEL);
+        channels = await getListChannels();
         alert("CHANNEL creation successfully");
         document.getElementById("sectioncreateCHANNEL").classList.remove("d-flex");
         document.getElementById("sectioncreateCHANNEL").classList.add("d-none");
         document.getElementById("listchannel_find").innerHTML = "";
         arrCHANNELS = [];
+        arrsearchCHANNEL = [];
         for(i=0;i<channels.length;i++){
             if(channels[i].type=="$"){
                 arrCHANNELS.push(channels[i]);
@@ -2270,8 +2341,8 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
             if(editCHANNEL.list_users[i].nickname!=actualuser.nickname)
                 receivers.push("@" + editCHANNEL.list_users[i].nickname);
         }
-        squeals.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:receivers, channel:channel, impressions:0});
-        addSqueal({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:receivers, channel:channel, impressions:0});
+        await addSqueal({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:receivers, channel:channel, impressions:0});
+        squeals = await getListSqueals();
         editCHANNEL.list_posts.unshift({sender:sender, typesender:"CHANNELS", body:{text:text, link:link, photo:img, position:position, video:video}, date:date, hour:hour, seconds:seconds, photoprofile:actualuser.photoprofile, pos_reactions:0, neg_reactions:0, usersReactions:[], usersViewed:[], answers:[], category:null, receivers:receivers, channel:channel, impressions:0});
         document.getElementById("photonewsqueal").innerHTML = '';
         document.getElementById("linknewsqueal").innerHTML = '';
@@ -2289,8 +2360,8 @@ document.getElementById("sendnewsqueal").addEventListener("click", async()=>{
             if(editCHANNEL.list_posts[i].body.photo=="")
                 editCHANNEL.list_posts[i].body.photo = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
                 let videoURL = "";
-                if(arrsqueals[i].body.video!=""){
-                    videoURL = arrsqueals[i].body.video;
+                if(editCHANNEL.list_posts[i].body.video!=""){
+                    videoURL = editCHANNEL.list_posts[i].body.video;
                 }
             let Address = await getAddressGeolocation(editCHANNEL.list_posts[i].body.position[0], editCHANNEL.list_posts[i].body.position[1]);
             document.getElementById("sectioneditCHANNELsquealers").innerHTML += '<div class="card border-light mb-3 d-flex flex-column mexcard"><div class="card-header" style="width:100%; height:70px"><img id="imgprofilesquealer" src="'+editCHANNEL.list_posts[i].photoprofile+'" alt=""><h5>'+editCHANNEL.list_posts[i].sender+'</h5><p class="card-text mb-0 me-3">'+editCHANNEL.list_posts[i].date+'</p><p class="card-text">'+editCHANNEL.list_posts[i].hour+'</p></div><div class="card-body"><p class="card-text">'+editCHANNEL.list_posts[i].body.text+'</p><p class="card-text">'+Address+'</p><a class="card-link" href="'+editCHANNEL.list_posts[i].body.link+'">'+editCHANNEL.list_posts[i].body.link+'</a><div class="text-center"><img id="imgsquealer" src="'+editCHANNEL.list_posts[i].body.photo+'" class="rounded" alt="..." style="max-height: 150px;"><video id="recordedVideosquealer" controls class="d-none mt-3" src="'+videoURL+'" style="max-height: 150px;"></video></div></div><div class="card-footer"><button class="btn btn-outline-primary deletemexbtn" style="padding: 0.6em 2em 0.6em 2em" onclick="deletesquealCHANNEL('+i+')">Delete</button><div class="reactions"><img src="../img/reaction_positive1.png" alt=""><img src="../img/reaction_positive2.png" alt=""><img src="../img/reaction_positive3.png" alt=""><span style="color:black">'+editCHANNEL.list_posts[i].pos_reactions+'</span></div><div class="reactions"><img src="../img/reaction_negative1.png" alt=""><img src="../img/reaction_negative2.png" alt=""><img src="../img/reaction_negative3.png" alt=""><span style="color:black">'+editCHANNEL.list_posts[i].neg_reactions+'</span></div></div></div>'; 
