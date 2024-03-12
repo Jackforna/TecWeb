@@ -140,10 +140,6 @@ export class DatabaseService {
     return this.http.post(this.UrlSite+`/upload-video`, video);
   }
 
-  updateChannel(id: string, updates: any): Observable<any> {
-    const url = this.UrlSite+`/update-channel/${id}`; 
-    return this.http.put(url, {  postToAdd : updates });
-  }
 
   // Aggiunta della funzione all'interno della classe DatabaseService
   // updateChannels(updatedChannels: any): Observable<any> {
@@ -176,6 +172,35 @@ export class DatabaseService {
       return data;
     } catch (error) {
       console.error('Errore nella richiesta:', error);
+      throw error;
+    }
+  }
+
+  async updateChannel(id: string, updates: any): Promise<any> {
+    try {
+      const response = await fetch(this.UrlSite+`/update-channel/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates)
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Canale non trovato o nessun aggiornamento necessario');
+        } else if (response.status === 400) {
+          throw new Error('Errore di rete. Impossibile completare la richiesta.');
+        } else if (response.status === 500) {
+          throw new Error('Errore di rete. Impossibile completare la richiesta.');
+        }
+        throw new Error('Errore di rete. Impossibile completare la richiesta.');
+      }
+
+      const data = await response.json();
+      return data;  // Potrebbe contenere un messaggio di successo o altro a seconda della risposta del server
+    } catch (error) {
+      console.error('Errore durante l\'aggiornamento del canale:', error);
       throw error;
     }
   }

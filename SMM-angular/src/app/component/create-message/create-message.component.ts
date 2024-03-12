@@ -862,9 +862,9 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     this.databaseService.addSqueal(squealData).subscribe({
       next: (response) => {
         if (flag == true) {
-          this.handleUpdateHashtagChannel(channelToUpdate);
+          this.handleUpdateHashtagChannel(channelToUpdate, squealData);
         } else {
-          this.handleCreateHashtagChannel(channelToUpdate);
+          this.handleCreateHashtagChannel(channelToUpdate, squealData);
         }
         console.log('Squeal added successfully', response);
         // Calcola i caratteri utilizzati (inclusi gli allegati)
@@ -923,26 +923,28 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
         console.error('Error fetching channels:', error);
       }
     });
-    // Trova l'indice del canale nell'array `channels` che corrisponde al `channelName` dato
     const channelIndex = this.allChannels.findIndex((channel: { name: any; }) => channel.name === channelName);
-  
-    // Se il canale è stato trovato...
     if (channelIndex !== -1) {
-      // Aggiunge il `post` all'array `list_posts` del canale trovato
-      this.allChannels[channelIndex].list_posts.push(post);
       if (usersToAdd) {
+        this.allChannels[channelIndex].list_posts.push(post);
         this.allChannels[channelIndex].list_users.push(usersToAdd);
+        const tempListPost = this.allChannels[channelIndex].list_posts;
+          const tempListUser = this.allChannels[channelIndex].list_users;
+          const updateTemp = {list_posts: tempListPost, list_users: tempListUser};
+          this.databaseService.updateChannel(this.allChannels[channelIndex]._id, updateTemp);
+      } else {
+        this.allChannels[channelIndex].list_posts.push(post);
+        const tempListPost = this.allChannels[channelIndex].list_posts;
+        const updateTemp = {list_posts: tempListPost};
+        this.databaseService.updateChannel(this.allChannels[channelIndex]._id, updateTemp);
       }
-      //this.databaseService.updateChannels(this.allChannels);
-      this.updateAllChannels(this.allChannels);
-      
       console.log(`Post aggiunto al canale ${channelName}.`);
     } else {
       console.log(`Canale ${channelName} non trovato.`);
     }
   }
 
-  handleUpdateHashtagChannel(channelToUpdate: any): void {
+  handleUpdateHashtagChannel(channelToUpdate: any, squealData: any): void {
     const channelDataUpdatePost = {
       answer: [],
       body: {
@@ -954,8 +956,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       },
       category: null,
       date: new Date(),
-      hour: new Date().getHours(),
-      seconds: new Date().getSeconds(),
+      hour: squealData.hour,
+      seconds: squealData.seconds,
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
@@ -990,7 +992,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     this.addPostToHashtag(channelToUpdate.name, channelDataUpdatePost, userToAdd);
   }
 
-  handleCreateHashtagChannel(channelToUpdate: any): void {
+  handleCreateHashtagChannel(channelToUpdate: any, squealData: any): void {
     const channelDataCreatePost = {
       creator: this.datiUtente.nickname,
       photoprofile: this.datiUtente.photoprofile,
@@ -1029,8 +1031,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
         },
         category: null,
         date: new Date(),
-        hour: new Date().getHours(),
-        seconds: new Date().getSeconds(),
+        hour: squealData.hour,
+        seconds: squealData.seconds,
         impressions: 0,
         neg_reactions: 0,
         pos_reactions: 0,
@@ -1359,13 +1361,13 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     this.databaseService.addSqueal(squealData).subscribe({
       next: (response) => {
         if (this.charLeftUser >= 125 && localStorage.getItem('Interval active') === null) {
-          this.updateChannelDeafaultPost(defaultCamp);
+          this.updateChannelDeafaultPost(defaultCamp, squealData);
           console.log('Squeal added successfully', response);
           const charsUsed = this.userText.length + this.calculateAttachmentChars();
           const userId = this.datiUtente ? this.datiUtente._id : null;
           this.resetCurrentPageWithDelay();
         } else if (localStorage.getItem('Interval active') === 'true') {
-          this.updateChannelDeafaultPost(defaultCamp);
+          this.updateChannelDeafaultPost(defaultCamp, squealData);
         } else {
           alert('Insufficient characters to send the message.');
           this.showPurchasePopup = true;
@@ -1447,17 +1449,18 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
     if (channelIndex !== -1) {
       // Aggiunge il `post` all'array `list_posts` del canale trovato
       this.allChannels[channelIndex].list_posts.push(post);
-      //this.databaseService.updateChannels(this.allChannels);
-      this.updateAllChannels(this.allChannels);
+      const tempListPost = this.allChannels[channelIndex].list_posts;
+      const updateTemp = {list_posts: tempListPost};
+      this.databaseService.updateChannel(this.allChannels[channelIndex]._id, updateTemp);
+      //this.updateAllChannels(this.allChannels);
       
       console.log(`Post aggiunto al canale ${channelName}.`);
     } else {
       console.log(`Canale ${channelName} non trovato.`);
     }
   }
-  
 
-  updateChannelDeafaultPost(defaultCamp: any): void {
+  updateChannelDeafaultPost(defaultCamp: any, squealData: any): void {
     const channelDataUpdatePost = {
       answer: [],
       body: {
@@ -1469,8 +1472,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       },
       category: null,
       date: new Date(),
-      hour: new Date().getHours(),
-      seconds: new Date().getSeconds(),
+      hour: squealData.hour,
+      seconds: squealData.seconds,
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
@@ -1563,7 +1566,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
   
   }
 
-  updateChannlePosts = () => {
+  updateChannlePosts = (squealData: any) => {
     const channelDataUpdatePost = {
       answer: [],
       body: {
@@ -1575,8 +1578,8 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       },
       category: null,
       date: new Date(),
-      hour: new Date().getHours(),
-      seconds: new Date().getSeconds(),
+      hour: squealData.hour,
+      seconds: squealData.seconds,
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
@@ -1633,7 +1636,7 @@ export class CreateMessageComponent implements OnInit, OnDestroy, AfterViewInit{
       // Chiamata al servizio per aggiungere lo squeal
       this.databaseService.addSqueal(squealData).subscribe({
         next: (response) => {
-          this.updateChannlePosts();
+          this.updateChannlePosts(squealData);
           console.log('Squeal added successfully', response);
           const charsUsed = this.userText.length + this.calculateAttachmentChars();
           const userId = this.datiUtente ? this.datiUtente._id : null;

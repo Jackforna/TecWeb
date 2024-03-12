@@ -791,7 +791,7 @@ function CreateMessage(props) {
 
   };
 
-  const handleCreateHashtagChannel = async () => {
+  const handleCreateHashtagChannel = async (squealData) => {
     const channelData = {
       creator: nicknameProfile,
       photoprofile: '',
@@ -833,13 +833,13 @@ function CreateMessage(props) {
           },
           category: null,
           date: new Date().toLocaleDateString(),
-          hour: formattedTime,
+          hour: squealData.hour,
           impressions: 0,
           neg_reactions: 0,
           photoprofile: photoProfile,
           pos_reactions: 0,
           receivers: [`@${nicknameProfile}`],
-          seconds: new Date().getSeconds(),
+          seconds: squealData.seconds,
           sender: nicknameProfile,
           typesender: 'keywords',
           usersReactions: [],
@@ -866,21 +866,26 @@ function CreateMessage(props) {
     
       // Se il canale è stato trovato...
       if (channelIndex !== -1) {
-        // Aggiunge il `post` all'array `list_posts` del canale trovato
-        getAllChannels[channelIndex].list_posts.push(post);
-        console.log('User to add1:', userToAdd);
         if ( userToAdd !== null) {
-          console.log('User to add2:', userToAdd);
           getAllChannels[channelIndex].list_users.push(userToAdd);
+          getAllChannels[channelIndex].list_posts.push(post);
+          const tempListPost = getAllChannels[channelIndex].list_posts;
+          const tempListUser = getAllChannels[channelIndex].list_users;
+          const updateTemp = {list_posts: tempListPost, list_users: tempListUser};
+          await updateChannel(getAllChannels[channelIndex]._id, updateTemp);
+        } else {
+          getAllChannels[channelIndex].list_posts.push(post);
+          const tempListPost = getAllChannels[channelIndex].list_posts;
+          const updateTemp = {list_posts: tempListPost};
+          await updateChannel(getAllChannels[channelIndex]._id, updateTemp);
         }
-        await updateChannels(getAllChannels);
         console.log(`Post aggiunto al canale ${channelName}.`);
     } else {
       console.log(`Canale ${channelName} non trovato.`);
     }
   }
 
-  const handleUpdateHashTagChannel = async (channelToUpdate) => {
+  const handleUpdateHashTagChannel = async (channelToUpdate, squealData) => {
     const channelDataUpdatePost = {
       answers: [],
       body: {
@@ -892,13 +897,13 @@ function CreateMessage(props) {
       },
       category: null,
       date: new Date().toLocaleDateString(),
-      hour: formattedTime,
+      hour: squealData.hour,
       impressions: 0,
       neg_reactions: 0,
       photoprofile: photoProfile,
       pos_reactions: 0,
       receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
-      seconds: new Date().getSeconds(),
+      seconds: squealData.seconds,
       sender: nicknameProfile,
       typesender: 'keywords',
       usersReactions: [],
@@ -967,9 +972,9 @@ function CreateMessage(props) {
   
     try {
       if (flag === true) {
-        await handleUpdateHashTagChannel(channelToUpdate);
+        await handleUpdateHashTagChannel(channelToUpdate, squealData);
       } else {
-        await handleCreateHashtagChannel();
+        await handleCreateHashtagChannel(squealData);
       }
       const result = await addSqueal(squealData);
       console.log('Squeal send:', result);
@@ -1186,14 +1191,16 @@ function CreateMessage(props) {
       if (channelIndex !== -1) {
         // Aggiunge il `post` all'array `list_posts` del canale trovato
         getAllChannels[channelIndex].list_posts.push(post);
-        await updateChannels(getAllChannels);
+        const tempListPost = getAllChannels[channelIndex].list_posts;
+        const updateTemp = {list_posts: tempListPost};
+        await updateChannel(getAllChannels[channelIndex]._id, updateTemp);
         console.log(`Post aggiunto al canale ${channelName}.`);
     } else {
       console.log(`Canale ${channelName} non trovato.`);
     }
   }
 
-  const handleUpdateChannelPosts = async (channelSelectedToUpdate) => {
+  const handleUpdateChannelPosts = async (channelSelectedToUpdate, squealData) => {
     const channelDataUpdatePost = {
       answers: [],
       body: {
@@ -1205,13 +1212,13 @@ function CreateMessage(props) {
       },
       category: null,
       date: new Date().toLocaleDateString(),
-      hour: formattedTime,
+      hour: squealData.hour,
       impressions: 0,
       neg_reactions: 0,
       pos_reactions: 0,
       photoprofile: photoProfile || '',
       receivers: channelSelected.list_users.map(user => `@${user.nickname}`),
-      seconds: new Date().getSeconds(),
+      seconds: squealData.seconds,
       sender: nicknameProfile,
       typesender: channelType,
       usersReactions: [],
@@ -1219,7 +1226,7 @@ function CreateMessage(props) {
     }
 
     try {
-      const resultChannel = await addPostToChannel(channelSelectedToUpdate.name, channelDataUpdatePost)
+      const resultChannel = await addPostToChannel(channelSelectedToUpdate.name, channelDataUpdatePost);
       console.log('Channels update succesfuly:', resultChannel);
     } catch (error) {
       console.error('Error in the channel updating:', error);
@@ -1256,7 +1263,7 @@ function CreateMessage(props) {
 
       try {
         const resultAddSqueal = await addSqueal(squealData);
-        await handleUpdateChannelPosts(channelSelected);
+        await handleUpdateChannelPosts(channelSelected, squealData);
         console.log('Squeal send:', resultAddSqueal);
         const textChars = squealData.body.text.length; 
         let imageChars = 0;
@@ -1447,7 +1454,7 @@ function CreateMessage(props) {
     try {
       if (wordsRemaining >= 125 && localStorage.getItem('Interval active') === null) {
         const resultAddSqueal = await addSqueal(squealData);
-        await hanleUpdateChannelDefaultMessage(channelSelected, defaultCamp);
+        await hanleUpdateChannelDefaultMessage(channelSelected, defaultCamp, squealData);
         console.log('Squeal send:', resultAddSqueal);
         // window.location.reload();
         resetForm();
@@ -1456,7 +1463,7 @@ function CreateMessage(props) {
       } else if (localStorage.getItem('Interval active') === 'true') {
         const resultAddSqueal = await addSqueal(squealData);
         const channelToProcess = JSON.parse(localStorage.getItem('ChannelSelected'));
-        await hanleUpdateChannelDefaultMessage(channelToProcess, defaultCamp);
+        await hanleUpdateChannelDefaultMessage(channelToProcess, defaultCamp, squealData);
         console.log('Squeal send:', resultAddSqueal);
       } else {
       alert("You don't have enough characters available to send the message.");
@@ -1469,7 +1476,7 @@ function CreateMessage(props) {
     }
   };
 
-  const hanleUpdateChannelDefaultMessage = async (channelToUpdate, defaultCamp) => {
+  const hanleUpdateChannelDefaultMessage = async (channelToUpdate, defaultCamp, squealData) => {
     const channelDataUpdatePost = {
       answers: [],
       body: {
@@ -1481,13 +1488,13 @@ function CreateMessage(props) {
       },
       category: null,
       date: new Date().toLocaleDateString(),
-      hour: formattedTime,
+      hour: squealData.hour,
       impressions: 0,
       neg_reactions: 0,
       photoprofile: localStorage.getItem("Interval active") ? localStorage.getItem('PhotoProfile') : photoProfile,
       pos_reactions: 0,
       receivers: channelToUpdate.list_users.map(user => `@${user.nickname}`),
-      seconds: new Date().getSeconds(),
+      seconds: squealData.seconds,
       sender: localStorage.getItem("Interval active") ? localStorage.getItem('Nickname') : nicknameProfile,
       typesender: localStorage.getItem("Interval active") ? localStorage.getItem('ChannelTypeSender') : channelType,
       usersReactions: [],
